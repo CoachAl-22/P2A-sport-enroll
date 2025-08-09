@@ -203,7 +203,7 @@ export default function Landing() {
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Multiple Venues Available</span>
+                    <span className="text-sm">School and Athletic Track venues, providing you multiple options</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Users className="w-4 h-4 mr-2" />
