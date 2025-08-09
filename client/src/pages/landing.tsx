@@ -65,7 +65,7 @@ export default function Landing() {
                   onClick={() => setIsLoginModalOpen(true)}
                   className="bg-secondary-500 hover:bg-secondary-600 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
-                  Start Your Child's Journey
+                  Start Your Athletic Journey
                 </Button>
                 <Button 
                   variant="outline"
