@@ -572,7 +572,7 @@ export default function Landing() {
             {/* High Performance Squad */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/Al & Archer Peru.jpg" 
+                src="/attached_assets/Photos%20for%20Power2ADAPT/Al%20%26%20Archer%20Peru.jpg" 
                 alt="High performance squad athletes training with elite coaching" 
                 className="w-full h-48 object-cover"
               />
