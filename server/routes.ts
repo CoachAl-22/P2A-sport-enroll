@@ -1280,10 +1280,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Attendance tracking routes
   
+  // Get all classes for a coach
+  app.get("/api/coach/classes", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'coach') {
+        return res.status(403).json({ message: "Access denied - coaches only" });
+      }
+
+      const coachClasses = await storage.getClassesByCoach(userId);
+      res.json(coachClasses);
+    } catch (error) {
+      console.error("Error fetching coach classes:", error);
+      res.status(500).json({ message: "Failed to fetch classes" });
+    }
+  });
+  
   // Get today's classes for a coach
   app.get("/api/coach/classes/today", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
       const user = await storage.getUser(userId);
       
       if (!user || user.role !== 'coach') {
@@ -1301,7 +1319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get enrolled students for a specific class
   app.get("/api/classes/:classId/students", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
       const user = await storage.getUser(userId);
       const { classId } = req.params;
       
@@ -1320,7 +1338,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Mark attendance for students
   app.post("/api/attendance/mark", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
       const user = await storage.getUser(userId);
       
       if (!user || user.role !== 'coach') {
@@ -1351,7 +1369,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get attendance records for a class on a specific date
   app.get("/api/classes/:classId/attendance/:date", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
       const user = await storage.getUser(userId);
       const { classId, date } = req.params;
       

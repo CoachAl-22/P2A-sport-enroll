@@ -693,26 +693,69 @@ export class DatabaseStorage implements IStorage {
   async getAttendanceForClass(classId: string, date: string): Promise<any[]> {
     const attendanceDate = new Date(date);
     
-    return await db
+    // Get all enrolled students for the class
+    const enrolledStudents = await db
       .select({
-        id: attendanceRecords.id,
-        childId: attendanceRecords.childId,
-        childName: sql<string>`${children.firstName} || ' ' || ${children.lastName}`,
-        status: attendanceRecords.status,
-        absenceReason: attendanceRecords.absenceReason,
-        creditsEligible: attendanceRecords.creditsEligible,
-        notes: attendanceRecords.notes,
-        markedAt: attendanceRecords.markedAt,
+        student: {
+          id: children.id,
+          firstName: children.firstName,
+          lastName: children.lastName,
+          age: children.age,
+        }
       })
+      .from(enrollments)
+      .innerJoin(children, eq(enrollments.childId, children.id))
+      .where(
+        and(
+          eq(enrollments.classId, classId),
+          eq(enrollments.status, "active")
+        )
+      )
+      .orderBy(children.firstName, children.lastName);
+
+    // Get attendance records for that date
+    const attendanceRecordsForDate = await db
+      .select()
       .from(attendanceRecords)
-      .innerJoin(children, eq(attendanceRecords.childId, children.id))
       .where(
         and(
           eq(attendanceRecords.classId, classId),
           eq(attendanceRecords.attendanceDate, attendanceDate)
         )
-      )
-      .orderBy(children.firstName, children.lastName);
+      );
+
+    // Combine students with their attendance records
+    return enrolledStudents.map((student) => {
+      const attendance = attendanceRecordsForDate.find(
+        (record) => record.childId === student.student.id
+      );
+
+      return {
+        student: student.student,
+        attendance: attendance || null,
+      };
+    });
+  }
+
+  async getClassesByCoach(coachId: string): Promise<any[]> {
+    return await db
+      .select({
+        id: classes.id,
+        name: classes.name,
+        dayOfWeek: classes.dayOfWeek,
+        startTime: classes.startTime,
+        endTime: classes.endTime,
+        venue: {
+          id: venues.id,
+          name: venues.name,
+        },
+        currentEnrollments: classes.currentEnrollments,
+        maxCapacity: classes.maxCapacity,
+      })
+      .from(classes)
+      .leftJoin(venues, eq(classes.venueId, venues.id))
+      .where(eq(classes.coachId, coachId))
+      .orderBy(classes.dayOfWeek, classes.startTime);
   }
 }
 

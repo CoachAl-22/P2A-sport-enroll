@@ -59,6 +59,16 @@ export default function Navbar() {
                     My Family
                   </Button>
                 </Link>
+                {((user as any)?.role === "coach" || (user as any)?.role === "admin") && (
+                  <Link href="/attendance">
+                    <Button
+                      variant={location === "/attendance" ? "default" : "ghost"}
+                      className="text-gray-700 hover:text-primary-500"
+                    >
+                      Attendance
+                    </Button>
+                  </Link>
+                )}
                 {(user as any)?.role === "admin" && (
                   <>
                     <Link href="/admin">

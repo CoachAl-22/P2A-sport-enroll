@@ -17,6 +17,7 @@ import AdminSMS from "@/pages/admin-sms";
 import Blog from "@/pages/blog";
 import BlogArticle from "@/pages/blog-article";
 import AdminBlog from "@/pages/admin-blog";
+import Attendance from "@/pages/attendance";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -47,6 +48,9 @@ function Router() {
           <Route path="/checkout/:enrollmentId" component={Checkout} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
+          {((user as any)?.role === "coach" || (user as any)?.role === "admin") && (
+            <Route path="/attendance" component={Attendance} />
+          )}
           {(user as any)?.role === "admin" && (
             <>
               <Route path="/admin" component={Admin} />
