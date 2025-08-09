@@ -21,6 +21,7 @@ import AdminTermConfig from "@/pages/admin-term-config";
 import AdminClasses from "@/pages/admin-classes";
 import AdminStaff from "@/pages/admin-staff";
 import Attendance from "@/pages/attendance";
+import Waitlist from "@/pages/waitlist";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -49,6 +50,7 @@ function Router() {
           <Route path="/classes" component={Classes} />
           <Route path="/enrollment/:classId" component={Enrollment} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
+          <Route path="/waitlist" component={Waitlist} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
           {((user as any)?.user?.role === "coach" || (user as any)?.user?.role === "admin") && (

@@ -61,6 +61,14 @@ export default function Navbar() {
                     My Family
                   </Button>
                 </Link>
+                <Link href="/waitlist">
+                  <Button
+                    variant={location === "/waitlist" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500"
+                  >
+                    Waitlists
+                  </Button>
+                </Link>
                 {(
                   (user as any)?.user?.role === "coach" || 
                   (user as any)?.user?.role === "admin" ||
@@ -162,6 +170,15 @@ export default function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   My Family
+                </Button>
+              </Link>
+              <Link href="/waitlist">
+                <Button
+                  variant={location === "/waitlist" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Waitlists
                 </Button>
               </Link>
               {(user as any)?.user?.role === "admin" && (

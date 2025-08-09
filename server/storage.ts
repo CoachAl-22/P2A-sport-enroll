@@ -9,6 +9,7 @@ import {
   notifications,
   seniorSquadApplications,
   highPerformanceSquadApplications,
+  waitlists,
   blogArticles,
   attendanceRecords,
   termConfigurations,
@@ -33,6 +34,8 @@ import {
   type InsertSeniorSquadApplication,
   type HighPerformanceSquadApplication,
   type InsertHighPerformanceSquadApplication,
+  type Waitlist,
+  type InsertWaitlist,
   type BlogArticle,
   type InsertBlogArticle,
   type AttendanceRecord,
@@ -139,6 +142,16 @@ export interface IStorage {
   getHighPerformanceSquadApplication(id: string): Promise<HighPerformanceSquadApplication | undefined>;
   getAllHighPerformanceSquadApplications(): Promise<HighPerformanceSquadApplication[]>;
   updateHighPerformanceSquadApplication(id: string, updates: Partial<HighPerformanceSquadApplication>): Promise<HighPerformanceSquadApplication>;
+
+  // Waitlist operations
+  addToWaitlist(waitlistData: InsertWaitlist): Promise<Waitlist>;
+  getWaitlistByClass(classId: string): Promise<Waitlist[]>;
+  getWaitlistByParent(parentId: string): Promise<Waitlist[]>;
+  getWaitlistPosition(classId: string, childId: string): Promise<number | null>;
+  updateWaitlistStatus(id: string, status: string, notificationExpiry?: Date): Promise<Waitlist>;
+  removeFromWaitlist(id: string): Promise<void>;
+  moveUpWaitlist(classId: string): Promise<void>;
+  getNextWaitlistEntry(classId: string): Promise<Waitlist | undefined>;
 
   // Blog operations
   getBlogArticle(id: string): Promise<BlogArticle | undefined>;
@@ -668,6 +681,139 @@ export class DatabaseStorage implements IStorage {
       .where(eq(highPerformanceSquadApplications.id, id))
       .returning();
     return updated;
+  }
+
+  // Waitlist operations
+  async addToWaitlist(waitlistData: InsertWaitlist): Promise<Waitlist> {
+    // Get the next position in the waitlist for this class
+    const [lastPosition] = await db
+      .select({ position: sql<number>`COALESCE(MAX(${waitlists.position}), 0)` })
+      .from(waitlists)
+      .where(eq(waitlists.classId, waitlistData.classId));
+
+    const nextPosition = (lastPosition?.position || 0) + 1;
+
+    const [created] = await db.insert(waitlists).values({
+      ...waitlistData,
+      position: nextPosition,
+    }).returning();
+    return created;
+  }
+
+  async getWaitlistByClass(classId: string): Promise<Waitlist[]> {
+    return await db
+      .select({
+        id: waitlists.id,
+        classId: waitlists.classId,
+        childId: waitlists.childId,
+        parentId: waitlists.parentId,
+        position: waitlists.position,
+        status: waitlists.status,
+        joinedAt: waitlists.joinedAt,
+        notifiedAt: waitlists.notifiedAt,
+        expiresAt: waitlists.expiresAt,
+        notes: waitlists.notes,
+        createdAt: waitlists.createdAt,
+        childName: sql<string>`${children.firstName} || ' ' || ${children.lastName}`,
+        parentName: sql<string>`${users.firstName} || ' ' || ${users.lastName}`,
+        parentEmail: users.email,
+        parentMobile: users.mobile,
+      })
+      .from(waitlists)
+      .innerJoin(children, eq(waitlists.childId, children.id))
+      .innerJoin(users, eq(waitlists.parentId, users.id))
+      .where(eq(waitlists.classId, classId))
+      .orderBy(asc(waitlists.position));
+  }
+
+  async getWaitlistByParent(parentId: string): Promise<Waitlist[]> {
+    return await db
+      .select({
+        id: waitlists.id,
+        classId: waitlists.classId,
+        childId: waitlists.childId,
+        parentId: waitlists.parentId,
+        position: waitlists.position,
+        status: waitlists.status,
+        joinedAt: waitlists.joinedAt,
+        notifiedAt: waitlists.notifiedAt,
+        expiresAt: waitlists.expiresAt,
+        notes: waitlists.notes,
+        createdAt: waitlists.createdAt,
+        childName: sql<string>`${children.firstName} || ' ' || ${children.lastName}`,
+        className: classes.name,
+        classDay: classes.dayOfWeek,
+        classTime: classes.startTime,
+      })
+      .from(waitlists)
+      .innerJoin(children, eq(waitlists.childId, children.id))
+      .innerJoin(classes, eq(waitlists.classId, classes.id))
+      .where(eq(waitlists.parentId, parentId))
+      .orderBy(desc(waitlists.joinedAt));
+  }
+
+  async getWaitlistPosition(classId: string, childId: string): Promise<number | null> {
+    const [result] = await db
+      .select({ position: waitlists.position })
+      .from(waitlists)
+      .where(and(eq(waitlists.classId, classId), eq(waitlists.childId, childId), eq(waitlists.status, 'active')));
+    
+    return result?.position || null;
+  }
+
+  async updateWaitlistStatus(id: string, status: string, notificationExpiry?: Date): Promise<Waitlist> {
+    const updateData: any = { 
+      status,
+      notifiedAt: status === 'notified' ? new Date() : undefined,
+      expiresAt: notificationExpiry,
+    };
+
+    const [updated] = await db
+      .update(waitlists)
+      .set(updateData)
+      .where(eq(waitlists.id, id))
+      .returning();
+    return updated;
+  }
+
+  async removeFromWaitlist(id: string): Promise<void> {
+    const [waitlistEntry] = await db.select().from(waitlists).where(eq(waitlists.id, id));
+    if (!waitlistEntry) return;
+
+    // Remove the entry
+    await db.delete(waitlists).where(eq(waitlists.id, id));
+
+    // Update positions for remaining entries in the same class
+    await db
+      .update(waitlists)
+      .set({ position: sql`${waitlists.position} - 1` })
+      .where(and(
+        eq(waitlists.classId, waitlistEntry.classId),
+        sql`${waitlists.position} > ${waitlistEntry.position}`
+      ));
+  }
+
+  async moveUpWaitlist(classId: string): Promise<void> {
+    // Move everyone up one position
+    await db
+      .update(waitlists)
+      .set({ position: sql`${waitlists.position} - 1` })
+      .where(and(
+        eq(waitlists.classId, classId),
+        eq(waitlists.status, 'active'),
+        sql`${waitlists.position} > 1`
+      ));
+  }
+
+  async getNextWaitlistEntry(classId: string): Promise<Waitlist | undefined> {
+    const [entry] = await db
+      .select()
+      .from(waitlists)
+      .where(and(eq(waitlists.classId, classId), eq(waitlists.status, 'active')))
+      .orderBy(asc(waitlists.position))
+      .limit(1);
+    
+    return entry;
   }
 
   // Blog operations

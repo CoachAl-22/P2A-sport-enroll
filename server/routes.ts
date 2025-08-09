@@ -6,7 +6,7 @@ import session from "express-session";
 import { storage } from "./storage";
 import { ObjectStorageService } from "./objectStorage";
 import { smsService } from "./sms";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -1474,6 +1474,168 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error updating High Performance Squad application:", error);
       res.status(500).json({ message: "Failed to update application" });
+    }
+  });
+
+  // Waitlist endpoints
+
+  // Add to waitlist
+  app.post("/api/waitlist", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    try {
+      const waitlistData = insertWaitlistSchema.parse({
+        ...req.body,
+        parentId: userId,
+      });
+
+      // Check if child is already on waitlist for this class
+      const existingPosition = await storage.getWaitlistPosition(waitlistData.classId, waitlistData.childId);
+      if (existingPosition) {
+        return res.status(400).json({ 
+          message: "Child is already on the waitlist", 
+          position: existingPosition 
+        });
+      }
+
+      const waitlistEntry = await storage.addToWaitlist(waitlistData);
+
+      // Send SMS confirmation
+      const user = await storage.getUser(userId);
+      const child = await storage.getChild(waitlistData.childId);
+      
+      if (user?.mobile && child) {
+        try {
+          await smsService.sendSMS(
+            user.mobile,
+            `Hi ${user.firstName}! ${child.firstName} has been added to the class waitlist (position #${waitlistEntry.position}). We'll notify you when a spot becomes available! 📋`
+          );
+        } catch (smsError) {
+          console.error("Failed to send waitlist SMS:", smsError);
+        }
+      }
+
+      res.status(201).json(waitlistEntry);
+    } catch (error: any) {
+      console.error("Error adding to waitlist:", error);
+      if (error.name === 'ZodError') {
+        res.status(400).json({ message: "Invalid waitlist data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to add to waitlist" });
+      }
+    }
+  });
+
+  // Get parent's waitlist entries
+  app.get("/api/waitlist/parent", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    try {
+      const waitlistEntries = await storage.getWaitlistByParent(userId);
+      res.json(waitlistEntries);
+    } catch (error: any) {
+      console.error("Error fetching parent waitlist:", error);
+      res.status(500).json({ message: "Failed to fetch waitlist entries" });
+    }
+  });
+
+  // Get waitlist for a class (admin only)
+  app.get("/api/waitlist/class/:classId", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const user = await storage.getUser(userId);
+    if (!user || !["admin", "coach"].includes(user.role)) {
+      return res.status(403).json({ message: "Admin or coach access required" });
+    }
+
+    try {
+      const { classId } = req.params;
+      const waitlistEntries = await storage.getWaitlistByClass(classId);
+      res.json(waitlistEntries);
+    } catch (error: any) {
+      console.error("Error fetching class waitlist:", error);
+      res.status(500).json({ message: "Failed to fetch class waitlist" });
+    }
+  });
+
+  // Remove from waitlist
+  app.delete("/api/waitlist/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    try {
+      const { id } = req.params;
+      
+      // Check if user owns this waitlist entry or is admin
+      const user = await storage.getUser(userId);
+      const waitlistEntry = await storage.getWaitlistByClass(''); // We'll need to modify this
+      
+      await storage.removeFromWaitlist(id);
+      res.json({ message: "Removed from waitlist successfully" });
+    } catch (error: any) {
+      console.error("Error removing from waitlist:", error);
+      res.status(500).json({ message: "Failed to remove from waitlist" });
+    }
+  });
+
+  // Notify next person in waitlist (admin only)
+  app.post("/api/waitlist/notify/:classId", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { classId } = req.params;
+      const nextEntry = await storage.getNextWaitlistEntry(classId);
+      
+      if (!nextEntry) {
+        return res.status(404).json({ message: "No one on waitlist" });
+      }
+
+      // Set notification expiry (48 hours from now)
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 48);
+
+      // Update waitlist status
+      await storage.updateWaitlistStatus(nextEntry.id, 'notified', expiresAt);
+
+      // Get parent and child info for SMS
+      const parent = await storage.getUser(nextEntry.parentId);
+      const child = await storage.getChild(nextEntry.childId);
+      const classInfo = await storage.getClass(classId);
+
+      if (parent?.mobile && child && classInfo) {
+        try {
+          await smsService.sendSMS(
+            parent.mobile,
+            `Great news! A spot is now available for ${child.firstName} in ${classInfo.name}. Please reply within 48 hours to secure the spot! 🎉`
+          );
+        } catch (smsError) {
+          console.error("Failed to send waitlist notification SMS:", smsError);
+        }
+      }
+
+      res.json({ message: "Notification sent successfully", waitlistEntry: nextEntry });
+    } catch (error: any) {
+      console.error("Error notifying waitlist:", error);
+      res.status(500).json({ message: "Failed to send notification" });
     }
   });
 

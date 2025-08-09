@@ -2,12 +2,24 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Users, Clock } from "lucide-react";
 import { Link } from "wouter";
+import { WaitlistButton } from "@/components/waitlist-button";
+import { useAuth } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
 
 interface ClassCardProps {
   classData: any;
 }
 
 export default function ClassCard({ classData }: ClassCardProps) {
+  const { user } = useAuth();
+  
+  const { data: children = [] } = useQuery<any[]>({
+    queryKey: ["/api/children"],
+  });
+
+  const { data: waitlistEntries = [] } = useQuery<any[]>({
+    queryKey: ["/api/waitlist/parent"],
+  });
   const getDayName = (dayOfWeek: number) => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     return days[dayOfWeek];
@@ -128,11 +140,37 @@ export default function ClassCard({ classData }: ClassCardProps) {
             </span>
             <span className="text-gray-500 text-sm">/per class</span>
           </div>
-          <Link href={`/enrollment/${classData.id}`}>
-            <Button className={`${statusInfo.buttonClass} text-white transition-colors`}>
-              {statusInfo.buttonText}
-            </Button>
-          </Link>
+          
+          {spotsLeft > 0 ? (
+            <Link href={`/enrollment/${classData.id}`}>
+              <Button className="bg-primary-500 hover:bg-primary-600 text-white transition-colors">
+                Enroll Now
+              </Button>
+            </Link>
+          ) : (
+            <div className="flex flex-col gap-1">
+              {children.slice(0, 2).map((child: any) => {
+                const waitlistEntry = waitlistEntries.find((entry: any) => 
+                  entry.classId === classData.id && entry.childId === child.id
+                );
+                return (
+                  <WaitlistButton
+                    key={child.id}
+                    classId={classData.id}
+                    childId={child.id}
+                    isOnWaitlist={!!waitlistEntry}
+                    waitlistPosition={waitlistEntry?.position}
+                    className="text-xs px-2 py-1"
+                  />
+                );
+              })}
+              {children.length > 2 && (
+                <div className="text-xs text-gray-500 text-center">
+                  +{children.length - 2} more children
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -71,6 +71,25 @@ export const termHolidays = pgTable("term_holidays", {
   uniqueTermDate: unique().on(table.termConfigurationId, table.holidayDate),
 }));
 
+// Waitlist table
+export const waitlistStatusEnum = pgEnum("waitlist_status", ["active", "notified", "enrolled", "cancelled", "expired"]);
+
+export const waitlists = pgTable("waitlists", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  classId: uuid("class_id").references(() => classes.id, { onDelete: "cascade" }).notNull(),
+  childId: uuid("child_id").references(() => children.id, { onDelete: "cascade" }).notNull(),
+  parentId: uuid("parent_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  position: integer("position").notNull(),
+  status: waitlistStatusEnum("status").default("active").notNull(),
+  joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  notifiedAt: timestamp("notified_at"),
+  expiresAt: timestamp("expires_at"), // When notification expires
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  uniqueClassChild: unique().on(table.classId, table.childId),
+}));
+
 export const classStatusEnum = pgEnum("class_status", ["active", "full", "cancelled", "completed"]);
 
 export const enrollmentStatusEnum = pgEnum("enrollment_status", [
@@ -328,6 +347,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   children: many(children),
   enrollments: many(enrollments),
   notifications: many(notifications),
+  waitlists: many(waitlists),
 }));
 
 export const childrenRelations = relations(children, ({ one, many }) => ({
@@ -336,6 +356,7 @@ export const childrenRelations = relations(children, ({ one, many }) => ({
     references: [users.id],
   }),
   enrollments: many(enrollments),
+  waitlists: many(waitlists),
 }));
 
 export const venuesRelations = relations(venues, ({ many }) => ({
@@ -369,6 +390,7 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
     references: [termConfigurations.id],
   }),
   enrollments: many(enrollments),
+  waitlists: many(waitlists),
 }));
 
 export const enrollmentsRelations = relations(enrollments, ({ one, many }) => ({
@@ -404,6 +426,21 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
 export const blogArticlesRelations = relations(blogArticles, ({ one }) => ({
   author: one(users, {
     fields: [blogArticles.authorId],
+    references: [users.id],
+  }),
+}));
+
+export const waitlistsRelations = relations(waitlists, ({ one }) => ({
+  class: one(classes, {
+    fields: [waitlists.classId],
+    references: [classes.id],
+  }),
+  child: one(children, {
+    fields: [waitlists.childId],
+    references: [children.id],
+  }),
+  parent: one(users, {
+    fields: [waitlists.parentId],
     references: [users.id],
   }),
 }));
@@ -492,6 +529,13 @@ export const insertHighPerformanceSquadApplicationSchema = createInsertSchema(hi
   reviewedAt: true,
 });
 
+export const insertWaitlistSchema = createInsertSchema(waitlists).omit({
+  id: true,
+  position: true,
+  joinedAt: true,
+  createdAt: true,
+});
+
 export const insertBlogArticleSchema = createInsertSchema(blogArticles).omit({
   id: true,
   createdAt: true,
@@ -578,6 +622,8 @@ export type SeniorSquadApplication = typeof seniorSquadApplications.$inferSelect
 export type InsertSeniorSquadApplication = z.infer<typeof insertSeniorSquadApplicationSchema>;
 export type HighPerformanceSquadApplication = typeof highPerformanceSquadApplications.$inferSelect;
 export type InsertHighPerformanceSquadApplication = z.infer<typeof insertHighPerformanceSquadApplicationSchema>;
+export type Waitlist = typeof waitlists.$inferSelect;
+export type InsertWaitlist = z.infer<typeof insertWaitlistSchema>;
 export type BlogArticle = typeof blogArticles.$inferSelect;
 export type InsertBlogArticle = z.infer<typeof insertBlogArticleSchema>;
 export type AttendanceRecord = typeof attendanceRecords.$inferSelect;
