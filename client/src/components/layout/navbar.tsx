@@ -36,7 +36,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
-              <h1 className="text-2xl font-heading font-bold text-primary-500">Power2Perform</h1>
+              <h1 className="text-2xl font-heading font-bold text-primary-500">Power2ADAPT</h1>
             </Link>
           </div>
 
@@ -59,7 +59,7 @@ export default function Navbar() {
                     Dashboard
                   </Button>
                 </Link>
-                {user?.role === "admin" && (
+                {(user as any)?.role === "admin" && (
                   <>
                     <Link href="/admin">
                       <Button
@@ -87,7 +87,7 @@ export default function Navbar() {
             {isAuthenticated ? (
               <>
                 <span className="hidden md:block text-gray-700">
-                  Welcome, {user?.firstName}
+                  Welcome, {(user as any)?.firstName}
                 </span>
                 <Button
                   onClick={handleLogout}
@@ -140,7 +140,7 @@ export default function Navbar() {
                   Dashboard
                 </Button>
               </Link>
-              {user?.role === "admin" && (
+              {(user as any)?.role === "admin" && (
                 <Link href="/admin">
                   <Button
                     variant={location === "/admin" ? "default" : "ghost"}

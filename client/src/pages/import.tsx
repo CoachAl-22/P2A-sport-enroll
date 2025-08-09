@@ -139,7 +139,7 @@ export default function Import() {
                     "First Name", "Last Name", "Email", "Mobile Phone 1", "Address #1", "Suburb", "Postcode", "Active"
                   </p>
                   <p className="mt-2"><strong>Expected format:</strong> Direct upload of SportsBiz customer export CSV files</p>
-                  <p className="text-xs">The system will only import customers marked as "Active" = "True"</p>
+                  <p className="text-xs">The system will only import customers marked as "Active" = "True" with default password "Power2ADAPT2024!"</p>
                 </div>
               </div>
             </CardContent>

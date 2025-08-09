@@ -14,7 +14,7 @@ export default function Landing() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-heading font-bold text-primary-500">Power2Perform</h1>
+                <h1 className="text-2xl font-heading font-bold text-primary-500">Power2ADAPT</h1>
               </div>
             </div>
             <div className="hidden md:block">

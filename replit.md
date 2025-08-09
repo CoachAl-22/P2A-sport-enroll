@@ -1,8 +1,8 @@
-# Power2Perform - Athletic Program Management System
+# Power2ADAPT - Athletic Program Management System
 
 ## Overview
 
-Power2Perform is a comprehensive web application designed for managing athletic programs, classes, and enrollments. The system serves multiple user types including parents, coaches, and administrators, providing features for class enrollment, payment processing via Stripe, and program administration. Built as a full-stack application with a React frontend and Express backend, it offers a complete solution for sports program management with real-time enrollment tracking, child profile management, and integrated payment workflows.
+Power2ADAPT is a comprehensive web application designed for managing athletic programs, classes, and enrollments. The system serves multiple user types including parents, coaches, and administrators, providing features for class enrollment, payment processing via Stripe, and program administration. Built as a full-stack application with a React frontend and Express backend, it offers a complete solution for sports program management with real-time enrollment tracking, child profile management, and integrated payment workflows.
 
 ## User Preferences
 

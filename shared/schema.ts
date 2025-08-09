@@ -244,6 +244,14 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
   }),
 }));
 
+// Predefined venues 
+export const venueOptions = [
+  'Toorak College',
+  'Peninsula Grammar', 
+  'Ballam Park Athletic Track',
+  'Mornington Athletic Track'
+] as const;
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,

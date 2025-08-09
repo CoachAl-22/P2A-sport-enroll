@@ -347,6 +347,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const amount = Math.round(parseFloat(classData.pricePerTerm) * 100); // Convert to cents
       
+      if (!stripe) {
+        return res.status(500).json({ message: "Payment processing not configured" });
+      }
+      
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: "aud",
@@ -366,6 +370,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const sig = req.headers['stripe-signature'] as string;
     
     try {
+      if (!stripe) {
+        return res.status(500).json({ message: "Payment processing not configured" });
+      }
+      
       const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
       
       if (event.type === 'payment_intent.succeeded') {
@@ -659,18 +667,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
               const existingUser = await storage.getUserByEmail(rowData['Email']);
               if (!existingUser) {
                 // Create new user with default password (they'll need to reset)
-                const hashedPassword = await bcrypt.hash('Power2Perform2024!', 10);
+                const hashedPassword = await bcrypt.hash('Power2ADAPT2024!', 10);
                 await storage.createUser({
                   email: rowData['Email'],
                   mobile: rowData['Mobile Phone 1'] || '',
                   firstName: rowData['First Name'],
                   lastName: rowData['Last Name'],
                   password: hashedPassword,
-                  role: 'parent',
-                  address: rowData['Address #1'] || '',
-                  suburb: rowData['Suburb'] || '',
-                  postcode: rowData['Postcode'] || '',
-                  emergencyContact: '', // SportsBiz doesn't have this field
+                  role: 'parent'
                 });
                 customersImported++;
               }
