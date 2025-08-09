@@ -691,50 +691,54 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAttendanceForClass(classId: string, date: string): Promise<any[]> {
-    const attendanceDate = new Date(date);
-    
-    // Get all enrolled students for the class
-    const enrolledStudents = await db
-      .select({
+    try {
+      const attendanceDate = new Date(date);
+      
+      // Use raw SQL to get enrolled students and their attendance records
+      const result = await db.execute(sql`
+        SELECT 
+          c.id as "studentId",
+          c.first_name as "firstName",
+          c.last_name as "lastName",
+          EXTRACT(YEAR FROM AGE(c.date_of_birth)) as "age",
+          ar.id as "attendanceId",
+          ar.status as "attendanceStatus",
+          ar.notes as "attendanceNotes",
+          ar.absence_reason as "absenceReason",
+          ar.credits_eligible as "creditsEligible"
+        FROM enrollments e
+        INNER JOIN children c ON e.child_id = c.id
+        LEFT JOIN attendance_records ar ON (
+          ar.child_id = c.id 
+          AND ar.class_id = e.class_id 
+          AND ar.attendance_date = ${attendanceDate}
+        )
+        WHERE e.class_id = ${classId} 
+          AND e.status = 'active'
+        ORDER BY c.first_name, c.last_name
+      `);
+
+      // Transform the result to match the expected format
+      return result.rows.map((row: any) => ({
         student: {
-          id: children.id,
-          firstName: children.firstName,
-          lastName: children.lastName,
-          age: children.age,
-        }
-      })
-      .from(enrollments)
-      .innerJoin(children, eq(enrollments.childId, children.id))
-      .where(
-        and(
-          eq(enrollments.classId, classId),
-          eq(enrollments.status, "active")
-        )
-      )
-      .orderBy(children.firstName, children.lastName);
-
-    // Get attendance records for that date
-    const attendanceRecordsForDate = await db
-      .select()
-      .from(attendanceRecords)
-      .where(
-        and(
-          eq(attendanceRecords.classId, classId),
-          eq(attendanceRecords.attendanceDate, attendanceDate)
-        )
-      );
-
-    // Combine students with their attendance records
-    return enrolledStudents.map((student) => {
-      const attendance = attendanceRecordsForDate.find(
-        (record) => record.childId === student.student.id
-      );
-
-      return {
-        student: student.student,
-        attendance: attendance || null,
-      };
-    });
+          id: row.studentId,
+          firstName: row.firstName,
+          lastName: row.lastName,
+          age: parseInt(row.age) || 0,
+        },
+        attendance: row.attendanceId ? {
+          id: row.attendanceId,
+          status: row.attendanceStatus,
+          notes: row.attendanceNotes,
+          absenceReason: row.absenceReason,
+          creditsEligible: row.creditsEligible,
+        } : null,
+      }));
+      
+    } catch (error) {
+      console.error('Error in getAttendanceForClass:', error);
+      return [];
+    }
   }
 
   async getClassesByCoach(userId: string): Promise<any[]> {
