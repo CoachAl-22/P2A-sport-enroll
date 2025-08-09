@@ -675,6 +675,20 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
+              
+              {/* High Performance Training Images */}
+              <div className="grid grid-cols-2 gap-4 mt-8">
+                <img 
+                  src="/images/high-performance-1.jpg" 
+                  alt="High performance athlete training session" 
+                  className="rounded-lg object-cover h-32 w-full"
+                />
+                <img 
+                  src="/images/high-performance-2.jpg" 
+                  alt="Elite coaching and movement analysis" 
+                  className="rounded-lg object-cover h-32 w-full"
+                />
+              </div>
             </div>
             
             <div className="bg-gray-800 rounded-xl p-8">
