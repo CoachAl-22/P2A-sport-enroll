@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/use-auth";
 import Landing from "@/pages/landing";
+import HighPerformance from "@/pages/high-performance";
 import Dashboard from "@/pages/dashboard";
 import Classes from "@/pages/classes";
 import Enrollment from "@/pages/enrollment";
@@ -29,7 +30,10 @@ function Router() {
   return (
     <Switch>
       {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
+        <>
+          <Route path="/" component={Landing} />
+          <Route path="/high-performance" component={HighPerformance} />
+        </>
       ) : (
         <>
           <Route path="/" component={Dashboard} />
