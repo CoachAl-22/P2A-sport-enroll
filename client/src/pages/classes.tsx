@@ -10,11 +10,11 @@ import { Search, Filter } from "lucide-react";
 
 export default function Classes() {
   const [filters, setFilters] = useState({
-    sportType: "",
-    venueId: "",
+    sportType: "all",
+    venueId: "all",
     term: "term_3",
     year: 2024,
-    dayOfWeek: "",
+    dayOfWeek: "all",
     search: "",
   });
 
@@ -101,7 +101,7 @@ export default function Classes() {
                   <SelectValue placeholder="All Programs" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Programs</SelectItem>
+                  <SelectItem value="all">All Programs</SelectItem>
                   {programTypes.map(program => (
                     <SelectItem key={program.value} value={program.value}>
                       {program.label}
@@ -118,7 +118,7 @@ export default function Classes() {
                   <SelectValue placeholder="All Venues" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Venues</SelectItem>
+                  <SelectItem value="all">All Venues</SelectItem>
                   {venues?.map((venue: any) => (
                     <SelectItem key={venue.id} value={venue.id}>
                       {venue.name}
@@ -135,7 +135,7 @@ export default function Classes() {
                   <SelectValue placeholder="Any Day" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Any Day</SelectItem>
+                  <SelectItem value="all">Any Day</SelectItem>
                   {daysOfWeek.map(day => (
                     <SelectItem key={day.value} value={day.value}>
                       {day.label}
@@ -147,11 +147,11 @@ export default function Classes() {
               <Button
                 variant="outline"
                 onClick={() => setFilters({
-                  sportType: "",
-                  venueId: "",
+                  sportType: "all",
+                  venueId: "all",
                   term: "term_3",
                   year: 2024,
-                  dayOfWeek: "",
+                  dayOfWeek: "all",
                   search: "",
                 })}
                 className="flex items-center"
@@ -179,11 +179,11 @@ export default function Classes() {
             <p className="text-gray-500 mb-4">No classes found matching your criteria</p>
             <Button
               onClick={() => setFilters({
-                sportType: "",
-                venueId: "",
+                sportType: "all",
+                venueId: "all",
                 term: "term_3",
                 year: 2024,
-                dayOfWeek: "",
+                dayOfWeek: "all",
                 search: "",
               })}
               className="bg-primary-500 hover:bg-primary-600"
