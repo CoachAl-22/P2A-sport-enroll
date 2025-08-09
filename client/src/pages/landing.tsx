@@ -453,7 +453,7 @@ export default function Landing() {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600">
                     <Calendar className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Monday 5:30pm</span>
+                    <span className="text-sm">Mon, Tue, Thu 5:30pm</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="w-4 h-4 mr-2" />
@@ -496,7 +496,7 @@ export default function Landing() {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600">
                     <Calendar className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Tuesday 5:30pm</span>
+                    <span className="text-sm">Mon, Tue, Thu 5:30pm</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="w-4 h-4 mr-2" />
@@ -539,7 +539,7 @@ export default function Landing() {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600">
                     <Calendar className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Thursday 5:30pm</span>
+                    <span className="text-sm">Mon, Tue, Thu 5:30pm</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="w-4 h-4 mr-2" />
