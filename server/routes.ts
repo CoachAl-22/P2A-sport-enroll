@@ -45,9 +45,23 @@ const enrollmentFormSchema = insertEnrollmentSchema.extend({
   }).optional(),
 });
 
+// Middleware to handle both session and token-based auth for mobile
+function authMiddleware(req: any, res: any, next: any) {
+  // Check for Authorization header (mobile)
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const sessionId = authHeader.substring(7);
+    // Set up session from token for mobile compatibility
+    req.sessionID = sessionId;
+  }
+  next();
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Session middleware
   app.use(sessionConfig);
+  // Mobile auth middleware
+  app.use(authMiddleware);
 
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {

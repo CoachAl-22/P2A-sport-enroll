@@ -29,7 +29,7 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiUrl": "https://your-replit-domain.replit.app"
+      "apiUrl": "https://868ede8d-c814-4847-9bfc-097bdd55a79a-00-1r2al5zaw3y2f.janeway.replit.dev"
     },
     "plugins": [
       "expo-router"
