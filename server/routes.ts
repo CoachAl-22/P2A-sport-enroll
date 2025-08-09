@@ -1780,7 +1780,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all classes for a coach
   app.get("/api/coach/classes", isAuthenticated, async (req, res) => {
     try {
-      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
       const user = await storage.getUser(userId);
       
       if (!user || user.role !== 'coach') {
@@ -1798,7 +1798,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get today's classes for a coach
   app.get("/api/coach/classes/today", isAuthenticated, async (req, res) => {
     try {
-      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
       const user = await storage.getUser(userId);
       
       if (!user || user.role !== 'coach') {
@@ -1816,7 +1816,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get enrolled students for a specific class
   app.get("/api/classes/:classId/students", isAuthenticated, async (req, res) => {
     try {
-      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
       const user = await storage.getUser(userId);
       const { classId } = req.params;
       
@@ -1835,7 +1835,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Mark attendance for students
   app.post("/api/attendance/mark", isAuthenticated, async (req, res) => {
     try {
-      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
       const user = await storage.getUser(userId);
       
       if (!user || user.role !== 'coach') {
@@ -1866,7 +1866,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get attendance records for a class on a specific date
   app.get("/api/classes/:classId/attendance/:date", isAuthenticated, async (req, res) => {
     try {
-      const userId = (req.user as any)?.claims?.sub || (req.session as any)?.userId;
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
       const user = await storage.getUser(userId);
       const { classId, date } = req.params;
       
