@@ -639,6 +639,139 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* High Performance Coaching & Consulting */}
+      <section className="py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">High Performance Coaching & Consulting</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Elite coaching services for serious athletes, coaches, and sporting organizations seeking competitive advantage
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
+            <div>
+              <h3 className="text-2xl font-heading font-bold mb-6 text-primary-400">Individual Athlete Development</h3>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-4">
+                  <div className="w-2 h-2 bg-primary-500 rounded-full mt-3 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-lg mb-1">1-on-1 Performance Coaching</h4>
+                    <p className="text-gray-300">Personalized training programs designed around your specific sport, goals, and competition schedule</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="w-2 h-2 bg-primary-500 rounded-full mt-3 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-lg mb-1">Movement Analysis & Correction</h4>
+                    <p className="text-gray-300">Advanced biomechanical assessment using video analysis and movement screening protocols</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="w-2 h-2 bg-primary-500 rounded-full mt-3 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-lg mb-1">Competition Preparation</h4>
+                    <p className="text-gray-300">Peak performance protocols for tournaments, trials, and championship events</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-gray-800 rounded-xl p-8">
+              <h3 className="text-xl font-heading font-bold mb-4">Investment Options</h3>
+              <div className="space-y-6">
+                <div className="border-l-4 border-primary-500 pl-4">
+                  <h4 className="font-semibold text-lg text-primary-400">Single Session</h4>
+                  <p className="text-2xl font-bold">$150</p>
+                  <p className="text-gray-300 text-sm">90-minute assessment + program design</p>
+                </div>
+                <div className="border-l-4 border-primary-500 pl-4">
+                  <h4 className="font-semibold text-lg text-primary-400">Monthly Package</h4>
+                  <p className="text-2xl font-bold">$480</p>
+                  <p className="text-gray-300 text-sm">4 sessions + ongoing support</p>
+                </div>
+                <div className="border-l-4 border-primary-500 pl-4">
+                  <h4 className="font-semibold text-lg text-primary-400">Season Program</h4>
+                  <p className="text-2xl font-bold">$1,200</p>
+                  <p className="text-gray-300 text-sm">12 sessions + competition prep + monitoring</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8 mb-16">
+            <div className="bg-gray-800 rounded-xl p-6">
+              <div className="w-12 h-12 bg-primary-500 rounded-lg flex items-center justify-center mb-4">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-heading font-bold mb-3">Team Consulting</h3>
+              <p className="text-gray-300 mb-4">
+                Comprehensive team development programs for clubs, schools, and representative squads
+              </p>
+              <ul className="text-sm text-gray-400 space-y-1">
+                <li>• Training periodization design</li>
+                <li>• Coaching education workshops</li>
+                <li>• Performance testing protocols</li>
+                <li>• Team culture development</li>
+              </ul>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-6">
+              <div className="w-12 h-12 bg-primary-500 rounded-lg flex items-center justify-center mb-4">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-heading font-bold mb-3">Organizational Development</h3>
+              <p className="text-gray-300 mb-4">
+                Strategic consulting for sporting organizations and educational institutions
+              </p>
+              <ul className="text-sm text-gray-400 space-y-1">
+                <li>• Program design & implementation</li>
+                <li>• Coach development pathways</li>
+                <li>• Facility optimization</li>
+                <li>• Long-term athlete development</li>
+              </ul>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-6">
+              <div className="w-12 h-12 bg-primary-500 rounded-lg flex items-center justify-center mb-4">
+                <Smartphone className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-heading font-bold mb-3">Remote Coaching</h3>
+              <p className="text-gray-300 mb-4">
+                Virtual coaching services for athletes unable to attend in-person sessions
+              </p>
+              <ul className="text-sm text-gray-400 space-y-1">
+                <li>• Video movement analysis</li>
+                <li>• Weekly program adjustments</li>
+                <li>• Performance monitoring</li>
+                <li>• Competition strategy</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-8 text-center">
+            <h3 className="text-2xl font-heading font-bold mb-4">Ready to Take Your Performance to the Next Level?</h3>
+            <p className="text-lg mb-6 text-primary-100">
+              Schedule a consultation to discuss your specific goals and create a customized development plan
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                onClick={() => setIsLoginModalOpen(true)}
+                className="bg-white text-primary-600 hover:bg-gray-100 font-semibold px-8 py-3"
+              >
+                Schedule Consultation
+              </Button>
+              <Button 
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-primary-600 px-8 py-3"
+              >
+                Download Performance Assessment
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer id="contact" className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
