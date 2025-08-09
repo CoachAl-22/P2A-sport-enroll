@@ -74,7 +74,7 @@ export default function Attendance() {
   const today = new Date();
   const todayDayOfWeek = today.getDay() === 0 ? 7 : today.getDay(); // Convert Sunday from 0 to 7
 
-  const todaysClasses = coachClasses?.filter((cls: any) => cls.dayOfWeek === todayDayOfWeek) || [];
+  const todaysClasses = (coachClasses || []).filter((cls: any) => cls.dayOfWeek === todayDayOfWeek);
 
   const getDayName = (dayOfWeek: number) => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -120,7 +120,7 @@ export default function Attendance() {
                       <div>
                         <h3 className="font-semibold text-gray-900">{cls.name}</h3>
                         <p className="text-sm text-gray-600">
-                          {cls.startTime} - {cls.endTime} | {cls.venue?.name}
+                          {cls.startTime} - {cls.endTime} | {cls.venueName}
                         </p>
                         <p className="text-sm text-gray-500">
                           {cls.currentEnrollments || 0} students enrolled
@@ -159,7 +159,7 @@ export default function Attendance() {
                     <SelectValue placeholder="Select a class" />
                   </SelectTrigger>
                   <SelectContent>
-                    {coachClasses?.map((cls: any) => (
+                    {(coachClasses || []).map((cls: any) => (
                       <SelectItem key={cls.id} value={cls.id}>
                         {cls.name} - {getDayName(cls.dayOfWeek)}s {cls.startTime}
                       </SelectItem>

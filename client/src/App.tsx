@@ -48,7 +48,7 @@ function Router() {
           <Route path="/checkout/:enrollmentId" component={Checkout} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
-          {((user as any)?.role === "coach" || (user as any)?.role === "admin") && (
+          {((user as any)?.user?.role === "coach" || (user as any)?.user?.role === "admin") && (
             <Route path="/attendance" component={Attendance} />
           )}
           {(user as any)?.role === "admin" && (

@@ -737,25 +737,33 @@ export class DatabaseStorage implements IStorage {
     });
   }
 
-  async getClassesByCoach(coachId: string): Promise<any[]> {
-    return await db
-      .select({
-        id: classes.id,
-        name: classes.name,
-        dayOfWeek: classes.dayOfWeek,
-        startTime: classes.startTime,
-        endTime: classes.endTime,
-        venue: {
-          id: venues.id,
-          name: venues.name,
-        },
-        currentEnrollments: classes.currentEnrollments,
-        maxCapacity: classes.maxCapacity,
-      })
-      .from(classes)
-      .leftJoin(venues, eq(classes.venueId, venues.id))
-      .where(eq(classes.coachId, coachId))
-      .orderBy(classes.dayOfWeek, classes.startTime);
+  async getClassesByCoach(userId: string): Promise<any[]> {
+    try {
+      // Use raw SQL to avoid Drizzle ORM issues
+      const result = await db.execute(sql`
+        SELECT 
+          c.id,
+          c.name,
+          c.day_of_week as "dayOfWeek",
+          c.start_time as "startTime",
+          c.end_time as "endTime",
+          c.venue_id as "venueId",
+          v.name as "venueName",
+          c.current_enrollment as "currentEnrollments",
+          c.max_capacity as "maxCapacity"
+        FROM classes c
+        LEFT JOIN venues v ON c.venue_id = v.id
+        INNER JOIN coaches coach ON c.coach_id = coach.id
+        WHERE coach.user_id = ${userId}
+        ORDER BY c.day_of_week, c.start_time
+      `);
+      
+      return result.rows;
+      
+    } catch (error) {
+      console.error('Error in getClassesByCoach:', error);
+      return [];
+    }
   }
 }
 
