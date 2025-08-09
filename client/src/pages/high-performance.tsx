@@ -84,13 +84,43 @@ export default function HighPerformance() {
               <div className="lg:col-span-2">
                 <h2 className="text-3xl font-heading font-bold mb-4 text-primary-400">Head Coach</h2>
                 <div className="space-y-4 text-gray-300">
-                  {/* Bio content placeholder - Ready for your bio */}
-                  <div className="bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-600">
-                    <p className="text-gray-400 text-sm text-center">
-                      Coach Bio Section
-                      <br />
-                      Ready for your professional biography and credentials
+                  {/* Bio content */}
+                  <div className="space-y-4">
+                    <p className="text-gray-200 leading-relaxed">
+                      Alistair was born and bred in Seaford and has lived on the Mornington Peninsula all of his life. He first became involved in athletics at the age of 8 and has been involved in the sport for over 30 years.
                     </p>
+                    <p className="text-gray-200 leading-relaxed">
+                      Alistair is a former track and field athlete and has since taken his love of athletics, health and fitness into coaching. He completed a Bachelor's Degree in Sports Coaching and holds a Level 3 Performance Development Coach accreditation with Athletics Australia.
+                    </p>
+                    <div className="bg-primary-900/30 rounded-lg p-4 border-l-4 border-primary-500">
+                      <h4 className="font-semibold text-primary-400 mb-2">Movement & Mindset Specialist</h4>
+                      <p className="text-gray-200 text-sm leading-relaxed">
+                        Alistair considers himself to be a "Movement and Mindset" improvement specialist with extensive knowledge in anatomy, biomechanics, physiology, sports psychology and nutrition. He understands that no two athletes are alike and each require coaching and programs that meet their specific needs.
+                      </p>
+                    </div>
+                    
+                    {/* Key Achievements */}
+                    <div className="mt-6">
+                      <h4 className="text-lg font-semibold mb-3 text-white">Notable Achievements</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-secondary-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <p className="text-gray-300">3x Victoria State Representative for 400m hurdles</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-secondary-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <p className="text-gray-300">Trained under Level 5 National hurdles coach Roy Boyd (coach of Australian 110mh record holder)</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-secondary-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <p className="text-gray-300">Athletic Training Venue Supervisor Melbourne 2006 Commonwealth Games</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-secondary-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <p className="text-gray-300">Led talent identification testing for 6,000+ youth athletes in India (Meghalaya Sport & Olympic Association)</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Credentials/Qualifications */}
