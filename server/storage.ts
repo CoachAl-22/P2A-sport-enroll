@@ -10,6 +10,7 @@ import {
   seniorSquadApplications,
   blogArticles,
   attendanceRecords,
+  termConfigurations,
   type User,
   type InsertUser,
   type Child,
@@ -32,6 +33,8 @@ import {
   type InsertBlogArticle,
   type AttendanceRecord,
   type InsertAttendanceRecord,
+  type TermConfiguration,
+  type InsertTermConfiguration,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, count, sql, gte, lte } from "drizzle-orm";
@@ -133,6 +136,15 @@ export interface IStorage {
   getStudentsForClass(classId: string): Promise<any[]>;
   markAttendance(attendanceData: any): Promise<any>;
   getAttendanceForClass(classId: string, date: string): Promise<any[]>;
+  
+  // Term Configuration operations
+  createTermConfiguration(termConfig: any): Promise<any>;
+  getTermConfigurations(): Promise<any[]>;
+  getTermConfigurationById(id: string): Promise<any>;
+  updateTermConfiguration(id: string, updates: any): Promise<any>;
+  deleteTermConfiguration(id: string): Promise<void>;
+  getActiveTermConfiguration(term: string, year: number): Promise<any>;
+  calculateTermPrice(termConfigId: string, classesPerWeek: number): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -697,10 +709,10 @@ export class DatabaseStorage implements IStorage {
           ${attendanceData.childId}, 
           ${attendanceData.attendanceDate}::timestamp, 
           ${attendanceData.status}, 
-          ${attendanceData.absenceReason || null}, 
+          ${attendanceData.absenceReason}, 
           ${attendanceData.creditsEligible || false}, 
           ${attendanceData.markedBy}, 
-          ${attendanceData.notes || null}
+          ${attendanceData.notes}
         ) RETURNING *
       `);
       
@@ -789,6 +801,81 @@ export class DatabaseStorage implements IStorage {
       console.error('Error in getClassesByCoach:', error);
       return [];
     }
+  }
+
+  // Term Configuration operations
+  async createTermConfiguration(termConfig: any): Promise<any> {
+    const [created] = await db
+      .insert(termConfigurations)
+      .values(termConfig)
+      .returning();
+    return created;
+  }
+
+  async getTermConfigurations(): Promise<any[]> {
+    return await db
+      .select()
+      .from(termConfigurations)
+      .orderBy(termConfigurations.year, termConfigurations.term);
+  }
+
+  async getTermConfigurationById(id: string): Promise<any> {
+    const [termConfig] = await db
+      .select()
+      .from(termConfigurations)
+      .where(eq(termConfigurations.id, id));
+    return termConfig;
+  }
+
+  async updateTermConfiguration(id: string, updates: any): Promise<any> {
+    const [updated] = await db
+      .update(termConfigurations)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(termConfigurations.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteTermConfiguration(id: string): Promise<void> {
+    await db.delete(termConfigurations).where(eq(termConfigurations.id, id));
+  }
+
+  async getActiveTermConfiguration(term: string, year: number): Promise<any> {
+    const [termConfig] = await db
+      .select()
+      .from(termConfigurations)
+      .where(
+        and(
+          eq(termConfigurations.term, term as any),
+          eq(termConfigurations.year, year),
+          eq(termConfigurations.active, true)
+        )
+      );
+    return termConfig;
+  }
+
+  async calculateTermPrice(termConfigId: string, classesPerWeek: number = 1): Promise<any> {
+    const [termConfig] = await db
+      .select()
+      .from(termConfigurations)
+      .where(eq(termConfigurations.id, termConfigId));
+
+    if (!termConfig) {
+      throw new Error('Term configuration not found');
+    }
+
+    const basePrice = Number(termConfig.pricePerWeek) * termConfig.weeksCount * classesPerWeek;
+    const gstAmount = basePrice * Number(termConfig.gstRate);
+    const totalPrice = basePrice + gstAmount;
+
+    return {
+      basePrice: Number(basePrice.toFixed(2)),
+      gstAmount: Number(gstAmount.toFixed(2)),
+      totalPrice: Number(totalPrice.toFixed(2)),
+      weeksCount: termConfig.weeksCount,
+      pricePerWeek: Number(termConfig.pricePerWeek),
+      classesPerWeek
+    };
   }
 }
 

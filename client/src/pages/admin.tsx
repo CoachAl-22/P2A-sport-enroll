@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/navbar";
 import AnalyticsCard from "@/components/admin/analytics-card";
-import { Plus, Users, Settings, BarChart3, MessageSquare, CreditCard, TrendingUp, AlertCircle, FileText } from "lucide-react";
+import { Plus, Users, Settings, BarChart3, MessageSquare, CreditCard, TrendingUp, AlertCircle, FileText, CalendarIcon } from "lucide-react";
 import { Redirect } from "wouter";
 
 export default function Admin() {
@@ -131,7 +131,7 @@ export default function Admin() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
+        <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
           <Button className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
             <div className="text-primary-400 mb-2">
               <Plus className="w-6 h-6 mx-auto" />
@@ -152,6 +152,15 @@ export default function Admin() {
                 <FileText className="w-6 h-6 mx-auto" />
               </div>
               <span className="text-sm font-medium">Blog Management</span>
+            </a>
+          </Button>
+
+          <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
+            <a href="/admin/term-config">
+              <div className="text-purple-400 mb-2">
+                <CalendarIcon className="w-6 h-6 mx-auto" />
+              </div>
+              <span className="text-sm font-medium">Term Config</span>
             </a>
           </Button>
           

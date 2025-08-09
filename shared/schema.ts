@@ -37,6 +37,24 @@ export const sportTypeEnum = pgEnum("sport_type", [
 
 export const termEnum = pgEnum("term", ["term_1", "term_2", "term_3", "term_4"]);
 
+// Term Configuration table for managing school terms
+export const termConfigurations = pgTable("term_configurations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  term: termEnum("term").notNull(),
+  year: integer("year").notNull(),
+  name: varchar("name", { length: 100 }).notNull(), // "Term 4 2025"
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  weeksCount: integer("weeks_count").notNull(),
+  enrollmentOpenDate: timestamp("enrollment_open_date"),
+  enrollmentCloseDate: timestamp("enrollment_close_date"),
+  pricePerWeek: decimal("price_per_week", { precision: 8, scale: 2 }).notNull(),
+  gstRate: decimal("gst_rate", { precision: 3, scale: 2 }).default("0.10"), // 10% GST
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const classStatusEnum = pgEnum("class_status", ["active", "full", "cancelled", "completed"]);
 
 export const enrollmentStatusEnum = pgEnum("enrollment_status", [
@@ -121,6 +139,7 @@ export const classes = pgTable("classes", {
   sportType: sportTypeEnum("sport_type").notNull(),
   venueId: uuid("venue_id").references(() => venues.id).notNull(),
   coachId: uuid("coach_id").references(() => coaches.id).notNull(),
+  termConfigId: uuid("term_config_id").references(() => termConfigurations.id),
   term: termEnum("term").notNull(),
   year: integer("year").notNull(),
   dayOfWeek: integer("day_of_week").notNull(), // 1-7 (Monday-Sunday)
@@ -264,6 +283,10 @@ export const coachesRelations = relations(coaches, ({ one, many }) => ({
   classes: many(classes),
 }));
 
+export const termConfigurationsRelations = relations(termConfigurations, ({ many }) => ({
+  classes: many(classes),
+}));
+
 export const classesRelations = relations(classes, ({ one, many }) => ({
   venue: one(venues, {
     fields: [classes.venueId],
@@ -272,6 +295,10 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
   coach: one(coaches, {
     fields: [classes.coachId],
     references: [coaches.id],
+  }),
+  termConfiguration: one(termConfigurations, {
+    fields: [classes.termConfigId],
+    references: [termConfigurations.id],
   }),
   enrollments: many(enrollments),
 }));
@@ -443,6 +470,12 @@ export const insertAttendanceRecordSchema = createInsertSchema(attendanceRecords
   markedAt: true,
 });
 
+export const insertTermConfigurationSchema = createInsertSchema(termConfigurations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -466,3 +499,5 @@ export type BlogArticle = typeof blogArticles.$inferSelect;
 export type InsertBlogArticle = z.infer<typeof insertBlogArticleSchema>;
 export type AttendanceRecord = typeof attendanceRecords.$inferSelect;
 export type InsertAttendanceRecord = z.infer<typeof insertAttendanceRecordSchema>;
+export type TermConfiguration = typeof termConfigurations.$inferSelect;
+export type InsertTermConfiguration = z.infer<typeof insertTermConfigurationSchema>;

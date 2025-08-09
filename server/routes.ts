@@ -1385,6 +1385,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Term Configuration Routes
+  app.get("/api/term-configurations", async (req, res) => {
+    try {
+      const termConfigs = await storage.getTermConfigurations();
+      res.json(termConfigs);
+    } catch (error: any) {
+      console.error('Error getting term configurations:', error);
+      res.status(500).json({ message: "Failed to fetch term configurations" });
+    }
+  });
+
+  app.post("/api/term-configurations", async (req, res) => {
+    try {
+      const termConfig = await storage.createTermConfiguration(req.body);
+      res.status(201).json(termConfig);
+    } catch (error: any) {
+      console.error('Error creating term configuration:', error);
+      res.status(500).json({ message: "Failed to create term configuration" });
+    }
+  });
+
+  app.get("/api/term-configurations/:id", async (req, res) => {
+    try {
+      const termConfig = await storage.getTermConfigurationById(req.params.id);
+      if (!termConfig) {
+        return res.status(404).json({ message: "Term configuration not found" });
+      }
+      res.json(termConfig);
+    } catch (error: any) {
+      console.error('Error getting term configuration:', error);
+      res.status(500).json({ message: "Failed to fetch term configuration" });
+    }
+  });
+
+  app.put("/api/term-configurations/:id", async (req, res) => {
+    try {
+      const termConfig = await storage.updateTermConfiguration(req.params.id, req.body);
+      res.json(termConfig);
+    } catch (error: any) {
+      console.error('Error updating term configuration:', error);
+      res.status(500).json({ message: "Failed to update term configuration" });
+    }
+  });
+
+  app.delete("/api/term-configurations/:id", async (req, res) => {
+    try {
+      await storage.deleteTermConfiguration(req.params.id);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error('Error deleting term configuration:', error);
+      res.status(500).json({ message: "Failed to delete term configuration" });
+    }
+  });
+
+  app.post("/api/term-configurations/calculate-price", async (req, res) => {
+    try {
+      const { termConfigId, classesPerWeek } = req.body;
+      const priceCalculation = await storage.calculateTermPrice(termConfigId, classesPerWeek);
+      res.json(priceCalculation);
+    } catch (error: any) {
+      console.error('Error calculating term price:', error);
+      res.status(500).json({ message: "Failed to calculate term price" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
