@@ -113,8 +113,8 @@ export default function HighPerformance() {
                 </div>
                 <div className="border-l-4 border-primary-500 pl-4">
                   <h3 className="font-semibold text-lg text-primary-400">Monthly Package</h3>
-                  <p className="text-2xl font-bold">$480</p>
-                  <p className="text-gray-300 text-sm">4 sessions + ongoing support</p>
+                  <p className="text-2xl font-bold">$400</p>
+                  <p className="text-gray-300 text-sm">4+ sessions per week + Power2Perform app + Athlete Monitoring protocols</p>
                 </div>
                 <div className="border-l-4 border-primary-500 pl-4">
                   <h3 className="font-semibold text-lg text-primary-400">Season Program</h3>
