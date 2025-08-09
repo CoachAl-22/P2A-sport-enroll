@@ -1,0 +1,9 @@
+Mobile App Direct Link:
+exp://w-6sz_k-anonymous-8081.exp.direct
+
+Instructions:
+1. Open Expo Go app
+2. Skip login (look for "Continue as Guest" or "Skip")
+3. Find "Enter URL" or "+" button
+4. Paste the link above
+5. Login with: admin@power2adapt.com / admin123
