@@ -57,7 +57,7 @@ export default function Landing() {
                 Where Young Athletes <span className="text-secondary-500">Thrive</span>
               </h1>
               <p className="text-xl mb-8 text-blue-100">
-                Expert coaching at your child's school. Flexible programs that build confidence, skill, and a love for sport. Ages 5-18 welcome.
+                Expert coaching at your child's school. Flexible programs that build confidence, skill, and a love for sport. Ages 5 to 13 welcome.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
