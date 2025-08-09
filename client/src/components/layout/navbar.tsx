@@ -60,14 +60,24 @@ export default function Navbar() {
                   </Button>
                 </Link>
                 {user?.role === "admin" && (
-                  <Link href="/admin">
-                    <Button
-                      variant={location === "/admin" ? "default" : "ghost"}
-                      className="text-gray-700 hover:text-primary-500"
-                    >
-                      Admin
-                    </Button>
-                  </Link>
+                  <>
+                    <Link href="/admin">
+                      <Button
+                        variant={location === "/admin" ? "default" : "ghost"}
+                        className="text-gray-700 hover:text-primary-500"
+                      >
+                        Admin
+                      </Button>
+                    </Link>
+                    <Link href="/import">
+                      <Button
+                        variant={location === "/import" ? "default" : "ghost"}
+                        className="text-gray-700 hover:text-primary-500"
+                      >
+                        Import Data
+                      </Button>
+                    </Link>
+                  </>
                 )}
               </div>
             </div>

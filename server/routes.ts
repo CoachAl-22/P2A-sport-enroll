@@ -4,6 +4,7 @@ import Stripe from "stripe";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import { storage } from "./storage";
+import { ObjectStorageService } from "./objectStorage";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -460,6 +461,257 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       await storage.markNotificationAsRead(req.params.id);
       res.json({ message: "Notification marked as read" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // CSV Import routes
+  app.post("/api/csv-upload-url", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const objectStorageService = new ObjectStorageService();
+      const uploadURL = await objectStorageService.getCSVUploadURL();
+      res.json({ uploadURL });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/csv-preview", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const { uploadURL } = req.body;
+      const objectStorageService = new ObjectStorageService();
+      
+      // Parse the object path from the upload URL
+      const url = new URL(uploadURL);
+      const objectPath = url.pathname;
+      
+      const csvFile = await objectStorageService.getCSVFile(objectPath);
+      const csvContent = await objectStorageService.downloadCSVContent(csvFile);
+      
+      // Parse CSV content
+      const lines = csvContent.split('\n').filter(line => line.trim());
+      if (lines.length < 2) {
+        throw new Error('CSV file must have at least a header row and one data row');
+      }
+      
+      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+      const dataRows = lines.slice(1).map(line => line.split(',').map(cell => cell.trim().replace(/"/g, '')));
+      
+      // Separate customers and students data
+      const customersPreview: any[] = [];
+      const studentsPreview: any[] = [];
+      const issues: string[] = [];
+      
+      // Expected customer columns
+      const customerColumns = ['email', 'mobile', 'firstName', 'lastName', 'address', 'suburb', 'postcode', 'emergencyContact'];
+      const studentColumns = ['parentEmail', 'studentFirstName', 'studentLastName', 'dateOfBirth', 'medicalInfo', 'emergencyContact'];
+      
+      // Check if we have customer or student data based on headers
+      const hasCustomerData = customerColumns.some(col => headers.includes(col));
+      const hasStudentData = studentColumns.some(col => headers.includes(col));
+      
+      if (!hasCustomerData && !hasStudentData) {
+        issues.push('No recognized customer or student columns found in CSV');
+      }
+      
+      dataRows.slice(0, 50).forEach((row, index) => {
+        if (row.length !== headers.length) {
+          issues.push(`Row ${index + 2}: Column count mismatch (expected ${headers.length}, got ${row.length})`);
+          return;
+        }
+        
+        const rowData: any = {};
+        headers.forEach((header, idx) => {
+          rowData[header] = row[idx];
+        });
+        
+        // Process as customer data
+        if (hasCustomerData && rowData.email) {
+          const customer = {
+            email: rowData.email || '',
+            mobile: rowData.mobile || '',
+            firstName: rowData.firstName || '',
+            lastName: rowData.lastName || '',
+            address: rowData.address || '',
+            suburb: rowData.suburb || '',
+            postcode: rowData.postcode || '',
+            emergencyContact: rowData.emergencyContact || '',
+          };
+          
+          // Validate required fields
+          if (!customer.email) {
+            issues.push(`Row ${index + 2}: Missing required email`);
+          }
+          if (!customer.firstName || !customer.lastName) {
+            issues.push(`Row ${index + 2}: Missing required name fields`);
+          }
+          
+          customersPreview.push(customer);
+        }
+        
+        // Process as student data
+        if (hasStudentData && rowData.parentEmail && rowData.studentFirstName) {
+          const student = {
+            parentEmail: rowData.parentEmail || '',
+            studentFirstName: rowData.studentFirstName || '',
+            studentLastName: rowData.studentLastName || '',
+            dateOfBirth: rowData.dateOfBirth || '',
+            medicalInfo: rowData.medicalInfo || '',
+            emergencyContact: rowData.emergencyContact || '',
+          };
+          
+          // Validate required fields
+          if (!student.parentEmail) {
+            issues.push(`Row ${index + 2}: Missing required parent email`);
+          }
+          if (!student.studentFirstName || !student.studentLastName) {
+            issues.push(`Row ${index + 2}: Missing required student name fields`);
+          }
+          
+          studentsPreview.push(student);
+        }
+      });
+      
+      res.json({
+        customersPreview,
+        studentsPreview,
+        issues,
+        totalRows: dataRows.length,
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/csv-import", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const { uploadURL } = req.body;
+      const objectStorageService = new ObjectStorageService();
+      
+      // Parse the object path from the upload URL
+      const url = new URL(uploadURL);
+      const objectPath = url.pathname;
+      
+      const csvFile = await objectStorageService.getCSVFile(objectPath);
+      const csvContent = await objectStorageService.downloadCSVContent(csvFile);
+      
+      // Parse CSV content
+      const lines = csvContent.split('\n').filter(line => line.trim());
+      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+      const dataRows = lines.slice(1).map(line => line.split(',').map(cell => cell.trim().replace(/"/g, '')));
+      
+      let customersImported = 0;
+      let studentsImported = 0;
+      
+      // Expected customer columns
+      const customerColumns = ['email', 'mobile', 'firstName', 'lastName', 'address', 'suburb', 'postcode', 'emergencyContact'];
+      const studentColumns = ['parentEmail', 'studentFirstName', 'studentLastName', 'dateOfBirth', 'medicalInfo', 'emergencyContact'];
+      
+      const hasCustomerData = customerColumns.some(col => headers.includes(col));
+      const hasStudentData = studentColumns.some(col => headers.includes(col));
+      
+      for (const row of dataRows) {
+        if (row.length !== headers.length) continue;
+        
+        const rowData: any = {};
+        headers.forEach((header, idx) => {
+          rowData[header] = row[idx];
+        });
+        
+        // Import customer data
+        if (hasCustomerData && rowData.email && rowData.firstName && rowData.lastName) {
+          try {
+            // Check if user already exists
+            const existingUser = await storage.getUserByEmail(rowData.email);
+            if (!existingUser) {
+              // Create new user with default password (they'll need to reset)
+              const hashedPassword = await bcrypt.hash('ChangeMe123!', 10);
+              await storage.createUser({
+                email: rowData.email,
+                mobile: rowData.mobile || '',
+                firstName: rowData.firstName,
+                lastName: rowData.lastName,
+                password: hashedPassword,
+                role: 'parent',
+                address: rowData.address || '',
+                suburb: rowData.suburb || '',
+                postcode: rowData.postcode || '',
+                emergencyContact: rowData.emergencyContact || '',
+              });
+              customersImported++;
+            }
+          } catch (error) {
+            console.error('Error importing customer:', error);
+          }
+        }
+        
+        // Import student data
+        if (hasStudentData && rowData.parentEmail && rowData.studentFirstName && rowData.studentLastName) {
+          try {
+            // Find parent by email
+            const parent = await storage.getUserByEmail(rowData.parentEmail);
+            if (parent) {
+              // Check if child already exists for this parent
+              const existingChildren = await storage.getChildrenByParent(parent.id);
+              const childExists = existingChildren.some(child => 
+                child.firstName === rowData.studentFirstName && 
+                child.lastName === rowData.studentLastName
+              );
+              
+              if (!childExists) {
+                await storage.createChild({
+                  parentId: parent.id,
+                  firstName: rowData.studentFirstName,
+                  lastName: rowData.studentLastName,
+                  dateOfBirth: rowData.dateOfBirth ? new Date(rowData.dateOfBirth) : new Date(),
+                  medicalInfo: rowData.medicalInfo || '',
+                  emergencyContact: rowData.emergencyContact || '',
+                });
+                studentsImported++;
+              }
+            }
+          } catch (error) {
+            console.error('Error importing student:', error);
+          }
+        }
+      }
+      
+      res.json({
+        customersImported,
+        studentsImported,
+        message: `Successfully imported ${customersImported} customers and ${studentsImported} students`
+      });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

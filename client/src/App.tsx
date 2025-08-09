@@ -9,6 +9,7 @@ import Dashboard from "@/pages/dashboard";
 import Classes from "@/pages/classes";
 import Enrollment from "@/pages/enrollment";
 import Admin from "@/pages/admin";
+import Import from "@/pages/import";
 import Checkout from "@/pages/checkout";
 import NotFound from "@/pages/not-found";
 
@@ -34,7 +35,10 @@ function Router() {
           <Route path="/enrollment/:classId" component={Enrollment} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
           {user?.role === "admin" && (
-            <Route path="/admin" component={Admin} />
+            <>
+              <Route path="/admin" component={Admin} />
+              <Route path="/import" component={Import} />
+            </>
           )}
         </>
       )}

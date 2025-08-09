@@ -1,0 +1,4 @@
+email,mobile,firstName,lastName,address,suburb,postcode,emergencyContact,parentEmail,studentFirstName,studentLastName,dateOfBirth,medicalInfo
+parent1@example.com,0412345678,John,Smith,123 Main St,Melbourne,3000,Emergency Contact 1,parent1@example.com,Emma,Smith,2015-06-15,No allergies
+parent2@example.com,0498765432,Sarah,Johnson,456 Oak Ave,Carlton,3053,Emergency Contact 2,parent2@example.com,Liam,Johnson,2014-09-22,Asthma medication required
+parent3@example.com,0411223344,Michael,Brown,789 Pine Rd,Richmond,3121,Emergency Contact 3,parent3@example.com,Olivia,Brown,2016-03-08,Allergic to nuts
