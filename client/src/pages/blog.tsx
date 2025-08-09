@@ -30,7 +30,7 @@ export default function Blog() {
           {/* Skool Community Link */}
           <div className="mt-6">
             <a 
-              href="https://skool.com/power2adapt" 
+              href="https://www.skool.com/power2adapt-speed-school-8929" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
