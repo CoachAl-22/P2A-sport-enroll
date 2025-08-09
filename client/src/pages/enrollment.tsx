@@ -1,0 +1,204 @@
+import { useParams } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import Navbar from "@/components/layout/navbar";
+import EnrollmentForm from "@/components/classes/enrollment-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, MapPin, Users, Clock, DollarSign } from "lucide-react";
+
+export default function Enrollment() {
+  const { classId } = useParams();
+
+  const { data: classDetails, isLoading } = useQuery({
+    queryKey: ["/api/classes", classId],
+    queryFn: async () => {
+      const response = await fetch(`/api/classes/${classId}`);
+      if (!response.ok) throw new Error('Failed to fetch class details');
+      return response.json();
+    },
+    enabled: !!classId,
+  });
+
+  const getDayName = (dayOfWeek: number) => {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    return days[dayOfWeek];
+  };
+
+  const getStatusInfo = (classData: any) => {
+    if (!classData?.class) return { status: "unknown", color: "bg-gray-100 text-gray-800", canEnroll: false };
+    
+    const { currentEnrollment, maxCapacity } = classData.class;
+    const spotsLeft = maxCapacity - currentEnrollment;
+    
+    if (spotsLeft > 0) {
+      return {
+        status: "available",
+        color: "bg-green-100 text-green-800",
+        canEnroll: true,
+        message: `${spotsLeft} spots available`
+      };
+    } else {
+      return {
+        status: "waitlist",
+        color: "bg-yellow-100 text-yellow-800",
+        canEnroll: true,
+        message: "Join waitlist"
+      };
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!classDetails) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Card>
+            <CardContent className="py-12 text-center">
+              <p className="text-gray-500">Class not found</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  const statusInfo = getStatusInfo(classDetails);
+  
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
+            Class Enrollment
+          </h1>
+          <p className="text-gray-600">
+            Complete your enrollment for this athletic program
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Class Details */}
+          <div className="lg:col-span-1">
+            <Card className="sticky top-4">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl font-heading font-bold">
+                    {classDetails.class?.name}
+                  </CardTitle>
+                  <Badge className={statusInfo.color}>
+                    {statusInfo.status === "available" ? "Available" : "Waitlist"}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {classDetails.class?.imageUrl && (
+                  <img
+                    src={classDetails.class.imageUrl}
+                    alt={classDetails.class.name}
+                    className="w-full h-32 object-cover rounded-lg"
+                  />
+                )}
+                
+                <div className="space-y-3">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      {classDetails.class && `${getDayName(classDetails.class.dayOfWeek)}s ${classDetails.class.startTime} - ${classDetails.class.endTime}`}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-600">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      {classDetails.venue?.name}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-600">
+                    <Users className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      Ages {classDetails.class?.minAge}-{classDetails.class?.maxAge} • {statusInfo.message}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-600">
+                    <Clock className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      9 weeks ({new Date(classDetails.class?.startDate).toLocaleDateString()} - {new Date(classDetails.class?.endDate).toLocaleDateString()})
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-600">
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      ${classDetails.class?.pricePerTerm} AUD per term
+                    </span>
+                  </div>
+                </div>
+
+                {classDetails.class?.description && (
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">About this class</h4>
+                    <p className="text-sm text-gray-600">
+                      {classDetails.class.description}
+                    </p>
+                  </div>
+                )}
+
+                {classDetails.coach && (
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">Your Coach</h4>
+                    <p className="text-sm text-gray-600">
+                      {classDetails.coach.firstName} {classDetails.coach.lastName}
+                    </p>
+                    {classDetails.coach.bio && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {classDetails.coach.bio}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Enrollment Form */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-heading font-bold">
+                  Enrollment Information
+                </CardTitle>
+                <p className="text-gray-600">
+                  Please provide the required information to complete your enrollment
+                </p>
+              </CardHeader>
+              <CardContent>
+                <EnrollmentForm 
+                  classId={classId!} 
+                  classDetails={classDetails} 
+                  canEnroll={statusInfo.canEnroll}
+                  isWaitlist={statusInfo.status === "waitlist"}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

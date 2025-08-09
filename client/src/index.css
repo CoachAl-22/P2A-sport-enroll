@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(210 25% 7.8431%);
+  --card: hsl(180 6.6667% 97.0588%);
+  --card-foreground: hsl(210 25% 7.8431%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(210 25% 7.8431%);
+  --primary: hsl(210 100% 32.7451%);
+  --primary-foreground: hsl(0 0% 100%);
+  --primary-50: hsl(214 100% 96.8627%);
+  --primary-500: hsl(210 100% 32.7451%);
+  --primary-600: hsl(214 93.1034% 31.7647%);
+  --primary-700: hsl(217 91.2281% 39.6078%);
+  --secondary: hsl(22 92.5926% 52.1569%);
+  --secondary-foreground: hsl(0 0% 100%);
+  --secondary-500: hsl(22 92.5926% 52.1569%);
+  --secondary-600: hsl(24 95.3488% 53.3333%);
+  --secondary-100: hsl(22 100% 95.2941%);
+  --muted: hsl(240 1.9608% 90%);
+  --muted-foreground: hsl(210 25% 7.8431%);
+  --accent: hsl(211.5789 51.3514% 92.7451%);
+  --accent-foreground: hsl(203.8863 88.2845% 53.1373%);
+  --destructive: hsl(356.3033 90.5579% 54.3137%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(201.4286 30.4348% 90.9804%);
+  --input: hsl(200 23.0769% 97.4510%);
+  --ring: hsl(202.8169 89.1213% 53.1373%);
+  --chart-1: hsl(203.8863 88.2845% 53.1373%);
+  --chart-2: hsl(159.7826 100% 36.0784%);
+  --chart-3: hsl(42.0290 92.8251% 56.2745%);
+  --chart-4: hsl(147.1429 78.5047% 41.9608%);
+  --chart-5: hsl(341.4894 75.2000% 50.9804%);
+  --sidebar: hsl(180 6.6667% 97.0588%);
+  --sidebar-foreground: hsl(210 25% 7.8431%);
+  --sidebar-primary: hsl(203.8863 88.2845% 53.1373%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(211.5789 51.3514% 92.7451%);
+  --sidebar-accent-foreground: hsl(203.8863 88.2845% 53.1373%);
+  --sidebar-border: hsl(205.0000 25.0000% 90.5882%);
+  --sidebar-ring: hsl(202.8169 89.1213% 53.1373%);
+  --font-sans: 'Inter', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 0.75rem;
+  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+  
+  /* Athletic theme colors */
+  --green-100: hsl(142 76% 90%);
+  --green-500: hsl(142 76% 46%);
+  --green-600: hsl(142 76% 41%);
+  --green-700: hsl(142 76% 36%);
+  --yellow-100: hsl(48 100% 88%);
+  --yellow-400: hsl(48 100% 58%);
+  --yellow-500: hsl(48 100% 50%);
+  --yellow-600: hsl(48 100% 45%);
+  --purple-100: hsl(270 100% 95%);
+  --purple-500: hsl(270 100% 60%);
+  --red-100: hsl(0 100% 95%);
+  --red-500: hsl(0 84% 60%);
+  --amber-50: hsl(48 100% 96%);
+  --amber-500: hsl(45 96% 53%);
+  --orange-100: hsl(33 100% 90%);
+  --orange-600: hsl(33 100% 50%);
+  --orange-700: hsl(33 100% 45%);
+  --blue-100: hsl(219 100% 90%);
+}
+
+.dark {
+  --background: hsl(0 0% 0%);
+  --foreground: hsl(200 6.6667% 91.1765%);
+  --card: hsl(228 9.8039% 10%);
+  --card-foreground: hsl(0 0% 85.0980%);
+  --popover: hsl(0 0% 0%);
+  --popover-foreground: hsl(200 6.6667% 91.1765%);
+  --primary: hsl(203.7736 87.6033% 52.5490%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(195.0000 15.3846% 94.9020%);
+  --secondary-foreground: hsl(210 25% 7.8431%);
+  --muted: hsl(0 0% 9.4118%);
+  --muted-foreground: hsl(210 3.3898% 46.2745%);
+  --accent: hsl(205.7143 70% 7.8431%);
+  --accent-foreground: hsl(203.7736 87.6033% 52.5490%);
+  --destructive: hsl(356.3033 90.5579% 54.3137%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(210 5.2632% 14.9020%);
+  --input: hsl(207.6923 27.6596% 18.4314%);
+  --ring: hsl(202.8169 89.1213% 53.1373%);
+  --chart-1: hsl(203.8863 88.2845% 53.1373%);
+  --chart-2: hsl(159.7826 100% 36.0784%);
+  --chart-3: hsl(42.0290 92.8251% 56.2745%);
+  --chart-4: hsl(147.1429 78.5047% 41.9608%);
+  --chart-5: hsl(341.4894 75.2000% 50.9804%);
+  --sidebar: hsl(228 9.8039% 10%);
+  --sidebar-foreground: hsl(0 0% 85.0980%);
+  --sidebar-primary: hsl(202.8169 89.1213% 53.1373%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(205.7143 70% 7.8431%);
+  --sidebar-accent-foreground: hsl(203.7736 87.6033% 52.5490%);
+  --sidebar-border: hsl(205.7143 15.7895% 26.0784%);
+  --sidebar-ring: hsl(202.8169 89.1213% 53.1373%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+  
+  .bg-primary-50 {
+    background-color: var(--primary-50);
+  }
+  
+  .bg-primary-500 {
+    background-color: var(--primary-500);
+  }
+  
+  .bg-primary-600 {
+    background-color: var(--primary-600);
+  }
+  
+  .bg-primary-700 {
+    background-color: var(--primary-700);
+  }
+  
+  .bg-secondary-100 {
+    background-color: var(--secondary-100);
+  }
+  
+  .bg-secondary-500 {
+    background-color: var(--secondary-500);
+  }
+  
+  .bg-secondary-600 {
+    background-color: var(--secondary-600);
+  }
+  
+  .text-primary-500 {
+    color: var(--primary-500);
+  }
+  
+  .text-primary-700 {
+    color: var(--primary-700);
+  }
+  
+  .text-secondary-500 {
+    color: var(--secondary-500);
+  }
+  
+  .text-secondary-600 {
+    color: var(--secondary-600);
+  }
+  
+  .text-blue-100 {
+    color: var(--blue-100);
+  }
+  
+  .text-orange-100 {
+    color: var(--orange-100);
+  }
+  
+  .text-green-100 {
+    color: hsl(142 76% 85%);
+  }
+  
+  .hover\:bg-primary-600:hover {
+    background-color: var(--primary-600);
+  }
+  
+  .hover\:bg-primary-700:hover {
+    background-color: var(--primary-700);
+  }
+  
+  .hover\:bg-secondary-600:hover {
+    background-color: var(--secondary-600);
+  }
+  
+  .hover\:text-primary-500:hover {
+    color: var(--primary-500);
+  }
+  
+  .hover\:text-primary-700:hover {
+    color: var(--primary-700);
+  }
+  
+  .hover\:text-secondary-700:hover {
+    color: var(--secondary-600);
+  }
+  
+  .bg-green-100 {
+    background-color: var(--green-100);
+  }
+  
+  .bg-green-500 {
+    background-color: var(--green-500);
+  }
+  
+  .bg-green-600 {
+    background-color: var(--green-600);
+  }
+  
+  .bg-green-700 {
+    background-color: var(--green-700);
+  }
+  
+  .text-green-500 {
+    color: var(--green-500);
+  }
+  
+  .text-green-800 {
+    color: hsl(142 76% 26%);
+  }
+  
+  .hover\:bg-green-600:hover {
+    background-color: var(--green-600);
+  }
+  
+  .hover\:bg-green-700:hover {
+    background-color: var(--green-700);
+  }
+  
+  .bg-yellow-100 {
+    background-color: var(--yellow-100);
+  }
+  
+  .bg-yellow-500 {
+    background-color: var(--yellow-500);
+  }
+  
+  .bg-yellow-600 {
+    background-color: var(--yellow-600);
+  }
+  
+  .text-yellow-600 {
+    color: var(--yellow-600);
+  }
+  
+  .text-yellow-800 {
+    color: hsl(48 100% 30%);
+  }
+  
+  .hover\:bg-yellow-600:hover {
+    background-color: var(--yellow-600);
+  }
+  
+  .bg-purple-100 {
+    background-color: var(--purple-100);
+  }
+  
+  .text-purple-500 {
+    color: var(--purple-500);
+  }
+  
+  .bg-red-100 {
+    background-color: var(--red-100);
+  }
+  
+  .text-red-500 {
+    color: var(--red-500);
+  }
+  
+  .bg-amber-50 {
+    background-color: var(--amber-50);
+  }
+  
+  .text-amber-500 {
+    color: var(--amber-500);
+  }
+  
+  .bg-orange-100 {
+    background-color: var(--orange-100);
+  }
+  
+  .bg-orange-600 {
+    background-color: var(--orange-600);
+  }
+  
+  .bg-orange-700 {
+    background-color: var(--orange-700);
+  }
+  
+  .hover\:bg-orange-600:hover {
+    background-color: var(--orange-600);
+  }
+  
+  .hover\:bg-orange-700:hover {
+    background-color: var(--orange-700);
+  }
+  
+  .gradient-primary {
+    background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  }
+  
+  .gradient-secondary {
+    background: linear-gradient(135deg, var(--secondary-500), var(--orange-600));
+  }
+  
+  .gradient-green {
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
+  }
+  
+  .hover\:scale-105 {
+    transform: scale(1.05);
+  }
+}
