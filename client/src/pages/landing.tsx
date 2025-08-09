@@ -177,7 +177,7 @@ export default function Landing() {
             <p className="text-xl text-gray-600">9 weeks of professional athletic training</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Foundation Class */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
@@ -333,6 +333,92 @@ export default function Landing() {
                   <div className="flex items-center text-gray-600">
                     <Users className="w-4 h-4 mr-2" />
                     <span className="text-sm">Year 3-6 • 30 spots</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                    <span className="text-gray-500 text-sm"> + GST per class</span>
+                  </div>
+                  <Button 
+                    onClick={() => setIsLoginModalOpen(true)}
+                    className="bg-primary-500 hover:bg-primary-600 text-white"
+                  >
+                    Enroll Now
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Team Sport Speed - Friday 4:30pm */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img 
+                src="https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
+                alt="Athletes training for speed and performance at athletic track" 
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Team Sport Speed</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Available
+                  </span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Friday 4:30pm</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Mornington Athletic Track</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Users className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Ages 13+ • 10 spots only</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                    <span className="text-gray-500 text-sm"> + GST per class</span>
+                  </div>
+                  <Button 
+                    onClick={() => setIsLoginModalOpen(true)}
+                    className="bg-primary-500 hover:bg-primary-600 text-white"
+                  >
+                    Enroll Now
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Team Sport Speed - Friday 5:30pm */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img 
+                src="https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
+                alt="Athletes training for speed and performance at athletic track" 
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Team Sport Speed</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Available
+                  </span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Friday 5:30pm</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Mornington Athletic Track</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Users className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Ages 13+ • 10 spots only</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
