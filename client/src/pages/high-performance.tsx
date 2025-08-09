@@ -72,14 +72,7 @@ export default function HighPerformance() {
             </div>
           </div>
 
-          {/* Header Image */}
-          <div className="mb-12">
-            <img 
-              src="/images/speed-gradient-bg.png" 
-              alt="High Performance Speed Training" 
-              className="w-full h-64 md:h-80 object-cover rounded-xl shadow-2xl"
-            />
-          </div>
+
 
           {/* Head Coach Section */}
           <div className="bg-gray-800 rounded-xl p-8 mb-16">
