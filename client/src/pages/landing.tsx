@@ -76,8 +76,8 @@ export default function Landing() {
             </div>
             <div className="hidden md:block">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/IMG_4332 (1).HEIC" 
-                alt="Young athletes playing basketball" 
+                src="/attached_assets/Photos for Power2ADAPT/Georgia Goss Comp ready.jpg" 
+                alt="Young athletes in training" 
                 className="rounded-xl shadow-2xl"
               />
             </div>
