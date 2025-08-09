@@ -98,8 +98,8 @@ export default function Landing() {
               <div className="text-gray-600">Students Helped</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">School and Athletic Track</div>
-              <div className="text-gray-600">Venues, providing you multiple options</div>
+              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">Multiple</div>
+              <div className="text-gray-600">Venues and Options</div>
             </div>
             <div className="text-center">
               <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">Team Sport</div>
