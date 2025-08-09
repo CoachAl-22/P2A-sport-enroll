@@ -61,6 +61,17 @@ export default function HighPerformance() {
             </p>
           </div>
 
+          {/* Coach Photo */}
+          <div className="mb-8">
+            <div className="flex justify-center">
+              <img 
+                src="/images/coach-photo.jpg" 
+                alt="Alistair Tait - Head Coach Power2ADAPT" 
+                className="w-80 h-80 object-cover object-top rounded-xl shadow-2xl"
+              />
+            </div>
+          </div>
+
           {/* Header Image */}
           <div className="mb-12">
             <img 
@@ -72,16 +83,8 @@ export default function HighPerformance() {
 
           {/* Head Coach Section */}
           <div className="bg-gray-800 rounded-xl p-8 mb-16">
-            <div className="grid lg:grid-cols-3 gap-8 items-center">
-              <div className="lg:col-span-1">
-                {/* Coach Photo */}
-                <img 
-                  src="/images/coach-photo.jpg" 
-                  alt="Head Coach - Power2ADAPT" 
-                  className="w-full h-80 object-cover object-top rounded-lg shadow-lg"
-                />
-              </div>
-              <div className="lg:col-span-2">
+            <div className="max-w-4xl mx-auto">
+              <div>
                 <h2 className="text-3xl font-heading font-bold mb-4 text-primary-400">Head Coach</h2>
                 <div className="space-y-4 text-gray-300">
                   {/* Bio content */}
