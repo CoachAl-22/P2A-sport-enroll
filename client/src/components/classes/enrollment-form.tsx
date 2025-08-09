@@ -160,7 +160,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
       {/* Child Selection */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label className="text-base font-semibold">Which child is enrolling?</Label>
+          <Label className="text-base font-semibold">Who is enrolling?</Label>
           <Button
             type="button"
             variant="outline"
@@ -171,12 +171,12 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
             {isCreatingNewChild ? (
               <>
                 <User className="w-4 h-4 mr-2" />
-                Select Existing Child
+                Select Existing Athlete
               </>
             ) : (
               <>
                 <Plus className="w-4 h-4 mr-2" />
-                Add New Child
+                Add New Athlete
               </>
             )}
           </Button>
@@ -185,7 +185,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
         {isCreatingNewChild ? (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Tell us about your child</CardTitle>
+              <CardTitle className="text-lg">Tell us about the athlete</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -194,7 +194,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
                   <Input
                     id="firstName"
                     {...form.register("firstName")}
-                    placeholder="Child's first name"
+                    placeholder="First name"
                   />
                   {form.formState.errors.firstName && (
                     <p className="text-red-500 text-sm mt-1">
@@ -207,7 +207,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
                   <Input
                     id="lastName"
                     {...form.register("lastName")}
-                    placeholder="Child's last name"
+                    placeholder="Last name"
                   />
                   {form.formState.errors.lastName && (
                     <p className="text-red-500 text-sm mt-1">
@@ -265,7 +265,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
           <div>
             <Select onValueChange={(value) => form.setValue("childId", value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a child" />
+                <SelectValue placeholder="Select an athlete" />
               </SelectTrigger>
               <SelectContent>
                 {children?.map((child: any) => (
@@ -278,7 +278,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
             </Select>
             {children?.length === 0 && (
               <p className="text-sm text-gray-500 mt-2">
-                No children found. Please add a new child to continue.
+                No athletes found. Please add a new athlete to continue.
               </p>
             )}
           </div>
@@ -294,7 +294,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
             onCheckedChange={(checked) => form.setValue("autoRenew", !!checked)}
           />
           <Label htmlFor="autoRenew" className="text-sm">
-            Keep my child enrolled for future terms (we'll send friendly reminders 1 month ahead)
+            Keep this athlete enrolled for future terms (we'll send friendly reminders 1 month ahead)
           </Label>
         </div>
 
@@ -303,7 +303,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
           <Textarea
             id="notes"
             {...form.register("notes")}
-            placeholder="Anything special we should know about your child? (Optional)"
+            placeholder="Anything special we should know about this athlete? (Optional)"
             rows={3}
           />
         </div>

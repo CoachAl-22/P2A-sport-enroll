@@ -108,7 +108,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       <DialogContent className="max-w-md w-full p-6">
         <DialogHeader className="flex flex-row justify-between items-center mb-6">
           <DialogTitle className="text-2xl font-heading font-bold text-gray-900">
-            {activeTab === "login" ? "Welcome Back to Power2ADAPT" : "Start Your Child's Athletic Journey"}
+            {activeTab === "login" ? "Welcome Back to Power2ADAPT" : "Start Your Athletic Journey"}
           </DialogTitle>
           <Button
             variant="ghost"
