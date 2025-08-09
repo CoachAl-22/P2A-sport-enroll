@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
-import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock } from "lucide-react";
+import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook } from "lucide-react";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -681,6 +681,51 @@ export default function Landing() {
                 <p className="flex items-center"><Mail className="w-4 h-4 mr-2" />support@power2perform.com.au</p>
                 <p className="flex items-center"><School className="w-4 h-4 mr-2" />Serving Victorian Schools</p>
                 <p className="flex items-center"><Clock className="w-4 h-4 mr-2" />Mon-Fri: 8am-6pm</p>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-heading font-semibold mb-4">Follow Us</h4>
+              <div className="flex space-x-4">
+                <a 
+                  href="https://youtube.com/@power2adapt" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-red-500 transition-colors"
+                  aria-label="Visit our YouTube channel"
+                >
+                  <Youtube className="w-6 h-6" />
+                </a>
+                <a 
+                  href="https://instagram.com/power2adapt" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-pink-500 transition-colors"
+                  aria-label="Follow us on Instagram"
+                >
+                  <Instagram className="w-6 h-6" />
+                </a>
+                <a 
+                  href="https://facebook.com/power2adapt" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-blue-500 transition-colors"
+                  aria-label="Like us on Facebook"
+                >
+                  <Facebook className="w-6 h-6" />
+                </a>
+                <a 
+                  href="https://skool.com/power2adapt" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-yellow-500 transition-colors flex items-center justify-center w-6 h-6 text-sm font-bold border border-gray-300 rounded"
+                  aria-label="Join our Skool community"
+                >
+                  S
+                </a>
+              </div>
+              <div className="mt-3 text-sm text-gray-400">
+                <p>Follow for training tips, success stories, and program updates!</p>
               </div>
             </div>
           </div>
