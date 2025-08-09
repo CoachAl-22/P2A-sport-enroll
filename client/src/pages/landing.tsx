@@ -525,7 +525,7 @@ export default function Landing() {
             {/* Senior Squad - Ballam Park Thursday */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
+                src="/attached_assets/Photos for Power2ADAPT/The_Archers (1).jpg" 
                 alt="Senior squad athletes training at professional athletic track" 
                 className="w-full h-48 object-cover"
               />
