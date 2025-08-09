@@ -166,6 +166,7 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
                     <div className="space-y-1 text-sm text-gray-600">
                       <div>• Casual: $30 + GST per class</div>
                       <div>• Unlimited Sessions: $300 per month</div>
+                      <div className="text-xs text-gray-500 ml-4">(includes Finals Surge app access)</div>
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">
