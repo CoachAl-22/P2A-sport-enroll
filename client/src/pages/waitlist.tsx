@@ -12,7 +12,7 @@ export default function Waitlist() {
 
   const { data: waitlistEntries = [], isLoading } = useQuery({
     queryKey: ["/api/waitlist/parent"],
-  });
+  }) as { data: any[], isLoading: boolean };
 
   const removeFromWaitlistMutation = useMutation({
     mutationFn: async (waitlistId: string) => {
