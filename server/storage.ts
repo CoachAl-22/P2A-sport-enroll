@@ -9,6 +9,7 @@ import {
   notifications,
   seniorSquadApplications,
   blogArticles,
+  attendanceRecords,
   type User,
   type InsertUser,
   type Child,
@@ -29,6 +30,8 @@ import {
   type InsertSeniorSquadApplication,
   type BlogArticle,
   type InsertBlogArticle,
+  type AttendanceRecord,
+  type InsertAttendanceRecord,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, count, sql, gte, lte } from "drizzle-orm";
@@ -124,6 +127,12 @@ export interface IStorage {
   createBlogArticle(article: InsertBlogArticle): Promise<BlogArticle>;
   updateBlogArticle(id: string, updates: Partial<BlogArticle>): Promise<BlogArticle>;
   deleteBlogArticle(id: string): Promise<void>;
+  
+  // Attendance operations
+  getTodaysClassesForCoach(coachUserId: string): Promise<any[]>;
+  getStudentsForClass(classId: string): Promise<any[]>;
+  markAttendance(attendanceData: any): Promise<any>;
+  getAttendanceForClass(classId: string, date: string): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -624,6 +633,86 @@ export class DatabaseStorage implements IStorage {
 
   async deleteBlogArticle(id: string): Promise<void> {
     await db.delete(blogArticles).where(eq(blogArticles.id, id));
+  }
+
+  // Attendance operations
+  async getTodaysClassesForCoach(coachUserId: string): Promise<any[]> {
+    const today = new Date();
+    const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay(); // Convert Sunday from 0 to 7
+    
+    return await db
+      .select({
+        id: classes.id,
+        name: classes.name,
+        startTime: classes.startTime,
+        endTime: classes.endTime,
+        venue: venues.name,
+        currentEnrollment: classes.currentEnrollment,
+        maxCapacity: classes.maxCapacity,
+      })
+      .from(classes)
+      .innerJoin(venues, eq(classes.venueId, venues.id))
+      .innerJoin(coaches, eq(classes.coachId, coaches.id))
+      .where(
+        and(
+          eq(coaches.userId, coachUserId),
+          eq(classes.dayOfWeek, dayOfWeek),
+          eq(classes.status, "active")
+        )
+      )
+      .orderBy(classes.startTime);
+  }
+
+  async getStudentsForClass(classId: string): Promise<any[]> {
+    return await db
+      .select({
+        childId: children.id,
+        firstName: children.firstName,
+        lastName: children.lastName,
+        grade: children.grade,
+        medicalInfo: children.medicalInfo,
+        enrollmentId: enrollments.id,
+        enrollmentStatus: enrollments.status,
+      })
+      .from(enrollments)
+      .innerJoin(children, eq(enrollments.childId, children.id))
+      .where(
+        and(
+          eq(enrollments.classId, classId),
+          eq(enrollments.status, "active")
+        )
+      )
+      .orderBy(children.firstName, children.lastName);
+  }
+
+  async markAttendance(attendanceData: any): Promise<any> {
+    const [created] = await db.insert(attendanceRecords).values(attendanceData).returning();
+    return created;
+  }
+
+  async getAttendanceForClass(classId: string, date: string): Promise<any[]> {
+    const attendanceDate = new Date(date);
+    
+    return await db
+      .select({
+        id: attendanceRecords.id,
+        childId: attendanceRecords.childId,
+        childName: sql<string>`${children.firstName} || ' ' || ${children.lastName}`,
+        status: attendanceRecords.status,
+        absenceReason: attendanceRecords.absenceReason,
+        creditsEligible: attendanceRecords.creditsEligible,
+        notes: attendanceRecords.notes,
+        markedAt: attendanceRecords.markedAt,
+      })
+      .from(attendanceRecords)
+      .innerJoin(children, eq(attendanceRecords.childId, children.id))
+      .where(
+        and(
+          eq(attendanceRecords.classId, classId),
+          eq(attendanceRecords.attendanceDate, attendanceDate)
+        )
+      )
+      .orderBy(children.firstName, children.lastName);
   }
 }
 

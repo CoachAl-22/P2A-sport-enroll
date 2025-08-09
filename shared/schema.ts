@@ -393,6 +393,56 @@ export const insertBlogArticleSchema = createInsertSchema(blogArticles).omit({
   publishedAt: true,
 });
 
+// Absence reasons enum for type safety
+export const absenceReasonEnum = pgEnum("absence_reason", [
+  "illness",
+  "injured", 
+  "prior_notice",
+  "travel",
+  "exception",
+  "cancelled",
+  "no_show",
+  "late_notice"
+]);
+
+// Attendance tracking table
+export const attendanceRecords = pgTable("attendance_records", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  classId: uuid("class_id").references(() => classes.id).notNull(),
+  childId: uuid("child_id").references(() => children.id).notNull(),
+  attendanceDate: timestamp("attendance_date").notNull(),
+  status: varchar("status", { length: 20 }).notNull(), // 'present', 'absent'
+  absenceReason: absenceReasonEnum("absence_reason"), // null for present, reason for absent
+  creditsEligible: boolean("credits_eligible").default(false), // true if absence qualifies for credit
+  markedBy: uuid("marked_by").references(() => users.id).notNull(), // coach who marked attendance
+  markedAt: timestamp("marked_at").defaultNow(),
+  notes: text("notes"), // optional notes from coach
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const attendanceRecordsRelations = relations(attendanceRecords, ({ one }) => ({
+  class: one(classes, {
+    fields: [attendanceRecords.classId],
+    references: [classes.id],
+  }),
+  child: one(children, {
+    fields: [attendanceRecords.childId],
+    references: [children.id],
+  }),
+  markedByUser: one(users, {
+    fields: [attendanceRecords.markedBy],
+    references: [users.id],
+  }),
+}));
+
+export const insertAttendanceRecordSchema = createInsertSchema(attendanceRecords).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  markedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -414,3 +464,5 @@ export type SeniorSquadApplication = typeof seniorSquadApplications.$inferSelect
 export type InsertSeniorSquadApplication = z.infer<typeof insertSeniorSquadApplicationSchema>;
 export type BlogArticle = typeof blogArticles.$inferSelect;
 export type InsertBlogArticle = z.infer<typeof insertBlogArticleSchema>;
+export type AttendanceRecord = typeof attendanceRecords.$inferSelect;
+export type InsertAttendanceRecord = z.infer<typeof insertAttendanceRecordSchema>;

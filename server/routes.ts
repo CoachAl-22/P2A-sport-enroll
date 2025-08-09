@@ -35,6 +35,14 @@ const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+// Simple authentication middleware
+const isAuthenticated = (req: any, res: any, next: any) => {
+  if (req.session && req.session.userId) {
+    return next();
+  }
+  return res.status(401).json({ message: "Authentication required" });
+};
+
 const enrollmentFormSchema = insertEnrollmentSchema.extend({
   childInfo: z.object({
     firstName: z.string().min(1),
@@ -1258,6 +1266,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error deleting blog article:", error);
       res.status(500).json({ message: "Failed to delete blog article" });
+    }
+  });
+
+  // Attendance tracking routes
+  
+  // Get today's classes for a coach
+  app.get("/api/coach/classes/today", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'coach') {
+        return res.status(403).json({ message: "Access denied - coaches only" });
+      }
+
+      const todaysClasses = await storage.getTodaysClassesForCoach(userId);
+      res.json(todaysClasses);
+    } catch (error) {
+      console.error("Error fetching today's classes:", error);
+      res.status(500).json({ message: "Failed to fetch classes" });
+    }
+  });
+
+  // Get enrolled students for a specific class
+  app.get("/api/classes/:classId/students", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const user = await storage.getUser(userId);
+      const { classId } = req.params;
+      
+      if (!user || user.role !== 'coach') {
+        return res.status(403).json({ message: "Access denied - coaches only" });
+      }
+
+      const students = await storage.getStudentsForClass(classId);
+      res.json(students);
+    } catch (error) {
+      console.error("Error fetching class students:", error);
+      res.status(500).json({ message: "Failed to fetch students" });
+    }
+  });
+
+  // Mark attendance for students
+  app.post("/api/attendance/mark", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'coach') {
+        return res.status(403).json({ message: "Access denied - coaches only" });
+      }
+
+      const attendanceData = req.body;
+      
+      // Validate and determine credit eligibility
+      const creditEligibleReasons = ['illness', 'injured', 'prior_notice', 'travel', 'exception', 'cancelled'];
+      
+      if (attendanceData.status === 'absent' && attendanceData.absenceReason) {
+        attendanceData.creditsEligible = creditEligibleReasons.includes(attendanceData.absenceReason);
+      } else {
+        attendanceData.creditsEligible = false;
+      }
+      
+      attendanceData.markedBy = userId;
+      
+      const result = await storage.markAttendance(attendanceData);
+      res.json(result);
+    } catch (error) {
+      console.error("Error marking attendance:", error);
+      res.status(500).json({ message: "Failed to mark attendance" });
+    }
+  });
+
+  // Get attendance records for a class on a specific date
+  app.get("/api/classes/:classId/attendance/:date", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const user = await storage.getUser(userId);
+      const { classId, date } = req.params;
+      
+      if (!user || user.role !== 'coach') {
+        return res.status(403).json({ message: "Access denied - coaches only" });
+      }
+
+      const attendance = await storage.getAttendanceForClass(classId, date);
+      res.json(attendance);
+    } catch (error) {
+      console.error("Error fetching attendance:", error);
+      res.status(500).json({ message: "Failed to fetch attendance" });
     }
   });
 
