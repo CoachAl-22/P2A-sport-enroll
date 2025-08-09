@@ -12,11 +12,11 @@ export default function Admin() {
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["/api/admin/analytics"],
-    enabled: user?.role === "admin",
+    enabled: (user as any)?.user?.role === "admin",
   });
 
   // Redirect if not admin
-  if (!authLoading && user?.role !== "admin") {
+  if (!authLoading && (user as any)?.user?.role !== "admin") {
     return <Redirect to="/" />;
   }
 
