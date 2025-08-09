@@ -52,7 +52,7 @@ function Router() {
           {((user as any)?.user?.role === "coach" || (user as any)?.user?.role === "admin") && (
             <Route path="/attendance" component={Attendance} />
           )}
-          {(user as any)?.role === "admin" && (
+          {(user as any)?.user?.role === "admin" && (
             <>
               <Route path="/admin" component={Admin} />
               <Route path="/import" component={Import} />
