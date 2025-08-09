@@ -96,11 +96,17 @@ export default function HighPerformance() {
                   {/* Credentials/Qualifications */}
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-3 text-white">Professional Qualifications</h3>
-                    <div className="bg-gray-700 rounded-lg p-4">
+                    <div className="bg-gray-700 rounded-lg p-4 space-y-3">
                       <div className="flex items-center space-x-3">
                         <div className="w-3 h-3 bg-primary-500 rounded-full flex-shrink-0"></div>
                         <p className="text-gray-200">
                           <span className="font-semibold text-white">Level 4 High Performance Coach</span> with World and Australian Athletics
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-primary-500 rounded-full flex-shrink-0"></div>
+                        <p className="text-gray-200">
+                          <span className="font-semibold text-white">Bachelor of Sports Coaching - PE Stream</span> (Victorian University)
                         </p>
                       </div>
                     </div>
