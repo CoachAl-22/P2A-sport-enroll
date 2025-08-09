@@ -15,11 +15,13 @@ export default function ClassCard({ classData }: ClassCardProps) {
 
   const getProgramLabel = (sportType: string) => {
     const programMap: Record<string, string> = {
-      foundation_prep_year2: "Foundation - Prep - Year 2",
+      foundation_prep_year2: "Movement & Skill Foundation (via a Games approach)",
       emerging_year3_6: "Emerging - Year 3 - 6", 
-      academy_year7_above: "Academy - Year 7 & Above",
+      junior_development: "Junior Development",
+      team_sport_athletes: "Team Sport Athletes",
       team_sport_speed: "Team Sport Speed",
       senior_squad: "Senior Squad",
+      competition_ready: "Competition Ready",
       empowered_athlete_program: "The Empowered Athlete Program",
       basketball: "Basketball",
       soccer: "Soccer",
@@ -122,9 +124,9 @@ export default function ClassCard({ classData }: ClassCardProps) {
         <div className="flex items-center justify-between">
           <div>
             <span className="text-2xl font-heading font-bold text-primary-500">
-              ${classData.pricePerTerm}
+              ${classData.pricePerTerm} + GST
             </span>
-            <span className="text-gray-500 text-sm">/9 weeks</span>
+            <span className="text-gray-500 text-sm">/per class</span>
           </div>
           <Link href={`/enrollment/${classData.id}`}>
             <Button className={`${statusInfo.buttonClass} text-white transition-colors`}>

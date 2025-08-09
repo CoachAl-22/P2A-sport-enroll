@@ -18,9 +18,11 @@ import { z } from "zod";
 export const sportTypeEnum = pgEnum("sport_type", [
   "foundation_prep_year2",
   "emerging_year3_6", 
-  "academy_year7_above",
+  "junior_development",
+  "team_sport_athletes",
   "team_sport_speed",
   "senior_squad",
+  "competition_ready",
   "empowered_athlete_program",
   "basketball",
   "soccer",
