@@ -44,7 +44,7 @@ export default function BlogArticle() {
           className="inline-flex items-center text-primary-600 hover:text-primary-700 mb-8 font-medium transition-colors"
         >
           <ArrowLeft className="mr-2 w-4 h-4" />
-          Back to Blog
+          Back to Education Hub
         </Link>
 
         {/* Article Header */}
@@ -87,7 +87,7 @@ export default function BlogArticle() {
           </div>
         </article>
 
-        {/* Back to Blog Footer */}
+        {/* Back to Education Hub Footer */}
         <div className="mt-12 text-center">
           <Link 
             href="/blog" 

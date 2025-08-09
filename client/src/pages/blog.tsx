@@ -22,7 +22,7 @@ export default function Blog() {
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-4xl font-heading font-bold text-gray-900">Training Insights Blog</h1>
+          <h1 className="text-4xl font-heading font-bold text-gray-900">Education Hub</h1>
           <p className="mt-2 text-xl text-gray-600">
             Expert tips, training insights, and athletic development advice from the Power2ADAPT coaches
           </p>
