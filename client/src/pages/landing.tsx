@@ -547,7 +547,7 @@ export default function Landing() {
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Users className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Max 20 athletes • Application only</span>
+                    <span className="text-sm">Max 10 athletes • Application only</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
