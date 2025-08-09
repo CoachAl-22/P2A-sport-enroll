@@ -21,6 +21,14 @@ Preferred communication style: Simple, everyday language.
 - **Tunnel Server Setup**: Expo development server configured with ngrok tunneling for live testing
 - **Production Ready**: Complete build and deployment configuration for app stores
 
+### Program Content Refinement (August 2025) - ✅ COMPLETED
+- **Foundation Programs**: Updated to "Movement & Skill Foundation (via a Games approach)" with games-based learning approach
+- **Emerging Programs**: Enhanced descriptions to emphasize team sport performance benefits and athletic movement development
+- **Academy Structure**: Reorganized into Junior Development and Team Sport Athletes categories
+- **Specialized Programs**: Updated age requirements and added Competition Ready program for dedicated athletes
+- **Empowered Athlete Program**: Enhanced with online learning modules and personal development journal components
+- **Pricing Structure**: Standardized to $30 + GST per class across all programs with clear GST indication
+
 ## System Architecture
 
 ### Frontend Architecture
