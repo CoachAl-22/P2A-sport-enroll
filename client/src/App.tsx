@@ -11,6 +11,7 @@ import Enrollment from "@/pages/enrollment";
 import Admin from "@/pages/admin";
 import Import from "@/pages/import";
 import Checkout from "@/pages/checkout";
+import Analytics from "@/pages/analytics";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -34,10 +35,11 @@ function Router() {
           <Route path="/classes" component={Classes} />
           <Route path="/enrollment/:classId" component={Enrollment} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
-          {user?.role === "admin" && (
+          {(user as any)?.role === "admin" && (
             <>
               <Route path="/admin" component={Admin} />
               <Route path="/import" component={Import} />
+              <Route path="/analytics" component={Analytics} />
             </>
           )}
         </>

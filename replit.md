@@ -17,6 +17,7 @@ Preferred communication style: Simple, everyday language.
 - **UI Framework**: Radix UI components with shadcn/ui for accessible, customizable component library
 - **Styling**: Tailwind CSS with CSS variables for consistent theming and responsive design
 - **Build Tool**: Vite for fast development and optimized production builds
+- **Analytics**: Recharts library for advanced data visualization and reporting charts
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js providing RESTful API endpoints

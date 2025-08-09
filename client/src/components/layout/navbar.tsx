@@ -69,6 +69,14 @@ export default function Navbar() {
                         Admin
                       </Button>
                     </Link>
+                    <Link href="/analytics">
+                      <Button
+                        variant={location === "/analytics" ? "default" : "ghost"}
+                        className="text-gray-700 hover:text-primary-500"
+                      >
+                        Analytics
+                      </Button>
+                    </Link>
                     <Link href="/import">
                       <Button
                         variant={location === "/import" ? "default" : "ghost"}
