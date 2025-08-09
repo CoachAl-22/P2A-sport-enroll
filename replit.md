@@ -19,13 +19,15 @@ Preferred communication style: Simple, everyday language.
 - **SMS Confirmation**: Automatic SMS notifications sent to applicants confirming successful application submission
 - **Elite Program Treatment**: Professional application process befitting the premium nature of Senior Squad program
 
-### High Performance Services Navigation (August 2025) - ✅ COMPLETED
+### High Performance Services & Squad Integration (August 2025) - ✅ COMPLETED
 - **Dedicated High Performance Page**: Created separate `/high-performance` route with comprehensive elite coaching services
 - **Navigation Tab Integration**: Added "High Performance" tab to main navigation bar between Classes and Features
 - **Content Reorganization**: Moved all 1-on-1 coaching, team consulting, and remote coaching services to dedicated page
 - **Enhanced User Experience**: Cleaner landing page focused on school-based group programs, with elite services properly separated
 - **Image Integration**: High-performance coaching photos (IMG_4312, IMG_4492) properly displayed with athlete nameplates visible
 - **Professional Layout**: Dark gradient design distinguishing premium services from standard group programs
+- **High Performance Squad Program**: Added elite squad option positioned next to Senior Squad with Al & Archer Peru image
+- **Application-Based Structure**: Purple "By Application" badge linking directly to High Performance page for premium coaching services
 
 ### Mobile App Implementation (August 2025) - ✅ COMPLETED
 - **React Native Mobile App**: Complete iOS and Android app implementation using Expo framework
