@@ -74,14 +74,12 @@ export default function HighPerformance() {
           <div className="bg-gray-800 rounded-xl p-8 mb-16">
             <div className="grid lg:grid-cols-3 gap-8 items-center">
               <div className="lg:col-span-1">
-                {/* Coach Image Placeholder - Ready for your upload */}
-                <div className="w-full h-80 bg-gray-700 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600">
-                  <div className="text-center text-gray-400">
-                    <Users className="w-12 h-12 mx-auto mb-2" />
-                    <p className="text-sm">Coach Photo</p>
-                    <p className="text-xs">Ready for upload</p>
-                  </div>
-                </div>
+                {/* Coach Photo */}
+                <img 
+                  src="/images/coach-photo.jpg" 
+                  alt="Head Coach - Power2ADAPT" 
+                  className="w-full h-80 object-cover object-top rounded-lg shadow-lg"
+                />
               </div>
               <div className="lg:col-span-2">
                 <h2 className="text-3xl font-heading font-bold mb-4 text-primary-400">Head Coach</h2>
