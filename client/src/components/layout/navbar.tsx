@@ -59,7 +59,11 @@ export default function Navbar() {
                     My Family
                   </Button>
                 </Link>
-                {((user as any)?.role === "coach" || (user as any)?.role === "admin") && (
+                {(
+                  (user as any)?.role === "coach" || 
+                  (user as any)?.role === "admin" ||
+                  (user as any)?.email === "coach@power2adapt.com"
+                ) && (
                   <Link href="/attendance">
                     <Button
                       variant={location === "/attendance" ? "default" : "ghost"}
