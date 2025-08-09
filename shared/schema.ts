@@ -222,6 +222,21 @@ export const seniorSquadApplications = pgTable("senior_squad_applications", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Blog Articles
+export const blogArticles = pgTable("blog_articles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  excerpt: text("excerpt"),
+  content: text("content").notNull(),
+  featuredImage: varchar("featured_image"),
+  authorId: uuid("author_id").references(() => users.id),
+  published: boolean("published").default(false),
+  publishedAt: timestamp("published_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   children: many(children),
@@ -287,6 +302,13 @@ export const paymentsRelations = relations(payments, ({ one }) => ({
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(users, {
     fields: [notifications.userId],
+    references: [users.id],
+  }),
+}));
+
+export const blogArticlesRelations = relations(blogArticles, ({ one }) => ({
+  author: one(users, {
+    fields: [blogArticles.authorId],
     references: [users.id],
   }),
 }));
@@ -364,6 +386,13 @@ export const insertSeniorSquadApplicationSchema = createInsertSchema(seniorSquad
   reviewedAt: true,
 });
 
+export const insertBlogArticleSchema = createInsertSchema(blogArticles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  publishedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -383,3 +412,5 @@ export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type SeniorSquadApplication = typeof seniorSquadApplications.$inferSelect;
 export type InsertSeniorSquadApplication = z.infer<typeof insertSeniorSquadApplicationSchema>;
+export type BlogArticle = typeof blogArticles.$inferSelect;
+export type InsertBlogArticle = z.infer<typeof insertBlogArticleSchema>;

@@ -8,6 +8,7 @@ import {
   payments,
   notifications,
   seniorSquadApplications,
+  blogArticles,
   type User,
   type InsertUser,
   type Child,
@@ -26,6 +27,8 @@ import {
   type InsertNotification,
   type SeniorSquadApplication,
   type InsertSeniorSquadApplication,
+  type BlogArticle,
+  type InsertBlogArticle,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, count, sql, gte, lte } from "drizzle-orm";
@@ -113,6 +116,14 @@ export interface IStorage {
   getSeniorSquadApplication(id: string): Promise<SeniorSquadApplication | undefined>;
   getAllSeniorSquadApplications(): Promise<SeniorSquadApplication[]>;
   updateSeniorSquadApplication(id: string, updates: Partial<SeniorSquadApplication>): Promise<SeniorSquadApplication>;
+
+  // Blog operations
+  getBlogArticle(id: string): Promise<BlogArticle | undefined>;
+  getBlogArticleBySlug(slug: string): Promise<BlogArticle | undefined>;
+  getAllBlogArticles(published?: boolean): Promise<BlogArticle[]>;
+  createBlogArticle(article: InsertBlogArticle): Promise<BlogArticle>;
+  updateBlogArticle(id: string, updates: Partial<BlogArticle>): Promise<BlogArticle>;
+  deleteBlogArticle(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -574,6 +585,45 @@ export class DatabaseStorage implements IStorage {
       .where(eq(seniorSquadApplications.id, id))
       .returning();
     return updated;
+  }
+
+  // Blog operations
+  async getBlogArticle(id: string): Promise<BlogArticle | undefined> {
+    const [article] = await db.select().from(blogArticles).where(eq(blogArticles.id, id));
+    return article;
+  }
+
+  async getBlogArticleBySlug(slug: string): Promise<BlogArticle | undefined> {
+    const [article] = await db.select().from(blogArticles).where(eq(blogArticles.slug, slug));
+    return article;
+  }
+
+  async getAllBlogArticles(published?: boolean): Promise<BlogArticle[]> {
+    const query = db.select().from(blogArticles);
+    
+    if (published !== undefined) {
+      return await query.where(eq(blogArticles.published, published)).orderBy(desc(blogArticles.publishedAt || blogArticles.createdAt));
+    }
+    
+    return await query.orderBy(desc(blogArticles.createdAt));
+  }
+
+  async createBlogArticle(article: InsertBlogArticle): Promise<BlogArticle> {
+    const [created] = await db.insert(blogArticles).values(article).returning();
+    return created;
+  }
+
+  async updateBlogArticle(id: string, updates: Partial<BlogArticle>): Promise<BlogArticle> {
+    const [updated] = await db
+      .update(blogArticles)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(blogArticles.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteBlogArticle(id: string): Promise<void> {
+    await db.delete(blogArticles).where(eq(blogArticles.id, id));
   }
 }
 

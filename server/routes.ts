@@ -6,7 +6,7 @@ import session from "express-session";
 import { storage } from "./storage";
 import { ObjectStorageService } from "./objectStorage";
 import { smsService } from "./sms";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertBlogArticleSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -1122,6 +1122,142 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error updating Senior Squad application:", error);
       res.status(500).json({ message: "Failed to update application" });
+    }
+  });
+
+  // Blog routes
+  // Get all published blog articles (public)
+  app.get("/api/blog", async (req, res) => {
+    try {
+      const articles = await storage.getAllBlogArticles(true);
+      res.json(articles);
+    } catch (error: any) {
+      console.error("Error fetching blog articles:", error);
+      res.status(500).json({ message: "Failed to fetch blog articles" });
+    }
+  });
+
+  // Get single blog article by slug (public)
+  app.get("/api/blog/:slug", async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const article = await storage.getBlogArticleBySlug(slug);
+      
+      if (!article || !article.published) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.json(article);
+    } catch (error: any) {
+      console.error("Error fetching blog article:", error);
+      res.status(500).json({ message: "Failed to fetch blog article" });
+    }
+  });
+
+  // Admin: Get all blog articles (published and drafts)
+  app.get("/api/admin/blog", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const articles = await storage.getAllBlogArticles();
+      res.json(articles);
+    } catch (error: any) {
+      console.error("Error fetching admin blog articles:", error);
+      res.status(500).json({ message: "Failed to fetch blog articles" });
+    }
+  });
+
+  // Admin: Create new blog article
+  app.post("/api/admin/blog", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const articleData = insertBlogArticleSchema.parse({
+        ...req.body,
+        authorId: userId,
+      });
+      
+      // Generate slug from title if not provided
+      if (!articleData.slug) {
+        articleData.slug = articleData.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .substring(0, 100);
+      }
+      
+      const article = await storage.createBlogArticle(articleData);
+      res.status(201).json(article);
+    } catch (error: any) {
+      console.error("Error creating blog article:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Admin: Update blog article
+  app.put("/api/admin/blog/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      // Set publishedAt when publishing
+      if (updates.published && updates.published !== false) {
+        updates.publishedAt = new Date();
+      }
+      
+      const article = await storage.updateBlogArticle(id, updates);
+      res.json(article);
+    } catch (error: any) {
+      console.error("Error updating blog article:", error);
+      res.status(500).json({ message: "Failed to update blog article" });
+    }
+  });
+
+  // Admin: Delete blog article
+  app.delete("/api/admin/blog/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { id } = req.params;
+      await storage.deleteBlogArticle(id);
+      res.json({ message: "Article deleted successfully" });
+    } catch (error: any) {
+      console.error("Error deleting blog article:", error);
+      res.status(500).json({ message: "Failed to delete blog article" });
     }
   });
 

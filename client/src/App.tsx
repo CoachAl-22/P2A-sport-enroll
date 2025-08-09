@@ -14,6 +14,9 @@ import Import from "@/pages/import";
 import Checkout from "@/pages/checkout";
 import Analytics from "@/pages/analytics";
 import AdminSMS from "@/pages/admin-sms";
+import Blog from "@/pages/blog";
+import BlogArticle from "@/pages/blog-article";
+import AdminBlog from "@/pages/admin-blog";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -33,6 +36,8 @@ function Router() {
         <>
           <Route path="/" component={Landing} />
           <Route path="/high-performance" component={HighPerformance} />
+          <Route path="/blog" component={Blog} />
+          <Route path="/blog/:slug" component={BlogArticle} />
         </>
       ) : (
         <>
@@ -40,12 +45,15 @@ function Router() {
           <Route path="/classes" component={Classes} />
           <Route path="/enrollment/:classId" component={Enrollment} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
+          <Route path="/blog" component={Blog} />
+          <Route path="/blog/:slug" component={BlogArticle} />
           {(user as any)?.role === "admin" && (
             <>
               <Route path="/admin" component={Admin} />
               <Route path="/import" component={Import} />
               <Route path="/analytics" component={Analytics} />
               <Route path="/admin/sms" component={AdminSMS} />
+              <Route path="/admin/blog" component={AdminBlog} />
             </>
           )}
         </>
