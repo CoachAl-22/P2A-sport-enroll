@@ -16,7 +16,7 @@ export default function ClassCard({ classData }: ClassCardProps) {
   const getProgramLabel = (sportType: string) => {
     const programMap: Record<string, string> = {
       foundation_prep_year2: "Movement & Skill Foundation (via a Games approach)",
-      emerging_year3_6: "Emerging - Year 3 - 6", 
+      emerging_year3_6: "Athletic Development - Year 3 - 6", 
       junior_development: "Junior Development",
       team_sport_athletes: "Team Sport Athletes",
       team_sport_speed: "Team Sport Speed",
