@@ -224,7 +224,7 @@ export default function Landing() {
             {/* Emerging Athletes */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
+                src="/attached_assets/Photos for Power2ADAPT/Ashton XCR pic.jpg" 
                 alt="Young athletes developing skills in team sports" 
                 className="w-full h-48 object-cover"
               />
@@ -310,7 +310,7 @@ export default function Landing() {
             {/* Emerging Athletes - Toorak College Thursday */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
+                src="/attached_assets/Photos for Power2ADAPT/Ashton XCR pic.jpg" 
                 alt="Young athletes developing skills in team sports" 
                 className="w-full h-48 object-cover"
               />
