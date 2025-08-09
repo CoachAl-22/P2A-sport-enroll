@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
-import { AuthProvider } from './src/context/AuthContext';
+import { AuthProvider } from './src/hooks/useAuth';
 import { theme } from './src/theme/theme';
 
 const queryClient = new QueryClient({

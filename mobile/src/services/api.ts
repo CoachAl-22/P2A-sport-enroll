@@ -1,59 +1,146 @@
-import axios from 'axios';
 import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 
-const API_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:5000';
+const API_URL = Constants.expoConfig?.extra?.apiUrl || 'https://868ede8d-c814-4847-9bfc-097bdd55a79a-00-1r2al5zaw3y2f.janeway.replit.dev';
 
-export const apiClient = axios.create({
-  baseURL: API_URL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+}
 
-// Request interceptor to add auth token
-apiClient.interceptors.request.use(
-  async (config) => {
-    const sessionToken = await SecureStore.getItemAsync('sessionToken');
-    if (sessionToken) {
-      config.headers.Authorization = `Bearer ${sessionToken}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+export interface AuthResponse {
+  user: User;
+  sessionToken?: string;
+}
+
+class ApiService {
+  private baseUrl: string;
+
+  constructor() {
+    this.baseUrl = API_URL;
   }
-);
 
-// Response interceptor to handle auth errors
-apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      await SecureStore.deleteItemAsync('sessionToken');
+  private async getAuthHeaders(): Promise<Record<string, string>> {
+    const token = await SecureStore.getItemAsync('sessionToken');
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
-    return Promise.reject(error);
+    
+    return headers;
   }
-);
 
-// API service functions
-export const classesApi = {
-  getClasses: () => apiClient.get('/api/classes'),
-  getClass: (id: string) => apiClient.get(`/api/classes/${id}`),
-};
+  async request(endpoint: string, options: RequestInit = {}): Promise<Response> {
+    const headers = await this.getAuthHeaders();
+    
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers: {
+        ...headers,
+        ...options.headers,
+      },
+    });
 
-export const enrollmentsApi = {
-  getEnrollments: () => apiClient.get('/api/enrollments'),
-  createEnrollment: (data: any) => apiClient.post('/api/enrollments', data),
-  updateEnrollment: (id: string, data: any) => apiClient.patch(`/api/enrollments/${id}`, data),
-};
+    return response;
+  }
 
-export const venuesApi = {
-  getVenues: () => apiClient.get('/api/venues'),
-};
+  async login(identifier: string, password: string): Promise<AuthResponse> {
+    const response = await this.request('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ identifier, password }),
+    });
 
-export const notificationsApi = {
-  getNotifications: () => apiClient.get('/api/notifications'),
-  markAsRead: (id: string) => apiClient.patch(`/api/notifications/${id}/read`),
-};
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Login failed');
+    }
+
+    const data = await response.json();
+    
+    // Store session token securely
+    if (data.sessionToken) {
+      await SecureStore.setItemAsync('sessionToken', data.sessionToken);
+    }
+
+    return data;
+  }
+
+  async logout(): Promise<void> {
+    await this.request('/api/auth/logout', { method: 'POST' });
+    await SecureStore.deleteItemAsync('sessionToken');
+  }
+
+  async getCurrentUser(): Promise<User> {
+    const response = await this.request('/api/auth/me');
+    
+    if (!response.ok) {
+      throw new Error('Not authenticated');
+    }
+
+    const data = await response.json();
+    return data.user;
+  }
+
+  async getClasses(filters?: any): Promise<any[]> {
+    const params = new URLSearchParams(filters).toString();
+    const response = await this.request(`/api/classes${params ? `?${params}` : ''}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch classes');
+    }
+
+    return response.json();
+  }
+
+  async getClassDetails(classId: string): Promise<any> {
+    const response = await this.request(`/api/classes/${classId}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch class details');
+    }
+
+    return response.json();
+  }
+
+  async enrollInClass(enrollmentData: any): Promise<any> {
+    const response = await this.request('/api/enrollments', {
+      method: 'POST',
+      body: JSON.stringify(enrollmentData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Enrollment failed');
+    }
+
+    return response.json();
+  }
+
+  async getUserEnrollments(): Promise<any[]> {
+    const response = await this.request('/api/enrollments/user');
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch enrollments');
+    }
+
+    return response.json();
+  }
+
+  async getVenues(): Promise<any[]> {
+    const response = await this.request('/api/venues');
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch venues');
+    }
+
+    return response.json();
+  }
+}
+
+export const apiService = new ApiService();

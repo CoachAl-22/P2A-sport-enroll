@@ -1,146 +1,110 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import { Button, TextInput, Text, Card } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '../context/AuthContext';
-import { theme, spacing } from '../theme/theme';
+import { View, StyleSheet, Alert } from 'react-native';
+import { 
+  TextInput, 
+  Button, 
+  Text, 
+  Card, 
+  Title 
+} from 'react-native-paper';
+import { useAuth } from '../hooks/useAuth';
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState('');
+export default function LoginScreen() {
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
+    if (!identifier || !password) {
       Alert.alert('Error', 'Please enter both email and password');
       return;
     }
 
-    setIsLoading(true);
+    setLoading(true);
     try {
-      await login(email.trim(), password);
+      await login(identifier, password);
     } catch (error: any) {
-      Alert.alert('Login Failed', error.message || 'Invalid credentials');
+      Alert.alert('Login Failed', error.message || 'Please check your credentials');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text variant="displaySmall" style={styles.title}>
-            Power2ADAPT
+    <View style={styles.container}>
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.title}>Power2ADAPT</Title>
+          <Text style={styles.subtitle}>Athletic Program Management</Text>
+          
+          <TextInput
+            label="Email, Mobile, or User ID"
+            value={identifier}
+            onChangeText={setIdentifier}
+            style={styles.input}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+          
+          <TextInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={styles.input}
+          />
+          
+          <Button
+            mode="contained"
+            onPress={handleLogin}
+            loading={loading}
+            disabled={loading}
+            style={styles.button}
+          >
+            Login
+          </Button>
+          
+          <Text style={styles.hint}>
+            Try: admin@power2adapt.com / admin123
           </Text>
-          <Text variant="bodyLarge" style={styles.subtitle}>
-            Athletic Program Management
-          </Text>
-        </View>
-
-        <Card style={styles.loginCard}>
-          <Card.Content>
-            <Text variant="headlineSmall" style={styles.loginTitle}>
-              Sign In
-            </Text>
-            
-            <TextInput
-              label="Email"
-              value={email}
-              onChangeText={setEmail}
-              mode="outlined"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              style={styles.input}
-            />
-            
-            <TextInput
-              label="Password"
-              value={password}
-              onChangeText={setPassword}
-              mode="outlined"
-              secureTextEntry={!showPassword}
-              right={
-                <TextInput.Icon
-                  icon={showPassword ? "eye-off" : "eye"}
-                  onPress={() => setShowPassword(!showPassword)}
-                />
-              }
-              style={styles.input}
-            />
-            
-            <Button
-              mode="contained"
-              onPress={handleLogin}
-              loading={isLoading}
-              disabled={isLoading}
-              style={styles.loginButton}
-            >
-              Sign In
-            </Button>
-          </Card.Content>
-        </Card>
-
-        <View style={styles.footer}>
-          <Text variant="bodySmall" style={styles.footerText}>
-            For support, contact your program administrator
-          </Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </Card.Content>
+      </Card>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    padding: spacing.lg,
     justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#f5f5f5',
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: spacing.xl,
+  card: {
+    padding: 20,
   },
   title: {
-    color: theme.colors.primary,
+    textAlign: 'center',
+    marginBottom: 8,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: spacing.sm,
   },
   subtitle: {
-    color: theme.colors.onBackground,
-    opacity: 0.7,
-  },
-  loginCard: {
-    marginBottom: spacing.xl,
-  },
-  loginTitle: {
     textAlign: 'center',
-    marginBottom: spacing.lg,
-    color: theme.colors.onSurface,
+    marginBottom: 30,
+    color: '#666',
   },
   input: {
-    marginBottom: spacing.md,
+    marginBottom: 16,
   },
-  loginButton: {
-    marginTop: spacing.md,
-    paddingVertical: spacing.sm,
+  button: {
+    marginTop: 16,
+    marginBottom: 16,
   },
-  footer: {
-    alignItems: 'center',
-  },
-  footerText: {
-    color: theme.colors.onBackground,
-    opacity: 0.6,
+  hint: {
     textAlign: 'center',
+    fontSize: 12,
+    color: '#888',
   },
 });
-
-export default LoginScreen;

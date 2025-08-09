@@ -1,294 +1,294 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, Card, Button, Avatar } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQuery } from '@tanstack/react-query';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext';
-import { enrollmentsApi, notificationsApi } from '../services/api';
-import { theme, spacing } from '../theme/theme';
+import { 
+  Card, 
+  Title, 
+  Paragraph, 
+  Button, 
+  Text,
+  Avatar,
+  Chip
+} from 'react-native-paper';
+import { useAuth } from '../hooks/useAuth';
+import { apiService } from '../services/api';
 
-const DashboardScreen = () => {
+export default function DashboardScreen() {
   const { user } = useAuth();
-  
-  const { data: enrollments, isLoading: enrollmentsLoading, refetch: refetchEnrollments } = useQuery({
-    queryKey: ['enrollments'],
-    queryFn: () => enrollmentsApi.getEnrollments(),
-    select: (response) => response.data,
-  });
+  const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const { data: notifications, isLoading: notificationsLoading, refetch: refetchNotifications } = useQuery({
-    queryKey: ['notifications'],
-    queryFn: () => notificationsApi.getNotifications(),
-    select: (response) => response.data,
-  });
+  const loadData = async () => {
+    try {
+      const userEnrollments = await apiService.getUserEnrollments();
+      setEnrollments(userEnrollments);
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
-  const onRefresh = React.useCallback(() => {
-    refetchEnrollments();
-    refetchNotifications();
-  }, [refetchEnrollments, refetchNotifications]);
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  const activeEnrollments = enrollments?.filter((e: any) => e.enrollment.status === 'active') || [];
-  const unreadNotifications = notifications?.filter((n: any) => !n.read) || [];
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadData();
+  };
+
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView}
-        refreshControl={
-          <RefreshControl
-            refreshing={enrollmentsLoading || notificationsLoading}
-            onRefresh={onRefresh}
-            colors={[theme.colors.primary]}
+    <ScrollView 
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      {/* Welcome Card */}
+      <Card style={styles.welcomeCard}>
+        <Card.Content style={styles.welcomeContent}>
+          <Avatar.Text 
+            size={60} 
+            label={getInitials(user?.firstName || '', user?.lastName || '')} 
+            style={styles.avatar}
           />
-        }
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.welcomeSection}>
-            <Avatar.Text 
-              size={48} 
-              label={`${user?.firstName?.[0]}${user?.lastName?.[0]}`}
-              style={styles.avatar}
-            />
-            <View style={styles.welcomeText}>
-              <Text variant="headlineSmall" style={styles.welcomeTitle}>
-                Welcome back, {user?.firstName}!
-              </Text>
-              <Text variant="bodyMedium" style={styles.welcomeSubtitle}>
-                Ready for today's training?
-              </Text>
-            </View>
+          <View style={styles.welcomeText}>
+            <Title style={styles.welcomeTitle}>
+              Welcome, {user?.firstName}!
+            </Title>
+            <Paragraph style={styles.welcomeSubtitle}>
+              {user?.role === 'admin' ? 'Administrator' : 'Parent Dashboard'}
+            </Paragraph>
           </View>
-        </View>
+        </Card.Content>
+      </Card>
 
-        {/* Quick Stats */}
-        <View style={styles.statsContainer}>
-          <Card style={styles.statCard}>
-            <Card.Content style={styles.statContent}>
-              <Ionicons name="fitness" size={24} color={theme.colors.primary} />
-              <Text variant="headlineMedium" style={styles.statNumber}>
-                {activeEnrollments.length}
-              </Text>
-              <Text variant="bodySmall" style={styles.statLabel}>
-                Active Classes
-              </Text>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.statCard}>
-            <Card.Content style={styles.statContent}>
-              <Ionicons name="notifications" size={24} color={theme.colors.secondary} />
-              <Text variant="headlineMedium" style={styles.statNumber}>
-                {unreadNotifications.length}
-              </Text>
-              <Text variant="bodySmall" style={styles.statLabel}>
-                New Notifications
-              </Text>
-            </Card.Content>
-          </Card>
-        </View>
-
-        {/* Active Enrollments */}
-        <Card style={styles.sectionCard}>
-          <Card.Title title="Your Active Classes" />
-          <Card.Content>
-            {activeEnrollments.length > 0 ? (
-              activeEnrollments.slice(0, 3).map((enrollment: any) => (
-                <View key={enrollment.enrollment.id} style={styles.enrollmentItem}>
-                  <View style={styles.enrollmentContent}>
-                    <Text variant="titleMedium" style={styles.className}>
-                      {enrollment.class.name}
-                    </Text>
-                    <Text variant="bodyMedium" style={styles.classDetails}>
-                      {enrollment.venue.name} • {enrollment.class.schedule}
-                    </Text>
-                    <Text variant="bodySmall" style={styles.classStatus}>
-                      Status: {enrollment.enrollment.status}
-                    </Text>
-                  </View>
-                  <Ionicons name="chevron-forward" size={20} color={theme.colors.outline} />
-                </View>
-              ))
-            ) : (
-              <View style={styles.emptyState}>
-                <Ionicons name="fitness-outline" size={48} color={theme.colors.outline} />
-                <Text variant="bodyLarge" style={styles.emptyText}>
-                  No active enrollments
-                </Text>
-                <Text variant="bodySmall" style={styles.emptySubtext}>
-                  Browse classes to get started
-                </Text>
-                <Button mode="contained" style={styles.browseButton}>
-                  Browse Classes
-                </Button>
-              </View>
-            )}
+      {/* Quick Stats */}
+      <View style={styles.statsRow}>
+        <Card style={[styles.statCard, { flex: 1, marginRight: 8 }]}>
+          <Card.Content style={styles.statContent}>
+            <Text style={styles.statNumber}>{enrollments.length}</Text>
+            <Text style={styles.statLabel}>Active Enrollments</Text>
           </Card.Content>
         </Card>
-
-        {/* Recent Notifications */}
-        <Card style={styles.sectionCard}>
-          <Card.Title title="Recent Notifications" />
-          <Card.Content>
-            {notifications && notifications.length > 0 ? (
-              notifications.slice(0, 3).map((notification: any) => (
-                <View key={notification.id} style={styles.notificationItem}>
-                  <View style={styles.notificationContent}>
-                    <Text variant="titleMedium" style={styles.notificationTitle}>
-                      {notification.title}
-                    </Text>
-                    <Text variant="bodyMedium" style={styles.notificationMessage}>
-                      {notification.message}
-                    </Text>
-                    <Text variant="bodySmall" style={styles.notificationDate}>
-                      {new Date(notification.createdAt).toLocaleDateString()}
-                    </Text>
-                  </View>
-                  {!notification.read && (
-                    <View style={styles.unreadIndicator} />
-                  )}
-                </View>
-              ))
-            ) : (
-              <View style={styles.emptyState}>
-                <Ionicons name="notifications-outline" size={48} color={theme.colors.outline} />
-                <Text variant="bodyLarge" style={styles.emptyText}>
-                  No notifications
-                </Text>
-                <Text variant="bodySmall" style={styles.emptySubtext}>
-                  You're all caught up!
-                </Text>
-              </View>
-            )}
+        
+        <Card style={[styles.statCard, { flex: 1, marginLeft: 8 }]}>
+          <Card.Content style={styles.statContent}>
+            <Text style={styles.statNumber}>2</Text>
+            <Text style={styles.statLabel}>Notifications</Text>
           </Card.Content>
         </Card>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+
+      {/* Recent Enrollments */}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>Recent Enrollments</Title>
+          {enrollments.length > 0 ? (
+            enrollments.slice(0, 3).map((enrollment: any, index) => (
+              <View key={index} style={styles.enrollmentItem}>
+                <View style={styles.enrollmentInfo}>
+                  <Text style={styles.enrollmentClass}>
+                    {enrollment.className || 'Class Name'}
+                  </Text>
+                  <Text style={styles.enrollmentChild}>
+                    {enrollment.childName || 'Child Name'}
+                  </Text>
+                </View>
+                <Chip 
+                  mode="outlined" 
+                  compact
+                  style={styles.statusChip}
+                >
+                  {enrollment.status || 'Active'}
+                </Chip>
+              </View>
+            ))
+          ) : (
+            <Paragraph style={styles.emptyText}>
+              No active enrollments. Browse classes to get started!
+            </Paragraph>
+          )}
+          <Button 
+            mode="outlined" 
+            style={styles.viewAllButton}
+            onPress={() => {}}
+          >
+            View All Enrollments
+          </Button>
+        </Card.Content>
+      </Card>
+
+      {/* Quick Actions */}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>Quick Actions</Title>
+          <View style={styles.actionButtons}>
+            <Button 
+              mode="contained" 
+              style={styles.actionButton}
+              onPress={() => {}}
+            >
+              Browse Classes
+            </Button>
+            <Button 
+              mode="outlined" 
+              style={styles.actionButton}
+              onPress={() => {}}
+            >
+              View Schedule
+            </Button>
+          </View>
+        </Card.Content>
+      </Card>
+
+      {/* Notifications Preview */}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>Recent Notifications</Title>
+          <View style={styles.notificationItem}>
+            <Text style={styles.notificationTitle}>
+              Welcome to Power2ADAPT!
+            </Text>
+            <Text style={styles.notificationText}>
+              Your account has been successfully set up.
+            </Text>
+          </View>
+          <View style={styles.notificationItem}>
+            <Text style={styles.notificationTitle}>
+              Term 4 2024 Classes Available
+            </Text>
+            <Text style={styles.notificationText}>
+              New classes are now open for enrollment.
+            </Text>
+          </View>
+          <Button 
+            mode="text" 
+            style={styles.viewAllButton}
+            onPress={() => {}}
+          >
+            View All Notifications
+          </Button>
+        </Card.Content>
+      </Card>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: '#f5f5f5',
   },
-  scrollView: {
-    flex: 1,
+  welcomeCard: {
+    margin: 16,
+    marginBottom: 8,
   },
-  header: {
-    padding: spacing.lg,
-    backgroundColor: theme.colors.surface,
-  },
-  welcomeSection: {
+  welcomeContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   avatar: {
-    backgroundColor: theme.colors.primary,
+    marginRight: 16,
   },
   welcomeText: {
-    marginLeft: spacing.md,
     flex: 1,
   },
   welcomeTitle: {
-    color: theme.colors.onSurface,
-    fontWeight: 'bold',
+    fontSize: 20,
+    marginBottom: 4,
   },
   welcomeSubtitle: {
-    color: theme.colors.onSurface,
-    opacity: 0.7,
+    color: '#666',
   },
-  statsContainer: {
+  statsRow: {
     flexDirection: 'row',
-    padding: spacing.lg,
-    gap: spacing.md,
+    paddingHorizontal: 16,
+    marginBottom: 8,
   },
   statCard: {
-    flex: 1,
+    backgroundColor: '#fff',
   },
   statContent: {
     alignItems: 'center',
-    paddingVertical: spacing.lg,
+    paddingVertical: 16,
   },
   statNumber: {
+    fontSize: 24,
     fontWeight: 'bold',
-    marginVertical: spacing.sm,
+    color: '#2196F3',
   },
   statLabel: {
-    opacity: 0.7,
+    fontSize: 12,
+    color: '#666',
     textAlign: 'center',
   },
-  sectionCard: {
-    margin: spacing.lg,
-    marginTop: 0,
+  card: {
+    margin: 16,
+    marginTop: 8,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    marginBottom: 16,
   },
   enrollmentItem: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: spacing.md,
+    paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.outline,
+    borderBottomColor: '#f0f0f0',
   },
-  enrollmentContent: {
+  enrollmentInfo: {
     flex: 1,
   },
-  className: {
-    fontWeight: 'bold',
-    marginBottom: spacing.xs,
+  enrollmentClass: {
+    fontSize: 16,
+    fontWeight: '500',
   },
-  classDetails: {
-    opacity: 0.7,
-    marginBottom: spacing.xs,
+  enrollmentChild: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
   },
-  classStatus: {
-    color: theme.colors.secondary,
-    textTransform: 'capitalize',
-  },
-  notificationItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.outline,
-  },
-  notificationContent: {
-    flex: 1,
-  },
-  notificationTitle: {
-    fontWeight: 'bold',
-    marginBottom: spacing.xs,
-  },
-  notificationMessage: {
-    opacity: 0.7,
-    marginBottom: spacing.xs,
-  },
-  notificationDate: {
-    opacity: 0.5,
-  },
-  unreadIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.primary,
-    marginLeft: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing.xl,
+  statusChip: {
+    marginLeft: 8,
   },
   emptyText: {
-    marginTop: spacing.md,
-    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#666',
+    fontStyle: 'italic',
+    marginVertical: 20,
   },
-  emptySubtext: {
-    opacity: 0.7,
-    marginBottom: spacing.lg,
+  viewAllButton: {
+    marginTop: 16,
   },
-  browseButton: {
-    marginTop: spacing.sm,
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  actionButton: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  notificationItem: {
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  notificationTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  notificationText: {
+    fontSize: 12,
+    color: '#666',
   },
 });
-
-export default DashboardScreen;

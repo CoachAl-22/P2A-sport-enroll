@@ -1,122 +1,93 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useTheme } from 'react-native-paper';
 
 // Screens
-import LoginScreen from '../screens/LoginScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import ClassesScreen from '../screens/ClassesScreen';
-import ClassDetailScreen from '../screens/ClassDetailScreen';
+import ClassDetailsScreen from '../screens/ClassDetailsScreen';
 import EnrollmentScreen from '../screens/EnrollmentScreen';
-import ProfileScreen from '../screens/ProfileScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
-import LoadingScreen from '../screens/LoadingScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import LoginScreen from '../screens/LoginScreen';
 
-export type RootStackParamList = {
-  Login: undefined;
-  Main: undefined;
-  ClassDetail: { classId: string };
-  Enrollment: { classId: string };
-};
+// Auth Hook
+import { useAuth } from '../hooks/useAuth';
 
-export type TabParamList = {
-  Dashboard: undefined;
-  Classes: undefined;
-  Notifications: undefined;
-  Profile: undefined;
-};
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator<TabParamList>();
+function ClassesStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="ClassesList" 
+        component={ClassesScreen} 
+        options={{ title: 'Classes' }}
+      />
+      <Stack.Screen 
+        name="ClassDetails" 
+        component={ClassDetailsScreen} 
+        options={{ title: 'Class Details' }}
+      />
+      <Stack.Screen 
+        name="Enrollment" 
+        component={EnrollmentScreen} 
+        options={{ title: 'Enroll' }}
+      />
+    </Stack.Navigator>
+  );
+}
 
-const TabNavigator = () => {
+function MainTabs() {
+  const theme = useTheme();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap;
+          let iconName: keyof typeof MaterialIcons.glyphMap;
 
           if (route.name === 'Dashboard') {
-            iconName = focused ? 'home' : 'home-outline';
+            iconName = 'dashboard';
           } else if (route.name === 'Classes') {
-            iconName = focused ? 'fitness' : 'fitness-outline';
+            iconName = 'sports';
           } else if (route.name === 'Notifications') {
-            iconName = focused ? 'notifications' : 'notifications-outline';
+            iconName = 'notifications';
           } else if (route.name === 'Profile') {
-            iconName = focused ? 'person' : 'person-outline';
+            iconName = 'person';
           } else {
-            iconName = 'help-outline';
+            iconName = 'help';
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <MaterialIcons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#3B82F6',
+        tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: 'gray',
         headerShown: false,
       })}
     >
-      <Tab.Screen 
-        name="Dashboard" 
-        component={DashboardScreen}
-        options={{ title: 'Dashboard' }}
-      />
-      <Tab.Screen 
-        name="Classes" 
-        component={ClassesScreen}
-        options={{ title: 'Classes' }}
-      />
-      <Tab.Screen 
-        name="Notifications" 
-        component={NotificationsScreen}
-        options={{ title: 'Notifications' }}
-      />
-      <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen}
-        options={{ title: 'Profile' }}
-      />
+      <Tab.Screen name="Dashboard" component={DashboardScreen} />
+      <Tab.Screen name="Classes" component={ClassesStack} />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
-};
+}
 
-const AppNavigator = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+export default function AppNavigator() {
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return null; // Show loading screen
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!isAuthenticated ? (
-        <Stack.Screen name="Login" component={LoginScreen} />
-      ) : (
-        <>
-          <Stack.Screen name="Main" component={TabNavigator} />
-          <Stack.Screen 
-            name="ClassDetail" 
-            component={ClassDetailScreen}
-            options={{ 
-              headerShown: true,
-              title: 'Class Details',
-              headerBackTitle: 'Back'
-            }}
-          />
-          <Stack.Screen 
-            name="Enrollment" 
-            component={EnrollmentScreen}
-            options={{ 
-              headerShown: true,
-              title: 'Enroll',
-              headerBackTitle: 'Back'
-            }}
-          />
-        </>
-      )}
-    </Stack.Navigator>
+    <NavigationContainer>
+      {user ? <MainTabs /> : <LoginScreen />}
+    </NavigationContainer>
   );
-};
-
-export default AppNavigator;
+}

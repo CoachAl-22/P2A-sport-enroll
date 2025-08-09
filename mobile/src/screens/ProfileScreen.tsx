@@ -1,223 +1,291 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import { Text, Card, Button, Avatar, List, Switch } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext';
-import { theme, spacing } from '../theme/theme';
+import { 
+  Card, 
+  Title, 
+  Paragraph, 
+  Button, 
+  Text,
+  Avatar,
+  List,
+  Switch,
+  Divider
+} from 'react-native-paper';
+import { useAuth } from '../hooks/useAuth';
 
-const ProfileScreen = () => {
+export default function ProfileScreen() {
   const { user, logout } = useAuth();
+  const [settings, setSettings] = useState({
+    pushNotifications: true,
+    emailNotifications: true,
+    smsReminders: true,
+    weeklyUpdates: false,
+  });
 
   const handleLogout = () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      'Logout',
+      'Are you sure you want to logout?',
       [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Sign Out',
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Logout', 
           style: 'destructive',
-          onPress: logout,
+          onPress: logout 
         },
       ]
     );
   };
 
-  const handleEditProfile = () => {
-    // TODO: Navigate to edit profile screen
-    Alert.alert('Edit Profile', 'Profile editing will be available in a future update.');
+  const getInitials = (firstName?: string, lastName?: string) => {
+    if (!firstName || !lastName) return 'U';
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
-  const handleChangePassword = () => {
-    // TODO: Navigate to change password screen
-    Alert.alert('Change Password', 'Password change will be available in a future update.');
-  };
-
-  const handleSupport = () => {
-    Alert.alert(
-      'Support',
-      'For support, please contact your program administrator or email support@power2adapt.com'
-    );
+  const updateSetting = (key: keyof typeof settings, value: boolean) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.content}>
-        {/* Profile Header */}
-        <Card style={styles.profileCard}>
-          <Card.Content>
-            <View style={styles.profileHeader}>
-              <Avatar.Text 
-                size={64} 
-                label={`${user?.firstName?.[0]}${user?.lastName?.[0]}`}
-                style={styles.avatar}
-              />
-              <View style={styles.profileInfo}>
-                <Text variant="headlineSmall" style={styles.userName}>
-                  {user?.firstName} {user?.lastName}
-                </Text>
-                <Text variant="bodyMedium" style={styles.userEmail}>
-                  {user?.email}
-                </Text>
-                <Text variant="bodySmall" style={styles.userRole}>
-                  {user?.role === 'parent' ? 'Parent Account' : user?.role}
-                </Text>
-              </View>
+    <ScrollView style={styles.container}>
+      {/* Profile Header */}
+      <Card style={styles.profileCard}>
+        <Card.Content style={styles.profileContent}>
+          <Avatar.Text 
+            size={80} 
+            label={getInitials(user?.firstName, user?.lastName)} 
+            style={styles.avatar}
+          />
+          <View style={styles.profileInfo}>
+            <Title style={styles.userName}>
+              {user?.firstName} {user?.lastName}
+            </Title>
+            <Paragraph style={styles.userEmail}>{user?.email}</Paragraph>
+            <Text style={styles.userRole}>
+              {user?.role === 'admin' ? 'Administrator' : 'Parent'}
+            </Text>
+          </View>
+        </Card.Content>
+      </Card>
+
+      {/* Account Information */}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>Account Information</Title>
+          
+          <List.Item
+            title="Full Name"
+            description={`${user?.firstName} ${user?.lastName}`}
+            left={props => <List.Icon {...props} icon="account" />}
+          />
+          
+          <List.Item
+            title="Email Address"
+            description={user?.email}
+            left={props => <List.Icon {...props} icon="email" />}
+          />
+          
+          <List.Item
+            title="Account Type"
+            description={user?.role === 'admin' ? 'Administrator' : 'Parent Account'}
+            left={props => <List.Icon {...props} icon="shield-account" />}
+          />
+        </Card.Content>
+      </Card>
+
+      {/* Notification Settings */}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>Notification Settings</Title>
+          
+          <View style={styles.settingItem}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>Push Notifications</Text>
+              <Text style={styles.settingDescription}>
+                Receive instant notifications on your device
+              </Text>
             </View>
-            
-            <Button 
-              mode="outlined" 
-              onPress={handleEditProfile}
-              style={styles.editButton}
-            >
-              Edit Profile
-            </Button>
-          </Card.Content>
-        </Card>
+            <Switch
+              value={settings.pushNotifications}
+              onValueChange={(value) => updateSetting('pushNotifications', value)}
+            />
+          </View>
+          
+          <Divider style={styles.divider} />
+          
+          <View style={styles.settingItem}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>Email Notifications</Text>
+              <Text style={styles.settingDescription}>
+                Get important updates via email
+              </Text>
+            </View>
+            <Switch
+              value={settings.emailNotifications}
+              onValueChange={(value) => updateSetting('emailNotifications', value)}
+            />
+          </View>
+          
+          <Divider style={styles.divider} />
+          
+          <View style={styles.settingItem}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>SMS Reminders</Text>
+              <Text style={styles.settingDescription}>
+                Class reminders sent to your mobile
+              </Text>
+            </View>
+            <Switch
+              value={settings.smsReminders}
+              onValueChange={(value) => updateSetting('smsReminders', value)}
+            />
+          </View>
+          
+          <Divider style={styles.divider} />
+          
+          <View style={styles.settingItem}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>Weekly Updates</Text>
+              <Text style={styles.settingDescription}>
+                Weekly summary of activities and progress
+              </Text>
+            </View>
+            <Switch
+              value={settings.weeklyUpdates}
+              onValueChange={(value) => updateSetting('weeklyUpdates', value)}
+            />
+          </View>
+        </Card.Content>
+      </Card>
 
-        {/* Account Settings */}
-        <Card style={styles.settingsCard}>
-          <Card.Title title="Account Settings" />
-          <Card.Content>
-            <List.Item
-              title="Change Password"
-              description="Update your account password"
-              left={() => <List.Icon icon="lock" />}
-              right={() => <List.Icon icon="chevron-right" />}
-              onPress={handleChangePassword}
-            />
-            
-            <List.Item
-              title="Notification Settings"
-              description="Manage your notification preferences"
-              left={() => <List.Icon icon="notifications" />}
-              right={() => <List.Icon icon="chevron-right" />}
-              onPress={() => Alert.alert('Coming Soon', 'Notification settings will be available in a future update.')}
-            />
-            
-            <List.Item
-              title="Auto-Renewal"
-              description="Automatically re-enroll for future terms"
-              left={() => <List.Icon icon="refresh" />}
-              right={() => <Switch value={true} onValueChange={() => {}} />}
-            />
-          </Card.Content>
-        </Card>
+      {/* App Information */}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>App Information</Title>
+          
+          <List.Item
+            title="Version"
+            description="1.0.0"
+            left={props => <List.Icon {...props} icon="information" />}
+          />
+          
+          <List.Item
+            title="Support"
+            description="Contact us for help"
+            left={props => <List.Icon {...props} icon="help-circle" />}
+            right={props => <List.Icon {...props} icon="chevron-right" />}
+            onPress={() => Alert.alert('Support', 'Contact support at support@power2adapt.com')}
+          />
+          
+          <List.Item
+            title="Privacy Policy"
+            description="Read our privacy policy"
+            left={props => <List.Icon {...props} icon="shield-check" />}
+            right={props => <List.Icon {...props} icon="chevron-right" />}
+            onPress={() => Alert.alert('Privacy Policy', 'Privacy policy would open here')}
+          />
+          
+          <List.Item
+            title="Terms of Service"
+            description="Read our terms of service"
+            left={props => <List.Icon {...props} icon="file-document" />}
+            right={props => <List.Icon {...props} icon="chevron-right" />}
+            onPress={() => Alert.alert('Terms of Service', 'Terms of service would open here')}
+          />
+        </Card.Content>
+      </Card>
 
-        {/* App Information */}
-        <Card style={styles.settingsCard}>
-          <Card.Title title="App Information" />
-          <Card.Content>
-            <List.Item
-              title="Help & Support"
-              description="Get help with your account"
-              left={() => <List.Icon icon="help-circle" />}
-              right={() => <List.Icon icon="chevron-right" />}
-              onPress={handleSupport}
-            />
-            
-            <List.Item
-              title="Terms & Conditions"
-              description="Read our terms and conditions"
-              left={() => <List.Icon icon="file-document" />}
-              right={() => <List.Icon icon="chevron-right" />}
-              onPress={() => Alert.alert('Terms & Conditions', 'Terms will be available in a future update.')}
-            />
-            
-            <List.Item
-              title="Privacy Policy"
-              description="Learn about your privacy"
-              left={() => <List.Icon icon="shield-check" />}
-              right={() => <List.Icon icon="chevron-right" />}
-              onPress={() => Alert.alert('Privacy Policy', 'Privacy policy will be available in a future update.')}
-            />
-            
-            <List.Item
-              title="App Version"
-              description="Version 1.0.0"
-              left={() => <List.Icon icon="information" />}
-            />
-          </Card.Content>
-        </Card>
-
-        {/* Sign Out */}
-        <View style={styles.signOutSection}>
-          <Button
-            mode="contained"
-            onPress={handleLogout}
-            style={styles.signOutButton}
-            buttonColor={theme.colors.error}
-          >
-            Sign Out
-          </Button>
-        </View>
-
-        <Text variant="bodySmall" style={styles.footer}>
-          Power2ADAPT Mobile App
-        </Text>
-      </ScrollView>
-    </SafeAreaView>
+      {/* Logout */}
+      <View style={styles.logoutSection}>
+        <Button
+          mode="outlined"
+          onPress={handleLogout}
+          style={styles.logoutButton}
+          labelStyle={styles.logoutButtonText}
+          icon="logout"
+        >
+          Logout
+        </Button>
+      </View>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  content: {
-    flex: 1,
-    padding: spacing.lg,
+    backgroundColor: '#f5f5f5',
   },
   profileCard: {
-    marginBottom: spacing.lg,
+    margin: 16,
+    marginBottom: 8,
   },
-  profileHeader: {
+  profileContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.lg,
+    paddingVertical: 16,
   },
   avatar: {
-    backgroundColor: theme.colors.primary,
+    marginRight: 20,
   },
   profileInfo: {
-    marginLeft: spacing.lg,
     flex: 1,
   },
   userName: {
-    fontWeight: 'bold',
-    marginBottom: spacing.xs,
+    fontSize: 24,
+    marginBottom: 4,
   },
   userEmail: {
-    opacity: 0.7,
-    marginBottom: spacing.xs,
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 4,
   },
   userRole: {
-    opacity: 0.6,
-    textTransform: 'capitalize',
+    fontSize: 14,
+    color: '#2196F3',
+    fontWeight: '500',
   },
-  editButton: {
-    alignSelf: 'flex-start',
+  card: {
+    margin: 16,
+    marginTop: 8,
   },
-  settingsCard: {
-    marginBottom: spacing.lg,
+  sectionTitle: {
+    fontSize: 18,
+    marginBottom: 16,
   },
-  signOutSection: {
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: spacing.xl,
+    paddingVertical: 12,
   },
-  signOutButton: {
-    width: '100%',
+  settingInfo: {
+    flex: 1,
+    marginRight: 16,
   },
-  footer: {
-    textAlign: 'center',
-    opacity: 0.5,
-    marginBottom: spacing.xl,
+  settingTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  settingDescription: {
+    fontSize: 14,
+    color: '#666',
+  },
+  divider: {
+    marginVertical: 8,
+  },
+  logoutSection: {
+    margin: 16,
+    marginTop: 8,
+    marginBottom: 32,
+  },
+  logoutButton: {
+    borderColor: '#f44336',
+    paddingVertical: 8,
+  },
+  logoutButtonText: {
+    color: '#f44336',
+    fontSize: 16,
   },
 });
-
-export default ProfileScreen;

@@ -1,46 +1,51 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import { Text, Card, Button, TextInput, Checkbox } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { 
+  Card, 
+  Title, 
+  Paragraph, 
+  Button, 
+  Text,
+  TextInput,
+  RadioButton
+} from 'react-native-paper';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { enrollmentsApi, classesApi } from '../services/api';
-import { theme, spacing } from '../theme/theme';
+import { apiService } from '../services/api';
 
-type RouteProps = {
-  params: {
-    classId: string;
-  };
-};
-
-const EnrollmentScreen = () => {
-  const route = useRoute<RouteProps>();
+export default function EnrollmentScreen() {
+  const route = useRoute();
   const navigation = useNavigation();
-  const queryClient = useQueryClient();
-  const { classId } = route.params;
-
-  const [childFirstName, setChildFirstName] = useState('');
-  const [childLastName, setChildLastName] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [grade, setGrade] = useState('');
-  const [medicalInfo, setMedicalInfo] = useState('');
-  const [emergencyContact, setEmergencyContact] = useState('');
-  const [autoRenew, setAutoRenew] = useState(true);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-
-  const { data: classData } = useQuery({
-    queryKey: ['class', classId],
-    queryFn: () => classesApi.getClass(classId),
-    select: (response) => response.data,
+  const { classData } = route.params as { classData: any };
+  
+  const [selectedChild, setSelectedChild] = useState('new');
+  const [childInfo, setChildInfo] = useState({
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    grade: '',
+    medicalInfo: '',
+    emergencyContact: '',
   });
+  const [loading, setLoading] = useState(false);
 
-  const enrollmentMutation = useMutation({
-    mutationFn: (enrollmentData: any) => enrollmentsApi.createEnrollment(enrollmentData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['enrollments'] });
+  const handleEnroll = async () => {
+    if (selectedChild === 'new' && (!childInfo.firstName || !childInfo.lastName || !childInfo.dateOfBirth)) {
+      Alert.alert('Error', 'Please fill in all required child information');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const enrollmentData = {
+        classId: classData.id,
+        childInfo: selectedChild === 'new' ? childInfo : undefined,
+      };
+
+      await apiService.enrollInClass(enrollmentData);
+      
       Alert.alert(
         'Enrollment Successful!',
-        'Your enrollment has been submitted. You will receive a confirmation email shortly.',
+        `Your child has been enrolled in ${classData.name}. You will receive a confirmation email shortly.`,
         [
           {
             text: 'OK',
@@ -48,266 +53,212 @@ const EnrollmentScreen = () => {
           },
         ]
       );
-    },
-    onError: (error: any) => {
-      Alert.alert(
-        'Enrollment Failed',
-        error.response?.data?.message || 'Please try again later.'
-      );
-    },
-  });
-
-  const handleSubmit = () => {
-    if (!childFirstName.trim() || !childLastName.trim() || !dateOfBirth.trim() || !emergencyContact.trim()) {
-      Alert.alert('Missing Information', 'Please fill in all required fields.');
-      return;
+    } catch (error: any) {
+      Alert.alert('Enrollment Failed', error.message || 'Please try again');
+    } finally {
+      setLoading(false);
     }
-
-    if (!termsAccepted) {
-      Alert.alert('Terms Required', 'Please accept the terms and conditions to proceed.');
-      return;
-    }
-
-    const enrollmentData = {
-      classId,
-      childInfo: {
-        firstName: childFirstName.trim(),
-        lastName: childLastName.trim(),
-        dateOfBirth,
-        grade: grade.trim(),
-        medicalInfo: medicalInfo.trim(),
-        emergencyContact: emergencyContact.trim(),
-      },
-      autoRenew,
-    };
-
-    enrollmentMutation.mutate(enrollmentData);
   };
 
-  if (!classData) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loading}>
-          <Text>Loading...</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.content}>
-        {/* Class Summary */}
-        <Card style={styles.summaryCard}>
-          <Card.Title title="Enrolling in:" />
-          <Card.Content>
-            <Text variant="titleLarge" style={styles.className}>
-              {classData.name}
-            </Text>
-            <Text variant="bodyMedium" style={styles.classPrice}>
-              ${classData.pricePerTerm} per term
-            </Text>
-          </Card.Content>
-        </Card>
+    <ScrollView style={styles.container}>
+      {/* Class Summary */}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>Class Summary</Title>
+          <Text style={styles.className}>{classData.name}</Text>
+          <Text style={styles.classInfo}>
+            {classData.sportType} • Ages {classData.minAge}-{classData.maxAge}
+          </Text>
+          <Text style={styles.classPrice}>
+            ${classData.price} per term
+          </Text>
+        </Card.Content>
+      </Card>
 
-        {/* Child Information */}
-        <Card style={styles.formCard}>
-          <Card.Title title="Child Information" />
+      {/* Child Selection */}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>Select Child</Title>
+          
+          <View style={styles.radioOption}>
+            <RadioButton
+              value="new"
+              status={selectedChild === 'new' ? 'checked' : 'unchecked'}
+              onPress={() => setSelectedChild('new')}
+            />
+            <Text style={styles.radioLabel}>Add New Child</Text>
+          </View>
+        </Card.Content>
+      </Card>
+
+      {/* Child Information Form */}
+      {selectedChild === 'new' && (
+        <Card style={styles.card}>
           <Card.Content>
+            <Title style={styles.sectionTitle}>Child Information</Title>
+            
             <TextInput
               label="First Name *"
-              value={childFirstName}
-              onChangeText={setChildFirstName}
-              mode="outlined"
+              value={childInfo.firstName}
+              onChangeText={(text) => setChildInfo(prev => ({ ...prev, firstName: text }))}
               style={styles.input}
+              mode="outlined"
             />
-
+            
             <TextInput
               label="Last Name *"
-              value={childLastName}
-              onChangeText={setChildLastName}
-              mode="outlined"
+              value={childInfo.lastName}
+              onChangeText={(text) => setChildInfo(prev => ({ ...prev, lastName: text }))}
               style={styles.input}
+              mode="outlined"
             />
-
+            
             <TextInput
               label="Date of Birth (YYYY-MM-DD) *"
-              value={dateOfBirth}
-              onChangeText={setDateOfBirth}
-              mode="outlined"
-              placeholder="2015-03-15"
+              value={childInfo.dateOfBirth}
+              onChangeText={(text) => setChildInfo(prev => ({ ...prev, dateOfBirth: text }))}
               style={styles.input}
-            />
-
-            <TextInput
-              label="Grade/Year Level"
-              value={grade}
-              onChangeText={setGrade}
               mode="outlined"
-              placeholder="Year 3"
-              style={styles.input}
+              placeholder="2015-06-15"
             />
-
+            
             <TextInput
-              label="Medical Information"
-              value={medicalInfo}
-              onChangeText={setMedicalInfo}
+              label="Grade (Optional)"
+              value={childInfo.grade}
+              onChangeText={(text) => setChildInfo(prev => ({ ...prev, grade: text }))}
+              style={styles.input}
+              mode="outlined"
+              placeholder="Grade 3"
+            />
+            
+            <TextInput
+              label="Medical Information (Optional)"
+              value={childInfo.medicalInfo}
+              onChangeText={(text) => setChildInfo(prev => ({ ...prev, medicalInfo: text }))}
+              style={styles.input}
               mode="outlined"
               multiline
               numberOfLines={3}
-              placeholder="Any allergies, medical conditions, or special requirements"
-              style={styles.input}
+              placeholder="Any allergies, medical conditions, or special requirements..."
             />
-
+            
             <TextInput
-              label="Emergency Contact *"
-              value={emergencyContact}
-              onChangeText={setEmergencyContact}
+              label="Emergency Contact (Optional)"
+              value={childInfo.emergencyContact}
+              onChangeText={(text) => setChildInfo(prev => ({ ...prev, emergencyContact: text }))}
+              style={styles.input}
               mode="outlined"
               placeholder="Name and phone number"
-              style={styles.input}
             />
           </Card.Content>
         </Card>
+      )}
 
-        {/* Options */}
-        <Card style={styles.formCard}>
-          <Card.Title title="Enrollment Options" />
-          <Card.Content>
-            <View style={styles.checkboxRow}>
-              <Checkbox
-                status={autoRenew ? 'checked' : 'unchecked'}
-                onPress={() => setAutoRenew(!autoRenew)}
-              />
-              <View style={styles.checkboxText}>
-                <Text variant="bodyMedium">Auto-renewal for future terms</Text>
-                <Text variant="bodySmall" style={styles.checkboxSubtext}>
-                  Automatically re-enroll for the next term (you'll be notified 1 month in advance)
-                </Text>
-              </View>
-            </View>
+      {/* Terms and Conditions */}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>Terms & Conditions</Title>
+          <Paragraph style={styles.termsText}>
+            • Full term payment is required at enrollment
+          </Paragraph>
+          <Paragraph style={styles.termsText}>
+            • Refunds are available up to 48 hours before the first session
+          </Paragraph>
+          <Paragraph style={styles.termsText}>
+            • Parents/guardians must sign a waiver before the first session
+          </Paragraph>
+          <Paragraph style={styles.termsText}>
+            • Children must arrive 10 minutes before session start time
+          </Paragraph>
+          <Paragraph style={styles.termsText}>
+            • All equipment is provided, please bring water bottle
+          </Paragraph>
+        </Card.Content>
+      </Card>
 
-            <View style={styles.checkboxRow}>
-              <Checkbox
-                status={termsAccepted ? 'checked' : 'unchecked'}
-                onPress={() => setTermsAccepted(!termsAccepted)}
-              />
-              <View style={styles.checkboxText}>
-                <Text variant="bodyMedium">I accept the terms and conditions *</Text>
-                <Text variant="bodySmall" style={styles.checkboxSubtext}>
-                  Including payment terms, cancellation policy, and liability waivers
-                </Text>
-              </View>
-            </View>
-          </Card.Content>
-        </Card>
-
-        {/* Summary */}
-        <Card style={styles.summaryCard}>
-          <Card.Title title="Enrollment Summary" />
-          <Card.Content>
-            <View style={styles.summaryRow}>
-              <Text variant="bodyMedium">Term Fee:</Text>
-              <Text variant="titleMedium" style={styles.summaryPrice}>
-                ${classData.pricePerTerm}
-              </Text>
-            </View>
-            
-            <Text variant="bodySmall" style={styles.paymentNote}>
-              Payment will be processed after enrollment confirmation.
-            </Text>
-          </Card.Content>
-        </Card>
-
-        {/* Submit Button */}
+      {/* Enrollment Button */}
+      <View style={styles.enrollmentSection}>
         <Button
           mode="contained"
-          onPress={handleSubmit}
-          loading={enrollmentMutation.isPending}
-          disabled={enrollmentMutation.isPending}
-          style={styles.submitButton}
-          contentStyle={styles.submitButtonContent}
+          onPress={handleEnroll}
+          loading={loading}
+          disabled={loading}
+          style={styles.enrollButton}
+          labelStyle={styles.enrollButtonText}
         >
-          Submit Enrollment
+          Complete Enrollment
         </Button>
-
-        <Text variant="bodySmall" style={styles.disclaimer}>
-          * Required fields. You will receive a confirmation email with payment instructions.
+        
+        <Text style={styles.paymentNote}>
+          You will be redirected to secure payment after enrollment
         </Text>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: '#f5f5f5',
   },
-  content: {
-    flex: 1,
-    padding: spacing.lg,
+  card: {
+    margin: 16,
+    marginBottom: 8,
   },
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  summaryCard: {
-    marginBottom: spacing.lg,
+  sectionTitle: {
+    fontSize: 18,
+    marginBottom: 12,
   },
   className: {
-    fontWeight: 'bold',
-    marginBottom: spacing.xs,
+    fontSize: 20,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  classInfo: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
   },
   classPrice: {
-    color: theme.colors.primary,
+    fontSize: 18,
     fontWeight: 'bold',
+    color: '#2196F3',
   },
-  formCard: {
-    marginBottom: spacing.lg,
+  radioOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  radioLabel: {
+    fontSize: 16,
+    marginLeft: 8,
   },
   input: {
-    marginBottom: spacing.md,
+    marginBottom: 16,
   },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: spacing.md,
+  termsText: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
   },
-  checkboxText: {
-    flex: 1,
-    marginLeft: spacing.sm,
+  enrollmentSection: {
+    margin: 16,
+    marginTop: 8,
   },
-  checkboxSubtext: {
-    opacity: 0.7,
-    marginTop: spacing.xs,
+  enrollButton: {
+    paddingVertical: 8,
+    marginBottom: 12,
   },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  summaryPrice: {
+  enrollButtonText: {
+    fontSize: 16,
     fontWeight: 'bold',
-    color: theme.colors.primary,
   },
   paymentNote: {
-    opacity: 0.7,
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
     fontStyle: 'italic',
   },
-  submitButton: {
-    marginVertical: spacing.xl,
-  },
-  submitButtonContent: {
-    paddingVertical: spacing.sm,
-  },
-  disclaimer: {
-    textAlign: 'center',
-    opacity: 0.7,
-    marginBottom: spacing.xl,
-  },
 });
-
-export default EnrollmentScreen;

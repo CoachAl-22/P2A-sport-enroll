@@ -1,285 +1,306 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, Card, Chip, Button, Searchbar } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQuery } from '@tanstack/react-query';
+import { 
+  Card, 
+  Title, 
+  Paragraph, 
+  Button, 
+  Text,
+  Searchbar,
+  Chip,
+  IconButton
+} from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Ionicons } from '@expo/vector-icons';
-import { classesApi, venuesApi } from '../services/api';
-import { theme, spacing } from '../theme/theme';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { apiService } from '../services/api';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
-const ClassesScreen = () => {
+export default function ClassesScreen() {
+  const navigation = useNavigation();
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSportType, setSelectedSportType] = useState<string | null>(null);
-  const navigation = useNavigation<NavigationProp>();
-
-  const { data: classes, isLoading: classesLoading, refetch: refetchClasses } = useQuery({
-    queryKey: ['classes'],
-    queryFn: () => classesApi.getClasses(),
-    select: (response) => response.data,
+  const [selectedFilters, setSelectedFilters] = useState({
+    sportType: '',
+    venue: '',
+    dayOfWeek: ''
   });
 
-  const { data: venues, isLoading: venuesLoading, refetch: refetchVenues } = useQuery({
-    queryKey: ['venues'],
-    queryFn: () => venuesApi.getVenues(),
-    select: (response) => response.data,
-  });
+  const sportTypes = ['Athletics', 'Basketball', 'Football', 'Tennis', 'Swimming'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  const onRefresh = React.useCallback(() => {
-    refetchClasses();
-    refetchVenues();
-  }, [refetchClasses, refetchVenues]);
-
-  const sportTypes = [
-    { key: 'foundation_prep_year2', label: 'Foundation' },
-    { key: 'emerging_year3_6', label: 'Emerging' },
-    { key: 'academy_year7_above', label: 'Academy' },
-    { key: 'team_sport_speed', label: 'Team Sport Speed' },
-    { key: 'senior_squad', label: 'Senior Squad' },
-  ];
-
-  const filteredClasses = classes?.filter((cls: any) => {
-    const matchesSearch = cls.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         cls.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSportType = !selectedSportType || cls.sportType === selectedSportType;
-    return matchesSearch && matchesSportType;
-  }) || [];
-
-  const getVenueName = (venueId: string) => {
-    const venue = venues?.find((v: any) => v.id === venueId);
-    return venue?.name || 'Unknown Venue';
+  const loadClasses = async () => {
+    try {
+      const classData = await apiService.getClasses(selectedFilters);
+      setClasses(classData);
+    } catch (error) {
+      console.error('Failed to load classes:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   };
 
-  const formatTime = (time: string) => {
-    if (!time) return '';
-    const [hours, minutes] = time.split(':');
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-    return `${displayHour}:${minutes} ${ampm}`;
+  useEffect(() => {
+    loadClasses();
+  }, [selectedFilters]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadClasses();
+  };
+
+  const filteredClasses = classes.filter((classItem: any) =>
+    classItem.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    classItem.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    classItem.sportType?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleClassPress = (classItem: any) => {
+    navigation.navigate('ClassDetails' as never, { classId: classItem.id } as never);
   };
 
   const getDayName = (dayOfWeek: number) => {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    return days[dayOfWeek - 1] || '';
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return days[dayOfWeek] || 'Unknown';
   };
 
-  const handleClassPress = (classId: string) => {
-    navigation.navigate('ClassDetail', { classId });
+  const formatTime = (timeString: string) => {
+    if (!timeString) return '';
+    return timeString.substring(0, 5); // HH:MM format
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text variant="headlineMedium" style={styles.title}>
-          Available Classes
-        </Text>
-        
-        <Searchbar
-          placeholder="Search classes..."
-          onChangeText={setSearchQuery}
-          value={searchQuery}
-          style={styles.searchbar}
-        />
+    <View style={styles.container}>
+      {/* Search Bar */}
+      <Searchbar
+        placeholder="Search classes..."
+        onChangeText={setSearchQuery}
+        value={searchQuery}
+        style={styles.searchbar}
+      />
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filtersContainer}>
+      {/* Filter Chips */}
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        style={styles.filtersContainer}
+        contentContainerStyle={styles.filtersContent}
+      >
+        {sportTypes.map((sport) => (
           <Chip
-            selected={selectedSportType === null}
-            onPress={() => setSelectedSportType(null)}
+            key={sport}
+            selected={selectedFilters.sportType === sport}
+            onPress={() => setSelectedFilters(prev => ({
+              ...prev,
+              sportType: prev.sportType === sport ? '' : sport
+            }))}
             style={styles.filterChip}
           >
-            All
+            {sport}
           </Chip>
-          {sportTypes.map((type) => (
-            <Chip
-              key={type.key}
-              selected={selectedSportType === type.key}
-              onPress={() => setSelectedSportType(selectedSportType === type.key ? null : type.key)}
-              style={styles.filterChip}
-            >
-              {type.label}
-            </Chip>
-          ))}
-        </ScrollView>
-      </View>
+        ))}
+      </ScrollView>
 
-      <ScrollView 
-        style={styles.content}
+      {/* Classes List */}
+      <ScrollView
+        style={styles.classesContainer}
         refreshControl={
-          <RefreshControl
-            refreshing={classesLoading || venuesLoading}
-            onRefresh={onRefresh}
-            colors={[theme.colors.primary]}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         {filteredClasses.length > 0 ? (
-          filteredClasses.map((cls: any) => (
-            <Card key={cls.id} style={styles.classCard} onPress={() => handleClassPress(cls.id)}>
+          filteredClasses.map((classItem: any) => (
+            <Card key={classItem.id} style={styles.classCard}>
               <Card.Content>
                 <View style={styles.classHeader}>
-                  <Text variant="titleLarge" style={styles.className}>
-                    {cls.name}
-                  </Text>
-                  <Chip mode="outlined" compact>
-                    {sportTypes.find(type => type.key === cls.sportType)?.label || cls.sportType}
-                  </Chip>
+                  <View style={styles.classInfo}>
+                    <Title style={styles.className}>{classItem.name}</Title>
+                    <View style={styles.classMetadata}>
+                      <Chip 
+                        mode="outlined" 
+                        compact 
+                        style={styles.sportChip}
+                      >
+                        {classItem.sportType}
+                      </Chip>
+                      <Text style={styles.ageRange}>
+                        Ages {classItem.minAge}-{classItem.maxAge}
+                      </Text>
+                    </View>
+                  </View>
+                  <IconButton
+                    icon="chevron-right"
+                    onPress={() => handleClassPress(classItem)}
+                  />
                 </View>
 
-                {cls.description && (
-                  <Text variant="bodyMedium" style={styles.classDescription}>
-                    {cls.description}
-                  </Text>
-                )}
+                <Paragraph style={styles.description} numberOfLines={2}>
+                  {classItem.description}
+                </Paragraph>
 
                 <View style={styles.classDetails}>
                   <View style={styles.detailRow}>
-                    <Ionicons name="location" size={16} color={theme.colors.primary} />
-                    <Text variant="bodyMedium" style={styles.detailText}>
-                      {getVenueName(cls.venueId)}
+                    <Text style={styles.detailLabel}>Schedule:</Text>
+                    <Text style={styles.detailValue}>
+                      {getDayName(classItem.dayOfWeek)} {formatTime(classItem.startTime)} - {formatTime(classItem.endTime)}
                     </Text>
                   </View>
-
+                  
                   <View style={styles.detailRow}>
-                    <Ionicons name="time" size={16} color={theme.colors.primary} />
-                    <Text variant="bodyMedium" style={styles.detailText}>
-                      {getDayName(cls.dayOfWeek)} {formatTime(cls.startTime)} - {formatTime(cls.endTime)}
+                    <Text style={styles.detailLabel}>Venue:</Text>
+                    <Text style={styles.detailValue}>{classItem.venueName}</Text>
+                  </View>
+                  
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Spots:</Text>
+                    <Text style={styles.detailValue}>
+                      {classItem.currentEnrollments || 0}/{classItem.maxStudents} enrolled
                     </Text>
                   </View>
-
+                  
                   <View style={styles.detailRow}>
-                    <Ionicons name="people" size={16} color={theme.colors.primary} />
-                    <Text variant="bodyMedium" style={styles.detailText}>
-                      Ages {cls.minAge}-{cls.maxAge} • Max {cls.maxCapacity} students
-                    </Text>
-                  </View>
-
-                  <View style={styles.detailRow}>
-                    <Ionicons name="cash" size={16} color={theme.colors.primary} />
-                    <Text variant="bodyMedium" style={styles.detailText}>
-                      ${cls.pricePerTerm} per term
+                    <Text style={styles.detailLabel}>Price:</Text>
+                    <Text style={[styles.detailValue, styles.price]}>
+                      ${classItem.price}/term
                     </Text>
                   </View>
                 </View>
 
-                <View style={styles.classFooter}>
-                  <Text variant="bodySmall" style={styles.availabilityText}>
-                    {cls.currentEnrollment || 0} / {cls.maxCapacity} enrolled
-                  </Text>
-                  <Button 
-                    mode="contained" 
-                    compact
-                    onPress={() => handleClassPress(cls.id)}
-                  >
-                    View Details
-                  </Button>
-                </View>
+                <Button
+                  mode="contained"
+                  onPress={() => handleClassPress(classItem)}
+                  style={styles.viewButton}
+                  disabled={classItem.currentEnrollments >= classItem.maxStudents}
+                >
+                  {classItem.currentEnrollments >= classItem.maxStudents ? 'Class Full' : 'View Details'}
+                </Button>
               </Card.Content>
             </Card>
           ))
         ) : (
-          <View style={styles.emptyState}>
-            <Ionicons name="search" size={64} color={theme.colors.outline} />
-            <Text variant="headlineSmall" style={styles.emptyTitle}>
-              No classes found
-            </Text>
-            <Text variant="bodyMedium" style={styles.emptyMessage}>
-              {searchQuery || selectedSportType 
-                ? 'Try adjusting your search or filters'
-                : 'No classes are currently available'
-              }
-            </Text>
-          </View>
+          <Card style={styles.emptyCard}>
+            <Card.Content>
+              <Title style={styles.emptyTitle}>No Classes Found</Title>
+              <Paragraph style={styles.emptyText}>
+                {searchQuery || Object.values(selectedFilters).some(f => f) 
+                  ? 'Try adjusting your search or filters'
+                  : 'Classes will appear here when they become available'
+                }
+              </Paragraph>
+              {(searchQuery || Object.values(selectedFilters).some(f => f)) && (
+                <Button
+                  mode="outlined"
+                  onPress={() => {
+                    setSearchQuery('');
+                    setSelectedFilters({ sportType: '', venue: '', dayOfWeek: '' });
+                  }}
+                  style={styles.clearButton}
+                >
+                  Clear Filters
+                </Button>
+              )}
+            </Card.Content>
+          </Card>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    padding: spacing.lg,
-    backgroundColor: theme.colors.surface,
-  },
-  title: {
-    fontWeight: 'bold',
-    marginBottom: spacing.md,
-    color: theme.colors.onSurface,
+    backgroundColor: '#f5f5f5',
   },
   searchbar: {
-    marginBottom: spacing.md,
+    margin: 16,
+    marginBottom: 8,
   },
   filtersContainer: {
-    marginBottom: spacing.sm,
+    maxHeight: 50,
+    marginBottom: 8,
+  },
+  filtersContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   filterChip: {
-    marginRight: spacing.sm,
+    marginRight: 8,
   },
-  content: {
+  classesContainer: {
     flex: 1,
-    padding: spacing.lg,
   },
   classCard: {
-    marginBottom: spacing.md,
+    margin: 16,
+    marginTop: 8,
   },
   classHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: spacing.sm,
+    marginBottom: 8,
+  },
+  classInfo: {
+    flex: 1,
   },
   className: {
-    flex: 1,
-    fontWeight: 'bold',
-    marginRight: spacing.sm,
+    fontSize: 18,
+    marginBottom: 4,
   },
-  classDescription: {
-    opacity: 0.7,
-    marginBottom: spacing.md,
+  classMetadata: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  sportChip: {
+    marginRight: 8,
+  },
+  ageRange: {
+    fontSize: 12,
+    color: '#666',
+  },
+  description: {
+    marginBottom: 12,
+    color: '#666',
   },
   classDetails: {
-    marginBottom: spacing.md,
+    marginBottom: 16,
   },
   detailRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.xs,
-  },
-  detailText: {
-    marginLeft: spacing.sm,
-    flex: 1,
-  },
-  classFooter: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    marginBottom: 4,
   },
-  availabilityText: {
-    opacity: 0.7,
+  detailLabel: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
   },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: spacing.xxl,
+  detailValue: {
+    fontSize: 14,
+    color: '#333',
+  },
+  price: {
+    fontWeight: 'bold',
+    color: '#2196F3',
+  },
+  viewButton: {
+    marginTop: 8,
+  },
+  emptyCard: {
+    margin: 16,
+    padding: 20,
   },
   emptyTitle: {
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-    fontWeight: 'bold',
-  },
-  emptyMessage: {
     textAlign: 'center',
-    opacity: 0.7,
+    marginBottom: 8,
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#666',
+    marginBottom: 16,
+  },
+  clearButton: {
+    alignSelf: 'center',
   },
 });
-
-export default ClassesScreen;

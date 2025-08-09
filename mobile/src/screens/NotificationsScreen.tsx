@@ -1,296 +1,297 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, Card, Button, Avatar, Chip } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Ionicons } from '@expo/vector-icons';
-import { notificationsApi } from '../services/api';
-import { theme, spacing } from '../theme/theme';
+import { 
+  Card, 
+  Title, 
+  Paragraph, 
+  Text,
+  IconButton,
+  Chip,
+  Badge
+} from 'react-native-paper';
 
-const NotificationsScreen = () => {
-  const queryClient = useQueryClient();
-
-  const { data: notifications, isLoading, refetch } = useQuery({
-    queryKey: ['notifications'],
-    queryFn: () => notificationsApi.getNotifications(),
-    select: (response) => response.data,
-  });
-
-  const markAsReadMutation = useMutation({
-    mutationFn: (notificationId: string) => notificationsApi.markAsRead(notificationId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+export default function NotificationsScreen() {
+  const [refreshing, setRefreshing] = useState(false);
+  const [notifications] = useState([
+    {
+      id: '1',
+      title: 'Welcome to Power2ADAPT!',
+      message: 'Your account has been successfully set up. Start browsing classes and enroll your children today.',
+      type: 'welcome',
+      timestamp: '2024-08-09T10:00:00Z',
+      read: false,
     },
-  });
+    {
+      id: '2',
+      title: 'Term 4 2024 Classes Now Available',
+      message: 'New classes for Term 4 2024 are now open for enrollment. Popular classes fill up quickly!',
+      type: 'announcement',
+      timestamp: '2024-08-08T14:30:00Z',
+      read: false,
+    },
+    {
+      id: '3',
+      title: 'Payment Confirmation',
+      message: 'Your payment for Athletics Foundation Program has been processed successfully.',
+      type: 'payment',
+      timestamp: '2024-08-07T09:15:00Z',
+      read: true,
+    },
+    {
+      id: '4',
+      title: 'Class Reminder',
+      message: 'Your child has a basketball session tomorrow at 4:00 PM at Toorak College.',
+      type: 'reminder',
+      timestamp: '2024-08-06T18:00:00Z',
+      read: true,
+    },
+    {
+      id: '5',
+      title: 'New Coach Introduction',
+      message: 'We\'re excited to introduce Coach Sarah Johnson who will be leading our tennis programs.',
+      type: 'announcement',
+      timestamp: '2024-08-05T12:00:00Z',
+      read: true,
+    },
+  ]);
 
-  const handleMarkAsRead = (notificationId: string) => {
-    markAsReadMutation.mutate(notificationId);
+  const onRefresh = () => {
+    setRefreshing(true);
+    // Simulate loading
+    setTimeout(() => setRefreshing(false), 1000);
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Just now';
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    if (diffInHours < 48) return 'Yesterday';
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays}d ago`;
   };
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'enrollment_reminder':
-        return 'calendar';
-      case 'payment_due':
-        return 'cash';
-      case 'class_update':
-        return 'information-circle';
-      default:
-        return 'notifications';
+      case 'welcome': return 'account-check';
+      case 'announcement': return 'bullhorn';
+      case 'payment': return 'credit-card';
+      case 'reminder': return 'bell';
+      default: return 'information';
     }
   };
 
   const getNotificationColor = (type: string) => {
     switch (type) {
-      case 'enrollment_reminder':
-        return theme.colors.primary;
-      case 'payment_due':
-        return theme.colors.error;
-      case 'class_update':
-        return theme.colors.secondary;
-      default:
-        return theme.colors.outline;
+      case 'welcome': return '#4CAF50';
+      case 'announcement': return '#2196F3';
+      case 'payment': return '#FF9800';
+      case 'reminder': return '#9C27B0';
+      default: return '#666';
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) {
-      return 'Today';
-    } else if (diffDays === 1) {
-      return 'Yesterday';
-    } else if (diffDays < 7) {
-      return `${diffDays} days ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
-  };
-
-  const unreadNotifications = notifications?.filter((n: any) => !n.read) || [];
-  const readNotifications = notifications?.filter((n: any) => n.read) || [];
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Text variant="headlineMedium" style={styles.title}>
-          Notifications
-        </Text>
-        {unreadNotifications.length > 0 && (
-          <Chip mode="outlined" compact>
-            {unreadNotifications.length} new
-          </Chip>
+        <Title style={styles.headerTitle}>Notifications</Title>
+        {unreadCount > 0 && (
+          <Badge size={24} style={styles.badge}>
+            {unreadCount}
+          </Badge>
         )}
       </View>
 
-      <ScrollView 
-        style={styles.content}
+      <ScrollView
+        style={styles.notificationsList}
         refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={refetch}
-            colors={[theme.colors.primary]}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* Unread Notifications */}
-        {unreadNotifications.length > 0 && (
-          <View style={styles.section}>
-            <Text variant="titleMedium" style={styles.sectionTitle}>
-              New Notifications
-            </Text>
-            {unreadNotifications.map((notification: any) => (
-              <Card key={notification.id} style={styles.unreadCard}>
-                <Card.Content>
-                  <View style={styles.notificationHeader}>
-                    <View style={styles.notificationIcon}>
-                      <Ionicons
-                        name={getNotificationIcon(notification.type)}
-                        size={24}
-                        color={getNotificationColor(notification.type)}
-                      />
-                    </View>
-                    <View style={styles.notificationContent}>
-                      <Text variant="titleMedium" style={styles.notificationTitle}>
-                        {notification.title}
-                      </Text>
-                      <Text variant="bodyMedium" style={styles.notificationMessage}>
-                        {notification.message}
-                      </Text>
-                      <Text variant="bodySmall" style={styles.notificationDate}>
-                        {formatDate(notification.createdAt)}
-                      </Text>
-                    </View>
-                    <View style={styles.unreadIndicator} />
-                  </View>
-                  
-                  <Button
-                    mode="outlined"
-                    compact
-                    onPress={() => handleMarkAsRead(notification.id)}
-                    style={styles.markReadButton}
-                  >
-                    Mark as Read
-                  </Button>
-                </Card.Content>
-              </Card>
-            ))}
-          </View>
-        )}
-
-        {/* Read Notifications */}
-        {readNotifications.length > 0 && (
-          <View style={styles.section}>
-            <Text variant="titleMedium" style={styles.sectionTitle}>
-              Earlier
-            </Text>
-            {readNotifications.map((notification: any) => (
-              <Card key={notification.id} style={styles.readCard}>
-                <Card.Content>
-                  <View style={styles.notificationHeader}>
-                    <View style={styles.notificationIcon}>
-                      <Ionicons
-                        name={getNotificationIcon(notification.type)}
-                        size={24}
-                        color={theme.colors.outline}
-                      />
-                    </View>
-                    <View style={styles.notificationContent}>
-                      <Text variant="titleMedium" style={styles.readNotificationTitle}>
-                        {notification.title}
-                      </Text>
-                      <Text variant="bodyMedium" style={styles.readNotificationMessage}>
-                        {notification.message}
-                      </Text>
-                      <Text variant="bodySmall" style={styles.notificationDate}>
-                        {formatDate(notification.createdAt)}
+        {notifications.map((notification) => (
+          <Card 
+            key={notification.id} 
+            style={[
+              styles.notificationCard,
+              !notification.read && styles.unreadCard
+            ]}
+          >
+            <Card.Content>
+              <View style={styles.notificationHeader}>
+                <View style={styles.notificationTitleRow}>
+                  <IconButton
+                    icon={getNotificationIcon(notification.type)}
+                    iconColor={getNotificationColor(notification.type)}
+                    size={24}
+                    style={styles.notificationIcon}
+                  />
+                  <View style={styles.titleContainer}>
+                    <Text style={[
+                      styles.notificationTitle,
+                      !notification.read && styles.unreadTitle
+                    ]}>
+                      {notification.title}
+                    </Text>
+                    <View style={styles.metadataRow}>
+                      <Chip 
+                        mode="outlined" 
+                        compact 
+                        style={[
+                          styles.typeChip,
+                          { borderColor: getNotificationColor(notification.type) }
+                        ]}
+                        textStyle={{ color: getNotificationColor(notification.type) }}
+                      >
+                        {notification.type}
+                      </Chip>
+                      <Text style={styles.timestamp}>
+                        {formatTimestamp(notification.timestamp)}
                       </Text>
                     </View>
                   </View>
-                </Card.Content>
-              </Card>
-            ))}
-          </View>
-        )}
+                </View>
+                {!notification.read && (
+                  <View style={styles.unreadDot} />
+                )}
+              </View>
+              
+              <Paragraph style={styles.notificationMessage}>
+                {notification.message}
+              </Paragraph>
+            </Card.Content>
+          </Card>
+        ))}
 
-        {/* Empty State */}
-        {!notifications || notifications.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Ionicons name="notifications-outline" size={64} color={theme.colors.outline} />
-            <Text variant="headlineSmall" style={styles.emptyTitle}>
-              No notifications
-            </Text>
-            <Text variant="bodyMedium" style={styles.emptyMessage}>
-              You're all caught up! New notifications will appear here.
-            </Text>
-          </View>
-        ) : null}
+        {notifications.length === 0 && (
+          <Card style={styles.emptyCard}>
+            <Card.Content>
+              <View style={styles.emptyContent}>
+                <IconButton
+                  icon="bell-outline"
+                  size={48}
+                  iconColor="#ccc"
+                />
+                <Title style={styles.emptyTitle}>No Notifications</Title>
+                <Paragraph style={styles.emptyText}>
+                  You're all caught up! New notifications will appear here.
+                </Paragraph>
+              </View>
+            </Card.Content>
+          </Card>
+        )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: spacing.lg,
-    backgroundColor: theme.colors.surface,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
-  title: {
+  headerTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.onSurface,
   },
-  content: {
+  badge: {
+    backgroundColor: '#f44336',
+  },
+  notificationsList: {
     flex: 1,
   },
-  section: {
-    marginBottom: spacing.lg,
-  },
-  sectionTitle: {
-    fontWeight: 'bold',
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.md,
-    color: theme.colors.onBackground,
+  notificationCard: {
+    margin: 16,
+    marginBottom: 8,
   },
   unreadCard: {
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.sm,
-    backgroundColor: theme.colors.primaryContainer,
-  },
-  readCard: {
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.sm,
-    opacity: 0.8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#2196F3',
   },
   notificationHeader: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: spacing.sm,
+    marginBottom: 8,
+  },
+  notificationTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    flex: 1,
   },
   notificationIcon: {
-    marginRight: spacing.md,
-    marginTop: spacing.xs,
+    margin: 0,
+    marginRight: 8,
   },
-  notificationContent: {
+  titleContainer: {
     flex: 1,
   },
   notificationTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 4,
+    color: '#333',
+  },
+  unreadTitle: {
     fontWeight: 'bold',
-    marginBottom: spacing.xs,
+    color: '#000',
   },
-  readNotificationTitle: {
-    fontWeight: 'bold',
-    marginBottom: spacing.xs,
-    opacity: 0.7,
+  metadataRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  notificationMessage: {
-    marginBottom: spacing.xs,
-    lineHeight: 20,
+  typeChip: {
+    marginRight: 8,
+    height: 24,
   },
-  readNotificationMessage: {
-    marginBottom: spacing.xs,
-    lineHeight: 20,
-    opacity: 0.7,
+  timestamp: {
+    fontSize: 12,
+    color: '#666',
   },
-  notificationDate: {
-    opacity: 0.6,
-  },
-  unreadIndicator: {
+  unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: theme.colors.primary,
-    marginLeft: spacing.sm,
-    marginTop: spacing.sm,
+    backgroundColor: '#2196F3',
+    marginLeft: 8,
+    marginTop: 4,
   },
-  markReadButton: {
-    alignSelf: 'flex-start',
+  notificationMessage: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
   },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
+  emptyCard: {
+    margin: 16,
+    padding: 20,
+  },
+  emptyContent: {
     alignItems: 'center',
-    paddingVertical: spacing.xxl,
+    paddingVertical: 20,
   },
   emptyTitle: {
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-    fontWeight: 'bold',
+    fontSize: 18,
+    marginBottom: 8,
+    color: '#666',
   },
-  emptyMessage: {
+  emptyText: {
     textAlign: 'center',
-    opacity: 0.7,
-    paddingHorizontal: spacing.xl,
+    color: '#888',
   },
 });
-
-export default NotificationsScreen;
