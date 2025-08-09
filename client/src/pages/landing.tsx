@@ -525,6 +525,49 @@ export default function Landing() {
               </div>
             </div>
 
+            {/* High Performance Squad */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img 
+                src="/attached_assets/Photos for Power2ADAPT/Al & Archer Peru.jpg" 
+                alt="High performance squad athletes training with elite coaching" 
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">High Performance Squad</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    By Application
+                  </span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Elite coaching sessions</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Multiple venues available</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Users className="w-4 h-4 mr-2" />
+                    <span className="text-sm">1-on-1 & small group training</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm text-gray-600">Custom pricing</span>
+                    <div className="text-xs text-gray-500">Based on individual needs</div>
+                  </div>
+                  <Button 
+                    onClick={() => window.location.href = '/high-performance'}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    Learn More
+                  </Button>
+                </div>
+              </div>
+            </div>
+
             {/* Senior Squad - Ballam Park Thursday */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
