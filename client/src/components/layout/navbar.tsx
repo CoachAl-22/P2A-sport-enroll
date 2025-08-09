@@ -75,7 +75,7 @@ export default function Navbar() {
                     </Button>
                   </Link>
                 )}
-                {(user as any)?.role === "admin" && (
+                {(user as any)?.user?.role === "admin" && (
                   <>
                     <Link href="/admin">
                       <Button
@@ -164,7 +164,7 @@ export default function Navbar() {
                   My Family
                 </Button>
               </Link>
-              {(user as any)?.role === "admin" && (
+              {(user as any)?.user?.role === "admin" && (
                 <Link href="/admin">
                   <Button
                     variant={location === "/admin" ? "default" : "ghost"}
