@@ -48,8 +48,16 @@ export default function HighPerformance() {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
+        {/* Speed Gradient Background */}
+        <div className="absolute inset-0 opacity-20">
+          <img 
+            src="/images/speed-gradient-bg.png" 
+            alt="Speed gradient background" 
+            className="w-full h-full object-cover object-center"
+          />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <div className="text-center mb-12">
             <Link href="/" className="inline-flex items-center text-primary-400 hover:text-primary-300 mb-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
