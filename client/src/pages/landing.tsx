@@ -600,7 +600,7 @@ export default function Landing() {
                   <div>
                     <div className="text-sm text-gray-600 mb-1">Casual $30 + GST per class</div>
                     <div className="text-sm text-gray-600">Unlimited Sessions <span className="text-lg font-heading font-bold text-primary-500">$300</span> per month</div>
-                    <div className="text-xs text-gray-500">(includes Finals Surge app access)</div>
+                    <div className="text-xs text-gray-500">(includes Final Surge app access)</div>
                   </div>
                   <Button 
                     onClick={() => setIsSeniorSquadModalOpen(true)}
