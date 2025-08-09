@@ -257,6 +257,57 @@ export const seniorSquadApplications = pgTable("senior_squad_applications", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const highPerformanceSquadApplications = pgTable("high_performance_squad_applications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  // Athlete Information
+  athleteFirstName: varchar("athlete_first_name", { length: 100 }).notNull(),
+  athleteLastName: varchar("athlete_last_name", { length: 100 }).notNull(),
+  athleteEmail: varchar("athlete_email", { length: 255 }).notNull(),
+  athletePhone: varchar("athlete_phone", { length: 20 }).notNull(),
+  dateOfBirth: varchar("date_of_birth", { length: 10 }).notNull(),
+  schoolYear: varchar("school_year", { length: 50 }).notNull(),
+  
+  // Contact Information
+  parentGuardianName: varchar("parent_guardian_name", { length: 100 }),
+  parentGuardianEmail: varchar("parent_guardian_email", { length: 255 }),
+  parentGuardianPhone: varchar("parent_guardian_phone", { length: 20 }),
+  
+  // Athletic Background & Performance Level
+  currentSports: text("current_sports").notNull(),
+  competitionLevel: text("competition_level").notNull(),
+  athleticExperience: text("athletic_experience").notNull(),
+  previousClubs: text("previous_clubs"),
+  personalBests: text("personal_bests").notNull(),
+  coachingHistory: text("coaching_history"),
+  
+  // High Performance Goals
+  athleticGoals: text("athletic_goals").notNull(),
+  targetCompetitions: text("target_competitions").notNull(),
+  performanceAmbitions: text("performance_ambitions").notNull(),
+  
+  // Training & Commitment
+  currentTrainingLoad: text("current_training_load").notNull(),
+  trainingCommitment: text("training_commitment").notNull(),
+  timeAvailability: text("time_availability").notNull(),
+  
+  // Specific Coaching Needs
+  coachingType: text("coaching_type").notNull(),
+  specificNeeds: text("specific_needs").notNull(),
+  reasonForHighPerformance: text("reason_for_high_performance").notNull(),
+  
+  // Additional Information
+  injuries: text("injuries"),
+  additionalNotes: text("additional_notes"),
+  
+  // Application Status
+  status: varchar("status", { length: 20 }).default("pending").notNull(),
+  reviewedBy: uuid("reviewed_by").references(() => users.id),
+  reviewNotes: text("review_notes"),
+  reviewedAt: timestamp("reviewed_at"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Blog Articles
 export const blogArticles = pgTable("blog_articles", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -432,6 +483,15 @@ export const insertSeniorSquadApplicationSchema = createInsertSchema(seniorSquad
   reviewedAt: true,
 });
 
+export const insertHighPerformanceSquadApplicationSchema = createInsertSchema(highPerformanceSquadApplications).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  reviewedBy: true,
+  reviewNotes: true,
+  reviewedAt: true,
+});
+
 export const insertBlogArticleSchema = createInsertSchema(blogArticles).omit({
   id: true,
   createdAt: true,
@@ -516,6 +576,8 @@ export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type SeniorSquadApplication = typeof seniorSquadApplications.$inferSelect;
 export type InsertSeniorSquadApplication = z.infer<typeof insertSeniorSquadApplicationSchema>;
+export type HighPerformanceSquadApplication = typeof highPerformanceSquadApplications.$inferSelect;
+export type InsertHighPerformanceSquadApplication = z.infer<typeof insertHighPerformanceSquadApplicationSchema>;
 export type BlogArticle = typeof blogArticles.$inferSelect;
 export type InsertBlogArticle = z.infer<typeof insertBlogArticleSchema>;
 export type AttendanceRecord = typeof attendanceRecords.$inferSelect;

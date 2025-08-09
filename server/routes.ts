@@ -6,7 +6,7 @@ import session from "express-session";
 import { storage } from "./storage";
 import { ObjectStorageService } from "./objectStorage";
 import { smsService } from "./sms";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -1389,6 +1389,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updatedApplication);
     } catch (error: any) {
       console.error("Error updating Senior Squad application:", error);
+      res.status(500).json({ message: "Failed to update application" });
+    }
+  });
+
+  // High Performance Squad Application endpoint
+  app.post("/api/applications/high-performance-squad", async (req, res) => {
+    try {
+      const applicationData = insertHighPerformanceSquadApplicationSchema.parse(req.body);
+      
+      const application = await storage.createHighPerformanceSquadApplication(applicationData);
+      
+      // Send confirmation SMS to athlete (or parent if provided)
+      const phoneNumber = applicationData.parentGuardianPhone || applicationData.athletePhone;
+      const athleteName = `${applicationData.athleteFirstName} ${applicationData.athleteLastName}`;
+      
+      if (phoneNumber) {
+        try {
+          await smsService.sendSMS(
+            phoneNumber,
+            `Hi! We've received ${athleteName}'s High Performance Squad application. We'll review it and get back to you within 48 hours. Thank you for choosing Power2ADAPT! 🏃‍♂️`
+          );
+        } catch (smsError) {
+          console.error("Failed to send application confirmation SMS:", smsError);
+          // Don't fail the application submission if SMS fails
+        }
+      }
+      
+      res.status(201).json(application);
+    } catch (error: any) {
+      console.error("Error creating High Performance Squad application:", error);
+      if (error.name === 'ZodError') {
+        res.status(400).json({ message: "Invalid application data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to submit application" });
+      }
+    }
+  });
+
+  // Get all High Performance Squad applications (admin only)
+  app.get("/api/applications/high-performance-squad", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const applications = await storage.getAllHighPerformanceSquadApplications();
+      res.json(applications);
+    } catch (error: any) {
+      console.error("Error fetching High Performance Squad applications:", error);
+      res.status(500).json({ message: "Failed to fetch applications" });
+    }
+  });
+
+  // Update High Performance Squad application (admin only)
+  app.put("/api/applications/high-performance-squad/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      const updatedApplication = await storage.updateHighPerformanceSquadApplication(id, {
+        ...updates,
+        reviewedBy: userId,
+        reviewedAt: new Date(),
+      });
+      
+      res.json(updatedApplication);
+    } catch (error: any) {
+      console.error("Error updating High Performance Squad application:", error);
       res.status(500).json({ message: "Failed to update application" });
     }
   });

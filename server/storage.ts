@@ -8,6 +8,7 @@ import {
   payments,
   notifications,
   seniorSquadApplications,
+  highPerformanceSquadApplications,
   blogArticles,
   attendanceRecords,
   termConfigurations,
@@ -30,6 +31,8 @@ import {
   type InsertNotification,
   type SeniorSquadApplication,
   type InsertSeniorSquadApplication,
+  type HighPerformanceSquadApplication,
+  type InsertHighPerformanceSquadApplication,
   type BlogArticle,
   type InsertBlogArticle,
   type AttendanceRecord,
@@ -130,6 +133,12 @@ export interface IStorage {
   getSeniorSquadApplication(id: string): Promise<SeniorSquadApplication | undefined>;
   getAllSeniorSquadApplications(): Promise<SeniorSquadApplication[]>;
   updateSeniorSquadApplication(id: string, updates: Partial<SeniorSquadApplication>): Promise<SeniorSquadApplication>;
+
+  // High Performance Squad Application operations
+  createHighPerformanceSquadApplication(application: InsertHighPerformanceSquadApplication): Promise<HighPerformanceSquadApplication>;
+  getHighPerformanceSquadApplication(id: string): Promise<HighPerformanceSquadApplication | undefined>;
+  getAllHighPerformanceSquadApplications(): Promise<HighPerformanceSquadApplication[]>;
+  updateHighPerformanceSquadApplication(id: string, updates: Partial<HighPerformanceSquadApplication>): Promise<HighPerformanceSquadApplication>;
 
   // Blog operations
   getBlogArticle(id: string): Promise<BlogArticle | undefined>;
@@ -633,6 +642,30 @@ export class DatabaseStorage implements IStorage {
       .update(seniorSquadApplications)
       .set(updates)
       .where(eq(seniorSquadApplications.id, id))
+      .returning();
+    return updated;
+  }
+
+  // High Performance Squad Application operations
+  async createHighPerformanceSquadApplication(application: InsertHighPerformanceSquadApplication): Promise<HighPerformanceSquadApplication> {
+    const [created] = await db.insert(highPerformanceSquadApplications).values(application).returning();
+    return created;
+  }
+
+  async getHighPerformanceSquadApplication(id: string): Promise<HighPerformanceSquadApplication | undefined> {
+    const [application] = await db.select().from(highPerformanceSquadApplications).where(eq(highPerformanceSquadApplications.id, id));
+    return application;
+  }
+
+  async getAllHighPerformanceSquadApplications(): Promise<HighPerformanceSquadApplication[]> {
+    return await db.select().from(highPerformanceSquadApplications).orderBy(desc(highPerformanceSquadApplications.createdAt));
+  }
+
+  async updateHighPerformanceSquadApplication(id: string, updates: Partial<HighPerformanceSquadApplication>): Promise<HighPerformanceSquadApplication> {
+    const [updated] = await db
+      .update(highPerformanceSquadApplications)
+      .set(updates)
+      .where(eq(highPerformanceSquadApplications.id, id))
       .returning();
     return updated;
   }

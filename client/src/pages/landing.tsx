@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
+import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
 import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook } from "lucide-react";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSeniorSquadModalOpen, setIsSeniorSquadModalOpen] = useState(false);
+  const [isHighPerformanceSquadModalOpen, setIsHighPerformanceSquadModalOpen] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -603,10 +605,10 @@ export default function Landing() {
                     <div className="text-xs text-gray-500">Based on individual needs</div>
                   </div>
                   <Button 
-                    onClick={() => window.location.href = '/high-performance'}
+                    onClick={() => setIsHighPerformanceSquadModalOpen(true)}
                     className="bg-purple-600 hover:bg-purple-700 text-white"
                   >
-                    Learn More
+                    Apply Now
                   </Button>
                 </div>
               </div>
@@ -744,6 +746,11 @@ export default function Landing() {
       <SeniorSquadApplication
         isOpen={isSeniorSquadModalOpen}
         onClose={() => setIsSeniorSquadModalOpen(false)}
+      />
+      
+      <HighPerformanceSquadApplication 
+        isOpen={isHighPerformanceSquadModalOpen} 
+        onClose={() => setIsHighPerformanceSquadModalOpen(false)} 
       />
     </div>
   );
