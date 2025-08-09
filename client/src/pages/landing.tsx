@@ -98,8 +98,8 @@ export default function Landing() {
               <div className="text-gray-600">Students Helped</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">Multiple</div>
-              <div className="text-gray-600">Venues</div>
+              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">School and Athletic Track</div>
+              <div className="text-gray-600">Venues, providing you multiple options</div>
             </div>
             <div className="text-center">
               <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">Team Sport</div>
@@ -203,7 +203,7 @@ export default function Landing() {
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">School and Athletic Track venues, providing you multiple options</span>
+                    <span className="text-sm">Multiple Venues Available</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Users className="w-4 h-4 mr-2" />
