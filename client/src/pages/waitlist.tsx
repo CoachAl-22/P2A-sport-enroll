@@ -6,6 +6,7 @@ import { Trash2, Clock, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
+import { PlayfulPositionIndicator, QueueVisualization, LoadingDots, WaitlistSuccessAnimation } from "@/components/waitlist-animations";
 
 export default function Waitlist() {
   const { toast } = useToast();
@@ -56,8 +57,9 @@ export default function Waitlist() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="h-screen flex items-center justify-center">
-          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" aria-label="Loading"/>
+        <div className="h-screen flex flex-col items-center justify-center space-y-4">
+          <LoadingDots className="scale-150" />
+          <p className="text-gray-600 font-medium">Loading your waitlist positions...</p>
         </div>
       </div>
     );
@@ -106,10 +108,11 @@ export default function Waitlist() {
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div className="text-sm">
-                      <span className="font-medium">Position: </span>
-                      <span className="text-lg font-bold text-blue-600">#{entry.position}</span>
-                    </div>
+                    <PlayfulPositionIndicator 
+                      position={entry.position}
+                      isLoading={entry.status === 'notified'}
+                      className="scale-75"
+                    />
                     
                     <Button
                       variant="outline"
@@ -119,9 +122,32 @@ export default function Waitlist() {
                       className="text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="w-4 h-4 mr-1" />
-                      Remove
+                      {removeFromWaitlistMutation.isPending ? (
+                        <>
+                          <LoadingDots className="mr-1" />
+                          Removing...
+                        </>
+                      ) : (
+                        "Remove"
+                      )}
                     </Button>
                   </div>
+                  
+                  {/* Queue Visualization */}
+                  <div className="pt-3 border-t">
+                    <QueueVisualization 
+                      position={entry.position} 
+                      totalInQueue={15}
+                      className="scale-75 transform origin-left"
+                    />
+                  </div>
+                  
+                  {/* Success animation for notified status */}
+                  {entry.status === 'notified' && (
+                    <div className="pt-2">
+                      <WaitlistSuccessAnimation message="Your spot is ready!" />
+                    </div>
+                  )}
 
                   <div className="text-xs text-gray-500 pt-2 border-t">
                     Joined: {new Date(entry.joinedAt).toLocaleDateString()}

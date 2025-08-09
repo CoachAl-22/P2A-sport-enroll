@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
+import { FloatingWaitlistButton, PlayfulPositionIndicator } from "./waitlist-animations";
 
 interface WaitlistButtonProps {
   classId: string;
@@ -28,7 +29,8 @@ export function WaitlistButton({
         childId 
       });
     },
-    onSuccess: (data) => {
+    onSuccess: async (response) => {
+      const data = await response.json();
       queryClient.invalidateQueries({ queryKey: ["/api/waitlist/parent"] });
       queryClient.invalidateQueries({ queryKey: ["/api/classes"] });
       
@@ -68,28 +70,27 @@ export function WaitlistButton({
     },
   });
 
-  if (isOnWaitlist) {
+  if (isOnWaitlist && waitlistPosition) {
     return (
-      <Button
-        variant="outline"
-        size="sm"
-        className={className}
-        disabled
-      >
-        On Waitlist #{waitlistPosition}
-      </Button>
+      <div className="flex flex-col items-center space-y-2">
+        <PlayfulPositionIndicator 
+          position={waitlistPosition} 
+          className="scale-75"
+        />
+        <p className="text-xs text-center font-medium text-gray-600">
+          Position #{waitlistPosition}
+        </p>
+      </div>
     );
   }
 
   return (
-    <Button
-      variant="secondary"
-      size="sm"
-      className={className}
+    <FloatingWaitlistButton
       onClick={() => addToWaitlistMutation.mutate()}
-      disabled={addToWaitlistMutation.isPending}
+      isLoading={addToWaitlistMutation.isPending}
+      className={`px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors ${className}`}
     >
       {addToWaitlistMutation.isPending ? "Joining..." : "Join Waitlist"}
-    </Button>
+    </FloatingWaitlistButton>
   );
 }
