@@ -115,12 +115,31 @@ export default function HighPerformance() {
                   {/* Specializations */}
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-3 text-white">Specializations</h3>
-                    <div className="bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-600">
-                      <p className="text-gray-400 text-sm text-center">
-                        Areas of expertise and specialization
-                        <br />
-                        Ready for your specialization details
-                      </p>
+                    <div className="bg-gray-700 rounded-lg p-4 space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-secondary-500 rounded-full flex-shrink-0"></div>
+                        <p className="text-gray-200">
+                          <span className="font-semibold text-white">Sprints, Hurdles & Relays</span>
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-secondary-500 rounded-full flex-shrink-0"></div>
+                        <p className="text-gray-200">
+                          <span className="font-semibold text-white">Former 400m Hurdler</span> at Junior National Level
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-secondary-500 rounded-full flex-shrink-0"></div>
+                        <p className="text-gray-200">
+                          <span className="font-semibold text-white">Performance Mindset</span> specialist
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-secondary-500 rounded-full flex-shrink-0"></div>
+                        <p className="text-gray-200">
+                          <span className="font-semibold text-white">Instrumentation Tool</span> technical expert
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
