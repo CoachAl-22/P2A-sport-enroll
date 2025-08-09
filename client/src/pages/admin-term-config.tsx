@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CalendarIcon, PlusIcon, EditIcon, TrashIcon, DollarSignIcon } from "lucide-react";
+import { CalendarIcon, PlusIcon, EditIcon, TrashIcon, DollarSignIcon, XIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 
@@ -37,11 +37,19 @@ export default function AdminTermConfig() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingConfig, setEditingConfig] = useState<any>(null);
   const [priceCalculation, setPriceCalculation] = useState<any>(null);
+  const [selectedConfigForHolidays, setSelectedConfigForHolidays] = useState<any>(null);
+  const [isHolidayDialogOpen, setIsHolidayDialogOpen] = useState(false);
+  const [newHoliday, setNewHoliday] = useState({ date: "", name: "", type: "public_holiday" });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: termConfigs, isLoading } = useQuery({
     queryKey: ["/api/term-configurations"],
+  });
+
+  const { data: selectedConfigHolidays } = useQuery({
+    queryKey: ["/api/term-configurations", selectedConfigForHolidays?.id, "holidays"],
+    enabled: !!selectedConfigForHolidays?.id,
   });
 
   const form = useForm<TermConfigFormData>({
@@ -125,6 +133,46 @@ export default function AdminTermConfig() {
     },
   });
 
+  const createHolidayMutation = useMutation({
+    mutationFn: (data: { termConfigId: string; holidayData: any }) =>
+      apiRequest("POST", `/api/term-configurations/${data.termConfigId}/holidays`, data.holidayData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/term-configurations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/term-configurations", selectedConfigForHolidays?.id, "holidays"] });
+      setNewHoliday({ date: "", name: "", type: "public_holiday" });
+      toast({
+        title: "Success",
+        description: "Holiday added successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to add holiday",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteHolidayMutation = useMutation({
+    mutationFn: (holidayId: string) => apiRequest("DELETE", `/api/term-holidays/${holidayId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/term-configurations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/term-configurations", selectedConfigForHolidays?.id, "holidays"] });
+      toast({
+        title: "Success", 
+        description: "Holiday removed successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to remove holiday",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (data: TermConfigFormData) => {
     if (editingConfig) {
       updateMutation.mutate({ id: editingConfig.id, data });
@@ -166,6 +214,30 @@ export default function AdminTermConfig() {
       termConfigId: config.id,
       classesPerWeek: 1,
     });
+  };
+
+  const handleManageHolidays = (config: any) => {
+    setSelectedConfigForHolidays(config);
+    setIsHolidayDialogOpen(true);
+  };
+
+  const handleAddHoliday = () => {
+    if (!newHoliday.date || !newHoliday.name || !selectedConfigForHolidays) return;
+    
+    createHolidayMutation.mutate({
+      termConfigId: selectedConfigForHolidays.id,
+      holidayData: {
+        holidayDate: newHoliday.date,
+        name: newHoliday.name,
+        type: newHoliday.type,
+      },
+    });
+  };
+
+  const handleDeleteHoliday = (holidayId: string) => {
+    if (confirm("Are you sure you want to remove this holiday?")) {
+      deleteHolidayMutation.mutate(holidayId);
+    }
   };
 
   const getTermDisplayName = (term: string) => {
@@ -458,6 +530,13 @@ export default function AdminTermConfig() {
                         <Button
                           size="sm"
                           variant="outline"
+                          onClick={() => handleManageHolidays(config)}
+                        >
+                          <CalendarIcon className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
                           onClick={() => handleEdit(config)}
                         >
                           <EditIcon className="w-4 h-4" />
@@ -484,7 +563,7 @@ export default function AdminTermConfig() {
               <CardTitle>Price Calculation Example</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-4 gap-4 text-center">
+              <div className="grid grid-cols-5 gap-4 text-center">
                 <div>
                   <div className="text-2xl font-bold">${priceCalculation.basePrice}</div>
                   <div className="text-sm text-gray-600">Base Price</div>
@@ -499,12 +578,134 @@ export default function AdminTermConfig() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold">{priceCalculation.weeksCount}</div>
-                  <div className="text-sm text-gray-600">Weeks</div>
+                  <div className="text-sm text-gray-600">Total Weeks</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-blue-600">{priceCalculation.effectiveWeeks || priceCalculation.weeksCount}</div>
+                  <div className="text-sm text-gray-600">
+                    Teaching Weeks
+                    {priceCalculation.holidaysCount > 0 && (
+                      <div className="text-xs text-orange-600">
+                        (-{priceCalculation.holidaysCount} holidays)
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         )}
+
+        {/* Holiday Management Dialog */}
+        <Dialog open={isHolidayDialogOpen} onOpenChange={setIsHolidayDialogOpen}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>
+                Manage Holidays - {selectedConfigForHolidays?.name}
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              {/* Add New Holiday Form */}
+              <div className="border rounded-lg p-4 bg-gray-50">
+                <h3 className="text-lg font-semibold mb-4">Add Holiday/Student-Free Day</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="holiday-date">Date</Label>
+                    <Input
+                      id="holiday-date"
+                      type="date"
+                      value={newHoliday.date}
+                      onChange={(e) => setNewHoliday(prev => ({ ...prev, date: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="holiday-name">Name</Label>
+                    <Input
+                      id="holiday-name"
+                      placeholder="e.g., Labour Day"
+                      value={newHoliday.name}
+                      onChange={(e) => setNewHoliday(prev => ({ ...prev, name: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="holiday-type">Type</Label>
+                    <Select 
+                      value={newHoliday.type}
+                      onValueChange={(value) => setNewHoliday(prev => ({ ...prev, type: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="public_holiday">Public Holiday</SelectItem>
+                        <SelectItem value="student_free_day">Student Free Day</SelectItem>
+                        <SelectItem value="term_break">Term Break</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleAddHoliday}
+                  disabled={!newHoliday.date || !newHoliday.name || createHolidayMutation.isPending}
+                  className="mt-4"
+                >
+                  Add Holiday
+                </Button>
+              </div>
+
+              {/* Existing Holidays List */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Current Holidays & Non-Teaching Days</h3>
+                {selectedConfigHolidays && selectedConfigHolidays.length > 0 ? (
+                  <div className="space-y-2">
+                    {selectedConfigHolidays.map((holiday: any) => (
+                      <div key={holiday.id} className="flex items-center justify-between p-3 bg-white border rounded-lg">
+                        <div className="flex items-center space-x-4">
+                          <div className="text-sm font-medium">
+                            {format(new Date(holiday.holidayDate), "MMM dd, yyyy")}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {holiday.name}
+                          </div>
+                          <Badge variant="outline">
+                            {holiday.type.replace("_", " ")}
+                          </Badge>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDeleteHoliday(holiday.id)}
+                          disabled={deleteHolidayMutation.isPending}
+                        >
+                          <XIcon className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No holidays or student-free days configured for this term.
+                  </div>
+                )}
+              </div>
+
+              {/* Pricing Impact Note */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start space-x-2">
+                  <CalendarIcon className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-medium text-blue-800">Automatic Pricing Adjustment</h4>
+                    <p className="text-sm text-blue-700 mt-1">
+                      Holidays and student-free days are automatically excluded from pricing calculations.
+                      Each holiday reduces the effective teaching weeks for more accurate parent billing.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

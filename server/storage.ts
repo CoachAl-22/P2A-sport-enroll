@@ -11,6 +11,7 @@ import {
   blogArticles,
   attendanceRecords,
   termConfigurations,
+  termHolidays,
   type User,
   type InsertUser,
   type Child,
@@ -35,6 +36,8 @@ import {
   type InsertAttendanceRecord,
   type TermConfiguration,
   type InsertTermConfiguration,
+  type TermHoliday,
+  type InsertTermHoliday,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, count, sql, gte, lte } from "drizzle-orm";
@@ -854,6 +857,38 @@ export class DatabaseStorage implements IStorage {
     return termConfig;
   }
 
+  // Term Holiday operations
+  async getTermHolidays(termConfigId: string): Promise<any[]> {
+    return await db
+      .select()
+      .from(termHolidays)
+      .where(eq(termHolidays.termConfigurationId, termConfigId))
+      .orderBy(termHolidays.holidayDate);
+  }
+
+  async createTermHoliday(holidayData: any): Promise<any> {
+    const [created] = await db
+      .insert(termHolidays)
+      .values(holidayData)
+      .returning();
+    return created;
+  }
+
+  async deleteTermHoliday(id: string): Promise<void> {
+    await db.delete(termHolidays).where(eq(termHolidays.id, id));
+  }
+
+  async getTermConfigurationWithHolidays(id: string): Promise<any> {
+    const termConfig = await this.getTermConfigurationById(id);
+    if (!termConfig) return null;
+
+    const holidays = await this.getTermHolidays(id);
+    return {
+      ...termConfig,
+      holidays
+    };
+  }
+
   async calculateTermPrice(termConfigId: string, classesPerWeek: number = 1): Promise<any> {
     const [termConfig] = await db
       .select()
@@ -864,7 +899,12 @@ export class DatabaseStorage implements IStorage {
       throw new Error('Term configuration not found');
     }
 
-    const basePrice = Number(termConfig.pricePerWeek) * termConfig.weeksCount * classesPerWeek;
+    // Get holidays for this term to calculate effective weeks
+    const holidays = await this.getTermHolidays(termConfigId);
+    const holidaysCount = holidays.length;
+    const effectiveWeeks = Math.max(1, termConfig.weeksCount - holidaysCount); // Ensure at least 1 week
+
+    const basePrice = Number(termConfig.pricePerWeek) * effectiveWeeks * classesPerWeek;
     const gstAmount = basePrice * Number(termConfig.gstRate);
     const totalPrice = basePrice + gstAmount;
 
@@ -873,6 +913,8 @@ export class DatabaseStorage implements IStorage {
       gstAmount: Number(gstAmount.toFixed(2)),
       totalPrice: Number(totalPrice.toFixed(2)),
       weeksCount: termConfig.weeksCount,
+      holidaysCount,
+      effectiveWeeks,
       pricePerWeek: Number(termConfig.pricePerWeek),
       classesPerWeek
     };

@@ -10,6 +10,7 @@ import {
   boolean,
   uuid,
   pgEnum,
+  unique,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -54,6 +55,21 @@ export const termConfigurations = pgTable("term_configurations", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Holiday Types Enum
+export const holidayTypeEnum = pgEnum("holiday_type", ["public_holiday", "student_free_day", "curriculum_day", "staff_planning_day"]);
+
+// Term Holidays (excluded dates)
+export const termHolidays = pgTable("term_holidays", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  termConfigurationId: uuid("term_configuration_id").references(() => termConfigurations.id, { onDelete: "cascade" }).notNull(),
+  holidayDate: timestamp("holiday_date").notNull(),
+  name: varchar("name", { length: 100 }).notNull(),
+  type: holidayTypeEnum("type").notNull().default("public_holiday"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  uniqueTermDate: unique().on(table.termConfigurationId, table.holidayDate),
+}));
 
 export const classStatusEnum = pgEnum("class_status", ["active", "full", "cancelled", "completed"]);
 
@@ -284,6 +300,7 @@ export const coachesRelations = relations(coaches, ({ one, many }) => ({
 }));
 
 export const termConfigurationsRelations = relations(termConfigurations, ({ many }) => ({
+  holidays: many(termHolidays),
   classes: many(classes),
 }));
 
@@ -339,6 +356,8 @@ export const blogArticlesRelations = relations(blogArticles, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+
 
 // Predefined venues 
 export const venueOptions = [
@@ -419,6 +438,8 @@ export const insertBlogArticleSchema = createInsertSchema(blogArticles).omit({
   updatedAt: true,
   publishedAt: true,
 });
+
+
 
 // Absence reasons enum for type safety
 export const absenceReasonEnum = pgEnum("absence_reason", [
@@ -501,3 +522,6 @@ export type AttendanceRecord = typeof attendanceRecords.$inferSelect;
 export type InsertAttendanceRecord = z.infer<typeof insertAttendanceRecordSchema>;
 export type TermConfiguration = typeof termConfigurations.$inferSelect;
 export type InsertTermConfiguration = z.infer<typeof insertTermConfigurationSchema>;
+
+export type TermHoliday = typeof termHolidays.$inferSelect;
+export type InsertTermHoliday = z.infer<typeof insertTermHolidaySchema>;

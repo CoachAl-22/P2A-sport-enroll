@@ -1450,6 +1450,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Term Holiday Routes
+  app.get("/api/term-configurations/:id/holidays", async (req, res) => {
+    try {
+      const holidays = await storage.getTermHolidays(req.params.id);
+      res.json(holidays);
+    } catch (error: any) {
+      console.error('Error getting term holidays:', error);
+      res.status(500).json({ message: "Failed to fetch term holidays" });
+    }
+  });
+
+  app.post("/api/term-configurations/:id/holidays", async (req, res) => {
+    try {
+      const holidayData = {
+        ...req.body,
+        termConfigurationId: req.params.id
+      };
+      const holiday = await storage.createTermHoliday(holidayData);
+      res.status(201).json(holiday);
+    } catch (error: any) {
+      console.error('Error creating term holiday:', error);
+      res.status(500).json({ message: "Failed to create term holiday" });
+    }
+  });
+
+  app.delete("/api/term-holidays/:id", async (req, res) => {
+    try {
+      await storage.deleteTermHoliday(req.params.id);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error('Error deleting term holiday:', error);
+      res.status(500).json({ message: "Failed to delete term holiday" });
+    }
+  });
+
+  app.get("/api/term-configurations/:id/with-holidays", async (req, res) => {
+    try {
+      const configWithHolidays = await storage.getTermConfigurationWithHolidays(req.params.id);
+      if (!configWithHolidays) {
+        return res.status(404).json({ message: "Term configuration not found" });
+      }
+      res.json(configWithHolidays);
+    } catch (error: any) {
+      console.error('Error getting term configuration with holidays:', error);
+      res.status(500).json({ message: "Failed to fetch term configuration with holidays" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
