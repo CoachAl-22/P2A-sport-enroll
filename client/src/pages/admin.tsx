@@ -132,18 +132,22 @@ export default function Admin() {
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
-          <Button className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
-            <div className="text-primary-400 mb-2">
-              <Plus className="w-6 h-6 mx-auto" />
-            </div>
-            <span className="text-sm font-medium">Add New Class</span>
+          <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
+            <a href="/admin/classes">
+              <div className="text-primary-400 mb-2">
+                <Plus className="w-6 h-6 mx-auto" />
+              </div>
+              <span className="text-sm font-medium">Manage Classes</span>
+            </a>
           </Button>
           
-          <Button className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
-            <div className="text-secondary-400 mb-2">
-              <Users className="w-6 h-6 mx-auto" />
-            </div>
-            <span className="text-sm font-medium">Manage Staff</span>
+          <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
+            <a href="/admin/staff">
+              <div className="text-secondary-400 mb-2">
+                <Users className="w-6 h-6 mx-auto" />
+              </div>
+              <span className="text-sm font-medium">Manage Staff</span>
+            </a>
           </Button>
           
           <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">

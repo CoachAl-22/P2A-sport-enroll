@@ -6,7 +6,7 @@ import session from "express-session";
 import { storage } from "./storage";
 import { ObjectStorageService } from "./objectStorage";
 import { smsService } from "./sms";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertBlogArticleSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -205,6 +205,257 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(classData);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin class management routes
+  app.post("/api/classes", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const classData = insertClassSchema.parse(req.body);
+      const newClass = await storage.createClass(classData);
+      res.json(newClass);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/classes/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const updates = req.body;
+      const updatedClass = await storage.updateClass(req.params.id, updates);
+      res.json(updatedClass);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/classes/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      await storage.deleteClass(req.params.id);
+      res.json({ message: "Class deleted successfully" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Coaches routes
+  app.get("/api/coaches", async (req, res) => {
+    try {
+      const coaches = await storage.getAllCoaches();
+      res.json(coaches);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Staff management routes (for admin)
+  app.get("/api/staff", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const [users, coaches] = await Promise.all([
+        storage.getAllUsers(),
+        storage.getAllCoaches()
+      ]);
+      
+      // Combine user and coach data for staff members
+      const staff = users.map(user => {
+        const coachData = coaches.find(c => c.userId === user.id);
+        return {
+          ...user,
+          ...coachData,
+          id: user.id, // Ensure we use the user ID
+        };
+      });
+      
+      res.json(staff);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/staff", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const staffData = req.body;
+      
+      // Hash password
+      const hashedPassword = await bcrypt.hash(staffData.password, 10);
+      
+      // Create user account
+      const userData = insertUserSchema.parse({
+        firstName: staffData.firstName,
+        lastName: staffData.lastName,
+        email: staffData.email,
+        mobile: staffData.mobile,
+        userId: staffData.userId,
+        password: hashedPassword,
+        role: staffData.role,
+      });
+      
+      const newUser = await storage.createUser(userData);
+      
+      // If role is coach, create coach profile
+      if (staffData.role === "coach") {
+        const coachData = insertCoachSchema.parse({
+          userId: newUser.id,
+          firstName: staffData.firstName,
+          lastName: staffData.lastName,
+          email: staffData.email,
+          mobile: staffData.mobile,
+          specializations: staffData.specializations || [],
+          qualifications: staffData.qualifications || [],
+          experience: staffData.experience || "",
+          bio: staffData.bio || "",
+          active: staffData.active !== false,
+        });
+        
+        await storage.createCoach(coachData);
+      }
+      
+      res.json({ ...newUser, message: "Staff member created successfully" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/staff/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const staffData = req.body;
+      const staffId = req.params.id;
+      
+      // Prepare user updates
+      const userUpdates: any = {
+        firstName: staffData.firstName,
+        lastName: staffData.lastName,
+        email: staffData.email,
+        mobile: staffData.mobile,
+        userId: staffData.userId,
+        role: staffData.role,
+      };
+      
+      // Hash password if provided
+      if (staffData.password) {
+        userUpdates.password = await bcrypt.hash(staffData.password, 10);
+      }
+      
+      // Update user account
+      const updatedUser = await storage.updateUser(staffId, userUpdates);
+      
+      // Update coach profile if role is coach
+      if (staffData.role === "coach") {
+        const existingCoach = await storage.getCoachByUserId(staffId);
+        const coachData = {
+          firstName: staffData.firstName,
+          lastName: staffData.lastName,
+          email: staffData.email,
+          mobile: staffData.mobile,
+          specializations: staffData.specializations || [],
+          qualifications: staffData.qualifications || [],
+          experience: staffData.experience || "",
+          bio: staffData.bio || "",
+          active: staffData.active !== false,
+        };
+        
+        if (existingCoach) {
+          await storage.updateCoach(existingCoach.id, coachData);
+        } else {
+          await storage.createCoach({
+            ...coachData,
+            userId: staffId,
+          });
+        }
+      }
+      
+      res.json({ ...updatedUser, message: "Staff member updated successfully" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/staff/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const staffId = req.params.id;
+      
+      // Delete coach profile if exists
+      const existingCoach = await storage.getCoachByUserId(staffId);
+      if (existingCoach) {
+        await storage.deleteCoach(existingCoach.id);
+      }
+      
+      // Delete user account
+      await storage.deleteUser(staffId);
+      
+      res.json({ message: "Staff member deleted successfully" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
     }
   });
 

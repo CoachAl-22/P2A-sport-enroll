@@ -18,6 +18,8 @@ import Blog from "@/pages/blog";
 import BlogArticle from "@/pages/blog-article";
 import AdminBlog from "@/pages/admin-blog";
 import AdminTermConfig from "@/pages/admin-term-config";
+import AdminClasses from "@/pages/admin-classes";
+import AdminStaff from "@/pages/admin-staff";
 import Attendance from "@/pages/attendance";
 import NotFound from "@/pages/not-found";
 
@@ -60,6 +62,8 @@ function Router() {
               <Route path="/admin/sms" component={AdminSMS} />
               <Route path="/admin/blog" component={AdminBlog} />
               <Route path="/admin/term-config" component={AdminTermConfig} />
+              <Route path="/admin/classes" component={AdminClasses} />
+              <Route path="/admin/staff" component={AdminStaff} />
             </>
           )}
         </>

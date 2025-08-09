@@ -48,8 +48,10 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByMobile(mobile: string): Promise<User | undefined>;
   getUserByUserId(userId: string): Promise<User | undefined>;
+  getAllUsers(): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User>;
+  deleteUser(id: string): Promise<void>;
 
   // Child operations
   getChild(id: string): Promise<Child | undefined>;
@@ -66,8 +68,10 @@ export interface IStorage {
   // Coach operations
   getCoach(id: string): Promise<Coach | undefined>;
   getAllCoaches(): Promise<Coach[]>;
+  getCoachByUserId(userId: string): Promise<Coach | undefined>;
   createCoach(coach: InsertCoach): Promise<Coach>;
   updateCoach(id: string, updates: Partial<Coach>): Promise<Coach>;
+  deleteCoach(id: string): Promise<void>;
 
   // Class operations
   getClass(id: string): Promise<Class | undefined>;
@@ -82,6 +86,7 @@ export interface IStorage {
   }): Promise<Class[]>;
   createClass(classData: InsertClass): Promise<Class>;
   updateClass(id: string, updates: Partial<Class>): Promise<Class>;
+  deleteClass(id: string): Promise<void>;
   updateClassEnrollmentCount(classId: string): Promise<void>;
 
   // Enrollment operations
@@ -172,6 +177,10 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users).orderBy(asc(users.firstName), asc(users.lastName));
+  }
+
   async createUser(user: InsertUser): Promise<User> {
     const [created] = await db.insert(users).values(user).returning();
     return created;
@@ -184,6 +193,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id))
       .returning();
     return updated;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
   }
 
   // Child operations
@@ -244,6 +257,11 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(coaches).where(eq(coaches.active, true));
   }
 
+  async getCoachByUserId(userId: string): Promise<Coach | undefined> {
+    const [coach] = await db.select().from(coaches).where(eq(coaches.userId, userId));
+    return coach;
+  }
+
   async createCoach(coach: InsertCoach): Promise<Coach> {
     const [created] = await db.insert(coaches).values(coach).returning();
     return created;
@@ -256,6 +274,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(coaches.id, id))
       .returning();
     return updated;
+  }
+
+  async deleteCoach(id: string): Promise<void> {
+    await db.delete(coaches).where(eq(coaches.id, id));
   }
 
   // Class operations
@@ -330,6 +352,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(classes.id, id))
       .returning();
     return updated;
+  }
+
+  async deleteClass(id: string): Promise<void> {
+    await db.delete(classes).where(eq(classes.id, id));
   }
 
   async updateClassEnrollmentCount(classId: string): Promise<void> {
