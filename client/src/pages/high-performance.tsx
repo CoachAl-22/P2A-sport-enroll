@@ -70,6 +70,59 @@ export default function HighPerformance() {
             />
           </div>
 
+          {/* Head Coach Section */}
+          <div className="bg-gray-800 rounded-xl p-8 mb-16">
+            <div className="grid lg:grid-cols-3 gap-8 items-center">
+              <div className="lg:col-span-1">
+                {/* Coach Image Placeholder - Ready for your upload */}
+                <div className="w-full h-80 bg-gray-700 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600">
+                  <div className="text-center text-gray-400">
+                    <Users className="w-12 h-12 mx-auto mb-2" />
+                    <p className="text-sm">Coach Photo</p>
+                    <p className="text-xs">Ready for upload</p>
+                  </div>
+                </div>
+              </div>
+              <div className="lg:col-span-2">
+                <h2 className="text-3xl font-heading font-bold mb-4 text-primary-400">Head Coach</h2>
+                <div className="space-y-4 text-gray-300">
+                  {/* Bio content placeholder - Ready for your bio */}
+                  <div className="bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-600">
+                    <p className="text-gray-400 text-sm text-center">
+                      Coach Bio Section
+                      <br />
+                      Ready for your professional biography and credentials
+                    </p>
+                  </div>
+                  
+                  {/* Credentials/Qualifications */}
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-3 text-white">Professional Qualifications</h3>
+                    <div className="bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-600">
+                      <p className="text-gray-400 text-sm text-center">
+                        Certifications and qualifications
+                        <br />
+                        Ready for your credentials
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Specializations */}
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-3 text-white">Specializations</h3>
+                    <div className="bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-600">
+                      <p className="text-gray-400 text-sm text-center">
+                        Areas of expertise and specialization
+                        <br />
+                        Ready for your specialization details
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
             <div>
               <h2 className="text-2xl font-heading font-bold mb-6 text-primary-400">Individual Athlete Development</h2>
