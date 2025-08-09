@@ -64,7 +64,7 @@ export default function Analytics() {
   }
 
   const programOptions = [
-    { value: "", label: "All Programs" },
+    { value: "all", label: "All Programs" },
     { value: "foundation_prep_year2", label: "Foundation - Prep - Year 2" },
     { value: "emerging_year3_6", label: "Emerging - Year 3 - 6" },
     { value: "academy_year7_above", label: "Academy - Year 7 & Above" },
@@ -130,7 +130,7 @@ export default function Analytics() {
                   <SelectValue placeholder="All Venues" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Venues</SelectItem>
+                  <SelectItem value="all">All Venues</SelectItem>
                   {(venues as any[])?.map((venue: any) => (
                     <SelectItem key={venue.id} value={venue.id}>
                       {venue.name}
