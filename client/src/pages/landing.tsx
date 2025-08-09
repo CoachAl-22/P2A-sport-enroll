@@ -227,7 +227,7 @@ export default function Landing() {
               <img 
                 src="/images/ashton-xcr.jpg" 
                 alt="Young athletes developing skills in team sports" 
-                className="w-full h-48 object-cover object-top"
+                className="w-full h-48 object-contain bg-gray-100"
               />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
@@ -313,7 +313,7 @@ export default function Landing() {
               <img 
                 src="/images/ashton-xcr.jpg" 
                 alt="Young athletes developing skills in team sports" 
-                className="w-full h-48 object-cover object-top"
+                className="w-full h-48 object-contain bg-gray-100"
               />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
