@@ -26,6 +26,25 @@ export default function Blog() {
           <p className="mt-2 text-xl text-gray-600">
             Expert tips, training insights, and athletic development advice from the Power2ADAPT coaches
           </p>
+          
+          {/* Skool Community Link */}
+          <div className="mt-6">
+            <a 
+              href="https://skool.com/power2adapt" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            >
+              <div className="flex items-center justify-center w-5 h-5 text-sm font-bold border border-white rounded mr-2">
+                S
+              </div>
+              Join Our Skool Community
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </a>
+            <p className="mt-2 text-sm text-gray-500">
+              Connect with other parents, get exclusive content, and ask questions directly to our coaches
+            </p>
+          </div>
         </div>
       </div>
 
