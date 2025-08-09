@@ -177,17 +177,17 @@ export default function Landing() {
             <p className="text-xl text-gray-600">9 weeks of professional athletic training</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Sample Basketball Class */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Foundation Class */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
-                alt="Basketball training session with youth players" 
+                src="https://images.unsplash.com/photo-1566666826155-6532fb52b1a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
+                alt="Young children learning fundamental movement skills" 
                 className="w-full h-48 object-cover"
               />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-heading font-bold text-gray-900">Basketball Elite</h3>
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Foundation Class</h3>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     Available
                   </span>
@@ -195,21 +195,21 @@ export default function Landing() {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600">
                     <Calendar className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Tuesdays 4:00 PM - 5:00 PM</span>
+                    <span className="text-sm">Building fundamental movement skills</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Melbourne High School</span>
+                    <span className="text-sm">Multiple Venues Available</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Users className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Ages 11-13 • 8 spots left</span>
+                    <span className="text-sm">Ages Prep - Year 2 • 15 spots</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$280</span>
-                    <span className="text-gray-500 text-sm">/9 weeks</span>
+                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                    <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
                     onClick={() => setIsLoginModalOpen(true)}
@@ -221,59 +221,16 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Sample Soccer Class */}
+            {/* Emerging Athletes */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
-                alt="Children playing soccer on grass field" 
+                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
+                alt="Young athletes developing skills in team sports" 
                 className="w-full h-48 object-cover"
               />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-heading font-bold text-gray-900">Soccer Champions</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    Waitlist
-                  </span>
-                </div>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Thursdays 3:30 PM - 4:30 PM</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Richmond Primary</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Users className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Ages 8-10 • Full class</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$260</span>
-                    <span className="text-gray-500 text-sm">/9 weeks</span>
-                  </div>
-                  <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white"
-                  >
-                    Join Waitlist
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Sample Tennis Class */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
-              <img 
-                src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
-                alt="Young tennis players practicing on court" 
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-heading font-bold text-gray-900">Tennis Academy</h3>
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Emerging Athletes</h3>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     Available
                   </span>
@@ -281,21 +238,21 @@ export default function Landing() {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600">
                     <Calendar className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Saturdays 9:00 AM - 10:00 AM</span>
+                    <span className="text-sm">Monday 3:30 - 4:45pm</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">St Kilda Sports Centre</span>
+                    <span className="text-sm">Peninsula Grammar</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Users className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Ages 5-7 • 12 spots left</span>
+                    <span className="text-sm">Year 3-6 • 30 spots</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$320</span>
-                    <span className="text-gray-500 text-sm">/9 weeks</span>
+                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                    <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
                     onClick={() => setIsLoginModalOpen(true)}
