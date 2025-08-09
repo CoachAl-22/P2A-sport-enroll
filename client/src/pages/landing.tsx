@@ -436,16 +436,16 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Academy - Ballam Park Monday */}
+            {/* Junior Academy - Ballam Park Tuesday */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
                 src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
-                alt="Elite academy athletes training at professional athletic track" 
+                alt="Junior academy athletes developing skills at athletic track" 
                 className="w-full h-48 object-cover"
               />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-heading font-bold text-gray-900">Academy</h3>
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Junior Academy</h3>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     Available
                   </span>
@@ -479,16 +479,16 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Junior Academy - Ballam Park Tuesday */}
+            {/* Academy - Ballam Park Monday */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
                 src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
-                alt="Junior academy athletes developing skills at athletic track" 
+                alt="Elite academy athletes training at professional athletic track" 
                 className="w-full h-48 object-cover"
               />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-heading font-bold text-gray-900">Junior Academy</h3>
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Academy</h3>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     Available
                   </span>
