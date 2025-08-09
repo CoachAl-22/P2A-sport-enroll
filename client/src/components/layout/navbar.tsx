@@ -48,7 +48,7 @@ export default function Navbar() {
                     variant={location === "/classes" ? "default" : "ghost"}
                     className="text-gray-700 hover:text-primary-500"
                   >
-                    Classes
+                    Programs
                   </Button>
                 </Link>
                 <Link href="/">
@@ -56,7 +56,7 @@ export default function Navbar() {
                     variant={location === "/" ? "default" : "ghost"}
                     className="text-gray-700 hover:text-primary-500"
                   >
-                    Dashboard
+                    My Family
                   </Button>
                 </Link>
                 {(user as any)?.role === "admin" && (
@@ -95,7 +95,7 @@ export default function Navbar() {
             {isAuthenticated ? (
               <>
                 <span className="hidden md:block text-gray-700">
-                  Welcome, {(user as any)?.firstName}
+                  Hi, {(user as any)?.firstName}!
                 </span>
                 <Button
                   onClick={handleLogout}
@@ -136,7 +136,7 @@ export default function Navbar() {
                   className="w-full justify-start"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Classes
+                  Programs
                 </Button>
               </Link>
               <Link href="/">
@@ -145,7 +145,7 @@ export default function Navbar() {
                   className="w-full justify-start"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Dashboard
+                  My Family
                 </Button>
               </Link>
               {(user as any)?.role === "admin" && (

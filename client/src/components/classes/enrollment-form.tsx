@@ -84,10 +84,10 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
     onSuccess: (enrollment) => {
       queryClient.invalidateQueries({ queryKey: ["/api/enrollments"] });
       toast({
-        title: "Enrollment Successful!",
+        title: "Great news! Enrollment confirmed!",
         description: isWaitlist 
-          ? "You've been added to the waitlist. We'll notify you when a spot becomes available."
-          : "Your child has been enrolled in the class. You'll receive payment instructions shortly.",
+          ? "Your child is on the waitlist. We'll contact you as soon as a spot opens up."
+          : "Your child's spot is secured! Payment details will be sent to you shortly.",
       });
       
       // Redirect to payment if not waitlisted
@@ -109,8 +109,8 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
   const onSubmit = (data: EnrollmentForm) => {
     if (!isCreatingNewChild && !data.childId) {
       toast({
-        title: "Child Required",
-        description: "Please select a child or create a new child profile",
+        title: "Almost there!",
+        description: "Please select which child is enrolling or add their details",
         variant: "destructive",
       });
       return;
@@ -119,8 +119,8 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
     if (isCreatingNewChild) {
       if (!data.firstName || !data.lastName || !data.dateOfBirth) {
         toast({
-          title: "Missing Information",
-          description: "Please fill in all required child information",
+          title: "Just a few more details needed",
+          description: "Please complete your child's name and date of birth",
           variant: "destructive",
         });
         return;
@@ -160,7 +160,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
       {/* Child Selection */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label className="text-base font-semibold">Select Child</Label>
+          <Label className="text-base font-semibold">Which child is enrolling?</Label>
           <Button
             type="button"
             variant="outline"
@@ -185,7 +185,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
         {isCreatingNewChild ? (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">New Child Information</CardTitle>
+              <CardTitle className="text-lg">Tell us about your child</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -294,16 +294,16 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
             onCheckedChange={(checked) => form.setValue("autoRenew", !!checked)}
           />
           <Label htmlFor="autoRenew" className="text-sm">
-            Enable auto-renewal for future terms (you'll receive reminders 1 month in advance)
+            Keep my child enrolled for future terms (we'll send friendly reminders 1 month ahead)
           </Label>
         </div>
 
         <div>
-          <Label htmlFor="notes">Additional Notes</Label>
+          <Label htmlFor="notes">Notes for the Coach</Label>
           <Textarea
             id="notes"
             {...form.register("notes")}
-            placeholder="Any special requests or information for the coach"
+            placeholder="Anything special we should know about your child? (Optional)"
             rows={3}
           />
         </div>
@@ -313,12 +313,12 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
       <Card className="bg-blue-50 border-blue-200">
         <CardContent className="pt-6">
           <div className="space-y-2 text-sm text-blue-700">
-            <h4 className="font-semibold">Enrollment Terms:</h4>
+            <h4 className="font-semibold">What you need to know:</h4>
             <ul className="list-disc list-inside space-y-1">
-              <li>Full payment is required within 7 days of enrollment</li>
-              <li>Refunds are available up to 48 hours before the first class</li>
-              <li>Make-up classes are available for illness with medical certificate</li>
-              <li>Auto-renewal can be disabled at any time from your dashboard</li>
+              <li>Complete payment within 7 days to secure your child's spot</li>
+              <li>Full refund available until 48 hours before first class</li>
+              <li>Missed classes due to illness can be made up (medical certificate required)</li>
+              <li>Change auto-renewal settings anytime from your dashboard</li>
             </ul>
           </div>
         </CardContent>
@@ -336,9 +336,9 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
             Processing...
           </div>
         ) : isWaitlist ? (
-          "Join Waitlist"
+          "Join the Waitlist"
         ) : (
-          "Enroll Now"
+          "Secure My Child's Spot"
         )}
       </Button>
     </form>

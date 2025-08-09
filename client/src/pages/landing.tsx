@@ -54,23 +54,23 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-6xl font-heading font-bold leading-tight mb-6">
-                Elite Athletic Training for <span className="text-secondary-500">Champions</span>
+                Where Young Athletes <span className="text-secondary-500">Thrive</span>
               </h1>
               <p className="text-xl mb-8 text-blue-100">
-                Join Victoria's premier school-based athletic program. Professional coaching, flexible scheduling, and championship-level training for all ages.
+                Expert coaching at your child's school. Flexible programs that build confidence, skill, and a love for sport. Ages 5-18 welcome.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   onClick={() => setIsLoginModalOpen(true)}
                   className="bg-secondary-500 hover:bg-secondary-600 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
-                  Enroll Now
+                  Start Your Child's Journey
                 </Button>
                 <Button 
                   variant="outline"
                   className="border-2 border-white text-white hover:bg-white hover:text-primary-500 px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
-                  View Classes
+                  Explore Programs
                 </Button>
               </div>
             </div>
@@ -113,8 +113,8 @@ export default function Landing() {
       <section id="features" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Platform Features</h2>
-            <p className="text-xl text-gray-600">Everything you need for seamless athletic program management</p>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Why Parents Choose Power2ADAPT</h2>
+            <p className="text-xl text-gray-600">Simple, convenient, and designed with your family in mind</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -122,24 +122,24 @@ export default function Landing() {
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Smartphone className="w-8 h-8 text-primary-500" />
               </div>
-              <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Mobile-First Design</h3>
-              <p className="text-gray-600">Optimized for parents on-the-go with intuitive mobile navigation</p>
+              <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Easy Mobile Access</h3>
+              <p className="text-gray-600">Manage enrollments, payments and schedules from anywhere on your phone</p>
             </div>
             
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <RotateCcw className="w-8 h-8 text-secondary-500" />
               </div>
-              <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Auto Re-enrollment</h3>
-              <p className="text-gray-600">1-month advance notifications with seamless renewal process</p>
+              <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Set and Forget Renewals</h3>
+              <p className="text-gray-600">Your child automatically re-enrolls each term (with advance notice and easy opt-out)</p>
             </div>
             
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CreditCard className="w-8 h-8 text-green-500" />
               </div>
-              <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Stripe Integration</h3>
-              <p className="text-gray-600">Secure payment processing with automated billing and receipts</p>
+              <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Secure Online Payments</h3>
+              <p className="text-gray-600">Pay safely online with instant receipts and automatic payment reminders</p>
             </div>
             
             <div className="text-center p-6">

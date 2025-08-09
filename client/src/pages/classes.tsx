@@ -70,9 +70,9 @@ export default function Classes() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">
-            Available Classes - Term 3, 2024
+            Programs Your Child Will Love
           </h1>
-          <p className="text-xl text-gray-600">9 weeks of professional athletic training</p>
+          <p className="text-xl text-gray-600">9 weeks of expert coaching designed for lasting success</p>
         </div>
 
         {/* Search and Filters */}
@@ -83,7 +83,7 @@ export default function Classes() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Search classes..."
+                  placeholder="Find the perfect program for your child..."
                   value={filters.search}
                   onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
                   className="pl-10"

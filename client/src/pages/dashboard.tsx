@@ -41,8 +41,8 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-6 border-b">
           <div>
-            <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">Parent Dashboard</h1>
-            <p className="text-gray-600">Manage your child's athletic journey with ease</p>
+            <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">Your Family Dashboard</h1>
+            <p className="text-gray-600">Supporting your child's athletic success every step of the way</p>
           </div>
           <div className="mt-4 md:mt-0">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
@@ -60,8 +60,8 @@ export default function Dashboard() {
                 <div className="flex items-center justify-center mb-3">
                   <Plus className="w-8 h-8" />
                 </div>
-                <h3 className="font-heading font-semibold text-lg mb-1">Enroll in Classes</h3>
-                <p className="text-sm text-blue-100">Find new programs</p>
+                <h3 className="font-heading font-semibold text-lg mb-1">Find New Programs</h3>
+                <p className="text-sm text-blue-100">Discover classes your child will love</p>
               </CardContent>
             </Card>
           </Link>
@@ -71,8 +71,8 @@ export default function Dashboard() {
               <div className="flex items-center justify-center mb-3">
                 <Calendar className="w-8 h-8" />
               </div>
-              <h3 className="font-heading font-semibold text-lg mb-1">View Schedule</h3>
-              <p className="text-sm text-orange-100">Upcoming classes</p>
+              <h3 className="font-heading font-semibold text-lg mb-1">Weekly Schedule</h3>
+              <p className="text-sm text-orange-100">See what's coming up</p>
             </CardContent>
           </Card>
           
@@ -81,8 +81,8 @@ export default function Dashboard() {
               <div className="flex items-center justify-center mb-3">
                 <CreditCard className="w-8 h-8" />
               </div>
-              <h3 className="font-heading font-semibold text-lg mb-1">Payment History</h3>
-              <p className="text-sm text-green-100">Manage billing</p>
+              <h3 className="font-heading font-semibold text-lg mb-1">Payments & Billing</h3>
+              <p className="text-sm text-green-100">Easy payment management</p>
             </CardContent>
           </Card>
         </div>
@@ -91,7 +91,7 @@ export default function Dashboard() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="text-xl font-heading font-bold text-gray-900">
-              Current Enrollments - Term 3, 2024
+              Your Child's Current Programs
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -140,10 +140,10 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-500 mb-4">No enrollments found</p>
+                <p className="text-gray-500 mb-4">Ready to start your child's athletic journey?</p>
                 <Link href="/classes">
                   <Button className="bg-primary-500 hover:bg-primary-600">
-                    Browse Classes
+                    Explore Our Programs
                   </Button>
                 </Link>
               </div>

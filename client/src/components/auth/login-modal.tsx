@@ -108,7 +108,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       <DialogContent className="max-w-md w-full p-6">
         <DialogHeader className="flex flex-row justify-between items-center mb-6">
           <DialogTitle className="text-2xl font-heading font-bold text-gray-900">
-            {activeTab === "login" ? "Welcome Back" : "Join Power2Perform"}
+            {activeTab === "login" ? "Welcome Back to Power2ADAPT" : "Start Your Child's Athletic Journey"}
           </DialogTitle>
           <Button
             variant="ghost"
@@ -130,11 +130,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
               <div>
                 <Label htmlFor="identifier" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email, Mobile, or User ID
+                  Your Login Details
                 </Label>
                 <Input
                   id="identifier"
-                  placeholder="Enter your email, mobile, or user ID"
+                  placeholder="Email, mobile number, or user ID"
                   {...loginForm.register("identifier")}
                   className="w-full"
                 />
