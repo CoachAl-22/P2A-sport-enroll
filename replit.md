@@ -28,8 +28,10 @@ Preferred communication style: Simple, everyday language.
 ### Data Storage Design
 - **ORM**: Drizzle ORM chosen for type safety, performance, and excellent TypeScript integration
 - **Schema Design**: Comprehensive relational schema supporting users, children, venues, coaches, classes, enrollments, payments, and notifications
-- **Database Enums**: Strongly typed enums for sport types, enrollment status, payment status, and user roles
+- **Class Programs**: Structured age-based athletic programs (Foundation Prep-Year 2, Emerging Year 3-6, Academy Year 7+, Team Sport Speed, Senior Squad, The Empowered Athlete Program)
+- **Database Enums**: Strongly typed enums for athletic programs, enrollment status, payment status, and user roles
 - **Relationships**: Proper foreign key relationships ensuring data integrity across entities
+- **Venues**: Specific Melbourne locations (Toorak College, Peninsula Grammar, Ballam Park Athletic Track, Mornington Athletic Track)
 
 ### Authentication & Authorization
 - **Session Management**: Express-session with secure cookie configuration for production environments

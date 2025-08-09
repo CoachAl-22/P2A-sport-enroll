@@ -36,14 +36,13 @@ export default function Classes() {
     queryKey: ["/api/venues"],
   });
 
-  const sportTypes = [
-    { value: "basketball", label: "Basketball" },
-    { value: "soccer", label: "Soccer" },
-    { value: "tennis", label: "Tennis" },
-    { value: "swimming", label: "Swimming" },
-    { value: "athletics", label: "Athletics" },
-    { value: "netball", label: "Netball" },
-    { value: "multi_sport", label: "Multi-Sport" },
+  const programTypes = [
+    { value: "foundation_prep_year2", label: "Foundation - Prep - Year 2" },
+    { value: "emerging_year3_6", label: "Emerging - Year 3 - 6" },
+    { value: "academy_year7_above", label: "Academy - Year 7 & Above" },
+    { value: "team_sport_speed", label: "Team Sport Speed" },
+    { value: "senior_squad", label: "Senior Squad" },
+    { value: "empowered_athlete_program", label: "The Empowered Athlete Program" },
   ];
 
   const daysOfWeek = [
@@ -99,13 +98,13 @@ export default function Classes() {
                 onValueChange={(value) => setFilters(prev => ({ ...prev, sportType: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="All Sports" />
+                  <SelectValue placeholder="All Programs" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Sports</SelectItem>
-                  {sportTypes.map(sport => (
-                    <SelectItem key={sport.value} value={sport.value}>
-                      {sport.label}
+                  <SelectItem value="">All Programs</SelectItem>
+                  {programTypes.map(program => (
+                    <SelectItem key={program.value} value={program.value}>
+                      {program.label}
                     </SelectItem>
                   ))}
                 </SelectContent>

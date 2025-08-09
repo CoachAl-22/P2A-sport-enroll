@@ -13,6 +13,27 @@ export default function ClassCard({ classData }: ClassCardProps) {
     return days[dayOfWeek];
   };
 
+  const getProgramLabel = (sportType: string) => {
+    const programMap: Record<string, string> = {
+      foundation_prep_year2: "Foundation - Prep - Year 2",
+      emerging_year3_6: "Emerging - Year 3 - 6", 
+      academy_year7_above: "Academy - Year 7 & Above",
+      team_sport_speed: "Team Sport Speed",
+      senior_squad: "Senior Squad",
+      empowered_athlete_program: "The Empowered Athlete Program",
+      basketball: "Basketball",
+      soccer: "Soccer",
+      tennis: "Tennis",
+      swimming: "Swimming",
+      athletics: "Athletics",
+      netball: "Netball",
+      cricket: "Cricket",
+      volleyball: "Volleyball",
+      multi_sport: "Multi-Sport",
+    };
+    return programMap[sportType] || sportType?.toUpperCase();
+  };
+
   const getStatusInfo = () => {
     const spotsLeft = classData.maxCapacity - classData.currentEnrollment;
     
@@ -46,8 +67,8 @@ export default function ClassCard({ classData }: ClassCardProps) {
         />
       ) : (
         <div className="w-full h-48 bg-gradient-to-r from-primary-500 to-primary-600 flex items-center justify-center">
-          <span className="text-white text-xl font-heading font-bold">
-            {classData.sportType?.toUpperCase()}
+          <span className="text-white text-lg font-heading font-bold text-center px-4">
+            {getProgramLabel(classData.sportType)}
           </span>
         </div>
       )}

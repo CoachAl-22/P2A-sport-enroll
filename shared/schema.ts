@@ -16,6 +16,12 @@ import { z } from "zod";
 
 // Enums
 export const sportTypeEnum = pgEnum("sport_type", [
+  "foundation_prep_year2",
+  "emerging_year3_6", 
+  "academy_year7_above",
+  "team_sport_speed",
+  "senior_squad",
+  "empowered_athlete_program",
   "basketball",
   "soccer",
   "tennis",
@@ -250,6 +256,16 @@ export const venueOptions = [
   'Peninsula Grammar', 
   'Ballam Park Athletic Track',
   'Mornington Athletic Track'
+] as const;
+
+// Class program options
+export const classProgramOptions = [
+  'Foundation - Prep - Year 2',
+  'Emerging - Year 3 - 6', 
+  'Academy - Year 7 & Above',
+  'Team Sport Speed',
+  'Senior Squad',
+  'The Empowered Athlete Program'
 ] as const;
 
 // Insert schemas
