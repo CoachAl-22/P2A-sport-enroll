@@ -37,10 +37,19 @@ const loginSchema = z.object({
 
 // Simple authentication middleware
 const isAuthenticated = (req: any, res: any, next: any) => {
-  if (req.session && req.session.userId) {
-    return next();
+  const sessionUserId = req.session?.userId;
+  const replitUserId = req.user?.claims?.sub;
+  
+  if (!sessionUserId && !replitUserId) {
+    return res.status(401).json({ message: "Authentication required" });
   }
-  return res.status(401).json({ message: "Authentication required" });
+  
+  // Set user ID for compatibility with both auth systems
+  if (sessionUserId && !req.user?.claims?.sub) {
+    req.user = { claims: { sub: sessionUserId } };
+  }
+  
+  return next();
 };
 
 const enrollmentFormSchema = insertEnrollmentSchema.extend({
