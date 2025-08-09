@@ -681,12 +681,12 @@ export default function Landing() {
                 <img 
                   src="/images/high-performance-1.jpg" 
                   alt="High performance athlete training session" 
-                  className="rounded-lg object-cover h-32 w-full"
+                  className="rounded-lg object-cover object-top h-48 w-full"
                 />
                 <img 
                   src="/images/high-performance-2.jpg" 
                   alt="Elite coaching and movement analysis" 
-                  className="rounded-lg object-cover h-32 w-full"
+                  className="rounded-lg object-cover object-top h-48 w-full"
                 />
               </div>
             </div>
