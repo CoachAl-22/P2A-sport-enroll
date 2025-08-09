@@ -102,8 +102,8 @@ export default function Landing() {
               <div className="text-gray-600">Venues</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">Multiple</div>
-              <div className="text-gray-600">Team Sports</div>
+              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">Team Sport</div>
+              <div className="text-gray-600">Athletic development - AFL, Soccer, Basketball, Netball and many more</div>
             </div>
             <div className="text-center">
               <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">98%</div>
