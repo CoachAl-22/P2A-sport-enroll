@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import { storage } from "./storage";
 import { ObjectStorageService } from "./objectStorage";
+import { smsService } from "./sms";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -330,6 +331,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
           dueDate,
         });
       }
+
+      // Send SMS notification for enrollment confirmation
+      try {
+        const parent = await storage.getUser(userId);
+        const child = await storage.getChild(childId);
+        const venue = await storage.getVenue(classData.venueId);
+        
+        if (parent?.mobile && child && venue) {
+          const startDate = new Date(classData.startDate).toLocaleDateString('en-AU', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
+          });
+          
+          if (enrollmentStatus === "waitlist") {
+            await smsService.sendSMS(
+              parent.mobile,
+              `${child.firstName} is on the waitlist for ${classData.name} at ${venue.name}. We'll contact you as soon as a spot opens up! 📋`
+            );
+          } else {
+            await smsService.sendEnrollmentConfirmation(
+              parent.mobile,
+              child.firstName,
+              classData.name,
+              venue.name,
+              startDate
+            );
+          }
+        }
+      } catch (smsError) {
+        console.log('SMS notification failed:', smsError);
+        // Don't fail the enrollment if SMS fails
+      }
       
       res.json(enrollment);
     } catch (error: any) {
@@ -414,6 +448,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const enrollment = await storage.getEnrollment(enrollmentId);
           if (enrollment) {
             await storage.updateClassEnrollmentCount(enrollment.classId);
+            
+            // Send payment confirmation SMS
+            try {
+              const parent = await storage.getUser(enrollment.parentId);
+              const child = await storage.getChild(enrollment.childId);
+              const classData = await storage.getClass(enrollment.classId);
+              
+              if (parent?.mobile && child && classData) {
+                const amount = (paymentIntent.amount / 100).toFixed(2);
+                await smsService.sendPaymentConfirmation(
+                  parent.mobile,
+                  child.firstName,
+                  amount,
+                  classData.name
+                );
+              }
+            } catch (smsError) {
+              console.log('Payment confirmation SMS failed:', smsError);
+            }
           }
         }
       }
@@ -422,6 +475,112 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err: any) {
       console.error('Webhook signature verification failed.', err.message);
       res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+  });
+
+  // SMS notification routes (requires admin role)
+  app.post("/api/admin/send-sms", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const { phoneNumber, message, type, recipients } = req.body;
+      
+      if (type === "broadcast" && recipients?.length > 0) {
+        // Send to multiple recipients
+        const results = await Promise.allSettled(
+          recipients.map((recipient: any) => 
+            smsService.sendSMS(recipient.mobile, message)
+          )
+        );
+        
+        const successCount = results.filter(r => r.status === "fulfilled" && r.value).length;
+        res.json({ 
+          message: `Sent to ${successCount} of ${recipients.length} recipients`,
+          successCount,
+          totalCount: recipients.length
+        });
+      } else {
+        // Send to single recipient
+        const success = await smsService.sendSMS(phoneNumber, message);
+        res.json({ success, message: success ? "SMS sent successfully" : "Failed to send SMS" });
+      }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/send-class-reminders", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const { classId, reminderDate } = req.body;
+      const targetDate = reminderDate ? new Date(reminderDate) : new Date();
+      targetDate.setDate(targetDate.getDate() + 1); // Tomorrow's classes
+      
+      // Get enrollments for classes happening tomorrow
+      const enrollments = await storage.getEnrollmentsByClassAndDate(classId, targetDate);
+      
+      let successCount = 0;
+      
+      for (const enrollment of enrollments) {
+        try {
+          const parent = await storage.getUser(enrollment.parentId);
+          const child = await storage.getChild(enrollment.childId);
+          const classData = await storage.getClass(enrollment.classId);
+          if (!classData) continue;
+          const venue = await storage.getVenue(classData.venueId);
+          
+          if (parent?.mobile && child && classData && venue) {
+            const classTime = new Date(classData.startTime).toLocaleTimeString('en-AU', {
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            });
+            
+            const classDate = targetDate.toLocaleDateString('en-AU', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'short'
+            });
+            
+            await smsService.sendClassReminder(
+              parent.mobile,
+              child.firstName,
+              classData.name,
+              venue.name,
+              classTime,
+              classDate
+            );
+            successCount++;
+          }
+        } catch (error) {
+          console.log('Failed to send reminder to enrollment:', enrollment.id, error);
+        }
+      }
+      
+      res.json({ 
+        message: `Sent ${successCount} class reminders`,
+        successCount,
+        totalEnrollments: enrollments.length
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
   });
 

@@ -101,6 +101,9 @@ export interface IStorage {
     outstanding: number;
     percentageChange: number;
   }>;
+
+  // SMS notification operations
+  getEnrollmentsByClassAndDate(classId: string | null, date: Date): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -515,6 +518,29 @@ export class DatabaseStorage implements IStorage {
       outstanding: outstandingResult.total || 0,
       percentageChange: 12, // Placeholder - would calculate from previous term
     };
+  }
+
+  // SMS notification operations
+  async getEnrollmentsByClassAndDate(classId: string | null, date: Date): Promise<any[]> {
+    const result = await db
+      .select({
+        id: enrollments.id,
+        parentId: enrollments.parentId,
+        childId: enrollments.childId,
+        classId: enrollments.classId,
+        status: enrollments.status,
+      })
+      .from(enrollments)
+      .innerJoin(classes, eq(enrollments.classId, classes.id))
+      .where(
+        and(
+          classId ? eq(enrollments.classId, classId) : sql`1=1`,
+          eq(enrollments.status, "active"),
+          sql`DATE(${classes.startDate}) = DATE(${date})`
+        )
+      );
+    
+    return result;
   }
 }
 

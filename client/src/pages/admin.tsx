@@ -115,8 +115,10 @@ export default function Admin() {
               <Button className="w-full bg-primary-500 hover:bg-primary-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
                 Send Term Enrollment Reminder
               </Button>
-              <Button className="w-full bg-secondary-500 hover:bg-secondary-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
-                Bulk SMS Parents
+              <Button asChild className="w-full bg-secondary-500 hover:bg-secondary-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                <a href="/admin/sms">
+                  SMS Notifications
+                </a>
               </Button>
               <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
                 Generate Reports

@@ -12,6 +12,7 @@ import Admin from "@/pages/admin";
 import Import from "@/pages/import";
 import Checkout from "@/pages/checkout";
 import Analytics from "@/pages/analytics";
+import AdminSMS from "@/pages/admin-sms";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -40,6 +41,7 @@ function Router() {
               <Route path="/admin" component={Admin} />
               <Route path="/import" component={Import} />
               <Route path="/analytics" component={Analytics} />
+              <Route path="/admin/sms" component={AdminSMS} />
             </>
           )}
         </>
