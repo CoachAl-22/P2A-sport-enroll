@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
+import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock } from "lucide-react";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isSeniorSquadModalOpen, setIsSeniorSquadModalOpen] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -600,7 +602,7 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => setIsSeniorSquadModalOpen(true)}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Apply Now
@@ -691,6 +693,11 @@ export default function Landing() {
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
+      />
+      
+      <SeniorSquadApplication
+        isOpen={isSeniorSquadModalOpen}
+        onClose={() => setIsSeniorSquadModalOpen(false)}
       />
     </div>
   );

@@ -7,6 +7,7 @@ import {
   enrollments,
   payments,
   notifications,
+  seniorSquadApplications,
   type User,
   type InsertUser,
   type Child,
@@ -23,6 +24,8 @@ import {
   type InsertPayment,
   type Notification,
   type InsertNotification,
+  type SeniorSquadApplication,
+  type InsertSeniorSquadApplication,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, count, sql, gte, lte } from "drizzle-orm";
@@ -104,6 +107,12 @@ export interface IStorage {
 
   // SMS notification operations
   getEnrollmentsByClassAndDate(classId: string | null, date: Date): Promise<any[]>;
+
+  // Senior Squad Application operations
+  createSeniorSquadApplication(application: InsertSeniorSquadApplication): Promise<SeniorSquadApplication>;
+  getSeniorSquadApplication(id: string): Promise<SeniorSquadApplication | undefined>;
+  getAllSeniorSquadApplications(): Promise<SeniorSquadApplication[]>;
+  updateSeniorSquadApplication(id: string, updates: Partial<SeniorSquadApplication>): Promise<SeniorSquadApplication>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -541,6 +550,30 @@ export class DatabaseStorage implements IStorage {
       );
     
     return result;
+  }
+
+  // Senior Squad Application operations
+  async createSeniorSquadApplication(application: InsertSeniorSquadApplication): Promise<SeniorSquadApplication> {
+    const [created] = await db.insert(seniorSquadApplications).values(application).returning();
+    return created;
+  }
+
+  async getSeniorSquadApplication(id: string): Promise<SeniorSquadApplication | undefined> {
+    const [application] = await db.select().from(seniorSquadApplications).where(eq(seniorSquadApplications.id, id));
+    return application;
+  }
+
+  async getAllSeniorSquadApplications(): Promise<SeniorSquadApplication[]> {
+    return await db.select().from(seniorSquadApplications).orderBy(desc(seniorSquadApplications.createdAt));
+  }
+
+  async updateSeniorSquadApplication(id: string, updates: Partial<SeniorSquadApplication>): Promise<SeniorSquadApplication> {
+    const [updated] = await db
+      .update(seniorSquadApplications)
+      .set(updates)
+      .where(eq(seniorSquadApplications.id, id))
+      .returning();
+    return updated;
   }
 }
 

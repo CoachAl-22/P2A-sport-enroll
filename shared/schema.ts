@@ -183,6 +183,45 @@ export const notifications = pgTable("notifications", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const seniorSquadApplications = pgTable("senior_squad_applications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  // Athlete Information
+  athleteFirstName: varchar("athlete_first_name", { length: 100 }).notNull(),
+  athleteLastName: varchar("athlete_last_name", { length: 100 }).notNull(),
+  athleteEmail: varchar("athlete_email", { length: 255 }).notNull(),
+  athletePhone: varchar("athlete_phone", { length: 20 }).notNull(),
+  dateOfBirth: varchar("date_of_birth", { length: 10 }).notNull(),
+  schoolYear: varchar("school_year", { length: 50 }).notNull(),
+  
+  // Contact Information
+  parentGuardianName: varchar("parent_guardian_name", { length: 100 }),
+  parentGuardianEmail: varchar("parent_guardian_email", { length: 255 }),
+  parentGuardianPhone: varchar("parent_guardian_phone", { length: 20 }),
+  
+  // Athletic Background
+  currentSports: text("current_sports").notNull(),
+  athleticExperience: text("athletic_experience").notNull(),
+  previousClubs: text("previous_clubs"),
+  personalBests: text("personal_bests"),
+  
+  // Goals and Commitment
+  athleticGoals: text("athletic_goals").notNull(),
+  trainingCommitment: text("training_commitment").notNull(),
+  reasonForJoining: text("reason_for_joining").notNull(),
+  
+  // Availability
+  availableDays: text("available_days").notNull(),
+  additionalNotes: text("additional_notes"),
+  
+  // Application Status
+  status: varchar("status", { length: 20 }).default("pending").notNull(),
+  reviewedBy: uuid("reviewed_by").references(() => users.id),
+  reviewNotes: text("review_notes"),
+  reviewedAt: timestamp("reviewed_at"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   children: many(children),
@@ -316,6 +355,15 @@ export const insertNotificationSchema = createInsertSchema(notifications).omit({
   createdAt: true,
 });
 
+export const insertSeniorSquadApplicationSchema = createInsertSchema(seniorSquadApplications).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  reviewedBy: true,
+  reviewNotes: true,
+  reviewedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -333,3 +381,5 @@ export type Payment = typeof payments.$inferSelect;
 export type InsertPayment = z.infer<typeof insertPaymentSchema>;
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type SeniorSquadApplication = typeof seniorSquadApplications.$inferSelect;
+export type InsertSeniorSquadApplication = z.infer<typeof insertSeniorSquadApplicationSchema>;
