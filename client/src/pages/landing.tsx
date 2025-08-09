@@ -598,8 +598,8 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
-                    <span className="text-gray-500 text-sm"> + GST per class</span>
+                    <div className="text-sm text-gray-600 mb-1">Casual $30 + GST per class</div>
+                    <div className="text-sm text-gray-600">Unlimited Sessions <span className="text-lg font-heading font-bold text-primary-500">$300</span> per month</div>
                   </div>
                   <Button 
                     onClick={() => setIsSeniorSquadModalOpen(true)}

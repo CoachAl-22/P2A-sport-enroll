@@ -159,8 +159,15 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
                     <span className="text-sm">High-performance training focus</span>
                   </div>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Badge className="bg-orange-100 text-orange-800">By Application Only</Badge>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900 mb-2">Pricing Options</h4>
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <div>• Casual: $30 + GST per class</div>
+                      <div>• Unlimited Sessions: $300 per month</div>
+                    </div>
+                  </div>
                   <p className="text-sm text-gray-600">
                     Our most advanced program designed for serious athletes seeking elite-level training 
                     and competitive performance development.
