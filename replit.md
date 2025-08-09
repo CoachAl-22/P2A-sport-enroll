@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### High Performance Services Navigation (August 2025) - ✅ COMPLETED
+- **Dedicated High Performance Page**: Created separate `/high-performance` route with comprehensive elite coaching services
+- **Navigation Tab Integration**: Added "High Performance" tab to main navigation bar between Classes and Features
+- **Content Reorganization**: Moved all 1-on-1 coaching, team consulting, and remote coaching services to dedicated page
+- **Enhanced User Experience**: Cleaner landing page focused on school-based group programs, with elite services properly separated
+- **Image Integration**: High-performance coaching photos (IMG_4312, IMG_4492) properly displayed with athlete nameplates visible
+- **Professional Layout**: Dark gradient design distinguishing premium services from standard group programs
+
 ### Mobile App Implementation (August 2025) - ✅ COMPLETED
 - **React Native Mobile App**: Complete iOS and Android app implementation using Expo framework
 - **Cross-Platform Architecture**: Shared codebase for iOS and Android with native performance
