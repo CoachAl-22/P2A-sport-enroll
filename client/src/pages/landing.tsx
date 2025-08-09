@@ -677,8 +677,8 @@ export default function Landing() {
             <div>
               <h4 className="font-heading font-semibold mb-4">Contact Info</h4>
               <div className="space-y-2 text-gray-300">
-                <p className="flex items-center"><Phone className="w-4 h-4 mr-2" />1300 SPORTS (1300 776 787)</p>
-                <p className="flex items-center"><Mail className="w-4 h-4 mr-2" />support@power2perform.com.au</p>
+                <p className="flex items-center"><Phone className="w-4 h-4 mr-2" />+61 434 679 395</p>
+                <p className="flex items-center"><Mail className="w-4 h-4 mr-2" />info@power2adapt.com</p>
                 <p className="flex items-center"><School className="w-4 h-4 mr-2" />Serving Victorian Schools</p>
                 <p className="flex items-center"><Clock className="w-4 h-4 mr-2" />Mon-Fri: 8am-6pm</p>
               </div>
