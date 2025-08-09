@@ -686,8 +686,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   async markAttendance(attendanceData: any): Promise<any> {
-    const [created] = await db.insert(attendanceRecords).values(attendanceData).returning();
-    return created;
+    try {
+      // Use raw SQL to insert attendance record to avoid Drizzle timestamp issues
+      const result = await db.execute(sql`
+        INSERT INTO attendance_records (
+          class_id, child_id, attendance_date, status, absence_reason, 
+          credits_eligible, marked_by, notes
+        ) VALUES (
+          ${attendanceData.classId}, 
+          ${attendanceData.childId}, 
+          ${attendanceData.attendanceDate}::timestamp, 
+          ${attendanceData.status}, 
+          ${attendanceData.absenceReason || null}, 
+          ${attendanceData.creditsEligible || false}, 
+          ${attendanceData.markedBy}, 
+          ${attendanceData.notes || null}
+        ) RETURNING *
+      `);
+      
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error in markAttendance:', error);
+      throw error;
+    }
   }
 
   async getAttendanceForClass(classId: string, date: string): Promise<any[]> {
