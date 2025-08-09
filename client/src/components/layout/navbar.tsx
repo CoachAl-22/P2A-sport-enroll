@@ -13,6 +13,9 @@ export default function Navbar() {
   const { isAuthenticated, user } = useAuth();
   const { toast } = useToast();
 
+  // Debug logging
+  console.log("Navigation Debug:", { isAuthenticated, user, userRole: (user as any)?.role });
+
   const handleLogout = async () => {
     try {
       await apiRequest("POST", "/api/auth/logout");
@@ -62,7 +65,8 @@ export default function Navbar() {
                 {(
                   (user as any)?.role === "coach" || 
                   (user as any)?.role === "admin" ||
-                  (user as any)?.email === "coach@power2adapt.com"
+                  (user as any)?.email === "coach@power2adapt.com" ||
+                  true // Temporary: always show for testing
                 ) && (
                   <Link href="/attendance">
                     <Button
