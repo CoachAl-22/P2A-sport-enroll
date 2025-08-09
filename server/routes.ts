@@ -523,12 +523,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const studentsPreview: any[] = [];
       const issues: string[] = [];
       
-      // Expected customer columns
-      const customerColumns = ['email', 'mobile', 'firstName', 'lastName', 'address', 'suburb', 'postcode', 'emergencyContact'];
+      // Expected customer columns - updated for SportsBiz format
+      const sportsBizColumns = ['Email', 'Mobile Phone 1', 'First Name', 'Last Name', 'Address #1', 'Suburb', 'Postcode', 'Active'];
       const studentColumns = ['parentEmail', 'studentFirstName', 'studentLastName', 'dateOfBirth', 'medicalInfo', 'emergencyContact'];
       
       // Check if we have customer or student data based on headers
-      const hasCustomerData = customerColumns.some(col => headers.includes(col));
+      const hasCustomerData = sportsBizColumns.some(col => headers.includes(col));
       const hasStudentData = studentColumns.some(col => headers.includes(col));
       
       if (!hasCustomerData && !hasStudentData) {
@@ -546,17 +546,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           rowData[header] = row[idx];
         });
         
-        // Process as customer data
-        if (hasCustomerData && rowData.email) {
+        // Process as customer data (SportsBiz format)
+        if (hasCustomerData && rowData['Email']) {
           const customer = {
-            email: rowData.email || '',
-            mobile: rowData.mobile || '',
-            firstName: rowData.firstName || '',
-            lastName: rowData.lastName || '',
-            address: rowData.address || '',
-            suburb: rowData.suburb || '',
-            postcode: rowData.postcode || '',
-            emergencyContact: rowData.emergencyContact || '',
+            email: rowData['Email'] || '',
+            mobile: rowData['Mobile Phone 1'] || '',
+            firstName: rowData['First Name'] || '',
+            lastName: rowData['Last Name'] || '',
+            address: rowData['Address #1'] || '',
+            suburb: rowData['Suburb'] || '',
+            postcode: rowData['Postcode'] || '',
+            active: rowData['Active'] || '',
+            state: rowData['State'] || '',
           };
           
           // Validate required fields
@@ -634,11 +635,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let customersImported = 0;
       let studentsImported = 0;
       
-      // Expected customer columns
-      const customerColumns = ['email', 'mobile', 'firstName', 'lastName', 'address', 'suburb', 'postcode', 'emergencyContact'];
+      // Expected customer columns - updated for SportsBiz format
+      const sportsBizColumns = ['Email', 'Mobile Phone 1', 'First Name', 'Last Name', 'Address #1', 'Suburb', 'Postcode', 'Active'];
       const studentColumns = ['parentEmail', 'studentFirstName', 'studentLastName', 'dateOfBirth', 'medicalInfo', 'emergencyContact'];
       
-      const hasCustomerData = customerColumns.some(col => headers.includes(col));
+      const hasCustomerData = sportsBizColumns.some(col => headers.includes(col));
       const hasStudentData = studentColumns.some(col => headers.includes(col));
       
       for (const row of dataRows) {
@@ -649,27 +650,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
           rowData[header] = row[idx];
         });
         
-        // Import customer data
-        if (hasCustomerData && rowData.email && rowData.firstName && rowData.lastName) {
+        // Import customer data (SportsBiz format)
+        if (hasCustomerData && rowData['Email'] && rowData['First Name'] && rowData['Last Name']) {
           try {
-            // Check if user already exists
-            const existingUser = await storage.getUserByEmail(rowData.email);
-            if (!existingUser) {
-              // Create new user with default password (they'll need to reset)
-              const hashedPassword = await bcrypt.hash('ChangeMe123!', 10);
-              await storage.createUser({
-                email: rowData.email,
-                mobile: rowData.mobile || '',
-                firstName: rowData.firstName,
-                lastName: rowData.lastName,
-                password: hashedPassword,
-                role: 'parent',
-                address: rowData.address || '',
-                suburb: rowData.suburb || '',
-                postcode: rowData.postcode || '',
-                emergencyContact: rowData.emergencyContact || '',
-              });
-              customersImported++;
+            // Only import active customers
+            if (rowData['Active'] === 'True') {
+              // Check if user already exists
+              const existingUser = await storage.getUserByEmail(rowData['Email']);
+              if (!existingUser) {
+                // Create new user with default password (they'll need to reset)
+                const hashedPassword = await bcrypt.hash('Power2Perform2024!', 10);
+                await storage.createUser({
+                  email: rowData['Email'],
+                  mobile: rowData['Mobile Phone 1'] || '',
+                  firstName: rowData['First Name'],
+                  lastName: rowData['Last Name'],
+                  password: hashedPassword,
+                  role: 'parent',
+                  address: rowData['Address #1'] || '',
+                  suburb: rowData['Suburb'] || '',
+                  postcode: rowData['Postcode'] || '',
+                  emergencyContact: '', // SportsBiz doesn't have this field
+                });
+                customersImported++;
+              }
             }
           } catch (error) {
             console.error('Error importing customer:', error);

@@ -134,14 +134,12 @@ export default function Import() {
                   Expected CSV Format
                 </h4>
                 <div className="text-sm text-blue-800 space-y-2">
-                  <p><strong>Customer columns:</strong></p>
+                  <p><strong>SportsBiz Export columns:</strong></p>
                   <p className="text-xs font-mono bg-white px-2 py-1 rounded">
-                    email, mobile, firstName, lastName, address, suburb, postcode, emergencyContact
+                    "First Name", "Last Name", "Email", "Mobile Phone 1", "Address #1", "Suburb", "Postcode", "Active"
                   </p>
-                  <p><strong>Student columns:</strong></p>
-                  <p className="text-xs font-mono bg-white px-2 py-1 rounded">
-                    parentEmail, studentFirstName, studentLastName, dateOfBirth, medicalInfo, emergencyContact
-                  </p>
+                  <p className="mt-2"><strong>Expected format:</strong> Direct upload of SportsBiz customer export CSV files</p>
+                  <p className="text-xs">The system will only import customers marked as "Active" = "True"</p>
                 </div>
               </div>
             </CardContent>
@@ -225,6 +223,7 @@ export default function Import() {
                               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Mobile</th>
                               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Suburb</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-200">
@@ -234,6 +233,11 @@ export default function Import() {
                                 <td className="px-3 py-2 text-sm">{customer.email}</td>
                                 <td className="px-3 py-2 text-sm">{customer.mobile}</td>
                                 <td className="px-3 py-2 text-sm">{customer.suburb}</td>
+                                <td className="px-3 py-2 text-sm">
+                                  <span className={`px-2 py-1 rounded text-xs ${customer.active === 'True' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                                    {customer.active === 'True' ? 'Active' : 'Inactive'}
+                                  </span>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
