@@ -76,7 +76,7 @@ export default function Landing() {
             </div>
             <div className="hidden md:block">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/Georgia Goss Comp ready.jpg" 
+                src="/images/georgia-goss-comp.jpg" 
                 alt="Young athletes in training" 
                 className="rounded-xl shadow-2xl"
               />
@@ -181,7 +181,7 @@ export default function Landing() {
             {/* Foundation Class */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/CoachGeorgia Crew.jpg" 
+                src="/images/coach-georgia-crew.jpg" 
                 alt="Young children learning fundamental movement skills" 
                 className="w-full h-48 object-cover"
               />
@@ -224,7 +224,7 @@ export default function Landing() {
             {/* Emerging Athletes */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/Ashton XCR pic.jpg" 
+                src="/images/ashton-xcr.jpg" 
                 alt="Young athletes developing skills in team sports" 
                 className="w-full h-48 object-cover"
               />
@@ -267,7 +267,7 @@ export default function Landing() {
             {/* Foundation Class - Toorak College Tuesday */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/CoachGeorgia Crew.jpg" 
+                src="/images/coach-georgia-crew.jpg" 
                 alt="Young children learning fundamental movement skills" 
                 className="w-full h-48 object-cover"
               />
@@ -310,7 +310,7 @@ export default function Landing() {
             {/* Emerging Athletes - Toorak College Thursday */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/Ashton XCR pic.jpg" 
+                src="/images/ashton-xcr.jpg" 
                 alt="Young athletes developing skills in team sports" 
                 className="w-full h-48 object-cover"
               />
@@ -353,7 +353,7 @@ export default function Landing() {
             {/* Team Sport Speed - Friday 4:30pm */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/Team Sport running SFNC.jpg" 
+                src="/images/team-sport-running.jpg" 
                 alt="Athletes training for speed and performance at athletic track" 
                 className="w-full h-48 object-cover"
               />
@@ -396,7 +396,7 @@ export default function Landing() {
             {/* Team Sport Speed - Friday 5:30pm */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/Team Sport running SFNC.jpg" 
+                src="/images/team-sport-running.jpg" 
                 alt="Athletes training for speed and performance at athletic track" 
                 className="w-full h-48 object-cover"
               />
@@ -568,7 +568,7 @@ export default function Landing() {
             {/* Senior Squad - Ballam Park Thursday */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
-                src="/attached_assets/Photos for Power2ADAPT/The_Archers (1).jpg" 
+                src="/images/the-archers.jpg" 
                 alt="Senior squad athletes training at professional athletic track" 
                 className="w-full h-48 object-cover"
               />
