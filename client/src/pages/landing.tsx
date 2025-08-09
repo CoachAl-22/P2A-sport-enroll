@@ -90,16 +90,16 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">500+</div>
-              <div className="text-gray-600">Active Students</div>
+              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">1000+</div>
+              <div className="text-gray-600">Students Helped</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">25+</div>
-              <div className="text-gray-600">School Venues</div>
+              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">Multiple</div>
+              <div className="text-gray-600">Venues</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">15+</div>
-              <div className="text-gray-600">Sports Programs</div>
+              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">Multiple</div>
+              <div className="text-gray-600">Team Sports</div>
             </div>
             <div className="text-center">
               <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">98%</div>
