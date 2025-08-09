@@ -574,7 +574,7 @@ export default function Landing() {
               <img 
                 src="/al-archer-peru.jpg" 
                 alt="High performance squad athletes training with elite coaching" 
-                className="w-full h-48 object-cover"
+                className="w-full h-56 object-contain bg-gray-100"
               />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
