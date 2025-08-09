@@ -532,8 +532,8 @@ export default function Landing() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-heading font-bold text-gray-900">Senior Squad</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Available
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                    By Application
                   </span>
                 </div>
                 <div className="space-y-2 mb-4">
@@ -547,7 +547,7 @@ export default function Landing() {
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Users className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Max 20 athletes total</span>
+                    <span className="text-sm">Max 20 athletes • Application only</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
@@ -559,7 +559,7 @@ export default function Landing() {
                     onClick={() => setIsLoginModalOpen(true)}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
-                    Enroll Now
+                    Apply Now
                   </Button>
                 </div>
               </div>
