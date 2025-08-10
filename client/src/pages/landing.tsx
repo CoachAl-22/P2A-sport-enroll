@@ -62,14 +62,6 @@ export default function Landing() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              {/* Large Power2ADAPT Logo */}
-              <div className="flex justify-center md:justify-start mb-8">
-                <img 
-                  src={logoPath} 
-                  alt="Power2ADAPT" 
-                  className="h-24 md:h-32 w-auto drop-shadow-2xl"
-                />
-              </div>
               <h1 className="text-4xl md:text-6xl font-heading font-bold leading-tight mb-6">
                 Where All Athletes <span className="text-secondary-500">Thrive</span>
               </h1>
@@ -130,8 +122,16 @@ export default function Landing() {
       </section>
 
       {/* Features Showcase */}
-      <section id="features" className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="features" className="relative py-16 bg-gray-50 overflow-hidden">
+        {/* Power2ADAPT Logo Background */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-5">
+          <img 
+            src={logoPath} 
+            alt="Power2ADAPT Background" 
+            className="w-96 h-96 object-contain"
+          />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Why Parents Choose Power2ADAPT</h2>
             <p className="text-xl text-gray-600">Simple, convenient, and designed with your family in mind</p>
