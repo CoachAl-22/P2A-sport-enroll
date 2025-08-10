@@ -663,11 +663,12 @@ export default function Landing() {
             <div>
               <h4 className="font-heading font-semibold mb-4">Programs</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><a href="#" className="hover:text-white">Basketball</a></li>
+                <li><a href="#" className="hover:text-white">Athletics</a></li>
+                <li><a href="#" className="hover:text-white">AFL</a></li>
                 <li><a href="#" className="hover:text-white">Soccer</a></li>
-                <li><a href="#" className="hover:text-white">Tennis</a></li>
-                <li><a href="#" className="hover:text-white">Swimming</a></li>
-                <li><a href="#" className="hover:text-white">Multi-Sport</a></li>
+                <li><a href="#" className="hover:text-white">Basketball</a></li>
+                <li><a href="#" className="hover:text-white">Netball</a></li>
+                <li><a href="#" className="hover:text-white">Multi-sports</a></li>
               </ul>
             </div>
             
