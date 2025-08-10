@@ -41,6 +41,7 @@ function Router() {
       {!isAuthenticated ? (
         <>
           <Route path="/" component={Landing} />
+          <Route path="/classes" component={Classes} />
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />

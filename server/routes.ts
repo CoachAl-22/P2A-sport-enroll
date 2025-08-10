@@ -189,11 +189,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/classes", async (req, res) => {
     try {
       const filters = {
-        sportType: req.query.sportType as string,
-        venueId: req.query.venueId as string,
-        term: req.query.term as string,
+        sportType: req.query.sportType === "all" ? undefined : req.query.sportType as string,
+        venueId: req.query.venueId === "all" ? undefined : req.query.venueId as string,
+        term: req.query.term === "all" ? undefined : req.query.term as string,
         year: req.query.year ? parseInt(req.query.year as string) : undefined,
-        dayOfWeek: req.query.dayOfWeek ? parseInt(req.query.dayOfWeek as string) : undefined,
+        dayOfWeek: req.query.dayOfWeek === "all" ? undefined : req.query.dayOfWeek ? parseInt(req.query.dayOfWeek as string) : undefined,
       };
       
       const classes = await storage.getClassesByFilters(filters);
