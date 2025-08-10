@@ -8,6 +8,7 @@ import { ObjectStorageService } from "./objectStorage";
 import { smsService } from "./sms";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
+import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -851,6 +852,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
         invoiceNumber: payment.invoiceNumber || null,
         paymentStatus: payment.status
       });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin customer and student data routes
+  app.get("/api/admin/customers", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const customers = await getAllCustomersWithChildren();
+      res.json(customers);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/admin/students", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const students = await getAllStudentsWithParents();
+      res.json(students);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

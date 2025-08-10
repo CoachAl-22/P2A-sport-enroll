@@ -149,6 +149,15 @@ export default function Admin() {
               <span className="text-sm font-medium">Manage Staff</span>
             </a>
           </Button>
+
+          <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
+            <a href="/admin/customers">
+              <div className="text-blue-400 mb-2">
+                <Users className="w-6 h-6 mx-auto" />
+              </div>
+              <span className="text-sm font-medium">Customers & Students</span>
+            </a>
+          </Button>
           
           <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
             <a href="/admin/blog">
