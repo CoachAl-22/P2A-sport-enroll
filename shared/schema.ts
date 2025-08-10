@@ -218,6 +218,9 @@ export const payments = pgTable("payments", {
   status: paymentStatusEnum("status").default("pending"),
   paidAt: timestamp("paid_at"),
   dueDate: timestamp("due_date").notNull(),
+  invoiceNumber: varchar("invoice_number", { length: 50 }).unique(),
+  invoiceGenerated: boolean("invoice_generated").default(false),
+  invoicePdfPath: varchar("invoice_pdf_path", { length: 500 }),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -599,6 +602,11 @@ export const insertTermConfigurationSchema = createInsertSchema(termConfiguratio
   id: true,
   createdAt: true,
   updatedAt: true,
+});
+
+export const insertTermHolidaySchema = createInsertSchema(termHolidays).omit({
+  id: true,
+  createdAt: true,
 });
 
 // Types

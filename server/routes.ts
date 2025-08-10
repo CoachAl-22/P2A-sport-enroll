@@ -6,6 +6,8 @@ import session from "express-session";
 import { storage } from "./storage";
 import { ObjectStorageService } from "./objectStorage";
 import { smsService } from "./sms";
+import { InvoiceService } from "./invoiceService";
+import { readFileSync } from "fs";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -80,6 +82,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(sessionConfig);
   // Mobile auth middleware
   app.use(authMiddleware);
+
+  // Initialize invoice service
+  const invoiceService = new InvoiceService();
 
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {
@@ -717,6 +722,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (enrollment) {
             await storage.updateClassEnrollmentCount(enrollment.classId);
             
+            // Generate invoice for payment
+            try {
+              const payments = await storage.getPaymentsByEnrollment(enrollmentId);
+              if (payments.length > 0) {
+                const { invoiceNumber } = await invoiceService.generateInvoiceForPayment(payments[0].id);
+                console.log(`Invoice ${invoiceNumber} generated for payment ${payments[0].id}`);
+              }
+            } catch (invoiceError) {
+              console.log('Invoice generation failed:', invoiceError);
+            }
+
             // Send payment confirmation SMS
             try {
               const parent = await storage.getUser(enrollment.parentId);
@@ -743,6 +759,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err: any) {
       console.error('Webhook signature verification failed.', err.message);
       res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+  });
+
+  // Invoice routes
+  app.post("/api/payments/:paymentId/generate-invoice", isAuthenticated, async (req: any, res) => {
+    const userId = req.user?.claims?.sub || req.session?.userId;
+    
+    try {
+      const { paymentId } = req.params;
+      
+      // Verify payment belongs to user
+      const payment = await storage.getPayment(paymentId);
+      if (!payment) {
+        return res.status(404).json({ message: "Payment not found" });
+      }
+      
+      const enrollment = await storage.getEnrollment(payment.enrollmentId);
+      if (!enrollment || enrollment.parentId !== userId) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const { invoiceNumber, pdfPath } = await invoiceService.generateInvoiceForPayment(paymentId);
+      
+      res.json({ 
+        invoiceNumber,
+        message: "Invoice generated successfully"
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/payments/:paymentId/invoice", isAuthenticated, async (req: any, res) => {
+    const userId = req.user?.claims?.sub || req.session?.userId;
+    
+    try {
+      const { paymentId } = req.params;
+      
+      // Verify payment belongs to user
+      const payment = await storage.getPayment(paymentId);
+      if (!payment) {
+        return res.status(404).json({ message: "Payment not found" });
+      }
+      
+      const enrollment = await storage.getEnrollment(payment.enrollmentId);
+      if (!enrollment || enrollment.parentId !== userId) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const pdfPath = await invoiceService.getInvoicePdfPath(paymentId);
+      if (!pdfPath) {
+        return res.status(404).json({ message: "Invoice not found" });
+      }
+      
+      // Read and serve the PDF file
+      try {
+        const pdfBuffer = readFileSync(pdfPath);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="invoice-${payment.invoiceNumber}.pdf"`);
+        res.send(pdfBuffer);
+      } catch (fileError) {
+        return res.status(404).json({ message: "Invoice file not found" });
+      }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/payments/:paymentId/invoice-status", isAuthenticated, async (req: any, res) => {
+    const userId = req.user?.claims?.sub || req.session?.userId;
+    
+    try {
+      const { paymentId } = req.params;
+      
+      // Verify payment belongs to user
+      const payment = await storage.getPayment(paymentId);
+      if (!payment) {
+        return res.status(404).json({ message: "Payment not found" });
+      }
+      
+      const enrollment = await storage.getEnrollment(payment.enrollmentId);
+      if (!enrollment || enrollment.parentId !== userId) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const hasInvoice = await invoiceService.hasInvoice(paymentId);
+      
+      res.json({ 
+        hasInvoice,
+        invoiceNumber: payment.invoiceNumber || null,
+        paymentStatus: payment.status
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
   });
 

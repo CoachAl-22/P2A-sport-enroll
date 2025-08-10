@@ -494,6 +494,41 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
+  async updatePaymentInvoice(paymentId: string, invoiceNumber: string, invoicePdfPath?: string) {
+    return await db
+      .update(payments)
+      .set({
+        invoiceNumber,
+        invoiceGenerated: true,
+        invoicePdfPath,
+      })
+      .where(eq(payments.id, paymentId))
+      .returning();
+  }
+
+  async getPaymentWithDetails(paymentId: string) {
+    const result = await db
+      .select({
+        payment: payments,
+        enrollment: enrollments,
+        child: children,
+        parent: users,
+        class: classes,
+        venue: venues,
+        termConfig: termConfigurations,
+      })
+      .from(payments)
+      .leftJoin(enrollments, eq(payments.enrollmentId, enrollments.id))
+      .leftJoin(children, eq(enrollments.childId, children.id))
+      .leftJoin(users, eq(enrollments.parentId, users.id))
+      .leftJoin(classes, eq(enrollments.classId, classes.id))
+      .leftJoin(venues, eq(classes.venueId, venues.id))
+      .leftJoin(termConfigurations, eq(classes.termConfigId, termConfigurations.id))
+      .where(eq(payments.id, paymentId));
+
+    return result[0] || null;
+  }
+
   // Notification operations
   async getNotification(id: string): Promise<Notification | undefined> {
     const [notification] = await db

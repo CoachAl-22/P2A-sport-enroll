@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/layout/navbar";
-import { Plus, Calendar, CreditCard, Bell } from "lucide-react";
+import { Plus, Calendar, CreditCard, Bell, Receipt } from "lucide-react";
 import { Link } from "wouter";
+import { InvoiceActions } from "@/components/InvoiceActions";
 
 export default function Dashboard() {
   const { data: enrollments, isLoading: enrollmentsLoading } = useQuery({
@@ -100,40 +101,52 @@ export default function Dashboard() {
                 <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
               </div>
             ) : enrollments && enrollments.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {enrollments.map((enrollment: any) => (
-                  <div key={enrollment.enrollment.id} className="bg-gray-50 rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between">
-                    <div className="flex-1">
-                      <h5 className="font-semibold text-gray-900 mb-1">
-                        {enrollment.class?.name || 'Unknown Class'}
-                      </h5>
-                      <p className="text-gray-600">
-                        {enrollment.class && `${getDayName(enrollment.class.dayOfWeek)}s ${enrollment.class.startTime} - ${enrollment.class.endTime}`}
-                        {enrollment.venue && ` | ${enrollment.venue.name}`}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {enrollment.coach && `Coach: ${enrollment.coach.firstName} ${enrollment.coach.lastName}`}
-                      </p>
-                      {enrollment.child && (
-                        <p className="text-sm text-gray-500">
-                          Student: {enrollment.child.firstName} {enrollment.child.lastName}
+                  <div key={enrollment.enrollment.id} className="bg-gray-50 rounded-lg p-6">
+                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+                      <div className="flex-1">
+                        <h5 className="font-semibold text-gray-900 mb-1">
+                          {enrollment.class?.name || 'Unknown Class'}
+                        </h5>
+                        <p className="text-gray-600">
+                          {enrollment.class && `${getDayName(enrollment.class.dayOfWeek)}s ${enrollment.class.startTime} - ${enrollment.class.endTime}`}
+                          {enrollment.venue && ` | ${enrollment.venue.name}`}
                         </p>
-                      )}
-                    </div>
-                    <div className="mt-3 md:mt-0 flex items-center space-x-3">
-                      <Badge className={getStatusColor(enrollment.enrollment.status)}>
-                        {enrollment.enrollment.status.replace('_', ' ').toUpperCase()}
-                      </Badge>
-                      {enrollment.enrollment.status === 'pending_payment' && (
-                        <Link href={`/checkout/${enrollment.enrollment.id}`}>
-                          <Button size="sm" className="bg-secondary-500 hover:bg-secondary-600">
-                            Pay Now
+                        <p className="text-sm text-gray-500">
+                          {enrollment.coach && `Coach: ${enrollment.coach.firstName} ${enrollment.coach.lastName}`}
+                        </p>
+                        {enrollment.child && (
+                          <p className="text-sm text-gray-500">
+                            Student: {enrollment.child.firstName} {enrollment.child.lastName}
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-start space-x-4">
+                        <div className="flex flex-col items-end space-y-3">
+                          <Badge className={getStatusColor(enrollment.enrollment.status)}>
+                            {enrollment.enrollment.status.replace('_', ' ').toUpperCase()}
+                          </Badge>
+                          {enrollment.enrollment.status === 'pending_payment' && (
+                            <Link href={`/checkout/${enrollment.enrollment.id}`}>
+                              <Button size="sm" className="bg-secondary-500 hover:bg-secondary-600">
+                                Pay Now
+                              </Button>
+                            </Link>
+                          )}
+                          <Button variant="ghost" size="sm" className="text-primary-500 hover:text-primary-700">
+                            View Details
                           </Button>
-                        </Link>
-                      )}
-                      <Button variant="ghost" size="sm" className="text-primary-500 hover:text-primary-700">
-                        View Details
-                      </Button>
+                        </div>
+                        
+                        {/* Invoice Section for Paid Enrollments */}
+                        {enrollment.enrollment.status === 'active' && enrollment.payment && (
+                          <div className="w-80">
+                            <InvoiceActions paymentId={enrollment.payment.id} />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -148,6 +161,42 @@ export default function Dashboard() {
                 </Link>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Payments & Invoices Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-heading font-bold text-gray-900 flex items-center">
+              <Receipt className="h-6 w-6 mr-2" />
+              Payment History & Invoices
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-2">Professional Invoice System</h4>
+                <p className="text-sm text-blue-700 mb-3">
+                  Power2ADAPT now provides professional PDF invoices for all completed payments. 
+                  Your invoices include detailed program information, GST breakdown, and company branding.
+                </p>
+                <div className="text-xs text-blue-600">
+                  <strong>Invoice Features:</strong>
+                  <ul className="list-disc list-inside mt-1 space-y-1">
+                    <li>Professional Power2ADAPT company branding</li>
+                    <li>Detailed term and class information</li>
+                    <li>Complete GST breakdown and totals</li>
+                    <li>Payment confirmation and transaction details</li>
+                    <li>Downloadable PDF format for your records</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-600">
+                Invoices are automatically generated when payments are completed. 
+                You can download them from the enrollment details above or from your payment confirmation emails.
+              </p>
+            </div>
           </CardContent>
         </Card>
 
