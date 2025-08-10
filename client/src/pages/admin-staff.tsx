@@ -54,12 +54,12 @@ export default function AdminStaff() {
     return <Redirect to="/" />;
   }
 
-  const { data: staff, isLoading: staffLoading } = useQuery({
+  const { data: staff = [], isLoading: staffLoading } = useQuery<any[]>({
     queryKey: ["/api/staff"],
     enabled: (user as any)?.user?.role === "admin",
   });
 
-  const { data: coaches } = useQuery({
+  const { data: coaches = [] } = useQuery<any[]>({
     queryKey: ["/api/coaches"],
     enabled: (user as any)?.user?.role === "admin",
   });
