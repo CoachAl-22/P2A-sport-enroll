@@ -109,22 +109,31 @@ export default function ParentHelpCenter() {
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">Venue Locations</h4>
             <div className="grid md:grid-cols-2 gap-3">
-              <div className="p-3 border rounded-lg">
-                <h5 className="font-medium flex items-center"><MapPin className="w-4 h-4 mr-2" />Peninsula Grammar</h5>
-                <p className="text-sm text-gray-600">Mount Eliza campus</p>
+              <div className="p-3 border border-orange-200 bg-orange-50 rounded-lg">
+                <h5 className="font-medium flex items-center text-orange-900"><MapPin className="w-4 h-4 mr-2" />Peninsula Grammar</h5>
+                <p className="text-xs text-orange-700 font-medium">Students attending this school only</p>
+                <p className="text-sm text-orange-600">Mount Eliza campus</p>
               </div>
-              <div className="p-3 border rounded-lg">
-                <h5 className="font-medium flex items-center"><MapPin className="w-4 h-4 mr-2" />Toorak College</h5>
-                <p className="text-sm text-gray-600">Mount Eliza campus</p>
+              <div className="p-3 border border-orange-200 bg-orange-50 rounded-lg">
+                <h5 className="font-medium flex items-center text-orange-900"><MapPin className="w-4 h-4 mr-2" />Toorak College</h5>
+                <p className="text-xs text-orange-700 font-medium">Students attending this school only</p>
+                <p className="text-sm text-orange-600">Mount Eliza campus</p>
               </div>
-              <div className="p-3 border rounded-lg">
-                <h5 className="font-medium flex items-center"><MapPin className="w-4 h-4 mr-2" />Haileybury</h5>
-                <p className="text-sm text-gray-600">Brighton campus</p>
+              <div className="p-3 border border-green-200 bg-green-50 rounded-lg">
+                <h5 className="font-medium flex items-center text-green-900"><MapPin className="w-4 h-4 mr-2" />Ballam Park Athletics Track</h5>
+                <p className="text-xs text-green-700 font-medium">Open to all students</p>
+                <p className="text-sm text-green-600">Frankston South</p>
               </div>
-              <div className="p-3 border rounded-lg">
-                <h5 className="font-medium flex items-center"><MapPin className="w-4 h-4 mr-2" />Balcombe Grammar</h5>
-                <p className="text-sm text-gray-600">Mount Martha campus</p>
+              <div className="p-3 border border-green-200 bg-green-50 rounded-lg">
+                <h5 className="font-medium flex items-center text-green-900"><MapPin className="w-4 h-4 mr-2" />Mornington Athletics Track</h5>
+                <p className="text-xs text-green-700 font-medium">Open to all students</p>
+                <p className="text-sm text-green-600">Mornington</p>
               </div>
+            </div>
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <p className="text-blue-800 text-sm">
+                <strong>Important:</strong> Peninsula Grammar and Toorak College programs are restricted to students attending those schools due to school policy. All other venues welcome students from any school.
+              </p>
             </div>
           </div>
         </div>
@@ -132,11 +141,11 @@ export default function ParentHelpCenter() {
       faqs: [
         {
           question: "What happens if my child's school is not a partner venue?",
-          answer: "We're always expanding our partnerships! Contact us at info@power2adapt.com to discuss bringing Power2ADAPT programs to your child's school."
+          answer: "We're always expanding our partnerships! Contact us at info@power2adapt.com to discuss bringing Power2ADAPT programs to your child's school. Our athletics track venues (Ballam Park and Mornington) are also open to all students."
         },
         {
-          question: "Can my child attend programs at a different school?",
-          answer: "Yes, children can attend programs at any of our partner venues, not just their own school. This provides flexibility for families."
+          question: "Can my child attend programs at a different venue?",
+          answer: "Yes, but with restrictions. Peninsula Grammar and Toorak College programs are only for students attending those schools due to school policy. However, Ballam Park Athletics Track and Mornington Athletics Track welcome students from any school, providing flexible options for families."
         }
       ]
     },
