@@ -9,6 +9,7 @@ import { MessageCircle, Send, Sparkles, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
+import icon12Path from "@assets/Photos for Power2ADAPT/Icon12.png";
 
 interface ChatMessage {
   id: string;
@@ -155,10 +156,14 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
       >
         <Button
           onClick={startChat}
-          className="w-16 h-16 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-lg hover:shadow-xl transition-all duration-300"
+          className="w-16 h-16 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-lg hover:shadow-xl transition-all duration-300 p-2"
           size="icon"
         >
-          <MessageCircle className="w-8 h-8 text-white" />
+          <img 
+            src={icon12Path} 
+            alt="Chat with us" 
+            className="w-full h-full object-contain"
+          />
         </Button>
         
         {/* Pulsing indicator */}
