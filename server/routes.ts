@@ -412,32 +412,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const staffData = req.body;
       const staffId = req.params.id;
       
-      // Prepare user updates
-      const userUpdates: any = {
-        firstName: staffData.firstName,
-        lastName: staffData.lastName,
-        email: staffData.email,
-        mobile: staffData.mobile,
-        userId: staffData.userId,
-        role: staffData.role,
-      };
+      // Check if this is a user ID or coach ID
+      const existingUser = await storage.getUser(staffId);
+      const existingCoach = await storage.getCoach(staffId);
       
-      // Hash password if provided
-      if (staffData.password) {
-        userUpdates.password = await bcrypt.hash(staffData.password, 10);
-      }
-      
-      // Update user account
-      const updatedUser = await storage.updateUser(staffId, userUpdates);
-      
-      // Update coach profile if role is coach
-      if (staffData.role === "coach") {
-        const existingCoach = await storage.getCoachByUserId(staffId);
-        const coachData = {
+      if (existingUser) {
+        // This is a user account - update user table
+        const userUpdates: any = {
           firstName: staffData.firstName,
           lastName: staffData.lastName,
           email: staffData.email,
           mobile: staffData.mobile,
+          userId: staffData.userId,
+          role: staffData.role,
+        };
+        
+        // Hash password if provided
+        if (staffData.password) {
+          userUpdates.password = await bcrypt.hash(staffData.password, 10);
+        }
+        
+        // Update user account
+        const updatedUser = await storage.updateUser(staffId, userUpdates);
+        
+        // Update associated coach profile if role is coach
+        if (staffData.role === "coach") {
+          const associatedCoach = await storage.getCoachByUserId(staffId);
+          if (associatedCoach) {
+            const coachData = {
+              firstName: staffData.firstName,
+              lastName: staffData.lastName,
+              specializations: staffData.specializations || [],
+              qualifications: staffData.qualifications || [],
+              experience: staffData.experience || "",
+              bio: staffData.bio || "",
+              active: staffData.active !== false,
+            };
+            await storage.updateCoach(associatedCoach.id, coachData);
+          }
+        }
+        
+        res.json({ ...updatedUser, message: "Staff member updated successfully" });
+        
+      } else if (existingCoach) {
+        // This is a standalone coach record - update coach table only
+        const coachData = {
+          firstName: staffData.firstName,
+          lastName: staffData.lastName,
           specializations: staffData.specializations || [],
           qualifications: staffData.qualifications || [],
           experience: staffData.experience || "",
@@ -445,18 +466,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           active: staffData.active !== false,
         };
         
-        if (existingCoach) {
-          await storage.updateCoach(existingCoach.id, coachData);
-        } else {
-          await storage.createCoach({
-            ...coachData,
-            userId: staffId,
-          });
-        }
+        const updatedCoach = await storage.updateCoach(staffId, coachData);
+        res.json({ ...updatedCoach, message: "Coach updated successfully" });
+        
+      } else {
+        return res.status(404).json({ message: "Staff member not found" });
       }
       
-      res.json({ ...updatedUser, message: "Staff member updated successfully" });
     } catch (error: any) {
+      console.error("Staff update error:", error);
       res.status(400).json({ message: error.message });
     }
   });
