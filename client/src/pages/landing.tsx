@@ -5,12 +5,14 @@ import LoginModal from "@/components/auth/login-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
 import OneClickChat from "@/components/one-click-chat";
-import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook } from "lucide-react";
+import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSeniorSquadModalOpen, setIsSeniorSquadModalOpen] = useState(false);
   const [isHighPerformanceSquadModalOpen, setIsHighPerformanceSquadModalOpen] = useState(false);
+  const [isSchoolPartnershipsModalOpen, setIsSchoolPartnershipsModalOpen] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -679,7 +681,7 @@ export default function Landing() {
                 <li><a href="#" className="hover:text-white">Enrollment Guide</a></li>
                 <li><a href="#" className="hover:text-white">Payment Support</a></li>
                 <li><a href="#" className="hover:text-white">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white">School Partnerships</a></li>
+                <li><button onClick={() => setIsSchoolPartnershipsModalOpen(true)} className="hover:text-white cursor-pointer">School Partnerships</button></li>
               </ul>
             </div>
             
@@ -766,6 +768,37 @@ export default function Landing() {
           setIsLoginModalOpen(true);
         }}
       />
+
+      {/* School Partnerships Modal */}
+      <Dialog open={isSchoolPartnershipsModalOpen} onOpenChange={setIsSchoolPartnershipsModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-heading font-bold text-gray-900">Our School Partners</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">Power2ADAPT is proud to partner with these prestigious educational institutions:</p>
+            <div className="space-y-3">
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <School className="w-5 h-5 text-primary-500 mr-3" />
+                <span className="font-medium">Peninsula Grammar</span>
+              </div>
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <School className="w-5 h-5 text-primary-500 mr-3" />
+                <span className="font-medium">Toorak College</span>
+              </div>
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <School className="w-5 h-5 text-primary-500 mr-3" />
+                <span className="font-medium">Haileybury</span>
+              </div>
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <School className="w-5 h-5 text-primary-500 mr-3" />
+                <span className="font-medium">Balcombe Grammar</span>
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mt-4">These partnerships enable us to deliver high-quality athletic programs directly at your child's school.</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
