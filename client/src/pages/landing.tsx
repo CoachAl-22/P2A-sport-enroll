@@ -680,7 +680,7 @@ export default function Landing() {
                 <li><a href="#" className="hover:text-white">Parent Help Center</a></li>
                 <li><a href="#" className="hover:text-white">Enrollment Guide</a></li>
                 <li><a href="#" className="hover:text-white">Payment Support</a></li>
-                <li><a href="#" className="hover:text-white">Contact Us</a></li>
+                <li><a href="mailto:info@power2adapt.com" className="hover:text-white">Contact Us</a></li>
                 <li><button onClick={() => setIsSchoolPartnershipsModalOpen(true)} className="hover:text-white cursor-pointer">School Partnerships</button></li>
               </ul>
             </div>
