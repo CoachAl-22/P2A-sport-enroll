@@ -80,7 +80,7 @@ export default function Landing() {
                     classesSection?.scrollIntoView({ behavior: 'smooth' });
                   }}
                   variant="outline"
-                  className="border-2 border-white text-white hover:bg-white hover:text-primary-500 px-8 py-4 rounded-lg font-heading font-semibold text-lg"
+                  className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary-500 px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
                   Explore Programs
                 </Button>
