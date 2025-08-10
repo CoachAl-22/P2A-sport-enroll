@@ -677,7 +677,7 @@ export default function Landing() {
             <div>
               <h4 className="font-heading font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><a href="#" className="hover:text-white">Parent Help Center</a></li>
+                <li><a href="/parent-help-center" className="hover:text-white">Parent Help Center</a></li>
                 <li><a href="#" className="hover:text-white">Enrollment Guide</a></li>
                 <li><a href="#" className="hover:text-white">Payment Support</a></li>
                 <li><a href="mailto:info@power2adapt.com" className="hover:text-white">Contact Us</a></li>

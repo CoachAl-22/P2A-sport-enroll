@@ -23,6 +23,7 @@ import AdminStaff from "@/pages/admin-staff";
 import AdminCustomers from "@/pages/admin-customers";
 import Attendance from "@/pages/attendance";
 import Waitlist from "@/pages/waitlist";
+import ParentHelpCenter from "@/pages/parent-help-center";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -45,6 +46,7 @@ function Router() {
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
+          <Route path="/parent-help-center" component={ParentHelpCenter} />
         </>
       ) : (
         <>
