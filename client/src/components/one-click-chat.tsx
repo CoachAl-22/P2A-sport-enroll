@@ -108,11 +108,12 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
     // Generate recommendations based on inputs
     setTimeout(() => {
       const recommendations = generateRecommendations();
-      sendMessage(
-        `Perfect! Based on ${childName}'s age (${childAge}), interests (${interests}), and availability (${availability}), here are my top recommendations:`, 
-        true, 
-        recommendations
-      );
+      const numRecs = recommendations.length;
+      const message = numRecs > 0 
+        ? `Perfect! Based on ${childName}'s age (${childAge}), interests (${interests}), and availability (${availability}), here ${numRecs === 1 ? 'is' : 'are'} ${numRecs} great ${numRecs === 1 ? 'option' : 'options'}:`
+        : `I couldn't find classes matching ${childName}'s age range right now, but here are some similar options:`;
+      
+      sendMessage(message, true, recommendations);
       setCurrentStep('recommendations');
     }, 1200);
   };
@@ -123,7 +124,7 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
       return age >= cls.minAge && age <= cls.maxAge;
     });
 
-    return filteredClasses.slice(0, 3).map((cls: any) => ({
+    return filteredClasses.map((cls: any) => ({
       id: cls.id,
       name: cls.name,
       program: cls.program,
