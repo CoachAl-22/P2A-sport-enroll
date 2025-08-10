@@ -4,7 +4,6 @@ import { Link } from "wouter";
 import LoginModal from "@/components/auth/login-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
-import { ClassRecommendationCarousel } from "@/components/ClassRecommendationCarousel";
 import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook } from "lucide-react";
 
 export default function Landing() {
@@ -179,9 +178,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
-      {/* Class Recommendation Carousel */}
-      <ClassRecommendationCarousel onEnrollClick={() => setIsLoginModalOpen(true)} />
 
       {/* Sample Classes Preview */}
       <section id="classes" className="py-16 bg-white">
