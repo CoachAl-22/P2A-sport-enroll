@@ -1643,7 +1643,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Check if child is already on waitlist for this class
-      const existingPosition = await storage.getWaitlistPosition(waitlistData.classId, waitlistData.childId);
+      const existingPosition = await storage.getWaitlistPositionByChild(waitlistData.classId, waitlistData.childId);
       if (existingPosition) {
         return res.status(400).json({ 
           message: "Child is already on the waitlist", 

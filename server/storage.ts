@@ -148,6 +148,7 @@ export interface IStorage {
   getWaitlistByClass(classId: string): Promise<Waitlist[]>;
   getWaitlistByParent(parentId: string): Promise<Waitlist[]>;
   getWaitlistPosition(classId: string, childId: string): Promise<number | null>;
+  getWaitlistPositionByChild(classId: string, childId: string): Promise<number | null>;
   updateWaitlistStatus(id: string, status: string, notificationExpiry?: Date): Promise<Waitlist>;
   removeFromWaitlist(id: string): Promise<void>;
   moveUpWaitlist(classId: string): Promise<void>;
