@@ -18,7 +18,23 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Redirect } from "wouter";
 
 const sportSpecializations = [
-  "Basketball", "Soccer", "Rugby", "Tennis", "Athletics", "Swimming", "Cricket", "Netball"
+  "foundation_prep_year2",
+  "emerging_year3_6", 
+  "junior_development",
+  "team_sport_athletes",
+  "team_sport_speed",
+  "senior_squad",
+  "competition_ready",
+  "empowered_athlete_program",
+  "basketball",
+  "soccer",
+  "tennis",
+  "swimming",
+  "athletics",
+  "netball",
+  "cricket",
+  "volleyball",
+  "multi_sport"
 ];
 
 const roleOptions = [
@@ -26,6 +42,30 @@ const roleOptions = [
   { value: "admin", label: "Admin" },
   { value: "parent", label: "Parent" }
 ];
+
+// Helper function to convert enum values to display names
+const getDisplayName = (value: string): string => {
+  const displayMap: { [key: string]: string } = {
+    "foundation_prep_year2": "Foundation Prep-Year 2",
+    "emerging_year3_6": "Emerging Year 3-6",
+    "junior_development": "Junior Development",
+    "team_sport_athletes": "Team Sport Athletes",
+    "team_sport_speed": "Team Sport Speed",
+    "senior_squad": "Senior Squad",
+    "competition_ready": "Competition Ready",
+    "empowered_athlete_program": "Empowered Athlete Program",
+    "basketball": "Basketball",
+    "soccer": "Soccer",
+    "tennis": "Tennis",
+    "swimming": "Swimming",
+    "athletics": "Athletics",
+    "netball": "Netball",
+    "cricket": "Cricket",
+    "volleyball": "Volleyball",
+    "multi_sport": "Multi Sport"
+  };
+  return displayMap[value] || value;
+};
 
 export default function AdminStaff() {
   const { user, isLoading: authLoading } = useAuth();
@@ -356,7 +396,7 @@ export default function AdminStaff() {
                       <div className="flex flex-wrap gap-1">
                         {staffMember.specializations?.slice(0, 2).map((spec: string) => (
                           <Badge key={spec} variant="outline" className="text-xs">
-                            {spec}
+                            {getDisplayName(spec)}
                           </Badge>
                         ))}
                         {staffMember.specializations?.length > 2 && (
@@ -515,7 +555,7 @@ export default function AdminStaff() {
                           {newStaff.specializations.map((spec) => (
                             <Badge key={spec} variant="secondary" className="cursor-pointer" 
                                    onClick={() => removeSpecialization(spec)}>
-                              {spec} ×
+                              {getDisplayName(spec)} ×
                             </Badge>
                           ))}
                         </div>
@@ -527,7 +567,7 @@ export default function AdminStaff() {
                             {sportSpecializations
                               .filter(sport => !newStaff.specializations.includes(sport))
                               .map((sport) => (
-                                <SelectItem key={sport} value={sport}>{sport}</SelectItem>
+                                <SelectItem key={sport} value={sport}>{getDisplayName(sport)}</SelectItem>
                               ))}
                           </SelectContent>
                         </Select>
