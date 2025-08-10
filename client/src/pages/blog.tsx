@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Calendar, User, ArrowRight } from "lucide-react";
+import { Calendar, User, ArrowRight, Home } from "lucide-react";
 import { format } from "date-fns";
 import type { BlogArticle } from "@shared/schema";
 
@@ -22,6 +22,16 @@ export default function Blog() {
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Return to Home Link */}
+          <div className="mb-4">
+            <Link href="/">
+              <a className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium transition-colors">
+                <Home className="w-4 h-4 mr-2" />
+                Return to Home
+              </a>
+            </Link>
+          </div>
+          
           <h1 className="text-4xl font-heading font-bold text-gray-900">Education Hub</h1>
           <p className="mt-2 text-xl text-gray-600">
             Expert tips, training insights, and athletic development advice from the Power2ADAPT coaches
