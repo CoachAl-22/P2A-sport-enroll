@@ -6,6 +6,7 @@ import { SeniorSquadApplication } from "@/components/applications/senior-squad-a
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
 import OneClickChat from "@/components/one-click-chat";
 import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook } from "lucide-react";
+import logoPath from "@assets/Photos for Power2ADAPT/13 White BG speed gradient flat.png";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -20,7 +21,11 @@ export default function Landing() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-heading font-bold text-primary-500">Power2ADAPT</h1>
+                <img 
+                  src={logoPath} 
+                  alt="Power2ADAPT" 
+                  className="h-12 w-auto"
+                />
               </div>
             </div>
             <div className="hidden md:block">
