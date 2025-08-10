@@ -21,11 +21,7 @@ export default function Landing() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <img 
-                  src={logoPath} 
-                  alt="Power2ADAPT" 
-                  className="h-12 w-auto"
-                />
+                <h1 className="text-2xl font-heading font-bold text-primary-500">Power2ADAPT</h1>
               </div>
             </div>
             <div className="hidden md:block">
@@ -66,6 +62,14 @@ export default function Landing() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
+              {/* Large Power2ADAPT Logo */}
+              <div className="flex justify-center md:justify-start mb-8">
+                <img 
+                  src={logoPath} 
+                  alt="Power2ADAPT" 
+                  className="h-24 md:h-32 w-auto drop-shadow-2xl"
+                />
+              </div>
               <h1 className="text-4xl md:text-6xl font-heading font-bold leading-tight mb-6">
                 Where All Athletes <span className="text-secondary-500">Thrive</span>
               </h1>
