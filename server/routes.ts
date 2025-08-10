@@ -303,14 +303,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         storage.getAllCoaches()
       ]);
       
+      // Only get admin and coach users (not parents/customers)
+      const staffUsers = users.filter(u => u.role === 'admin' || u.role === 'coach');
+      
+      // Get only active coaches
+      const activeCoaches = coaches.filter(c => c.active);
+      
       // Combine user and coach data for staff members
-      const staff = users.map(user => {
-        const coachData = coaches.find(c => c.userId === user.id);
+      const staff = staffUsers.map(user => {
+        const coachData = activeCoaches.find(c => c.userId === user.id);
         return {
           ...user,
           ...coachData,
           id: user.id, // Ensure we use the user ID
         };
+      });
+      
+      // Add coaches without user accounts (standalone coach records)
+      const coachesWithoutUsers = activeCoaches.filter(c => !c.userId && c.active);
+      coachesWithoutUsers.forEach(coach => {
+        staff.push({
+          id: coach.id,
+          firstName: coach.firstName,
+          lastName: coach.lastName,
+          email: coach.email || '',
+          mobile: coach.mobile || '',
+          role: 'coach',
+          specializations: coach.specializations,
+          qualifications: coach.qualifications,
+          experience: coach.experience,
+          bio: coach.bio,
+          active: coach.active,
+        });
       });
       
       res.json(staff);
