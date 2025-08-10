@@ -10,6 +10,7 @@ import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { importCustomersFromCSV, createSampleChildrenForParents } from "./csv-import";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -2142,6 +2143,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Error getting term configuration with holidays:', error);
       res.status(500).json({ message: "Failed to fetch term configuration with holidays" });
+    }
+  });
+
+  // CSV Import endpoints
+  app.post("/api/admin/import-csv", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const csvFilePath = './attached_assets/SportsBiz_CustomerExport_1754714208259.csv';
+      const results = await importCustomersFromCSV(csvFilePath);
+      res.json({ 
+        message: "CSV import completed",
+        results 
+      });
+    } catch (error: any) {
+      console.error('Error importing CSV:', error);
+      res.status(500).json({ message: "Failed to import CSV", error: error.message });
+    }
+  });
+
+  app.post("/api/admin/create-sample-children", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const results = await createSampleChildrenForParents();
+      res.json({ 
+        message: "Sample children created successfully",
+        results 
+      });
+    } catch (error: any) {
+      console.error('Error creating sample children:', error);
+      res.status(500).json({ message: "Failed to create sample children", error: error.message });
     }
   });
 

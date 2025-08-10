@@ -1,19 +1,92 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/layout/navbar";
 import AnalyticsCard from "@/components/admin/analytics-card";
-import { Plus, Users, Settings, BarChart3, MessageSquare, CreditCard, TrendingUp, AlertCircle, FileText, CalendarIcon } from "lucide-react";
+import { Plus, Users, Settings, BarChart3, MessageSquare, CreditCard, TrendingUp, AlertCircle, FileText, CalendarIcon, Upload, Database } from "lucide-react";
 import { Redirect } from "wouter";
+import { apiRequest } from "@/lib/queryClient";
+import { useState } from "react";
 
 export default function Admin() {
   const { user, isLoading: authLoading } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isImporting, setIsImporting] = useState(false);
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["/api/admin/analytics"],
     enabled: (user as any)?.user?.role === "admin",
   });
+
+  const importCsvMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/admin/import-csv", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to import CSV");
+      }
+      return response.json();
+    },
+    onSuccess: (data: any) => {
+      toast({
+        title: "CSV Import Successful",
+        description: `Imported ${data.results.imported} customers, skipped ${data.results.skipped}, errors: ${data.results.errors}`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/analytics"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/customers"] });
+      setIsImporting(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Import Failed",
+        description: error.message || "Failed to import CSV data",
+        variant: "destructive",
+      });
+      setIsImporting(false);
+    },
+  });
+
+  const createSampleChildrenMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/admin/create-sample-children", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create sample children");
+      }
+      return response.json();
+    },
+    onSuccess: (data: any) => {
+      toast({
+        title: "Sample Children Created",
+        description: `Created ${data.results.created} sample children for parents`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/analytics"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/students"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Failed to Create Children",
+        description: error.message || "Failed to create sample children",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleImportCsv = () => {
+    setIsImporting(true);
+    importCsvMutation.mutate();
+  };
+
+  const handleCreateSampleChildren = () => {
+    createSampleChildrenMutation.mutate();
+  };
 
   // Redirect if not admin
   if (!authLoading && (user as any)?.user?.role !== "admin") {
@@ -128,6 +201,75 @@ export default function Admin() {
               </div>
             </div>
           </AnalyticsCard>
+        </div>
+
+        {/* Data Import Section */}
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <Upload className="w-5 h-5 mr-2" />
+                Import SportsBiz Data
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <p className="text-gray-300 text-sm">
+                  Import customers from SportsBiz CSV export file
+                </p>
+                <Button 
+                  onClick={handleImportCsv}
+                  disabled={isImporting || importCsvMutation.isPending}
+                  className="w-full bg-primary-500 hover:bg-primary-600"
+                >
+                  {isImporting || importCsvMutation.isPending ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+                      Importing...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4 mr-2" />
+                      Import CSV Data
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <Database className="w-5 h-5 mr-2" />
+                Generate Sample Data
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <p className="text-gray-300 text-sm">
+                  Create sample children for imported parents
+                </p>
+                <Button 
+                  onClick={handleCreateSampleChildren}
+                  disabled={createSampleChildrenMutation.isPending}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  {createSampleChildrenMutation.isPending ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Database className="w-4 h-4 mr-2" />
+                      Create Sample Children
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Quick Actions */}
