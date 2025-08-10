@@ -5,11 +5,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MessageCircle, Send, Sparkles, X } from "lucide-react";
+import { MessageCircle, Send, Sparkles, X, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-import icon12Path from "@assets/Photos for Power2ADAPT/Icon12.png";
 
 interface ChatMessage {
   id: string;
@@ -157,14 +156,13 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
       >
         <Button
           onClick={startChat}
-          className="w-16 h-16 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-lg hover:shadow-xl transition-all duration-300 p-2"
+          className="w-16 h-16 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden"
           size="icon"
         >
-          <img 
-            src={icon12Path} 
-            alt="Chat with us" 
-            className="w-full h-full object-contain"
-          />
+          <div className="flex flex-col items-center justify-center">
+            <Bot className="w-6 h-6 text-white mb-1" />
+            <div className="text-xs text-white font-bold">HELP</div>
+          </div>
         </Button>
         
         {/* Pulsing indicator */}
