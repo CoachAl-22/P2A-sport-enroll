@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import LoginModal from "@/components/auth/login-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
@@ -73,10 +74,13 @@ export default function Landing() {
                   Start Your Athletic Journey
                 </Button>
                 <Button 
+                  asChild
                   variant="outline"
                   className="border-2 border-white text-white hover:bg-white hover:text-primary-500 px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
-                  Explore Programs
+                  <Link href="/classes">
+                    Explore Programs
+                  </Link>
                 </Button>
               </div>
             </div>
