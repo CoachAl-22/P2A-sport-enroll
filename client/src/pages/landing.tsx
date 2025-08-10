@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import LoginModal from "@/components/auth/login-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
+import OneClickChat from "@/components/one-click-chat";
 import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook } from "lucide-react";
 
 export default function Landing() {
@@ -756,6 +757,13 @@ export default function Landing() {
       <HighPerformanceSquadApplication 
         isOpen={isHighPerformanceSquadModalOpen} 
         onClose={() => setIsHighPerformanceSquadModalOpen(false)} 
+      />
+      
+      <OneClickChat 
+        onEnrollClick={(classId) => {
+          // Open login modal for enrollment
+          setIsLoginModalOpen(true);
+        }}
       />
     </div>
   );
