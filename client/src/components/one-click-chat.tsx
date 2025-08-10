@@ -37,7 +37,7 @@ interface OneClickChatProps {
 export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [currentStep, setCurrentStep] = useState<'welcome' | 'collecting' | 'recommendations'>('welcome');
+  const [currentStep, setCurrentStep] = useState<'welcome' | 'name' | 'age' | 'interests' | 'availability' | 'recommendations'>('welcome');
   const [childAge, setChildAge] = useState<string>("");
   const [childName, setChildName] = useState<string>("");
   const [interests, setInterests] = useState<string>("");
@@ -55,7 +55,7 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
       isBot: true,
       timestamp: new Date()
     }]);
-    setCurrentStep('collecting');
+    setCurrentStep('name');
   };
 
   const sendMessage = (text: string, isBot: boolean = false, recommendations?: ClassRecommendation[]) => {
@@ -75,7 +75,8 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
     sendMessage(`My child's name is ${childName}`);
     setTimeout(() => {
       sendMessage(`Great! How old is ${childName}?`, true);
-    }, 500);
+      setCurrentStep('age');
+    }, 800);
   };
 
   const handleAgeSubmit = () => {
@@ -84,7 +85,8 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
     sendMessage(`${childName} is ${childAge} years old`);
     setTimeout(() => {
       sendMessage(`Perfect! What sports or activities is ${childName} most interested in?`, true);
-    }, 500);
+      setCurrentStep('interests');
+    }, 800);
   };
 
   const handleInterestsSubmit = () => {
@@ -93,7 +95,8 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
     sendMessage(`${childName} is interested in ${interests}`);
     setTimeout(() => {
       sendMessage("When would work best for classes?", true);
-    }, 500);
+      setCurrentStep('availability');
+    }, 800);
   };
 
   const handleAvailabilitySubmit = () => {
@@ -110,7 +113,7 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
         recommendations
       );
       setCurrentStep('recommendations');
-    }, 1000);
+    }, 1200);
   };
 
   const generateRecommendations = (): ClassRecommendation[] => {
@@ -139,7 +142,7 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
     setChildName("");
     setInterests("");
     setAvailability("");
-    startChat();
+    setTimeout(() => startChat(), 300);
   };
 
   return (
@@ -263,99 +266,105 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
           </div>
 
           {/* Input Area */}
-          {currentStep === 'collecting' && (
+          {currentStep === 'name' && (
             <div className="p-4 border-t bg-gray-50">
-              {!childName && (
-                <div className="space-y-2">
-                  <Input
-                    placeholder="Enter your child's name"
-                    value={childName}
-                    onChange={(e) => setChildName(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleNameSubmit()}
-                  />
-                  <Button 
-                    onClick={handleNameSubmit}
-                    disabled={!childName.trim()}
-                    className="w-full"
-                    size="sm"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Continue
-                  </Button>
-                </div>
-              )}
+              <div className="space-y-2">
+                <Input
+                  placeholder="Enter your child's name"
+                  value={childName}
+                  onChange={(e) => setChildName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleNameSubmit()}
+                  autoFocus
+                />
+                <Button 
+                  onClick={handleNameSubmit}
+                  disabled={!childName.trim()}
+                  className="w-full"
+                  size="sm"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  Continue
+                </Button>
+              </div>
+            </div>
+          )}
 
-              {childName && !childAge && (
-                <div className="space-y-2">
-                  <Select value={childAge} onValueChange={setChildAge}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select age" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: 14 }, (_, i) => i + 5).map(age => (
-                        <SelectItem key={age} value={age.toString()}>
-                          {age} years old
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button 
-                    onClick={handleAgeSubmit}
-                    disabled={!childAge}
-                    className="w-full"
-                    size="sm"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Continue
-                  </Button>
-                </div>
-              )}
+          {currentStep === 'age' && (
+            <div className="p-4 border-t bg-gray-50">
+              <div className="space-y-2">
+                <Select value={childAge} onValueChange={setChildAge}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select age" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 14 }, (_, i) => i + 5).map(age => (
+                      <SelectItem key={age} value={age.toString()}>
+                        {age} years old
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button 
+                  onClick={handleAgeSubmit}
+                  disabled={!childAge}
+                  className="w-full"
+                  size="sm"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  Continue
+                </Button>
+              </div>
+            </div>
+          )}
 
-              {childAge && !interests && (
-                <div className="space-y-2">
-                  <Input
-                    placeholder="e.g., soccer, basketball, running, general fitness"
-                    value={interests}
-                    onChange={(e) => setInterests(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleInterestsSubmit()}
-                  />
-                  <Button 
-                    onClick={handleInterestsSubmit}
-                    disabled={!interests.trim()}
-                    className="w-full"
-                    size="sm"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Continue
-                  </Button>
-                </div>
-              )}
+          {currentStep === 'interests' && (
+            <div className="p-4 border-t bg-gray-50">
+              <div className="space-y-2">
+                <Input
+                  placeholder="e.g., soccer, basketball, running, general fitness"
+                  value={interests}
+                  onChange={(e) => setInterests(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleInterestsSubmit()}
+                  autoFocus
+                />
+                <Button 
+                  onClick={handleInterestsSubmit}
+                  disabled={!interests.trim()}
+                  className="w-full"
+                  size="sm"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  Continue
+                </Button>
+              </div>
+            </div>
+          )}
 
-              {interests && !availability && (
-                <div className="space-y-2">
-                  <Select value={availability} onValueChange={setAvailability}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="When works best?" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="weekday-morning">Weekday mornings</SelectItem>
-                      <SelectItem value="weekday-afternoon">Weekday afternoons</SelectItem>
-                      <SelectItem value="weekend-morning">Weekend mornings</SelectItem>
-                      <SelectItem value="weekend-afternoon">Weekend afternoons</SelectItem>
-                      <SelectItem value="any-time">Any time works</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button 
-                    onClick={handleAvailabilitySubmit}
-                    disabled={!availability}
-                    className="w-full"
-                    size="sm"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Get Recommendations
-                  </Button>
-                </div>
-              )}
+          {currentStep === 'availability' && (
+            <div className="p-4 border-t bg-gray-50">
+              <div className="space-y-2">
+                <Select value={availability} onValueChange={setAvailability}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="When works best?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="weekday-morning">Weekday mornings</SelectItem>
+                    <SelectItem value="weekday-afternoon">Weekday afternoons</SelectItem>
+                    <SelectItem value="weekend-morning">Weekend mornings</SelectItem>
+                    <SelectItem value="weekend-afternoon">Weekend afternoons</SelectItem>
+                    <SelectItem value="any-time">Any time works</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button 
+                  onClick={handleAvailabilitySubmit}
+                  disabled={!availability}
+                  className="w-full"
+                  size="sm"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  Get Recommendations
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
