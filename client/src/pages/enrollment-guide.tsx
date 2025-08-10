@@ -389,8 +389,8 @@ export default function EnrollmentGuide() {
               <Button asChild className="bg-white text-primary-500 hover:bg-gray-100">
                 <Link href="/classes">Browse Programs</Link>
               </Button>
-              <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-primary-500">
-                <a href="mailto:info@power2adapt.com">Ask a Question</a>
+              <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-primary-500 bg-transparent">
+                <a href="mailto:info@power2adapt.com" className="text-white hover:text-primary-500">Ask a Question</a>
               </Button>
             </div>
           </div>

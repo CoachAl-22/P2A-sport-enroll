@@ -521,8 +521,8 @@ export default function PaymentSupport() {
                 <Button asChild className="bg-white text-red-500 hover:bg-gray-100">
                   <a href="tel:+61434679395">Call Now</a>
                 </Button>
-                <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-red-500">
-                  <a href="mailto:info@power2adapt.com">Send Urgent Email</a>
+                <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-red-500 bg-transparent">
+                  <a href="mailto:info@power2adapt.com" className="text-white hover:text-red-500">Send Urgent Email</a>
                 </Button>
               </div>
             </div>
