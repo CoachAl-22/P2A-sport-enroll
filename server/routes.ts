@@ -456,6 +456,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
       } else if (existingCoach) {
         // This is a standalone coach record - update coach table only
+        // Note: email/mobile are not stored in coaches table, only in users table
         const coachData = {
           firstName: staffData.firstName,
           lastName: staffData.lastName,
@@ -467,7 +468,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
         
         const updatedCoach = await storage.updateCoach(staffId, coachData);
-        res.json({ ...updatedCoach, message: "Coach updated successfully" });
+        
+        // For standalone coaches, we need to indicate that email/mobile cannot be updated
+        // since they don't have associated user accounts
+        const message = staffData.email || staffData.mobile 
+          ? "Coach updated successfully. Note: Email/mobile can only be set for coaches with user accounts."
+          : "Coach updated successfully";
+          
+        res.json({ ...updatedCoach, message });
         
       } else {
         return res.status(404).json({ message: "Staff member not found" });
