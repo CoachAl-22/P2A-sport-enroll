@@ -24,6 +24,8 @@ import AdminCustomers from "@/pages/admin-customers";
 import Attendance from "@/pages/attendance";
 import Waitlist from "@/pages/waitlist";
 import ParentHelpCenter from "@/pages/parent-help-center";
+import EnrollmentGuide from "@/pages/enrollment-guide";
+import PaymentSupport from "@/pages/payment-support";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -47,6 +49,8 @@ function Router() {
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
           <Route path="/parent-help-center" component={ParentHelpCenter} />
+          <Route path="/enrollment-guide" component={EnrollmentGuide} />
+          <Route path="/payment-support" component={PaymentSupport} />
         </>
       ) : (
         <>
