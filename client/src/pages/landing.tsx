@@ -74,13 +74,14 @@ export default function Landing() {
                   Start Your Athletic Journey
                 </Button>
                 <Button 
-                  asChild
+                  onClick={() => {
+                    const classesSection = document.getElementById('classes');
+                    classesSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   variant="outline"
                   className="border-2 border-white text-white hover:bg-white hover:text-primary-500 px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
-                  <Link href="/classes">
-                    Explore Programs
-                  </Link>
+                  Explore Programs
                 </Button>
               </div>
             </div>
