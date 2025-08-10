@@ -8,27 +8,30 @@ export async function getAllCustomersWithChildren() {
     const allUsers = await storage.getAllUsers();
     const customers = allUsers.filter(user => user.role === "parent");
     
-    // Get all enrollments to find children data
-    const allEnrollments = await storage.getAllEnrollmentsWithDetails();
-    
-    // Create customer objects with their children
-    const customersWithChildren = customers.map(customer => {
-      const customerEnrollments = allEnrollments.filter(
-        (enrollment: any) => enrollment.enrollment?.parentId === customer.id
-      );
-      
-      const children = customerEnrollments.map((enrollment: any) => enrollment.child)
-        .filter((child: any, index: number, self: any[]) => 
-          child && self.findIndex((c: any) => c.id === child.id) === index
-        );
-      
-      return {
-        ...customer,
-        children,
-        totalEnrollments: customerEnrollments.length,
-        activeEnrollments: customerEnrollments.filter((e: any) => e.enrollment?.status === 'active').length
-      };
-    });
+    // Get all children for each customer
+    const customersWithChildren = await Promise.all(
+      customers.map(async (customer) => {
+        try {
+          const children = await storage.getChildrenByParent(customer.id);
+          const enrollments = await storage.getEnrollmentsByParent(customer.id);
+          
+          return {
+            ...customer,
+            children,
+            totalEnrollments: enrollments.length,
+            activeEnrollments: enrollments.filter((e: any) => e.enrollment?.status === 'active').length
+          };
+        } catch (error) {
+          console.error(`Error fetching data for customer ${customer.id}:`, error);
+          return {
+            ...customer,
+            children: [],
+            totalEnrollments: 0,
+            activeEnrollments: 0
+          };
+        }
+      })
+    );
     
     return customersWithChildren;
   } catch (error) {
@@ -39,28 +42,38 @@ export async function getAllCustomersWithChildren() {
 
 export async function getAllStudentsWithParents() {
   try {
-    const allEnrollments = await storage.getAllEnrollmentsWithDetails();
+    // Get all children from the database
+    const allChildren = await storage.getAllChildren();
     
-    // Extract unique students with their parent information
-    const studentsMap = new Map();
+    // Get detailed information for each child
+    const studentsWithParents = await Promise.all(
+      allChildren.map(async (child: any) => {
+        try {
+          const parent = await storage.getUser(child.parentId);
+          const enrollments = await storage.getEnrollmentsByParent(child.parentId);
+          const childEnrollments = enrollments.filter((e: any) => e.child?.id === child.id);
+          
+          return {
+            ...child,
+            parent,
+            totalEnrollments: childEnrollments.length,
+            activeEnrollments: childEnrollments.filter((e: any) => e.enrollment?.status === 'active').length,
+            enrollments: childEnrollments
+          };
+        } catch (error) {
+          console.error(`Error fetching data for child ${child.id}:`, error);
+          return {
+            ...child,
+            parent: null,
+            totalEnrollments: 0,
+            activeEnrollments: 0,
+            enrollments: []
+          };
+        }
+      })
+    );
     
-    allEnrollments.forEach((enrollment: any) => {
-      if (enrollment.child && !studentsMap.has(enrollment.child.id)) {
-        const studentEnrollments = allEnrollments.filter(
-          (e: any) => e.child?.id === enrollment.child.id
-        );
-        
-        studentsMap.set(enrollment.child.id, {
-          ...enrollment.child,
-          parent: enrollment.parent,
-          totalEnrollments: studentEnrollments.length,
-          activeEnrollments: studentEnrollments.filter((e: any) => e.enrollment?.status === 'active').length,
-          enrollments: studentEnrollments
-        });
-      }
-    });
-    
-    return Array.from(studentsMap.values());
+    return studentsWithParents.filter((student: any) => student.parent !== null);
   } catch (error) {
     console.error('Error fetching students with parents:', error);
     throw error;

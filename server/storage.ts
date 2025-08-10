@@ -231,6 +231,10 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(children).where(eq(children.parentId, parentId));
   }
 
+  async getAllChildren(): Promise<Child[]> {
+    return await db.select().from(children).orderBy(asc(children.firstName), asc(children.lastName));
+  }
+
   async createChild(child: InsertChild): Promise<Child> {
     const [created] = await db.insert(children).values(child).returning();
     return created;
@@ -464,6 +468,25 @@ export class DatabaseStorage implements IStorage {
         )
       );
     return result.count + 1;
+  }
+
+  async getAllEnrollmentsWithDetails(): Promise<any[]> {
+    return await db
+      .select({
+        enrollment: enrollments,
+        child: children,
+        parent: users,
+        class: classes,
+        venue: venues,
+        coach: coaches,
+      })
+      .from(enrollments)
+      .leftJoin(children, eq(enrollments.childId, children.id))
+      .leftJoin(users, eq(enrollments.parentId, users.id))
+      .leftJoin(classes, eq(enrollments.classId, classes.id))
+      .leftJoin(venues, eq(classes.venueId, venues.id))
+      .leftJoin(coaches, eq(classes.coachId, coaches.id))
+      .orderBy(desc(enrollments.createdAt));
   }
 
   // Payment operations
@@ -787,7 +810,7 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(waitlists.joinedAt));
   }
 
-  async getWaitlistPosition(classId: string, childId: string): Promise<number | null> {
+  async getWaitlistPositionByChild(classId: string, childId: string): Promise<number | null> {
     const [result] = await db
       .select({ position: waitlists.position })
       .from(waitlists)
