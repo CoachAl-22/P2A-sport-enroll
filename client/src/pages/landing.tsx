@@ -6,7 +6,6 @@ import { SeniorSquadApplication } from "@/components/applications/senior-squad-a
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
 import OneClickChat from "@/components/one-click-chat";
 import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook } from "lucide-react";
-import logoPath from "@assets/Photos for Power2ADAPT/13 White BG speed gradient flat.png";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -122,16 +121,8 @@ export default function Landing() {
       </section>
 
       {/* Features Showcase */}
-      <section id="features" className="relative py-16 bg-gray-50 overflow-hidden">
-        {/* Power2ADAPT Logo Background */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-5">
-          <img 
-            src={logoPath} 
-            alt="Power2ADAPT Background" 
-            className="w-96 h-96 object-contain"
-          />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="features" className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Why Parents Choose Power2ADAPT</h2>
             <p className="text-xl text-gray-600">Simple, convenient, and designed with your family in mind</p>
