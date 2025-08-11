@@ -10,8 +10,9 @@ import DashboardScreen from '../screens/DashboardScreen';
 import ClassesScreen from '../screens/ClassesScreen';
 import ClassDetailsScreen from '../screens/ClassDetailsScreen';
 import EnrollmentScreen from '../screens/EnrollmentScreen';
-import NotificationsScreen from '../screens/NotificationsScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import WaitlistScreen from '../screens/WaitlistScreen';
+import HighPerformanceScreen from '../screens/HighPerformanceScreen';
+import EducationScreen from '../screens/EducationScreen';
 import LoginScreen from '../screens/LoginScreen';
 
 // Auth Hook
@@ -51,14 +52,16 @@ function MainTabs() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof MaterialIcons.glyphMap;
 
-          if (route.name === 'Dashboard') {
+          if (route.name === 'My Family') {
             iconName = 'dashboard';
-          } else if (route.name === 'Classes') {
+          } else if (route.name === 'Programs') {
             iconName = 'sports';
-          } else if (route.name === 'Notifications') {
-            iconName = 'notifications';
-          } else if (route.name === 'Profile') {
-            iconName = 'person';
+          } else if (route.name === 'Waitlists') {
+            iconName = 'schedule';
+          } else if (route.name === 'High Performance') {
+            iconName = 'emoji-events';
+          } else if (route.name === 'Education') {
+            iconName = 'school';
           } else {
             iconName = 'help';
           }
@@ -70,10 +73,11 @@ function MainTabs() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Classes" component={ClassesStack} />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="My Family" component={DashboardScreen} />
+      <Tab.Screen name="Programs" component={ClassesStack} />
+      <Tab.Screen name="Waitlists" component={WaitlistScreen} />
+      <Tab.Screen name="High Performance" component={HighPerformanceScreen} />
+      <Tab.Screen name="Education" component={EducationScreen} />
     </Tab.Navigator>
   );
 }
