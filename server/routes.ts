@@ -560,6 +560,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin route to add child to any parent
+  app.post("/api/admin/children", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    // Check if user is admin
+    const user = await storage.getUserById(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const childData = insertChildSchema.parse(req.body);
+      const child = await storage.createChild(childData);
+      res.json(child);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
   // Enrollments routes (requires authentication)
   app.get("/api/enrollments", async (req, res) => {
     const userId = (req.session as any)?.userId;

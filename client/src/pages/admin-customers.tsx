@@ -6,14 +6,38 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navbar from "@/components/layout/navbar";
-import { Users, UserCheck, Baby, Search, Mail, Phone, MapPin, Calendar } from "lucide-react";
+import { Users, UserCheck, Baby, Search, Mail, Phone, MapPin, Calendar, Plus } from "lucide-react";
 import { Redirect } from "wouter";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+
+// Child form schema
+const addChildSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  grade: z.string().optional(),
+  medicalInfo: z.string().optional(),
+  schoolName: z.string().optional(),
+});
+
+type AddChildForm = z.infer<typeof addChildSchema>;
 
 export default function AdminCustomers() {
   const { user, isLoading: authLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedParent, setSelectedParent] = useState<any>(null);
+  const [isAddChildOpen, setIsAddChildOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Fetch all customers with their children
   const { data: customers, isLoading: customersLoading } = useQuery({
@@ -44,8 +68,8 @@ export default function AdminCustomers() {
   }
 
   // Use the fetched data directly
-  const allCustomers = customers || [];
-  const allStudents = students || [];
+  const allCustomers = Array.isArray(customers) ? customers : [];
+  const allStudents = Array.isArray(students) ? students : [];
 
   // Filter functions
   const filteredCustomers = allCustomers.filter((customer: any) =>
@@ -77,6 +101,71 @@ export default function AdminCustomers() {
       age--;
     }
     return age;
+  };
+
+  // Form setup for adding child
+  const form = useForm<AddChildForm>({
+    resolver: zodResolver(addChildSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      grade: "",
+      medicalInfo: "",
+      schoolName: "",
+    },
+  });
+
+  // Mutation to add child to parent
+  const addChildMutation = useMutation({
+    mutationFn: async (data: AddChildForm & { parentId: string }) => {
+      const response = await fetch('/api/admin/children', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to add child');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/customers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/students"] });
+      toast({
+        title: "Success",
+        description: "Child added successfully",
+      });
+      setIsAddChildOpen(false);
+      form.reset();
+      setSelectedParent(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add child",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleAddChild = (data: AddChildForm) => {
+    if (!selectedParent) return;
+    addChildMutation.mutate({
+      ...data,
+      parentId: selectedParent.id,
+    });
+  };
+
+  const openAddChildDialog = (parent: any) => {
+    setSelectedParent(parent);
+    setIsAddChildOpen(true);
   };
 
   return (
@@ -197,6 +286,7 @@ export default function AdminCustomers() {
                         <TableHead>Account Info</TableHead>
                         <TableHead>Children</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -251,6 +341,17 @@ export default function AdminCustomers() {
                               <Badge variant="default" className="bg-green-100 text-green-800">
                                 Active
                               </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openAddChildDialog(customer)}
+                                className="flex items-center gap-2"
+                              >
+                                <Plus className="h-4 w-4" />
+                                Add Child
+                              </Button>
                             </TableCell>
                           </TableRow>
                         );
@@ -346,6 +447,142 @@ export default function AdminCustomers() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Add Child Dialog */}
+      <Dialog open={isAddChildOpen} onOpenChange={setIsAddChildOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              Add Child to {selectedParent?.firstName} {selectedParent?.lastName}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleAddChild)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter first name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter last name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="dateOfBirth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date of Birth</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="grade"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Grade (Optional)</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select grade" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="prep">Prep</SelectItem>
+                        <SelectItem value="1">Grade 1</SelectItem>
+                        <SelectItem value="2">Grade 2</SelectItem>
+                        <SelectItem value="3">Grade 3</SelectItem>
+                        <SelectItem value="4">Grade 4</SelectItem>
+                        <SelectItem value="5">Grade 5</SelectItem>
+                        <SelectItem value="6">Grade 6</SelectItem>
+                        <SelectItem value="7">Year 7</SelectItem>
+                        <SelectItem value="8">Year 8</SelectItem>
+                        <SelectItem value="9">Year 9</SelectItem>
+                        <SelectItem value="10">Year 10</SelectItem>
+                        <SelectItem value="11">Year 11</SelectItem>
+                        <SelectItem value="12">Year 12</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="schoolName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>School Name (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter school name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="medicalInfo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Medical Information (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Any medical conditions or allergies" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddChildOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit"
+                  disabled={addChildMutation.isPending}
+                >
+                  {addChildMutation.isPending ? "Adding..." : "Add Child"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
