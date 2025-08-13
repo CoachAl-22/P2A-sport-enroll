@@ -91,11 +91,19 @@ export default function VideoHighlights() {
 
   // Create video highlight mutation
   const createVideoMutation = useMutation({
-    mutationFn: (data: VideoHighlightForm) => 
-      apiRequest("/api/video-highlights", {
+    mutationFn: async (data: VideoHighlightForm) => {
+      const response = await fetch("/api/video-highlights", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
-      }),
+      });
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/video-highlights"] });
       setCreateDialogOpen(false);
@@ -115,11 +123,19 @@ export default function VideoHighlights() {
 
   // Share video mutation
   const shareVideoMutation = useMutation({
-    mutationFn: ({ videoId, shareData }: { videoId: string; shareData: ShareVideoForm }) =>
-      apiRequest(`/api/video-highlights/${videoId}/share`, {
+    mutationFn: async ({ videoId, shareData }: { videoId: string; shareData: ShareVideoForm }) => {
+      const response = await fetch(`/api/video-highlights/${videoId}/share`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(shareData),
-      }),
+      });
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+      return response.json();
+    },
     onSuccess: () => {
       setShareDialogOpen(false);
       setSelectedVideo(null);
@@ -139,10 +155,15 @@ export default function VideoHighlights() {
 
   // Delete video mutation
   const deleteVideoMutation = useMutation({
-    mutationFn: (videoId: string) =>
-      apiRequest(`/api/video-highlights/${videoId}`, {
+    mutationFn: async (videoId: string) => {
+      const response = await fetch(`/api/video-highlights/${videoId}`, {
         method: "DELETE",
-      }),
+      });
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/video-highlights"] });
       toast({
@@ -176,9 +197,11 @@ export default function VideoHighlights() {
   });
 
   const onSubmit = (data: VideoHighlightForm) => {
-    // Convert comma-separated strings to arrays
+    // Clean up form data
     const formattedData = {
       ...data,
+      childId: data.childId === "none" ? undefined : data.childId,
+      classId: data.classId === "none" ? undefined : data.classId,
       skillsHighlighted: data.skillsHighlighted || [],
       tags: data.tags || [],
     };
@@ -307,8 +330,8 @@ export default function VideoHighlights() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">None</SelectItem>
-                            {children.map((child: any) => (
+                            <SelectItem value="none">None</SelectItem>
+                            {(children as any[]).map((child: any) => (
                               <SelectItem key={child.id} value={child.id}>
                                 {child.firstName} {child.lastName}
                               </SelectItem>
@@ -333,8 +356,8 @@ export default function VideoHighlights() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">None</SelectItem>
-                            {classes.map((cls: any) => (
+                            <SelectItem value="none">None</SelectItem>
+                            {(classes as any[]).map((cls: any) => (
                               <SelectItem key={cls.id} value={cls.id}>
                                 {cls.name}
                               </SelectItem>
