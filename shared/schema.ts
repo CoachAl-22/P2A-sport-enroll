@@ -377,7 +377,7 @@ export const performanceVideoHighlights = pgTable("performance_video_highlights"
   // Associated data
   childId: uuid("child_id").references(() => children.id, { onDelete: "cascade" }),
   classId: uuid("class_id").references(() => classes.id, { onDelete: "set null" }),
-  coachId: uuid("coach_id").references(() => coaches.id).notNull(),
+  coachId: uuid("coach_id").references(() => coaches.id),
   
   // Performance metrics (optional)
   skillsHighlighted: text("skills_highlighted").array(), // Array of skills demonstrated

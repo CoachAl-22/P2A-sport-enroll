@@ -2345,11 +2345,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         coachId = coach[0].id;
       } else {
-        // Admin can specify coach
-        coachId = req.body.coachId;
-        if (!coachId) {
-          return res.status(400).json({ message: "Coach ID required for admin" });
-        }
+        // Admin can optionally specify coach
+        coachId = req.body.coachId || null;
       }
 
       const videoData = insertPerformanceVideoHighlightSchema.parse({
