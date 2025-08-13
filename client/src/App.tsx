@@ -63,16 +63,16 @@ function Router() {
           <Route path="/waitlist" component={Waitlist} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
-          {((user as any)?.user?.role === "coach" || (user as any)?.user?.role === "admin") && (
+          {(user?.role === "coach" || user?.role === "admin") && (
             <>
               <Route path="/attendance" component={Attendance} />
               <Route path="/video-highlights" component={VideoHighlights} />
             </>
           )}
-          {(user as any)?.user?.role === "parent" && (
+          {user?.role === "parent" && (
             <Route path="/video-highlights" component={VideoHighlightsParent} />
           )}
-          {(user as any)?.user?.role === "admin" && (
+          {user?.role === "admin" && (
             <>
               <Route path="/admin" component={Admin} />
               <Route path="/import" component={Import} />
