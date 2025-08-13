@@ -14,6 +14,8 @@ import {
   attendanceRecords,
   termConfigurations,
   termHolidays,
+  performanceVideoHighlights,
+  videoShares,
   type User,
   type InsertUser,
   type Child,
@@ -44,6 +46,10 @@ import {
   type InsertTermConfiguration,
   type TermHoliday,
   type InsertTermHoliday,
+  type PerformanceVideoHighlight,
+  type InsertPerformanceVideoHighlight,
+  type VideoShare,
+  type InsertVideoShare,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, count, sql, gte, lte } from "drizzle-orm";
@@ -176,6 +182,23 @@ export interface IStorage {
   deleteTermConfiguration(id: string): Promise<void>;
   getActiveTermConfiguration(term: string, year: number): Promise<any>;
   calculateTermPrice(termConfigId: string, classesPerWeek: number): Promise<any>;
+
+  // Performance Video Highlights operations
+  createPerformanceVideoHighlight(videoData: InsertPerformanceVideoHighlight): Promise<PerformanceVideoHighlight>;
+  getPerformanceVideoHighlight(id: string): Promise<PerformanceVideoHighlight | undefined>;
+  getAllPerformanceVideoHighlights(): Promise<PerformanceVideoHighlight[]>;
+  getPerformanceVideoHighlightsByChild(childId: string): Promise<PerformanceVideoHighlight[]>;
+  getPerformanceVideoHighlightsByCoach(coachId: string): Promise<PerformanceVideoHighlight[]>;
+  getPerformanceVideoHighlightsByClass(classId: string): Promise<PerformanceVideoHighlight[]>;
+  updatePerformanceVideoHighlight(id: string, updates: Partial<PerformanceVideoHighlight>): Promise<PerformanceVideoHighlight>;
+  deletePerformanceVideoHighlight(id: string): Promise<void>;
+  
+  // Video Share operations
+  createVideoShare(shareData: InsertVideoShare): Promise<VideoShare>;
+  getVideoSharesByVideo(videoId: string): Promise<VideoShare[]>;
+  getVideoSharesByParent(parentId: string): Promise<VideoShare[]>;
+  updateVideoShare(id: string, updates: Partial<VideoShare>): Promise<VideoShare>;
+  deleteVideoShare(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1182,6 +1205,138 @@ export class DatabaseStorage implements IStorage {
       pricePerWeek: Number(termConfig.pricePerWeek),
       classesPerWeek
     };
+  }
+
+  // Performance Video Highlights operations
+  async createPerformanceVideoHighlight(videoData: InsertPerformanceVideoHighlight): Promise<PerformanceVideoHighlight> {
+    const [created] = await db.insert(performanceVideoHighlights).values({
+      ...videoData,
+      shareableLink: `video-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    }).returning();
+    return created;
+  }
+
+  async getPerformanceVideoHighlight(id: string): Promise<PerformanceVideoHighlight | undefined> {
+    const [video] = await db.select().from(performanceVideoHighlights).where(eq(performanceVideoHighlights.id, id));
+    return video;
+  }
+
+  async getAllPerformanceVideoHighlights(): Promise<PerformanceVideoHighlight[]> {
+    return await db
+      .select({
+        id: performanceVideoHighlights.id,
+        title: performanceVideoHighlights.title,
+        description: performanceVideoHighlights.description,
+        type: performanceVideoHighlights.type,
+        status: performanceVideoHighlights.status,
+        videoUrl: performanceVideoHighlights.videoUrl,
+        thumbnailUrl: performanceVideoHighlights.thumbnailUrl,
+        duration: performanceVideoHighlights.duration,
+        fileSize: performanceVideoHighlights.fileSize,
+        childId: performanceVideoHighlights.childId,
+        classId: performanceVideoHighlights.classId,
+        coachId: performanceVideoHighlights.coachId,
+        skillsHighlighted: performanceVideoHighlights.skillsHighlighted,
+        performanceNotes: performanceVideoHighlights.performanceNotes,
+        coachComments: performanceVideoHighlights.coachComments,
+        isPublic: performanceVideoHighlights.isPublic,
+        shareableLink: performanceVideoHighlights.shareableLink,
+        viewCount: performanceVideoHighlights.viewCount,
+        tags: performanceVideoHighlights.tags,
+        createdAt: performanceVideoHighlights.createdAt,
+        updatedAt: performanceVideoHighlights.updatedAt,
+        childName: children.firstName ? sql<string>`${children.firstName} || ' ' || ${children.lastName}` : null,
+        coachName: sql<string>`${coaches.firstName} || ' ' || ${coaches.lastName}`,
+        className: classes.name,
+      })
+      .from(performanceVideoHighlights)
+      .leftJoin(children, eq(performanceVideoHighlights.childId, children.id))
+      .leftJoin(coaches, eq(performanceVideoHighlights.coachId, coaches.id))
+      .leftJoin(classes, eq(performanceVideoHighlights.classId, classes.id))
+      .orderBy(desc(performanceVideoHighlights.createdAt));
+  }
+
+  async getPerformanceVideoHighlightsByChild(childId: string): Promise<PerformanceVideoHighlight[]> {
+    return await db
+      .select()
+      .from(performanceVideoHighlights)
+      .where(eq(performanceVideoHighlights.childId, childId))
+      .orderBy(desc(performanceVideoHighlights.createdAt));
+  }
+
+  async getPerformanceVideoHighlightsByCoach(coachId: string): Promise<PerformanceVideoHighlight[]> {
+    return await db
+      .select()
+      .from(performanceVideoHighlights)
+      .where(eq(performanceVideoHighlights.coachId, coachId))
+      .orderBy(desc(performanceVideoHighlights.createdAt));
+  }
+
+  async getPerformanceVideoHighlightsByClass(classId: string): Promise<PerformanceVideoHighlight[]> {
+    return await db
+      .select()
+      .from(performanceVideoHighlights)
+      .where(eq(performanceVideoHighlights.classId, classId))
+      .orderBy(desc(performanceVideoHighlights.createdAt));
+  }
+
+  async updatePerformanceVideoHighlight(id: string, updates: Partial<PerformanceVideoHighlight>): Promise<PerformanceVideoHighlight> {
+    const [updated] = await db
+      .update(performanceVideoHighlights)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(performanceVideoHighlights.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deletePerformanceVideoHighlight(id: string): Promise<void> {
+    await db.delete(performanceVideoHighlights).where(eq(performanceVideoHighlights.id, id));
+  }
+
+  // Video Share operations
+  async createVideoShare(shareData: InsertVideoShare): Promise<VideoShare> {
+    const [created] = await db.insert(videoShares).values(shareData).returning();
+    return created;
+  }
+
+  async getVideoSharesByVideo(videoId: string): Promise<VideoShare[]> {
+    return await db
+      .select({
+        id: videoShares.id,
+        videoId: videoShares.videoId,
+        parentId: videoShares.parentId,
+        email: videoShares.email,
+        sharedAt: videoShares.sharedAt,
+        viewedAt: videoShares.viewedAt,
+        message: videoShares.message,
+        parentName: users.firstName ? sql<string>`${users.firstName} || ' ' || ${users.lastName}` : null,
+        parentEmail: users.email,
+      })
+      .from(videoShares)
+      .leftJoin(users, eq(videoShares.parentId, users.id))
+      .where(eq(videoShares.videoId, videoId))
+      .orderBy(desc(videoShares.sharedAt));
+  }
+
+  async getVideoSharesByParent(parentId: string): Promise<VideoShare[]> {
+    return await db
+      .select()
+      .from(videoShares)
+      .where(eq(videoShares.parentId, parentId))
+      .orderBy(desc(videoShares.sharedAt));
+  }
+
+  async updateVideoShare(id: string, updates: Partial<VideoShare>): Promise<VideoShare> {
+    const [updated] = await db
+      .update(videoShares)
+      .set(updates)
+      .where(eq(videoShares.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteVideoShare(id: string): Promise<void> {
+    await db.delete(videoShares).where(eq(videoShares.id, id));
   }
 }
 

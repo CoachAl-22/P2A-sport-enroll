@@ -27,6 +27,8 @@ import ParentHelpCenter from "@/pages/parent-help-center";
 import EnrollmentGuide from "@/pages/enrollment-guide";
 import PaymentSupport from "@/pages/payment-support";
 import NotFound from "@/pages/not-found";
+import VideoHighlights from "@/pages/video-highlights";
+import VideoHighlightsParent from "@/components/video-highlights-parent";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -62,7 +64,13 @@ function Router() {
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
           {((user as any)?.user?.role === "coach" || (user as any)?.user?.role === "admin") && (
-            <Route path="/attendance" component={Attendance} />
+            <>
+              <Route path="/attendance" component={Attendance} />
+              <Route path="/video-highlights" component={VideoHighlights} />
+            </>
+          )}
+          {(user as any)?.user?.role === "parent" && (
+            <Route path="/video-highlights" component={VideoHighlightsParent} />
           )}
           {(user as any)?.user?.role === "admin" && (
             <>

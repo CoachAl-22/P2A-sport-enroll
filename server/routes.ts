@@ -9,7 +9,7 @@ import { smsService } from "./sms";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { importCustomersFromCSV, createSampleChildrenForParents } from "./csv-import";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -2263,6 +2263,277 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Error creating sample children:', error);
       res.status(500).json({ message: "Failed to create sample children", error: error.message });
+    }
+  });
+
+  // Performance Video Highlights API endpoints
+
+  // Get all video highlights (coach/admin)
+  app.get("/api/video-highlights", isAuthenticated, async (req, res) => {
+    try {
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
+      const user = await storage.getUser(userId);
+      
+      if (!user || !["coach", "admin"].includes(user.role)) {
+        return res.status(403).json({ message: "Coach or admin access required" });
+      }
+
+      let videos;
+      if (user.role === "admin") {
+        videos = await storage.getAllPerformanceVideoHighlights();
+      } else {
+        // Coach can only see their own videos
+        const coach = await db.select().from(coaches).where(eq(coaches.userId, userId)).limit(1);
+        if (!coach[0]) {
+          return res.status(404).json({ message: "Coach profile not found" });
+        }
+        videos = await storage.getPerformanceVideoHighlightsByCoach(coach[0].id);
+      }
+
+      res.json(videos);
+    } catch (error: any) {
+      console.error("Error fetching video highlights:", error);
+      res.status(500).json({ message: "Failed to fetch video highlights" });
+    }
+  });
+
+  // Get video highlights for a specific child (parents)
+  app.get("/api/video-highlights/child/:childId", isAuthenticated, async (req, res) => {
+    try {
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
+      const user = await storage.getUser(userId);
+      const { childId } = req.params;
+
+      if (!user) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      // Check if user is parent of this child, coach, or admin
+      if (user.role === "parent") {
+        const child = await storage.getChild(childId);
+        if (!child || child.parentId !== userId) {
+          return res.status(403).json({ message: "Access denied" });
+        }
+      } else if (!["coach", "admin"].includes(user.role)) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const videos = await storage.getPerformanceVideoHighlightsByChild(childId);
+      res.json(videos);
+    } catch (error: any) {
+      console.error("Error fetching child video highlights:", error);
+      res.status(500).json({ message: "Failed to fetch video highlights" });
+    }
+  });
+
+  // Create new video highlight (coach/admin)
+  app.post("/api/video-highlights", isAuthenticated, async (req, res) => {
+    try {
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
+      const user = await storage.getUser(userId);
+      
+      if (!user || !["coach", "admin"].includes(user.role)) {
+        return res.status(403).json({ message: "Coach or admin access required" });
+      }
+
+      // Get coach ID for this user
+      let coachId;
+      if (user.role === "coach") {
+        const coach = await db.select().from(coaches).where(eq(coaches.userId, userId)).limit(1);
+        if (!coach[0]) {
+          return res.status(404).json({ message: "Coach profile not found" });
+        }
+        coachId = coach[0].id;
+      } else {
+        // Admin can specify coach
+        coachId = req.body.coachId;
+        if (!coachId) {
+          return res.status(400).json({ message: "Coach ID required for admin" });
+        }
+      }
+
+      const videoData = insertPerformanceVideoHighlightSchema.parse({
+        ...req.body,
+        coachId,
+      });
+
+      const video = await storage.createPerformanceVideoHighlight(videoData);
+      
+      // Send SMS notification to parent if video is for a specific child
+      if (video.childId) {
+        try {
+          const child = await storage.getChild(video.childId);
+          if (child) {
+            const parent = await storage.getUser(child.parentId);
+            if (parent?.mobile) {
+              await smsService.sendSMS(
+                parent.mobile,
+                `📹 New performance video available for ${child.firstName}! "${video.title}" - Check it out in the app. 🏃‍♂️`
+              );
+            }
+          }
+        } catch (smsError) {
+          console.error("Failed to send video notification SMS:", smsError);
+        }
+      }
+
+      res.status(201).json(video);
+    } catch (error: any) {
+      console.error("Error creating video highlight:", error);
+      if (error.name === 'ZodError') {
+        res.status(400).json({ message: "Invalid video data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create video highlight" });
+      }
+    }
+  });
+
+  // Update video highlight (coach/admin)
+  app.put("/api/video-highlights/:id", isAuthenticated, async (req, res) => {
+    try {
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
+      const user = await storage.getUser(userId);
+      const { id } = req.params;
+      
+      if (!user || !["coach", "admin"].includes(user.role)) {
+        return res.status(403).json({ message: "Coach or admin access required" });
+      }
+
+      // Check ownership for coaches
+      if (user.role === "coach") {
+        const video = await storage.getPerformanceVideoHighlight(id);
+        if (!video) {
+          return res.status(404).json({ message: "Video not found" });
+        }
+        
+        const coach = await db.select().from(coaches).where(eq(coaches.userId, userId)).limit(1);
+        if (!coach[0] || video.coachId !== coach[0].id) {
+          return res.status(403).json({ message: "Access denied" });
+        }
+      }
+
+      const updates = req.body;
+      const updatedVideo = await storage.updatePerformanceVideoHighlight(id, updates);
+      res.json(updatedVideo);
+    } catch (error: any) {
+      console.error("Error updating video highlight:", error);
+      res.status(500).json({ message: "Failed to update video highlight" });
+    }
+  });
+
+  // Delete video highlight (coach/admin)
+  app.delete("/api/video-highlights/:id", isAuthenticated, async (req, res) => {
+    try {
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
+      const user = await storage.getUser(userId);
+      const { id } = req.params;
+      
+      if (!user || !["coach", "admin"].includes(user.role)) {
+        return res.status(403).json({ message: "Coach or admin access required" });
+      }
+
+      // Check ownership for coaches
+      if (user.role === "coach") {
+        const video = await storage.getPerformanceVideoHighlight(id);
+        if (!video) {
+          return res.status(404).json({ message: "Video not found" });
+        }
+        
+        const coach = await db.select().from(coaches).where(eq(coaches.userId, userId)).limit(1);
+        if (!coach[0] || video.coachId !== coach[0].id) {
+          return res.status(403).json({ message: "Access denied" });
+        }
+      }
+
+      await storage.deletePerformanceVideoHighlight(id);
+      res.json({ message: "Video highlight deleted successfully" });
+    } catch (error: any) {
+      console.error("Error deleting video highlight:", error);
+      res.status(500).json({ message: "Failed to delete video highlight" });
+    }
+  });
+
+  // Share video with parent
+  app.post("/api/video-highlights/:id/share", isAuthenticated, async (req, res) => {
+    try {
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
+      const user = await storage.getUser(userId);
+      const { id } = req.params;
+      
+      if (!user || !["coach", "admin"].includes(user.role)) {
+        return res.status(403).json({ message: "Coach or admin access required" });
+      }
+
+      const video = await storage.getPerformanceVideoHighlight(id);
+      if (!video) {
+        return res.status(404).json({ message: "Video not found" });
+      }
+
+      const shareData = insertVideoShareSchema.parse({
+        ...req.body,
+        videoId: id,
+      });
+
+      const share = await storage.createVideoShare(shareData);
+
+      // Send SMS notification if sharing with a parent
+      if (share.parentId) {
+        try {
+          const parent = await storage.getUser(share.parentId);
+          if (parent?.mobile) {
+            await smsService.sendSMS(
+              parent.mobile,
+              `📹 ${user.firstName} shared a performance video: "${video.title}". ${share.message || 'Check it out in the app!'} 🏃‍♂️`
+            );
+          }
+        } catch (smsError) {
+          console.error("Failed to send share notification SMS:", smsError);
+        }
+      }
+
+      res.status(201).json(share);
+    } catch (error: any) {
+      console.error("Error sharing video:", error);
+      if (error.name === 'ZodError') {
+        res.status(400).json({ message: "Invalid share data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to share video" });
+      }
+    }
+  });
+
+  // Get shared videos for a parent
+  app.get("/api/video-highlights/shared", isAuthenticated, async (req, res) => {
+    try {
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== "parent") {
+        return res.status(403).json({ message: "Parent access required" });
+      }
+
+      const shares = await storage.getVideoSharesByParent(userId);
+      res.json(shares);
+    } catch (error: any) {
+      console.error("Error fetching shared videos:", error);
+      res.status(500).json({ message: "Failed to fetch shared videos" });
+    }
+  });
+
+  // Mark video as viewed
+  app.post("/api/video-highlights/shares/:shareId/view", isAuthenticated, async (req, res) => {
+    try {
+      const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
+      const { shareId } = req.params;
+
+      await storage.updateVideoShare(shareId, {
+        viewedAt: new Date(),
+      });
+
+      res.json({ message: "Video marked as viewed" });
+    } catch (error: any) {
+      console.error("Error marking video as viewed:", error);
+      res.status(500).json({ message: "Failed to mark video as viewed" });
     }
   });
 

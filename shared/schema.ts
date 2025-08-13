@@ -345,6 +345,68 @@ export const blogArticles = pgTable("blog_articles", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Performance Video Highlights
+export const videoHighlightTypeEnum = pgEnum("video_highlight_type", [
+  "individual_performance",
+  "class_highlights", 
+  "skill_demonstration",
+  "progress_comparison",
+  "team_performance"
+]);
+
+export const videoStatusEnum = pgEnum("video_status", [
+  "processing",
+  "ready", 
+  "failed",
+  "archived"
+]);
+
+export const performanceVideoHighlights = pgTable("performance_video_highlights", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  type: videoHighlightTypeEnum("type").notNull(),
+  status: videoStatusEnum("status").default("processing"),
+  
+  // Video metadata
+  videoUrl: varchar("video_url"), // Cloud storage URL
+  thumbnailUrl: varchar("thumbnail_url"),
+  duration: integer("duration"), // in seconds
+  fileSize: integer("file_size"), // in bytes
+  
+  // Associated data
+  childId: uuid("child_id").references(() => children.id, { onDelete: "cascade" }),
+  classId: uuid("class_id").references(() => classes.id, { onDelete: "set null" }),
+  coachId: uuid("coach_id").references(() => coaches.id).notNull(),
+  
+  // Performance metrics (optional)
+  skillsHighlighted: text("skills_highlighted").array(), // Array of skills demonstrated
+  performanceNotes: text("performance_notes"),
+  coachComments: text("coach_comments"),
+  
+  // Sharing and privacy
+  isPublic: boolean("is_public").default(false),
+  shareableLink: varchar("shareable_link").unique(),
+  viewCount: integer("view_count").default(0),
+  
+  // Tags for organization
+  tags: text("tags").array(),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Video Shares - track who videos are shared with
+export const videoShares = pgTable("video_shares", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  videoId: uuid("video_id").references(() => performanceVideoHighlights.id, { onDelete: "cascade" }).notNull(),
+  parentId: uuid("parent_id").references(() => users.id, { onDelete: "cascade" }),
+  email: varchar("email"), // For sharing with non-users
+  sharedAt: timestamp("shared_at").defaultNow(),
+  viewedAt: timestamp("viewed_at"),
+  message: text("message"), // Optional message from coach
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   children: many(children),
@@ -448,6 +510,33 @@ export const waitlistsRelations = relations(waitlists, ({ one }) => ({
   }),
 }));
 
+export const performanceVideoHighlightsRelations = relations(performanceVideoHighlights, ({ one, many }) => ({
+  child: one(children, {
+    fields: [performanceVideoHighlights.childId],
+    references: [children.id],
+  }),
+  class: one(classes, {
+    fields: [performanceVideoHighlights.classId],
+    references: [classes.id],
+  }),
+  coach: one(coaches, {
+    fields: [performanceVideoHighlights.coachId],
+    references: [coaches.id],
+  }),
+  shares: many(videoShares),
+}));
+
+export const videoSharesRelations = relations(videoShares, ({ one }) => ({
+  video: one(performanceVideoHighlights, {
+    fields: [videoShares.videoId],
+    references: [performanceVideoHighlights.id],
+  }),
+  parent: one(users, {
+    fields: [videoShares.parentId],
+    references: [users.id],
+  }),
+}));
+
 
 
 // Predefined venues 
@@ -545,6 +634,27 @@ export const insertBlogArticleSchema = createInsertSchema(blogArticles).omit({
   updatedAt: true,
   publishedAt: true,
 });
+
+export const insertPerformanceVideoHighlightSchema = createInsertSchema(performanceVideoHighlights).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  status: true,
+  shareableLink: true,
+  viewCount: true,
+});
+
+export const insertVideoShareSchema = createInsertSchema(videoShares).omit({
+  id: true,
+  sharedAt: true,
+  viewedAt: true,
+});
+
+// Types
+export type PerformanceVideoHighlight = typeof performanceVideoHighlights.$inferSelect;
+export type InsertPerformanceVideoHighlight = z.infer<typeof insertPerformanceVideoHighlightSchema>;
+export type VideoShare = typeof videoShares.$inferSelect;
+export type InsertVideoShare = z.infer<typeof insertVideoShareSchema>;
 
 
 

@@ -69,6 +69,14 @@ export default function Navbar() {
                     Waitlists
                   </Button>
                 </Link>
+                <Link href="/video-highlights">
+                  <Button
+                    variant={location === "/video-highlights" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500"
+                  >
+                    {(user as any)?.user?.role === "parent" ? "Videos" : "Video Highlights"}
+                  </Button>
+                </Link>
                 {(
                   (user as any)?.user?.role === "coach" || 
                   (user as any)?.user?.role === "admin" ||
