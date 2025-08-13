@@ -36,6 +36,7 @@ interface OneClickChatProps {
 
 export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentStep, setCurrentStep] = useState<'welcome' | 'name' | 'age' | 'interests' | 'availability' | 'recommendations'>('welcome');
   const [childAge, setChildAge] = useState<string>("");
@@ -149,58 +150,71 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
   return (
     <>
       {/* Prominent Chat Helper */}
-      <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="fixed bottom-6 right-6 z-50"
-      >
-        {/* Chat Message Bubble */}
+      {isVisible && (
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 2, duration: 0.5 }}
-          className="absolute bottom-20 right-0 bg-gray-900 rounded-lg shadow-xl p-4 mb-2 max-w-xs border-2 border-gray-700"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          className="fixed bottom-6 right-6 z-50"
         >
-          <div className="flex items-center gap-2 mb-2">
-            <Bot className="w-5 h-5 text-secondary-500" />
-            <span className="font-semibold text-white">Program Finder</span>
-          </div>
-          <p className="text-sm text-gray-200 mb-3">
-            How can I help? I'll find the perfect athletic program for your child!
-          </p>
-          <div className="flex justify-end">
-            <Button
-              onClick={startChat}
-              size="sm"
-              className="bg-secondary-500 hover:bg-secondary-600 text-white text-xs px-3 py-1"
-            >
-              Get Started
-            </Button>
-          </div>
-          {/* Speech bubble arrow */}
-          <div className="absolute bottom-0 right-6 transform translate-y-1/2 rotate-45 w-3 h-3 bg-gray-900 border-r-2 border-b-2 border-gray-700"></div>
-        </motion.div>
+          {/* Chat Message Bubble */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 2, duration: 0.5 }}
+            className="absolute bottom-20 right-0 bg-gray-900 rounded-lg shadow-xl p-4 mb-2 max-w-xs border-2 border-gray-700"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Bot className="w-5 h-5 text-secondary-500" />
+                <span className="font-semibold text-white">Program Finder</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsVisible(false)}
+                className="text-gray-400 hover:text-white hover:bg-gray-800 h-6 w-6"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <p className="text-sm text-gray-200 mb-3">
+              How can I help? I'll find the perfect athletic program for your child!
+            </p>
+            <div className="flex justify-end">
+              <Button
+                onClick={startChat}
+                size="sm"
+                className="bg-secondary-500 hover:bg-secondary-600 text-white text-xs px-3 py-1"
+              >
+                Get Started
+              </Button>
+            </div>
+            {/* Speech bubble arrow */}
+            <div className="absolute bottom-0 right-6 transform translate-y-1/2 rotate-45 w-3 h-3 bg-gray-900 border-r-2 border-b-2 border-gray-700"></div>
+          </motion.div>
 
-        {/* Enhanced Chat Button */}
-        <Button
-          onClick={startChat}
-          className="w-20 h-20 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden"
-          size="icon"
-        >
-          <div className="flex flex-col items-center justify-center">
-            <Bot className="w-8 h-8 text-white mb-1" />
-            <div className="text-xs text-white font-bold">HELP</div>
-          </div>
+          {/* Enhanced Chat Button */}
+          <Button
+            onClick={startChat}
+            className="w-20 h-20 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden"
+            size="icon"
+          >
+            <div className="flex flex-col items-center justify-center">
+              <Bot className="w-8 h-8 text-white mb-1" />
+              <div className="text-xs text-white font-bold">HELP</div>
+            </div>
+            
+            {/* Animated ring */}
+            <div className="absolute inset-0 rounded-full border-4 border-white/30 animate-ping"></div>
+          </Button>
           
-          {/* Animated ring */}
-          <div className="absolute inset-0 rounded-full border-4 border-white/30 animate-ping"></div>
-        </Button>
-        
-        {/* Enhanced pulsing indicator */}
-        <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full animate-pulse flex items-center justify-center">
-          <div className="w-3 h-3 bg-white rounded-full"></div>
-        </div>
-      </motion.div>
+          {/* Enhanced pulsing indicator */}
+          <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full animate-pulse flex items-center justify-center">
+            <div className="w-3 h-3 bg-white rounded-full"></div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Chat Dialog */}
       <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
