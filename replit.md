@@ -46,6 +46,7 @@ Preferred communication style: Simple, everyday language.
 - **Class and Staff Management**: Admin interfaces for CRUD operations on classes and staff, with role-based access control.
 - **Chat Widget**: Floating chat widget for class recommendations, gathering user preferences and providing tailored suggestions.
 - **Education Hub**: Rebranded "Blog" section to "Education Hub" with integration for the Skool community.
+- **Video Highlights with Skool Integration**: Complete performance video management system with one-click sharing to Skool community platform, shareable public links, and view tracking.
 - **UI/UX Refinements**: Parent-friendly messaging, simplified navigation, enhanced enrollment flows, and improved error handling.
 
 ## External Dependencies
