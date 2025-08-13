@@ -295,7 +295,7 @@ export default function OneClickVideo({ selectedChild, selectedClass, onSuccess 
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">None</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
                           {(children as any[]).map((child: any) => (
                             <SelectItem key={child.id} value={child.id}>
                               {child.firstName} {child.lastName}
@@ -321,7 +321,7 @@ export default function OneClickVideo({ selectedChild, selectedClass, onSuccess 
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">None</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
                           {(classes as any[]).map((cls: any) => (
                             <SelectItem key={cls.id} value={cls.id}>
                               {cls.name}
