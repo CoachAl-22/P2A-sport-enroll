@@ -29,7 +29,9 @@ import {
   Upload,
   FileVideo,
   Calendar,
-  Users
+  Users,
+  ExternalLink,
+  Copy
 } from "lucide-react";
 import OneClickVideo from "@/components/one-click-video";
 import { format } from "date-fns";
@@ -213,6 +215,54 @@ export default function VideoHighlights() {
     shareVideoMutation.mutate({
       videoId: selectedVideo.id,
       shareData: data,
+    });
+  };
+
+  const shareToSkool = (video: any) => {
+    // Generate a shareable message for Skool
+    const skoolMessage = `🏃‍♂️ **${video.title}** 
+    
+${video.description || "Check out this amazing performance highlight!"}
+
+🎯 Type: ${getTypeDisplay(video.type)}
+${video.childName ? `👤 Athlete: ${video.childName}` : ''}
+${video.className ? `🏫 Class: ${video.className}` : ''}
+${video.coachName ? `👨‍🏫 Coach: ${video.coachName}` : ''}
+
+Watch the full video: ${window.location.origin}/video-highlights/${video.shareableLink}
+
+#Power2ADAPT #AthleticTraining #PerformanceHighlights`;
+
+    // Copy to clipboard for easy pasting in Skool
+    navigator.clipboard.writeText(skoolMessage).then(() => {
+      toast({
+        title: "Skool Post Ready!",
+        description: "Message copied to clipboard. Paste it in your Skool community!",
+      });
+    }).catch(() => {
+      // Fallback: open in new window with the message
+      const skoolUrl = `https://www.skool.com/power2adapt/classroom`; // Update with your actual Skool URL
+      window.open(skoolUrl, '_blank');
+      toast({
+        title: "Skool Community Opened",
+        description: "Create a new post and share your video highlight!",
+      });
+    });
+  };
+
+  const copyShareableLink = (video: any) => {
+    const shareableUrl = `${window.location.origin}/video-highlights/${video.shareableLink}`;
+    navigator.clipboard.writeText(shareableUrl).then(() => {
+      toast({
+        title: "Link Copied!",
+        description: "Shareable link copied to clipboard",
+      });
+    }).catch(() => {
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy link to clipboard",
+        variant: "destructive",
+      });
     });
   };
 
@@ -561,6 +611,25 @@ export default function VideoHighlights() {
                         >
                           <Share2 className="h-4 w-4 mr-1" />
                           Share
+                        </Button>
+                        
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => shareToSkool(video)}
+                          title="Share to Skool Community"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-1" />
+                          Skool
+                        </Button>
+                        
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => copyShareableLink(video)}
+                          title="Copy shareable link"
+                        >
+                          <Copy className="h-4 w-4" />
                         </Button>
                         
                         <Button 

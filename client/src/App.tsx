@@ -28,6 +28,7 @@ import EnrollmentGuide from "@/pages/enrollment-guide";
 import PaymentSupport from "@/pages/payment-support";
 import NotFound from "@/pages/not-found";
 import VideoHighlights from "@/pages/video-highlights";
+import SharedVideo from "@/pages/shared-video";
 import VideoHighlightsParent from "@/components/video-highlights-parent";
 
 function Router() {
@@ -53,6 +54,7 @@ function Router() {
           <Route path="/parent-help-center" component={ParentHelpCenter} />
           <Route path="/enrollment-guide" component={EnrollmentGuide} />
           <Route path="/payment-support" component={PaymentSupport} />
+          <Route path="/video-highlights/:shareableLink" component={SharedVideo} />
         </>
       ) : (
         <>

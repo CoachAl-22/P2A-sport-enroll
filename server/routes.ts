@@ -1391,6 +1391,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public shareable video link endpoint
+  app.get("/api/video-highlights/share/:shareableLink", async (req, res) => {
+    try {
+      const { shareableLink } = req.params;
+      
+      const [video] = await db
+        .select({
+          id: performanceVideoHighlights.id,
+          title: performanceVideoHighlights.title,
+          description: performanceVideoHighlights.description,
+          type: performanceVideoHighlights.type,
+          videoUrl: performanceVideoHighlights.videoUrl,
+          thumbnailUrl: performanceVideoHighlights.thumbnailUrl,
+          duration: performanceVideoHighlights.duration,
+          skillsHighlighted: performanceVideoHighlights.skillsHighlighted,
+          performanceNotes: performanceVideoHighlights.performanceNotes,
+          coachComments: performanceVideoHighlights.coachComments,
+          viewCount: performanceVideoHighlights.viewCount,
+          tags: performanceVideoHighlights.tags,
+          createdAt: performanceVideoHighlights.createdAt,
+          childName: children.firstName ? sql<string>`${children.firstName} || ' ' || ${children.lastName}` : null,
+          coachName: sql<string>`${coaches.firstName} || ' ' || ${coaches.lastName}`,
+          className: classes.name,
+        })
+        .from(performanceVideoHighlights)
+        .leftJoin(children, eq(performanceVideoHighlights.childId, children.id))
+        .leftJoin(coaches, eq(performanceVideoHighlights.coachId, coaches.id))
+        .leftJoin(classes, eq(performanceVideoHighlights.classId, classes.id))
+        .where(eq(performanceVideoHighlights.shareableLink, shareableLink));
+
+      if (!video) {
+        return res.status(404).json({ message: "Video not found" });
+      }
+
+      // Increment view count
+      await db
+        .update(performanceVideoHighlights)
+        .set({ 
+          viewCount: video.viewCount + 1,
+          updatedAt: new Date()
+        })
+        .where(eq(performanceVideoHighlights.shareableLink, shareableLink));
+
+      res.json({
+        ...video,
+        viewCount: video.viewCount + 1
+      });
+    } catch (error: any) {
+      console.error("Error fetching shareable video:", error);
+      res.status(500).json({ message: "Failed to fetch video" });
+    }
+  });
+
   // Analytics endpoints for advanced reporting dashboard
   app.get("/api/analytics/enrollments", async (req, res) => {
     const userId = (req.session as any)?.userId;
