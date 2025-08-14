@@ -47,6 +47,7 @@ Preferred communication style: Simple, everyday language.
 - **Chat Widget**: Floating chat widget for class recommendations, gathering user preferences and providing tailored suggestions.
 - **Education Hub**: Rebranded "Blog" section to "Education Hub" with integration for the Skool community.
 - **Video Highlights with Skool Integration**: Complete performance video management system with one-click sharing to Skool community platform, shareable public links, and view tracking.
+- **URL Routing**: Proper browser URL routing implemented for all pages, enabling direct link sharing with clean paths (e.g., power2adapt.online/education).
 - **UI/UX Refinements**: Parent-friendly messaging, simplified navigation, enhanced enrollment flows, and improved error handling.
 
 ## External Dependencies
