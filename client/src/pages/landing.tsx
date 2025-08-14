@@ -64,7 +64,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-6xl font-heading font-bold leading-tight mb-6">
-                Where All Athletes <span className="text-secondary-500">Thrive</span>
+                The Emerging Athlete Program - Where All Athletes <span className="text-secondary-500">Thrive</span>
               </h1>
               <p className="text-xl mb-8 text-blue-100">
                 Expert coaching at your child's school. Flexible programs that build confidence, skill, and a love for sport. Ages 5 to 13 welcome.
@@ -188,6 +188,7 @@ export default function Landing() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Available Classes - Term 3, 2024</h2>
             <p className="text-xl text-gray-600">9 weeks of professional athletic training</p>
+            <p className="text-lg text-gray-500 mt-2">Senior and High Performance squads by Application</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
