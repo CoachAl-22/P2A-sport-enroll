@@ -50,7 +50,9 @@ function Router() {
           <Route path="/classes" component={Classes} />
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/blog" component={Blog} />
+          <Route path="/education" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
+          <Route path="/education/:slug" component={BlogArticle} />
           <Route path="/parent-help-center" component={ParentHelpCenter} />
           <Route path="/enrollment-guide" component={EnrollmentGuide} />
           <Route path="/payment-support" component={PaymentSupport} />
@@ -64,7 +66,9 @@ function Router() {
           <Route path="/checkout/:enrollmentId" component={Checkout} />
           <Route path="/waitlist" component={Waitlist} />
           <Route path="/blog" component={Blog} />
+          <Route path="/education" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
+          <Route path="/education/:slug" component={BlogArticle} />
           {(user?.role === "coach" || user?.role === "admin") && (
             <>
               <Route path="/attendance" component={Attendance} />

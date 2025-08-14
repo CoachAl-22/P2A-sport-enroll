@@ -69,6 +69,14 @@ export default function Navbar() {
                     Waitlists
                   </Button>
                 </Link>
+                <Link href="/education">
+                  <Button
+                    variant={location === "/education" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500"
+                  >
+                    Education Hub
+                  </Button>
+                </Link>
                 <Link href="/video-highlights">
                   <Button
                     variant={location === "/video-highlights" ? "default" : "ghost"}
@@ -187,6 +195,15 @@ export default function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Waitlists
+                </Button>
+              </Link>
+              <Link href="/education">
+                <Button
+                  variant={location === "/education" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Education Hub
                 </Button>
               </Link>
               {(user as any)?.user?.role === "admin" && (
