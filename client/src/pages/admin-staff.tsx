@@ -86,18 +86,18 @@ export default function AdminStaff() {
   });
 
   // Redirect if not admin
-  if (!authLoading && (user as any)?.user?.role !== "admin") {
+  if (!authLoading && user?.role !== "admin") {
     return <Redirect to="/" />;
   }
 
   const { data: staff = [], isLoading: staffLoading } = useQuery<any[]>({
     queryKey: ["/api/staff"],
-    enabled: (user as any)?.user?.role === "admin",
+    enabled: user?.role === "admin",
   });
 
   const { data: coaches = [] } = useQuery<any[]>({
     queryKey: ["/api/coaches"],
-    enabled: (user as any)?.user?.role === "admin",
+    enabled: user?.role === "admin",
   });
 
   const createStaffMutation = useMutation({

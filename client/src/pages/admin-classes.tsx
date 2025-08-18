@@ -191,11 +191,11 @@ export default function AdminClasses() {
   };
 
   const getVenueName = (venueId: string) => {
-    return venues?.find((v: any) => v.id === venueId)?.name || "Unknown Venue";
+    return (venues as any)?.find((v: any) => v.id === venueId)?.name || "Unknown Venue";
   };
 
   const getCoachName = (coachId: string) => {
-    const coach = coaches?.find((c: any) => c.id === coachId);
+    const coach = (coaches as any)?.find((c: any) => c.id === coachId);
     return coach ? `${coach.firstName} ${coach.lastName}` : "Unknown Coach";
   };
 
@@ -267,7 +267,7 @@ export default function AdminClasses() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {classes?.map((classItem: any) => (
+                {(classes as any)?.map((classItem: any) => (
                   <TableRow key={classItem.id}>
                     <TableCell>
                       <div>
@@ -395,7 +395,7 @@ export default function AdminClasses() {
                       <SelectValue placeholder="Select venue" />
                     </SelectTrigger>
                     <SelectContent>
-                      {venues?.map((venue: any) => (
+                      {(venues as any)?.map((venue: any) => (
                         <SelectItem key={venue.id} value={venue.id}>{venue.name}</SelectItem>
                       ))}
                     </SelectContent>
@@ -411,7 +411,7 @@ export default function AdminClasses() {
                       <SelectValue placeholder="Select coach" />
                     </SelectTrigger>
                     <SelectContent>
-                      {coaches?.map((coach: any) => (
+                      {(coaches as any)?.map((coach: any) => (
                         <SelectItem key={coach.id} value={coach.id}>
                           {coach.firstName} {coach.lastName}
                         </SelectItem>
