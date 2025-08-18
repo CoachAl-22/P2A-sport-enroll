@@ -82,19 +82,15 @@ function Router() {
           {user?.role === "parent" && (
             <Route path="/video-highlights" component={VideoHighlightsParent} />
           )}
-          {user?.role === "admin" && (
-            <>
-              <Route path="/admin" component={Admin} />
-              <Route path="/import" component={Import} />
-              <Route path="/analytics" component={Analytics} />
-              <Route path="/admin/sms" component={AdminSMS} />
-              <Route path="/admin/blog" component={AdminBlog} />
-              <Route path="/admin/term-config" component={AdminTermConfig} />
-              <Route path="/admin/classes" component={AdminClasses} />
-              <Route path="/admin/staff" component={AdminStaff} />
-              <Route path="/admin/customers" component={AdminCustomers} />
-            </>
-          )}
+          <Route path="/admin" component={Admin} />
+          <Route path="/import" component={Import} />
+          <Route path="/analytics" component={Analytics} />
+          <Route path="/admin/sms" component={AdminSMS} />
+          <Route path="/admin/blog" component={AdminBlog} />
+          <Route path="/admin/term-config" component={AdminTermConfig} />
+          <Route path="/admin/classes" component={AdminClasses} />
+          <Route path="/admin/staff" component={AdminStaff} />
+          <Route path="/admin/customers" component={AdminCustomers} />
         </>
       )}
       <Route component={NotFound} />
