@@ -42,17 +42,17 @@ export default function AdminCustomers() {
   // Fetch all customers with their children
   const { data: customers, isLoading: customersLoading } = useQuery({
     queryKey: ["/api/admin/customers"],
-    enabled: (user as any)?.user?.role === "admin",
+    enabled: user?.role === "admin",
   });
 
   // Fetch all students with their parents
   const { data: students, isLoading: studentsLoading } = useQuery({
     queryKey: ["/api/admin/students"],
-    enabled: (user as any)?.user?.role === "admin",
+    enabled: user?.role === "admin",
   });
 
   // Redirect if not admin
-  if (!authLoading && (user as any)?.user?.role !== "admin") {
+  if (!authLoading && user?.role !== "admin") {
     return <Redirect to="/" />;
   }
 
