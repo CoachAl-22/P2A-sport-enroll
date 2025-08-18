@@ -90,13 +90,13 @@ export default function Navbar() {
                     variant={location === "/video-highlights" ? "default" : "ghost"}
                     className="text-gray-700 hover:text-primary-500"
                   >
-                    {(user as any)?.user?.role === "parent" ? "Videos" : "Video Highlights"}
+                    {user?.role === "parent" ? "Videos" : "Video Highlights"}
                   </Button>
                 </Link>
                 {(
-                  (user as any)?.user?.role === "coach" || 
-                  (user as any)?.user?.role === "admin" ||
-                  (user as any)?.user?.email === "coach@power2adapt.com"
+                  user?.role === "coach" || 
+                  user?.role === "admin" ||
+                  user?.email === "coach@power2adapt.com"
                 ) && (
                   <Link href="/attendance">
                     <Button
@@ -107,7 +107,7 @@ export default function Navbar() {
                     </Button>
                   </Link>
                 )}
-                {(user as any)?.user?.role === "admin" && (
+                {user?.role === "admin" && (
                   <>
                     <Link href="/admin">
                       <Button
@@ -143,7 +143,7 @@ export default function Navbar() {
             {isAuthenticated ? (
               <>
                 <span className="hidden md:block text-gray-700">
-                  Hi, {(user as any)?.firstName}!
+                  Hi, {user?.firstName}!
                 </span>
                 <Button
                   onClick={handleLogout}
