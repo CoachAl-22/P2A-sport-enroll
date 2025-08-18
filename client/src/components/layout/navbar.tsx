@@ -42,6 +42,7 @@ export default function Navbar() {
             </Link>
           </div>
 
+          <div className="text-xs text-gray-500">DEBUG: Auth={String(isAuthenticated)} Role={user?.role} Email={user?.email}</div>
           {isAuthenticated && (
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
