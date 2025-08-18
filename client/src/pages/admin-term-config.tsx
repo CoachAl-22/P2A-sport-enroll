@@ -19,7 +19,7 @@ import { format } from "date-fns";
 
 const termConfigSchema = z.object({
   term: z.enum(["term_1", "term_2", "term_3", "term_4"]),
-  year: z.number().min(2024).max(2030),
+  year: z.number().min(2025).max(2030),
   name: z.string().min(1, "Name is required"),
   startDate: z.string(),
   endDate: z.string(),
@@ -56,7 +56,7 @@ export default function AdminTermConfig() {
     resolver: zodResolver(termConfigSchema),
     defaultValues: {
       term: "term_1",
-      year: new Date().getFullYear(),
+      year: 2025,
       name: "",
       startDate: "",
       endDate: "",

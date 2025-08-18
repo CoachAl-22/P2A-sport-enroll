@@ -2194,7 +2194,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/term-configurations/:id", async (req, res) => {
     try {
-      const termConfig = await storage.updateTermConfiguration(req.params.id, req.body);
+      const updateData = { ...req.body };
+      
+      // Convert date strings to Date objects
+      if (updateData.startDate) {
+        updateData.startDate = new Date(updateData.startDate);
+      }
+      if (updateData.endDate) {
+        updateData.endDate = new Date(updateData.endDate);
+      }
+      if (updateData.enrollmentOpenDate) {
+        updateData.enrollmentOpenDate = new Date(updateData.enrollmentOpenDate);
+      }
+      if (updateData.enrollmentCloseDate) {
+        updateData.enrollmentCloseDate = new Date(updateData.enrollmentCloseDate);
+      }
+      
+      const termConfig = await storage.updateTermConfiguration(req.params.id, updateData);
       res.json(termConfig);
     } catch (error: any) {
       console.error('Error updating term configuration:', error);
