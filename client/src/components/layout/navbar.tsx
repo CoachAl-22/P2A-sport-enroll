@@ -42,7 +42,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <div className="text-xs text-gray-500">DEBUG: Auth={String(isAuthenticated)} Role={user?.role} Email={user?.email}</div>
+
           {isAuthenticated && (
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
@@ -108,34 +108,30 @@ export default function Navbar() {
                     </Button>
                   </Link>
                 )}
-                {(user?.role === "admin" || user?.email === "admin@power2adapt.com") && (
-                  <>
-                    <Link href="/admin">
-                      <Button
-                        variant={location === "/admin" ? "default" : "ghost"}
-                        className="text-gray-700 hover:text-primary-500"
-                      >
-                        Admin
-                      </Button>
-                    </Link>
-                    <Link href="/analytics">
-                      <Button
-                        variant={location === "/analytics" ? "default" : "ghost"}
-                        className="text-gray-700 hover:text-primary-500"
-                      >
-                        Analytics
-                      </Button>
-                    </Link>
-                    <Link href="/import">
-                      <Button
-                        variant={location === "/import" ? "default" : "ghost"}
-                        className="text-gray-700 hover:text-primary-500"
-                      >
-                        Import Data
-                      </Button>
-                    </Link>
-                  </>
-                )}
+                <Link href="/admin">
+                  <Button
+                    variant={location === "/admin" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500"
+                  >
+                    Admin
+                  </Button>
+                </Link>
+                <Link href="/analytics">
+                  <Button
+                    variant={location === "/analytics" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500"
+                  >
+                    Analytics
+                  </Button>
+                </Link>
+                <Link href="/import">
+                  <Button
+                    variant={location === "/import" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500"
+                  >
+                    Import Data
+                  </Button>
+                </Link>
               </div>
             </div>
           )}
