@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/use-auth";
 import Landing from "@/pages/landing";
 import HighPerformance from "@/pages/high-performance";
+import SeniorSquad from "@/pages/senior-squad";
 import Dashboard from "@/pages/dashboard";
 import Classes from "@/pages/classes";
 import Enrollment from "@/pages/enrollment";
@@ -49,6 +50,7 @@ function Router() {
           <Route path="/" component={Landing} />
           <Route path="/classes" component={Classes} />
           <Route path="/high-performance" component={HighPerformance} />
+          <Route path="/senior-squad" component={SeniorSquad} />
           <Route path="/blog" component={Blog} />
           <Route path="/education" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
