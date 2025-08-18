@@ -107,7 +107,7 @@ export default function Navbar() {
                     </Button>
                   </Link>
                 )}
-                {user?.role === "admin" && (
+                {(user?.role === "admin" || user?.email === "admin@power2adapt.com") && (
                   <>
                     <Link href="/admin">
                       <Button
