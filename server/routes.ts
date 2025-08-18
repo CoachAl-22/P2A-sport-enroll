@@ -2587,6 +2587,173 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Athlete Portal API Routes
+  app.get("/api/performance-records/:childId", authMiddleware, async (req, res) => {
+    try {
+      const { childId } = req.params;
+      // Mock data for now - will be replaced with real database queries
+      const mockRecords = [
+        {
+          id: "1",
+          childId,
+          recordType: "100m_sprint",
+          value: "12.45",
+          unit: "seconds",
+          recordDate: new Date("2024-12-01"),
+          isPersonalBest: true,
+          notes: "Great improvement in form"
+        },
+        {
+          id: "2", 
+          childId,
+          recordType: "long_jump",
+          value: "4.2",
+          unit: "meters",
+          recordDate: new Date("2024-11-15"),
+          isPersonalBest: false,
+          notes: "Good technique"
+        }
+      ];
+      res.json(mockRecords);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/training-goals/:childId", authMiddleware, async (req, res) => {
+    try {
+      const { childId } = req.params;
+      const mockGoals = [
+        {
+          id: "1",
+          childId,
+          title: "Improve 100m Sprint Time",
+          description: "Work on starting technique and acceleration",
+          targetValue: "11.50",
+          targetUnit: "seconds",
+          currentValue: "12.45",
+          status: "active",
+          priority: "high",
+          category: "speed",
+          targetDate: new Date("2025-03-01")
+        },
+        {
+          id: "2",
+          childId,
+          title: "Increase Long Jump Distance",
+          description: "Focus on take-off technique",
+          targetValue: "5.0",
+          targetUnit: "meters", 
+          currentValue: "4.2",
+          status: "active",
+          priority: "medium",
+          category: "technique",
+          targetDate: new Date("2025-04-15")
+        }
+      ];
+      res.json(mockGoals);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/attendance-records/:childId", authMiddleware, async (req, res) => {
+    try {
+      const { childId } = req.params;
+      const mockAttendance = [
+        {
+          id: "1",
+          childId,
+          sessionDate: new Date("2024-12-10"),
+          status: "present",
+          performanceRating: 8,
+          skillsFocused: ["sprint_starts", "acceleration"]
+        },
+        {
+          id: "2", 
+          childId,
+          sessionDate: new Date("2024-12-03"),
+          status: "present",
+          performanceRating: 7,
+          skillsFocused: ["long_jump", "take_off"]
+        }
+      ];
+      res.json(mockAttendance);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/coach-messages/:childId", authMiddleware, async (req, res) => {
+    try {
+      const { childId } = req.params;
+      const mockMessages = [
+        {
+          id: "1",
+          childId,
+          fromCoach: {
+            firstName: "Alistair",
+            lastName: "Tait"
+          },
+          subject: "Great progress this week!",
+          message: "I've noticed significant improvement in your sprint starts. Keep focusing on the explosive first step and you'll see even better times.",
+          messageType: "performance",
+          priority: "normal",
+          isRead: false,
+          createdAt: new Date("2024-12-08")
+        },
+        {
+          id: "2",
+          childId,
+          fromCoach: {
+            firstName: "Georgia",
+            lastName: "Middleton"
+          },
+          subject: "Training Focus for Next Week",
+          message: "Next session we'll work on long jump approach. Practice your rhythm counting at home if you can.",
+          messageType: "technique_tip",
+          priority: "normal", 
+          isRead: true,
+          createdAt: new Date("2024-12-05"),
+          parentReply: "Thanks for the tip! We'll practice the counting at home.",
+          repliedAt: new Date("2024-12-06")
+        }
+      ];
+      res.json(mockMessages);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/upcoming-classes/:childId", authMiddleware, async (req, res) => {
+    try {
+      const { childId } = req.params;
+      const mockClasses = [
+        {
+          id: "1",
+          name: "Emerging Athletes",
+          date: new Date("2024-12-17"),
+          startTime: "15:30",
+          endTime: "16:45",
+          venue: { name: "Toorak College" },
+          coach: { firstName: "Georgia", lastName: "Middleton" }
+        },
+        {
+          id: "2",
+          name: "Emerging Athletes", 
+          date: new Date("2024-12-19"),
+          startTime: "15:30",
+          endTime: "16:45",
+          venue: { name: "Toorak College" },
+          coach: { firstName: "Georgia", lastName: "Middleton" }
+        }
+      ];
+      res.json(mockClasses);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

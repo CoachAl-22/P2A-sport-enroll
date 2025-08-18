@@ -31,6 +31,7 @@ import NotFound from "@/pages/not-found";
 import VideoHighlights from "@/pages/video-highlights";
 import SharedVideo from "@/pages/shared-video";
 import VideoHighlightsParent from "@/components/video-highlights-parent";
+import AthletePortal from "@/pages/athlete-portal";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -63,6 +64,7 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Dashboard} />
+          <Route path="/athlete-portal" component={AthletePortal} />
           <Route path="/classes" component={Classes} />
           <Route path="/enrollment/:classId" component={Enrollment} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />

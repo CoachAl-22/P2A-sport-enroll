@@ -61,6 +61,14 @@ export default function Navbar() {
                     My Family
                   </Button>
                 </Link>
+                <Link href="/athlete-portal">
+                  <Button
+                    variant={location === "/athlete-portal" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500"
+                  >
+                    Athlete Portal
+                  </Button>
+                </Link>
                 <Link href="/waitlist">
                   <Button
                     variant={location === "/waitlist" ? "default" : "ghost"}
@@ -186,6 +194,15 @@ export default function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   My Family
+                </Button>
+              </Link>
+              <Link href="/athlete-portal">
+                <Button
+                  variant={location === "/athlete-portal" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Athlete Portal
                 </Button>
               </Link>
               <Link href="/waitlist">

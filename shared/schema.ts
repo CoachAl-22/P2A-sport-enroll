@@ -407,6 +407,77 @@ export const videoShares = pgTable("video_shares", {
   message: text("message"), // Optional message from coach
 });
 
+// Performance Records - track athlete personal bests and performance metrics
+export const performanceRecords = pgTable("performance_records", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  childId: uuid("child_id").references(() => children.id, { onDelete: "cascade" }).notNull(),
+  recordType: varchar("record_type", { length: 50 }).notNull(), // "100m_sprint", "long_jump", "strength_test", etc.
+  value: decimal("value", { precision: 10, scale: 3 }).notNull(), // Time in seconds, distance in meters, etc.
+  unit: varchar("unit", { length: 20 }).notNull(), // "seconds", "meters", "kg", etc.
+  recordDate: timestamp("record_date").notNull(),
+  classId: uuid("class_id").references(() => classes.id, { onDelete: "set null" }),
+  coachId: uuid("coach_id").references(() => coaches.id),
+  notes: text("notes"),
+  isPersonalBest: boolean("is_personal_best").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Training Goals - individual goals set for athletes
+export const trainingGoals = pgTable("training_goals", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  childId: uuid("child_id").references(() => children.id, { onDelete: "cascade" }).notNull(),
+  coachId: uuid("coach_id").references(() => coaches.id),
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+  targetValue: decimal("target_value", { precision: 10, scale: 3 }),
+  targetUnit: varchar("target_unit", { length: 20 }),
+  targetDate: timestamp("target_date"),
+  currentValue: decimal("current_value", { precision: 10, scale: 3 }),
+  status: varchar("status", { length: 20 }).default("active"), // "active", "achieved", "paused", "cancelled"
+  priority: varchar("priority", { length: 10 }).default("medium"), // "low", "medium", "high"
+  category: varchar("category", { length: 50 }), // "speed", "strength", "technique", "endurance"
+  achievedAt: timestamp("achieved_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Attendance Records - track individual session attendance
+export const attendanceRecords = pgTable("attendance_records", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  childId: uuid("child_id").references(() => children.id, { onDelete: "cascade" }).notNull(),
+  classId: uuid("class_id").references(() => classes.id, { onDelete: "cascade" }).notNull(),
+  sessionDate: timestamp("session_date").notNull(),
+  status: varchar("status", { length: 20 }).notNull().default("present"), // "present", "absent", "late", "partial"
+  arrivalTime: timestamp("arrival_time"),
+  departureTime: timestamp("departure_time"),
+  coachNotes: text("coach_notes"),
+  skillsFocused: text("skills_focused").array(), // Array of skills worked on
+  performanceRating: integer("performance_rating"), // 1-10 scale
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  uniqueChildSession: unique().on(table.childId, table.classId, table.sessionDate),
+}));
+
+// Coach Messages - communication between coaches and athletes/parents
+export const coachMessages = pgTable("coach_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fromCoachId: uuid("from_coach_id").references(() => coaches.id, { onDelete: "cascade" }).notNull(),
+  toUserId: uuid("to_user_id").references(() => users.id, { onDelete: "cascade" }),
+  childId: uuid("child_id").references(() => children.id, { onDelete: "cascade" }),
+  subject: varchar("subject", { length: 200 }),
+  message: text("message").notNull(),
+  messageType: varchar("message_type", { length: 30 }).default("general"), // "general", "performance", "goal_update", "technique_tip"
+  priority: varchar("priority", { length: 10 }).default("normal"), // "low", "normal", "high", "urgent"
+  isRead: boolean("is_read").default(false),
+  readAt: timestamp("read_at"),
+  parentReply: text("parent_reply"),
+  repliedAt: timestamp("replied_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   children: many(children),
@@ -422,6 +493,11 @@ export const childrenRelations = relations(children, ({ one, many }) => ({
   }),
   enrollments: many(enrollments),
   waitlists: many(waitlists),
+  performanceRecords: many(performanceRecords),
+  trainingGoals: many(trainingGoals),
+  attendanceRecords: many(attendanceRecords),
+  performanceVideos: many(performanceVideoHighlights),
+  coachMessages: many(coachMessages),
 }));
 
 export const venuesRelations = relations(venues, ({ many }) => ({
@@ -524,6 +600,58 @@ export const performanceVideoHighlightsRelations = relations(performanceVideoHig
     references: [coaches.id],
   }),
   shares: many(videoShares),
+}));
+
+export const performanceRecordsRelations = relations(performanceRecords, ({ one }) => ({
+  child: one(children, {
+    fields: [performanceRecords.childId],
+    references: [children.id],
+  }),
+  class: one(classes, {
+    fields: [performanceRecords.classId],
+    references: [classes.id],
+  }),
+  coach: one(coaches, {
+    fields: [performanceRecords.coachId],
+    references: [coaches.id],
+  }),
+}));
+
+export const trainingGoalsRelations = relations(trainingGoals, ({ one }) => ({
+  child: one(children, {
+    fields: [trainingGoals.childId],
+    references: [children.id],
+  }),
+  coach: one(coaches, {
+    fields: [trainingGoals.coachId],
+    references: [coaches.id],
+  }),
+}));
+
+export const attendanceRecordsRelations = relations(attendanceRecords, ({ one }) => ({
+  child: one(children, {
+    fields: [attendanceRecords.childId],
+    references: [children.id],
+  }),
+  class: one(classes, {
+    fields: [attendanceRecords.classId],
+    references: [classes.id],
+  }),
+}));
+
+export const coachMessagesRelations = relations(coachMessages, ({ one }) => ({
+  fromCoach: one(coaches, {
+    fields: [coachMessages.fromCoachId],
+    references: [coaches.id],
+  }),
+  toUser: one(users, {
+    fields: [coachMessages.toUserId],
+    references: [users.id],
+  }),
+  child: one(children, {
+    fields: [coachMessages.childId],
+    references: [children.id],
+  }),
 }));
 
 export const videoSharesRelations = relations(videoShares, ({ one }) => ({
@@ -658,48 +786,7 @@ export type InsertVideoShare = z.infer<typeof insertVideoShareSchema>;
 
 
 
-// Absence reasons enum for type safety
-export const absenceReasonEnum = pgEnum("absence_reason", [
-  "illness",
-  "injured", 
-  "prior_notice",
-  "travel",
-  "exception",
-  "cancelled",
-  "no_show",
-  "late_notice"
-]);
 
-// Attendance tracking table
-export const attendanceRecords = pgTable("attendance_records", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  classId: uuid("class_id").references(() => classes.id).notNull(),
-  childId: uuid("child_id").references(() => children.id).notNull(),
-  attendanceDate: timestamp("attendance_date").notNull(),
-  status: varchar("status", { length: 20 }).notNull(), // 'present', 'absent'
-  absenceReason: absenceReasonEnum("absence_reason"), // null for present, reason for absent
-  creditsEligible: boolean("credits_eligible").default(false), // true if absence qualifies for credit
-  markedBy: uuid("marked_by").references(() => users.id).notNull(), // coach who marked attendance
-  markedAt: timestamp("marked_at").defaultNow(),
-  notes: text("notes"), // optional notes from coach
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const attendanceRecordsRelations = relations(attendanceRecords, ({ one }) => ({
-  class: one(classes, {
-    fields: [attendanceRecords.classId],
-    references: [classes.id],
-  }),
-  child: one(children, {
-    fields: [attendanceRecords.childId],
-    references: [children.id],
-  }),
-  markedByUser: one(users, {
-    fields: [attendanceRecords.markedBy],
-    references: [users.id],
-  }),
-}));
 
 export const insertAttendanceRecordSchema = createInsertSchema(attendanceRecords).omit({
   id: true,
