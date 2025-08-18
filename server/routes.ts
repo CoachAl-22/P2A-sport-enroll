@@ -2171,7 +2171,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/term-configurations", async (req, res) => {
     try {
-      const termConfig = await storage.createTermConfiguration(req.body);
+      const createData = { ...req.body };
+      
+      // Convert date strings to Date objects
+      if (createData.startDate) {
+        createData.startDate = new Date(createData.startDate);
+      }
+      if (createData.endDate) {
+        createData.endDate = new Date(createData.endDate);
+      }
+      if (createData.enrollmentOpenDate) {
+        createData.enrollmentOpenDate = new Date(createData.enrollmentOpenDate);
+      }
+      if (createData.enrollmentCloseDate) {
+        createData.enrollmentCloseDate = new Date(createData.enrollmentCloseDate);
+      }
+      
+      const termConfig = await storage.createTermConfiguration(createData);
       res.status(201).json(termConfig);
     } catch (error: any) {
       console.error('Error creating term configuration:', error);
