@@ -19,13 +19,15 @@ export default function Navbar() {
     try {
       await apiRequest("POST", "/api/auth/logout");
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      // Force page refresh to clear all state
+      window.location.href = '/';
       toast({
         title: "Success",
         description: "Logged out successfully",
       });
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Error", 
         description: "Failed to logout",
         variant: "destructive",
       });
@@ -151,7 +153,13 @@ export default function Navbar() {
                 </Button>
               </>
             ) : (
-              <div className="text-gray-700">Not authenticated</div>
+              <Button 
+                onClick={() => window.location.href = '/login'}
+                variant="outline"
+                className="text-primary-500 hover:text-primary-700"
+              >
+                Login
+              </Button>
             )}
 
             {/* Mobile menu button */}
