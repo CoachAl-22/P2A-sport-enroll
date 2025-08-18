@@ -18,7 +18,7 @@ export default function Admin() {
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["/api/admin/analytics"],
-    enabled: (user as any)?.user?.role === "admin",
+    enabled: user?.role === "admin",
   });
 
   const importCsvMutation = useMutation({
@@ -89,7 +89,7 @@ export default function Admin() {
   };
 
   // Redirect if not admin
-  if (!authLoading && (user as any)?.user?.role !== "admin") {
+  if (!authLoading && user?.role !== "admin") {
     return <Redirect to="/" />;
   }
 
@@ -131,23 +131,23 @@ export default function Admin() {
               <div className="flex justify-between items-center">
                 <span className="text-gray-300">Total Enrolled</span>
                 <span className="text-2xl font-bold text-green-400">
-                  {analytics?.enrollment?.totalEnrolled || 0}
+                  {(analytics as any)?.enrollment?.totalEnrolled || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-300">This Week</span>
                 <span className="text-xl font-bold text-blue-400">
-                  +{analytics?.enrollment?.thisWeek || 0}
+                  +{(analytics as any)?.enrollment?.thisWeek || 0}
                 </span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2">
                 <div 
                   className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full" 
-                  style={{ width: `${analytics?.enrollment?.capacityPercentage || 0}%` }}
+                  style={{ width: `${(analytics as any)?.enrollment?.capacityPercentage || 0}%` }}
                 ></div>
               </div>
               <p className="text-sm text-gray-400">
-                {analytics?.enrollment?.capacityPercentage || 0}% capacity across all programs
+                {(analytics as any)?.enrollment?.capacityPercentage || 0}% capacity across all programs
               </p>
             </div>
           </AnalyticsCard>
@@ -162,18 +162,18 @@ export default function Admin() {
               <div className="flex justify-between items-center">
                 <span className="text-gray-300">This Term</span>
                 <span className="text-2xl font-bold text-secondary-500">
-                  ${analytics?.revenue?.thisTerm?.toLocaleString() || 0}
+                  ${(analytics as any)?.revenue?.thisTerm?.toLocaleString() || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-300">Outstanding</span>
                 <span className="text-xl font-bold text-yellow-400">
-                  ${analytics?.revenue?.outstanding?.toLocaleString() || 0}
+                  ${(analytics as any)?.revenue?.outstanding?.toLocaleString() || 0}
                 </span>
               </div>
               <div className="flex items-center text-sm text-green-400">
                 <TrendingUp className="w-4 h-4 mr-1" />
-                <span>+{analytics?.revenue?.percentageChange || 0}% vs last term</span>
+                <span>+{(analytics as any)?.revenue?.percentageChange || 0}% vs last term</span>
               </div>
             </div>
           </AnalyticsCard>
