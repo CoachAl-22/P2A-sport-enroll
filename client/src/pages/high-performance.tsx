@@ -275,6 +275,60 @@ export default function HighPerformance() {
             </div>
           </div>
 
+          {/* Performance Testing Section */}
+          <div className="mb-16">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-heading font-bold mb-4 text-primary-400">Performance Testing</h2>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+                Advanced testing protocols and movement analysis techniques used to optimize athletic performance and identify areas for improvement
+              </p>
+            </div>
+            
+            <div className="bg-gray-800 rounded-xl p-8">
+              <div className="grid lg:grid-cols-2 gap-8 items-center">
+                <div>
+                  <h3 className="text-xl font-semibold mb-4 text-white">Elite Movement Analysis</h3>
+                  <p className="text-gray-300 mb-4">
+                    Our comprehensive testing protocols utilize advanced video analysis and biomechanical assessment to identify performance limiting factors and movement inefficiencies.
+                  </p>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-secondary-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-300 text-sm">High-speed video analysis for technique refinement</p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-secondary-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-300 text-sm">Biomechanical assessment protocols</p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-secondary-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-300 text-sm">Performance benchmarking and tracking</p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-secondary-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-300 text-sm">Individualized improvement strategies</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-900 rounded-lg p-4">
+                  <video 
+                    controls 
+                    className="w-full h-auto rounded-lg"
+                    poster="/images/coach-photo.jpg"
+                  >
+                    <source src="/attached_assets/reel_edge10 alistair iv (1).MP4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                  <p className="text-center text-gray-400 text-sm mt-2">
+                    Performance testing demonstration by Head Coach Alistair Tait
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-8 text-center">
             <h2 className="text-2xl font-heading font-bold mb-4">Ready to Take Your Performance to the Next Level?</h2>
             <p className="text-lg mb-6 text-primary-100">
