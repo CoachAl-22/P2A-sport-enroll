@@ -339,14 +339,14 @@ export default function HighPerformance() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 onClick={() => setIsContactFormOpen(true)}
-                className="bg-white text-primary-600 hover:bg-gray-100 font-semibold px-8 py-3"
+                className="bg-secondary-500 hover:bg-secondary-600 text-white font-semibold px-8 py-3"
               >
                 Book a Call / Email
               </Button>
               <Button 
                 onClick={() => setIsContactFormOpen(true)}
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-primary-600 px-8 py-3"
+                className="border-secondary-400 text-secondary-400 hover:bg-secondary-400 hover:text-white px-8 py-3"
               >
                 Enquire / Book Performance Assessment
               </Button>
