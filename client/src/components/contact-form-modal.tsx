@@ -20,6 +20,8 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
     phone: "",
     contactMethod: "",
     subject: "",
+    performanceTestType: "",
+    assessmentType: "",
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,6 +47,8 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
         phone: "",
         contactMethod: "",
         subject: "",
+        performanceTestType: "",
+        assessmentType: "",
         message: ""
       });
       
@@ -162,6 +166,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
                 <SelectValue placeholder="Select consultation type" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="performance-assessment">Performance Assessment</SelectItem>
                 <SelectItem value="high-performance">High Performance Consultation</SelectItem>
                 <SelectItem value="senior-squad">Senior Squad Application</SelectItem>
                 <SelectItem value="youth-programs">Youth Programs</SelectItem>
@@ -170,6 +175,40 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
               </SelectContent>
             </Select>
           </div>
+
+          {/* Performance Test Type - Only show if Performance Assessment is selected */}
+          {formData.subject === "performance-assessment" && (
+            <div className="space-y-2">
+              <Label htmlFor="performanceTestType">What type of performance test are you interested in? *</Label>
+              <Select value={formData.performanceTestType} onValueChange={(value) => handleInputChange("performanceTestType", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select performance test type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="speed">Speed</SelectItem>
+                  <SelectItem value="power">Power</SelectItem>
+                  <SelectItem value="agility">Agility</SelectItem>
+                  <SelectItem value="sport-specific">Sport Specific</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Assessment Type - Only show if Performance Assessment is selected */}
+          {formData.subject === "performance-assessment" && (
+            <div className="space-y-2">
+              <Label htmlFor="assessmentType">Individual or Team Assessment? *</Label>
+              <Select value={formData.assessmentType} onValueChange={(value) => handleInputChange("assessmentType", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select assessment type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="individual">Individual Assessment</SelectItem>
+                  <SelectItem value="team">Team Assessment (Minimum 20 athletes)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Message */}
           <div className="space-y-2">
@@ -188,7 +227,15 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
           <div className="flex space-x-3 pt-4">
             <Button
               type="submit"
-              disabled={isSubmitting || !formData.name || !formData.email || !formData.contactMethod || !formData.subject || !formData.message}
+              disabled={
+                isSubmitting || 
+                !formData.name || 
+                !formData.email || 
+                !formData.contactMethod || 
+                !formData.subject || 
+                !formData.message ||
+                (formData.subject === "performance-assessment" && (!formData.performanceTestType || !formData.assessmentType))
+              }
               className="flex-1 bg-primary-600 hover:bg-primary-700 text-white"
             >
               {isSubmitting ? "Sending..." : "Send Message"}
