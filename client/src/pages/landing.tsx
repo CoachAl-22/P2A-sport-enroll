@@ -65,10 +65,10 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-6xl font-heading font-bold leading-tight mb-6">
-                The Emerging Athlete Program - Where All Athletes <span className="text-secondary-500">Thrive</span>
+                Where All Athletes <span className="text-secondary-500">Thrive</span>
               </h1>
               <p className="text-xl mb-8 text-blue-100">
-                Expert coaching at your child's school. Flexible programs that build confidence, skill, and a love for sport. Ages 5 to 13 welcome.
+                Expert coaching at your child's school. Flexible programs that build confidence, skill and athletic movements. Ages 5 to 13 welcome. For Senior Squad and High Performance, Ages 14+
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
