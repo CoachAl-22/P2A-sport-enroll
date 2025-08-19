@@ -316,7 +316,7 @@ export default function HighPerformance() {
                   <video 
                     controls 
                     className="w-full h-auto rounded-lg"
-                    poster="/images/coach-photo.jpg"
+                    preload="metadata"
                   >
                     <source src="/images/reel_edge10 alistair iv (1).MP4" type="video/mp4" />
                     Your browser does not support the video tag.
