@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
+import ContactFormModal from "@/components/contact-form-modal";
 import { Users, Building2, Smartphone, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 
 export default function HighPerformance() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isContactFormOpen, setIsContactFormOpen] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -336,10 +338,10 @@ export default function HighPerformance() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                onClick={() => setIsLoginModalOpen(true)}
+                onClick={() => setIsContactFormOpen(true)}
                 className="bg-white text-primary-600 hover:bg-gray-100 font-semibold px-8 py-3"
               >
-                Schedule Consultation
+                Book a Call / Email
               </Button>
               <Button 
                 variant="outline"
@@ -401,6 +403,11 @@ export default function HighPerformance() {
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
+      />
+      
+      <ContactFormModal 
+        isOpen={isContactFormOpen} 
+        onClose={() => setIsContactFormOpen(false)} 
       />
     </div>
   );

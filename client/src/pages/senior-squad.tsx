@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
+import ContactFormModal from "@/components/contact-form-modal";
 import { Users, Building2, Smartphone, ArrowLeft, Star, CheckCircle, Trophy, Target, Clock, Heart } from "lucide-react";
 import { Link } from "wouter";
 
 export default function SeniorSquad() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isContactFormOpen, setIsContactFormOpen] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -290,11 +292,11 @@ export default function SeniorSquad() {
 
           <div className="space-y-4">
             <Button 
-              onClick={() => setIsLoginModalOpen(true)}
+              onClick={() => setIsContactFormOpen(true)}
               size="lg"
               className="bg-white text-primary-600 hover:bg-gray-100 font-bold px-8 py-3 text-lg"
             >
-              Apply for Senior Squad
+              Book Discovery Call
             </Button>
             <p className="text-primary-200 text-sm">
               * By Application Only - Assessment Required
@@ -303,10 +305,15 @@ export default function SeniorSquad() {
         </div>
       </section>
 
-      {/* Login Modal */}
+      {/* Modals */}
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
+      />
+      
+      <ContactFormModal 
+        isOpen={isContactFormOpen} 
+        onClose={() => setIsContactFormOpen(false)} 
       />
     </div>
   );
