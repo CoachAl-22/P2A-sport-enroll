@@ -5,7 +5,7 @@ import LoginModal from "@/components/auth/login-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
 import OneClickChat from "@/components/one-click-chat";
-import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X } from "lucide-react";
+import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X, Menu } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Landing() {
@@ -13,6 +13,7 @@ export default function Landing() {
   const [isSeniorSquadModalOpen, setIsSeniorSquadModalOpen] = useState(false);
   const [isHighPerformanceSquadModalOpen, setIsHighPerformanceSquadModalOpen] = useState(false);
   const [isSchoolPartnershipsModalOpen, setIsSchoolPartnershipsModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -39,19 +40,105 @@ export default function Landing() {
               <Button 
                 onClick={() => setIsLoginModalOpen(true)}
                 variant="ghost"
-                className="text-primary-500 hover:text-primary-700 font-medium"
+                className="hidden sm:inline-flex text-primary-500 hover:text-primary-700 font-medium"
               >
                 Login
               </Button>
               <Button 
                 onClick={() => setIsLoginModalOpen(true)}
-                className="bg-secondary-500 hover:bg-secondary-600 text-white font-medium"
+                className="hidden sm:inline-flex bg-secondary-500 hover:bg-secondary-600 text-white font-medium"
               >
                 Sign Up
               </Button>
+              
+              {/* Mobile menu button */}
+              <div className="md:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="h-6 w-6" />
+                  ) : (
+                    <Menu className="h-6 w-6" />
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+              <a 
+                href="#classes" 
+                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Classes
+              </a>
+              <a 
+                href="#features" 
+                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Features
+              </a>
+              <a 
+                href="/high-performance" 
+                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                High Performance
+              </a>
+              <a 
+                href="/senior-squad" 
+                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Senior Squad
+              </a>
+              <a 
+                href="/education" 
+                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Education
+              </a>
+              <a 
+                href="#contact" 
+                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contact
+              </a>
+              <div className="pt-2 border-t border-gray-200">
+                <Button 
+                  onClick={() => {
+                    setIsLoginModalOpen(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full justify-start text-primary-500 hover:text-primary-700 font-medium"
+                >
+                  Login
+                </Button>
+                <Button 
+                  onClick={() => {
+                    setIsLoginModalOpen(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full justify-start bg-secondary-500 hover:bg-secondary-600 text-white font-medium mt-2"
+                >
+                  Sign Up
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
