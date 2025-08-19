@@ -344,10 +344,11 @@ export default function HighPerformance() {
                 Book a Call / Email
               </Button>
               <Button 
+                onClick={() => setIsContactFormOpen(true)}
                 variant="outline"
                 className="border-white text-white hover:bg-white hover:text-primary-600 px-8 py-3"
               >
-                Download Performance Assessment
+                Enquire / Book Performance Assessment
               </Button>
             </div>
           </div>
