@@ -654,7 +654,7 @@ export default function Landing() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-sm text-gray-600 mb-1">Casual $30 + GST per class</div>
-                    <div className="text-sm text-gray-600">Unlimited Sessions <span className="text-lg font-heading font-bold text-primary-500">$300</span> per month</div>
+                    <div className="text-sm text-gray-600">Unlimited Sessions <span className="text-lg font-heading font-bold text-primary-500">$200</span> per month</div>
                     <div className="text-xs text-gray-500">(includes Final Surge app access)</div>
                   </div>
                   <Button 
@@ -697,8 +697,8 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-sm text-gray-600">Custom pricing</span>
-                    <div className="text-xs text-gray-500">Based on individual needs</div>
+                    <div className="text-sm text-gray-600">Monthly <span className="text-lg font-heading font-bold text-primary-500">$300</span></div>
+                    <div className="text-xs text-gray-500">Annual program $3,500</div>
                   </div>
                   <Button 
                     onClick={() => setIsHighPerformanceSquadModalOpen(true)}

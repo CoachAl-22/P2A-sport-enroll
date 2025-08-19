@@ -213,12 +213,12 @@ export default function HighPerformance() {
                 </div>
                 <div className="border-l-4 border-primary-500 pl-4">
                   <h3 className="font-semibold text-lg text-primary-400">Monthly Package</h3>
-                  <p className="text-2xl font-bold">$400</p>
+                  <p className="text-2xl font-bold">$300</p>
                   <p className="text-gray-300 text-sm">4+ sessions per week + Power2Perform app + Athlete Monitoring protocols</p>
                 </div>
                 <div className="border-l-4 border-primary-500 pl-4">
-                  <h3 className="font-semibold text-lg text-primary-400">Season Program Investment</h3>
-                  <p className="text-2xl font-bold">$5,000</p>
+                  <h3 className="font-semibold text-lg text-primary-400">Annual Program Investment</h3>
+                  <p className="text-2xl font-bold">$3,500</p>
                   <p className="text-gray-300 text-sm"><strong>Benefits:</strong> Leverages our unique Professional partnerships for Strength and Conditioning, Physiotherapy support and the Empowered Athlete support program</p>
                 </div>
               </div>
