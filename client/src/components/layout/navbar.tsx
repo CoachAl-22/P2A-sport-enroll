@@ -180,64 +180,153 @@ export default function Navbar() {
         </div>
 
         {/* Mobile menu */}
-        {isMobileMenuOpen && isAuthenticated && (
+        {isMobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <Link href="/classes">
-                <Button
-                  variant={location === "/classes" ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Programs
-                </Button>
-              </Link>
-              <Link href="/">
-                <Button
-                  variant={location === "/" ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  My Family
-                </Button>
-              </Link>
-              <Link href="/athlete-portal">
-                <Button
-                  variant={location === "/athlete-portal" ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Athlete Portal
-                </Button>
-              </Link>
-              <Link href="/waitlist">
-                <Button
-                  variant={location === "/waitlist" ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Waitlists
-                </Button>
-              </Link>
-              <Link href="/education">
-                <Button
-                  variant={location === "/education" ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Education Hub
-                </Button>
-              </Link>
-              {(user as any)?.user?.role === "admin" && (
-                <Link href="/admin">
-                  <Button
-                    variant={location === "/admin" ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Admin
-                  </Button>
-                </Link>
+              {/* Public navigation items */}
+              {!isAuthenticated && (
+                <>
+                  <Link href="/">
+                    <Button
+                      variant={location === "/" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Home
+                    </Button>
+                  </Link>
+                  <Link href="/#classes">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Classes
+                    </Button>
+                  </Link>
+                  <Link href="/high-performance">
+                    <Button
+                      variant={location === "/high-performance" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      High Performance
+                    </Button>
+                  </Link>
+                  <Link href="/senior-squad">
+                    <Button
+                      variant={location === "/senior-squad" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Senior Squad
+                    </Button>
+                  </Link>
+                  <Link href="/education">
+                    <Button
+                      variant={location === "/education" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Education Hub
+                    </Button>
+                  </Link>
+                  <Link href="/#contact">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Contact
+                    </Button>
+                  </Link>
+                </>
+              )}
+              
+              {/* Authenticated user navigation items */}
+              {isAuthenticated && (
+                <>
+                  <Link href="/classes">
+                    <Button
+                      variant={location === "/classes" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Programs
+                    </Button>
+                  </Link>
+                  <Link href="/">
+                    <Button
+                      variant={location === "/" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      My Family
+                    </Button>
+                  </Link>
+                  <Link href="/athlete-portal">
+                    <Button
+                      variant={location === "/athlete-portal" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Athlete Portal
+                    </Button>
+                  </Link>
+                  <Link href="/waitlist">
+                    <Button
+                      variant={location === "/waitlist" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Waitlists
+                    </Button>
+                  </Link>
+                  <Link href="/education">
+                    <Button
+                      variant={location === "/education" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Education Hub
+                    </Button>
+                  </Link>
+                  <Link href="/video-highlights">
+                    <Button
+                      variant={location === "/video-highlights" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {user?.role === "parent" ? "Videos" : "Video Highlights"}
+                    </Button>
+                  </Link>
+                  {(
+                    user?.role === "coach" || 
+                    user?.role === "admin" ||
+                    user?.email === "coach@power2adapt.com"
+                  ) && (
+                    <Link href="/attendance">
+                      <Button
+                        variant={location === "/attendance" ? "default" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Attendance
+                      </Button>
+                    </Link>
+                  )}
+                  {(user as any)?.user?.role === "admin" && (
+                    <Link href="/admin">
+                      <Button
+                        variant={location === "/admin" ? "default" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+                </>
               )}
             </div>
           </div>
