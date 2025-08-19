@@ -345,8 +345,7 @@ export default function HighPerformance() {
               </Button>
               <Button 
                 onClick={() => setIsContactFormOpen(true)}
-                variant="outline"
-                className="border-secondary-400 text-secondary-400 hover:bg-secondary-400 hover:text-white px-8 py-3"
+                className="bg-transparent border-2 border-secondary-400 text-secondary-400 hover:bg-secondary-400 hover:text-white px-8 py-3 font-semibold"
               >
                 Enquire / Book Performance Assessment
               </Button>
