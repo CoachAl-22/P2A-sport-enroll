@@ -318,7 +318,7 @@ export default function HighPerformance() {
                     className="w-full h-auto rounded-lg"
                     poster="/images/coach-photo.jpg"
                   >
-                    <source src="/attached_assets/reel_edge10 alistair iv (1).MP4" type="video/mp4" />
+                    <source src="/images/reel_edge10 alistair iv (1).MP4" type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                   <p className="text-center text-gray-400 text-sm mt-2">
