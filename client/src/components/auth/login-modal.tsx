@@ -88,12 +88,21 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     try {
       const { confirmPassword, ...registerData } = data;
       await apiRequest("POST", "/api/auth/register", registerData);
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      
+      // Invalidate and refetch auth state to ensure immediate login
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/auth/me"] });
+      
       toast({
         title: "🎉 Congratulations!",
         description: "Your new account has been created successfully! Welcome to the team - where all athletes thrive. Let's get started on your athletic journey!",
       });
       onClose();
+      
+      // Small delay to ensure UI updates, then refresh if needed
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error: any) {
       toast({
         title: "Registration Failed",
