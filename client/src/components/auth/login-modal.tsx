@@ -68,13 +68,23 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   const handleLogin = async (data: LoginForm) => {
     try {
-      await apiRequest("POST", "/api/auth/login", data);
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      const response = await apiRequest("POST", "/api/auth/login", data);
+      
+      // Clear cache and refetch auth state
+      queryClient.clear();
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/auth/me"] });
+      
       toast({
         title: "Success",
-        description: "Welcome back to Power2Perform!",
+        description: "Welcome back to Power2ADAPT!",
       });
       onClose();
+      
+      // Force page refresh to ensure proper session state
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error: any) {
       toast({
         title: "Login Failed",
