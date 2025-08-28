@@ -87,11 +87,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const handleRegister = async (data: RegisterForm) => {
     try {
       const { confirmPassword, ...registerData } = data;
-      await apiRequest("POST", "/api/auth/register", registerData);
+      const response = await apiRequest("POST", "/api/auth/register", registerData);
       
-      // Invalidate and refetch auth state to ensure immediate login
+      // Clear all queries and refetch auth state
+      queryClient.clear();
       await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-      await queryClient.refetchQueries({ queryKey: ["/api/auth/me"] });
       
       toast({
         title: "🎉 Congratulations!",
@@ -99,10 +99,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       });
       onClose();
       
-      // Small delay to ensure UI updates, then refresh if needed
+      // Force a page reload to ensure proper session handling
       setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+        window.location.href = '/';
+      }, 500);
     } catch (error: any) {
       toast({
         title: "Registration Failed",
