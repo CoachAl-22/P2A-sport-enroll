@@ -90,8 +90,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       await apiRequest("POST", "/api/auth/register", registerData);
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       toast({
-        title: "Success",
-        description: "Welcome to Power2Perform! Your account has been created.",
+        title: "🎉 Congratulations!",
+        description: "Your new account has been created successfully! Welcome to the team - where all athletes thrive. Let's get started on your athletic journey!",
       });
       onClose();
     } catch (error: any) {
