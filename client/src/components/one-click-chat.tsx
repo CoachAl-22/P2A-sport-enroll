@@ -32,9 +32,10 @@ interface ClassRecommendation {
 
 interface OneClickChatProps {
   onEnrollClick?: (classId: string) => void;
+  isActive?: boolean;
 }
 
-export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
+export default function OneClickChat({ onEnrollClick, isActive = false }: OneClickChatProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -150,7 +151,7 @@ export default function OneClickChat({ onEnrollClick }: OneClickChatProps) {
   return (
     <>
       {/* Prominent Chat Helper */}
-      {isVisible && (
+      {isActive && isVisible && (
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

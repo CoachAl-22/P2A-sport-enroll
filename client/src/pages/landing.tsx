@@ -14,6 +14,7 @@ export default function Landing() {
   const [isHighPerformanceSquadModalOpen, setIsHighPerformanceSquadModalOpen] = useState(false);
   const [isSchoolPartnershipsModalOpen, setIsSchoolPartnershipsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isChatActive, setIsChatActive] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -314,7 +315,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -357,7 +361,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -400,7 +407,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -443,7 +453,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -486,7 +499,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -529,7 +545,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -572,7 +591,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -615,7 +637,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -658,7 +683,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -701,7 +729,10 @@ export default function Landing() {
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
                   <Button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => {
+                      setIsChatActive(true);
+                      setIsLoginModalOpen(true);
+                    }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Enroll Now
@@ -938,6 +969,7 @@ export default function Landing() {
       />
       
       <OneClickChat 
+        isActive={isChatActive}
         onEnrollClick={(classId) => {
           // Open login modal for enrollment
           setIsLoginModalOpen(true);
