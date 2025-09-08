@@ -5,7 +5,7 @@ import LoginModal from "@/components/auth/login-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
 import OneClickChat from "@/components/one-click-chat";
-import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X, Menu } from "lucide-react";
+import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X, Menu, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Landing() {
@@ -15,6 +15,7 @@ export default function Landing() {
   const [isSchoolPartnershipsModalOpen, setIsSchoolPartnershipsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isChatActive, setIsChatActive] = useState(false);
+  const [isFoundationInfoModalOpen, setIsFoundationInfoModalOpen] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -309,19 +310,29 @@ export default function Landing() {
                     <span className="text-sm">Ages Prep - Year 2 • 15 spots</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
-                    <span className="text-gray-500 text-sm"> + GST per class</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                      <span className="text-gray-500 text-sm"> + GST per class</span>
+                    </div>
+                    <Button 
+                      onClick={() => {
+                        setIsChatActive(true);
+                        setIsLoginModalOpen(true);
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
                   </div>
                   <Button 
-                    onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
+                    onClick={() => setIsFoundationInfoModalOpen(true)}
+                    variant="outline"
+                    className="w-full border-primary-300 text-primary-600 hover:bg-primary-50"
                   >
-                    Enroll Now
+                    <Info className="w-4 h-4 mr-2" />
+                    Find out more
                   </Button>
                 </div>
               </div>
@@ -401,19 +412,29 @@ export default function Landing() {
                     <span className="text-sm">Ages Prep - Year 2 • 15 spots</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
-                    <span className="text-gray-500 text-sm"> + GST per class</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                      <span className="text-gray-500 text-sm"> + GST per class</span>
+                    </div>
+                    <Button 
+                      onClick={() => {
+                        setIsChatActive(true);
+                        setIsLoginModalOpen(true);
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
                   </div>
                   <Button 
-                    onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
+                    onClick={() => setIsFoundationInfoModalOpen(true)}
+                    variant="outline"
+                    className="w-full border-primary-300 text-primary-600 hover:bg-primary-50"
                   >
-                    Enroll Now
+                    <Info className="w-4 h-4 mr-2" />
+                    Find out more
                   </Button>
                 </div>
               </div>
@@ -493,19 +514,29 @@ export default function Landing() {
                     <span className="text-sm">Ages Prep - Year 2 • 15 spots</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
-                    <span className="text-gray-500 text-sm"> + GST per class</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                      <span className="text-gray-500 text-sm"> + GST per class</span>
+                    </div>
+                    <Button 
+                      onClick={() => {
+                        setIsChatActive(true);
+                        setIsLoginModalOpen(true);
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
                   </div>
                   <Button 
-                    onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
+                    onClick={() => setIsFoundationInfoModalOpen(true)}
+                    variant="outline"
+                    className="w-full border-primary-300 text-primary-600 hover:bg-primary-50"
                   >
-                    Enroll Now
+                    <Info className="w-4 h-4 mr-2" />
+                    Find out more
                   </Button>
                 </div>
               </div>
@@ -975,6 +1006,20 @@ export default function Landing() {
           setIsLoginModalOpen(true);
         }}
       />
+
+      {/* Foundation Class Info Modal */}
+      <Dialog open={isFoundationInfoModalOpen} onOpenChange={setIsFoundationInfoModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-heading font-bold text-gray-900">Foundation Class</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Working on the FUNdamentals of athletic movement, we build confidence and improve athletic movements, build fitness and endurance, so our athletes can achieve their goals, whatever their sport may be.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* School Partnerships Modal */}
       <Dialog open={isSchoolPartnershipsModalOpen} onOpenChange={setIsSchoolPartnershipsModalOpen}>
