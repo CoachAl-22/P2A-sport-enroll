@@ -16,6 +16,7 @@ export default function Landing() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isChatActive, setIsChatActive] = useState(false);
   const [isFoundationInfoModalOpen, setIsFoundationInfoModalOpen] = useState(false);
+  const [isEmergingAthletesInfoModalOpen, setIsEmergingAthletesInfoModalOpen] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -366,19 +367,29 @@ export default function Landing() {
                     <span className="text-sm">Year 3-6 • 30 spots</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
-                    <span className="text-gray-500 text-sm"> + GST per class</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                      <span className="text-gray-500 text-sm"> + GST per class</span>
+                    </div>
+                    <Button 
+                      onClick={() => {
+                        setIsChatActive(true);
+                        setIsLoginModalOpen(true);
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
                   </div>
                   <Button 
-                    onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
+                    onClick={() => setIsEmergingAthletesInfoModalOpen(true)}
+                    variant="outline"
+                    className="w-full border-primary-300 text-primary-600 hover:bg-primary-50"
                   >
-                    Enroll Now
+                    <Info className="w-4 h-4 mr-2" />
+                    Find out more
                   </Button>
                 </div>
               </div>
@@ -468,19 +479,29 @@ export default function Landing() {
                     <span className="text-sm">Year 3-6 • 30 spots</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
-                    <span className="text-gray-500 text-sm"> + GST per class</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                      <span className="text-gray-500 text-sm"> + GST per class</span>
+                    </div>
+                    <Button 
+                      onClick={() => {
+                        setIsChatActive(true);
+                        setIsLoginModalOpen(true);
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
                   </div>
                   <Button 
-                    onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
+                    onClick={() => setIsEmergingAthletesInfoModalOpen(true)}
+                    variant="outline"
+                    className="w-full border-primary-300 text-primary-600 hover:bg-primary-50"
                   >
-                    Enroll Now
+                    <Info className="w-4 h-4 mr-2" />
+                    Find out more
                   </Button>
                 </div>
               </div>
@@ -570,19 +591,29 @@ export default function Landing() {
                     <span className="text-sm">Year 3-6 • 30 spots</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
-                    <span className="text-gray-500 text-sm"> + GST per class</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
+                      <span className="text-gray-500 text-sm"> + GST per class</span>
+                    </div>
+                    <Button 
+                      onClick={() => {
+                        setIsChatActive(true);
+                        setIsLoginModalOpen(true);
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
                   </div>
                   <Button 
-                    onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
+                    onClick={() => setIsEmergingAthletesInfoModalOpen(true)}
+                    variant="outline"
+                    className="w-full border-primary-300 text-primary-600 hover:bg-primary-50"
                   >
-                    Enroll Now
+                    <Info className="w-4 h-4 mr-2" />
+                    Find out more
                   </Button>
                 </div>
               </div>
@@ -1016,6 +1047,23 @@ export default function Landing() {
           <div className="space-y-4">
             <p className="text-gray-600">
               Working on the FUNdamentals of athletic movement, we build confidence and improve athletic movements, build fitness and endurance, so our athletes can achieve their goals, whatever their sport may be.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Emerging Athletes Info Modal */}
+      <Dialog open={isEmergingAthletesInfoModalOpen} onOpenChange={setIsEmergingAthletesInfoModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-heading font-bold text-gray-900">Junior Athlete Development</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Every parent and every kid that comes to our programs wants to move better, get fitter and be faster. Sport is fun, but for a lot of kids, if they feel uncomfortable, slow or awkward it takes this fun out of the sport for them. They begin to feel self-conscious and then get lost to the sport and have their self-esteem affected.
+            </p>
+            <p className="text-gray-600">
+              Our junior development programs help every kid move better, understand their challenge points and learn that persistence leads to improvement and changes. Every kid is coached for what they need and given cues that they understand and can implement.
             </p>
           </div>
         </DialogContent>
