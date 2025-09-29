@@ -219,7 +219,7 @@ export default function SeniorSquad() {
                 <div className="text-sm">State Medalists</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">Several</div>
+                <div className="text-2xl font-bold">Multiple</div>
                 <div className="text-sm">National Qualifiers</div>
               </div>
             </div>
