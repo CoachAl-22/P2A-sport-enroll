@@ -256,17 +256,27 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className="mt-12 bg-gray-50 rounded-xl p-8">
-            <div className="text-center">
-              <h3 className="text-2xl font-heading font-bold text-gray-900 mb-4">Meet Our Head Coach</h3>
-              <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                With extensive experience in athletic development and a passion for helping young athletes reach their potential, 
-                our coaching team brings together expertise in movement fundamentals, sports-specific training, and performance psychology.
-              </p>
-              <p className="text-gray-600">
-                Our coaches are committed to creating a positive, supportive environment where every athlete can thrive, 
-                regardless of their starting point or ultimate goals.
-              </p>
+          {/* Coach Profiles */}
+          <div className="mt-16">
+            <h3 className="text-2xl font-heading font-bold text-gray-900 text-center mb-12">Meet Our Coaching Team</h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Coach 1 - Sami */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                <div className="text-center mb-4">
+                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Users className="w-8 h-8 text-primary-500" />
+                  </div>
+                  <h4 className="text-xl font-heading font-bold text-gray-900">Sami</h4>
+                  <p className="text-sm text-primary-600 font-medium">Running Specialist</p>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Sami's passion for running ignited during his soccer days when his natural speed and endurance shone through. 
+                  By 2020, running became his primary focus, and he has since dedicated himself to becoming stronger every day. As a competitive runner with four years of experience, Sami understands the challenges of starting a new sport, learning first-hand the risks of overtraining and the value of proper guidance.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed mt-3">
+                  Through coaching education and personal experience, Sami has developed a tailored, holistic approach to help clients achieve their goals. Whether you aim to compete at a national level or build a foundation for another sport, Sami's expertise ensures you train efficiently and effectively. Backed by a network of experts and his team at Power2Adapt, Sami is dedicated to creating personalised, research-based programs to help you reach your full athletic potential.
+                </p>
+              </div>
             </div>
           </div>
         </div>
