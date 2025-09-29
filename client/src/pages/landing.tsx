@@ -32,6 +32,7 @@ export default function Landing() {
               <div className="ml-10 flex items-baseline space-x-4">
                 <a href="#classes" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Classes</a>
                 <a href="#features" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Features</a>
+                <a href="#coaches" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Our Coaches</a>
                 <a href="/high-performance" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">High Performance</a>
                 <a href="/senior-squad" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Senior Squad</a>
                 <a href="/education" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Education</a>
@@ -88,6 +89,13 @@ export default function Landing() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Features
+              </a>
+              <a 
+                href="#coaches" 
+                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Our Coaches
               </a>
               <a 
                 href="/high-performance" 
@@ -209,6 +217,56 @@ export default function Landing() {
             <div className="text-center">
               <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">98%</div>
               <div className="text-gray-600">Parent Satisfaction</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Coaches */}
+      <section id="coaches" className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Our Coaches</h2>
+            <p className="text-xl text-gray-600">Experienced professionals dedicated to athletic development</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="text-center p-6">
+              <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-10 h-10 text-primary-500" />
+              </div>
+              <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Qualified Expertise</h3>
+              <p className="text-gray-600">Our coaching team holds recognized qualifications in sports science, athletics, and youth development</p>
+            </div>
+            
+            <div className="text-center p-6">
+              <div className="w-20 h-20 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="w-10 h-10 text-secondary-500" />
+              </div>
+              <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Proven Track Record</h3>
+              <p className="text-gray-600">Years of experience developing young athletes with state and national level achievements</p>
+            </div>
+            
+            <div className="text-center p-6">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Plus className="w-10 h-10 text-green-500" />
+              </div>
+              <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Individualized Approach</h3>
+              <p className="text-gray-600">Every athlete receives personalized coaching tailored to their specific needs and goals</p>
+            </div>
+          </div>
+
+          <div className="mt-12 bg-gray-50 rounded-xl p-8">
+            <div className="text-center">
+              <h3 className="text-2xl font-heading font-bold text-gray-900 mb-4">Meet Our Head Coach</h3>
+              <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                With extensive experience in athletic development and a passion for helping young athletes reach their potential, 
+                our coaching team brings together expertise in movement fundamentals, sports-specific training, and performance psychology.
+              </p>
+              <p className="text-gray-600">
+                Our coaches are committed to creating a positive, supportive environment where every athlete can thrive, 
+                regardless of their starting point or ultimate goals.
+              </p>
             </div>
           </div>
         </div>
