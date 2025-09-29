@@ -215,8 +215,8 @@ export default function SeniorSquad() {
             </p>
             <div className="flex justify-center items-center space-x-8 text-primary-600">
               <div className="text-center">
-                <div className="text-2xl font-bold">Dozens</div>
-                <div className="text-sm">State Medalists</div>
+                <div className="text-2xl font-bold">State and National</div>
+                <div className="text-sm">Medalists</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">Multiple</div>
