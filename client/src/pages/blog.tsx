@@ -58,6 +58,62 @@ export default function Blog() {
         </div>
       </div>
 
+      {/* Enhanced Skool Community CTA Section */}
+      <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            <div className="flex items-center justify-center w-16 h-16 bg-yellow-500 rounded-full mx-auto mb-6">
+              <div className="flex items-center justify-center w-10 h-10 text-lg font-bold border-2 border-white rounded text-white">
+                S
+              </div>
+            </div>
+            
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">
+              Join Our Exclusive Community
+            </h2>
+            
+            <p className="text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
+              Connect with other Power2ADAPT families, access exclusive training content, get personalized coaching advice, and stay updated on the latest athletic development strategies.
+            </p>
+            
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <div className="text-center">
+                <div className="text-2xl mb-2">👨‍👩‍👧‍👦</div>
+                <h3 className="font-semibold text-gray-900 mb-1">Parent Network</h3>
+                <p className="text-sm text-gray-600">Connect with other families on the same athletic journey</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl mb-2">🎯</div>
+                <h3 className="font-semibold text-gray-900 mb-1">Expert Coaching</h3>
+                <p className="text-sm text-gray-600">Direct access to our professional coaches for questions</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl mb-2">📚</div>
+                <h3 className="font-semibold text-gray-900 mb-1">Exclusive Content</h3>
+                <p className="text-sm text-gray-600">Training videos, tips, and resources not available elsewhere</p>
+              </div>
+            </div>
+            
+            <a 
+              href="https://www.skool.com/power2adapt-speed-school-8929" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all hover:scale-105 shadow-lg"
+            >
+              <div className="flex items-center justify-center w-6 h-6 text-sm font-bold border border-white rounded mr-3">
+                S
+              </div>
+              Join Skool Community Now - It's Free!
+              <ArrowRight className="ml-3 w-5 h-5" />
+            </a>
+            
+            <p className="mt-4 text-sm text-gray-500">
+              Join 200+ parents already getting the best athletic development insights
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Blog Articles */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {!articles || articles.length === 0 ? (
