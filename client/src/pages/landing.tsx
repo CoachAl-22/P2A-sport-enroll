@@ -14,7 +14,6 @@ export default function Landing() {
   const [isHighPerformanceSquadModalOpen, setIsHighPerformanceSquadModalOpen] = useState(false);
   const [isSchoolPartnershipsModalOpen, setIsSchoolPartnershipsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isChatActive, setIsChatActive] = useState(false);
   const [isFoundationInfoModalOpen, setIsFoundationInfoModalOpen] = useState(false);
   const [isEmergingAthletesInfoModalOpen, setIsEmergingAthletesInfoModalOpen] = useState(false);
 
@@ -162,7 +161,9 @@ export default function Landing() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
-                  onClick={() => setIsLoginModalOpen(true)}
+                  onClick={() => {
+                    window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                  }}
                   className="bg-secondary-500 hover:bg-secondary-600 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
                   Start Your Athletic Journey
@@ -319,8 +320,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        setIsChatActive(true);
-                        setIsLoginModalOpen(true);
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -375,8 +375,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        setIsChatActive(true);
-                        setIsLoginModalOpen(true);
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -431,8 +430,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        setIsChatActive(true);
-                        setIsLoginModalOpen(true);
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -487,8 +485,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        setIsChatActive(true);
-                        setIsLoginModalOpen(true);
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -543,8 +540,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        setIsChatActive(true);
-                        setIsLoginModalOpen(true);
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -599,8 +595,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        setIsChatActive(true);
-                        setIsLoginModalOpen(true);
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -654,8 +649,7 @@ export default function Landing() {
                   </div>
                   <Button 
                     onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
+                      window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                     }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
@@ -700,8 +694,7 @@ export default function Landing() {
                   </div>
                   <Button 
                     onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
+                      window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                     }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
@@ -746,8 +739,7 @@ export default function Landing() {
                   </div>
                   <Button 
                     onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
+                      window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                     }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
@@ -792,8 +784,7 @@ export default function Landing() {
                   </div>
                   <Button 
                     onClick={() => {
-                      setIsChatActive(true);
-                      setIsLoginModalOpen(true);
+                      window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
                     }}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
@@ -1030,13 +1021,6 @@ export default function Landing() {
         onClose={() => setIsHighPerformanceSquadModalOpen(false)} 
       />
       
-      <OneClickChat 
-        isActive={isChatActive}
-        onEnrollClick={(classId) => {
-          // Open login modal for enrollment
-          setIsLoginModalOpen(true);
-        }}
-      />
 
       {/* Foundation Class Info Modal */}
       <Dialog open={isFoundationInfoModalOpen} onOpenChange={setIsFoundationInfoModalOpen}>
