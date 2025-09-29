@@ -263,9 +263,11 @@ export default function Landing() {
               {/* Coach 1 - Sami */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <div className="text-center mb-4">
-                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Users className="w-8 h-8 text-primary-500" />
-                  </div>
+                  <img 
+                    src="@assets/IMG_3038_1759146359558.jpg" 
+                    alt="Sami - Running Specialist Coach" 
+                    className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-200"
+                  />
                   <h4 className="text-xl font-heading font-bold text-gray-900">Sami</h4>
                   <p className="text-sm text-primary-600 font-medium">Running Specialist</p>
                 </div>
