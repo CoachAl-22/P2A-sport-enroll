@@ -7,6 +7,7 @@ import { HighPerformanceSquadApplication } from "@/components/applications/high-
 import OneClickChat from "@/components/one-click-chat";
 import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X, Menu, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import coachSamiImage from "@assets/IMG_3038_1759146359558.jpg";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -264,7 +265,7 @@ export default function Landing() {
               <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <div className="text-center mb-4">
                   <img 
-                    src="@assets/IMG_3038_1759146359558.jpg" 
+                    src={coachSamiImage} 
                     alt="Sami - Running Specialist Coach" 
                     className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-200"
                   />
