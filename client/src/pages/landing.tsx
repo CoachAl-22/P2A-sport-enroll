@@ -339,7 +339,26 @@ export default function Landing() {
                 </p>
               </div>
 
-              {/* Coach 4 - Miah Noble */}
+              {/* Coach 4 - Blake */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                <div className="text-center mb-4">
+                  <img 
+                    src={coachBlakeImage} 
+                    alt="Blake - Distance and Trail Running Specialist" 
+                    className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-200"
+                  />
+                  <h4 className="text-xl font-heading font-bold text-gray-900">Blake</h4>
+                  <p className="text-sm text-primary-600 font-medium">Distance and Trail Running Specialist</p>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  I've always loved pushing my physical limits to see what I'm truly capable of. For me, trail running is the perfect mix of freedom and challenge. It's not just about raw speed, but about resilience, adapting to obstacles, and embracing the unexpected challenges. Out on the trails you encounter experiences you never get in everyday life, and there is just a calmness to being in nature that's good for both mind and body.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed mt-3">
+                  I want to coach to share my passion with others to help people build confidence, resilience, and consistency through endurance training, and to show them what they're truly capable of.
+                </p>
+              </div>
+
+              {/* Coach 5 - Miah Noble */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <div className="text-center mb-4">
                   <img 
@@ -358,25 +377,6 @@ export default function Landing() {
                 </p>
                 <p className="text-gray-600 text-sm leading-relaxed mt-3">
                   I am dedicated to helping others cultivate strength, confidence, and resilience through running. If you're ready to run stronger, fuel better, and build genuine resilience, I'm here to guide you every step of the way.
-                </p>
-              </div>
-
-              {/* Coach 5 - Blake */}
-              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-                <div className="text-center mb-4">
-                  <img 
-                    src={coachBlakeImage} 
-                    alt="Blake - Distance and Trail Running Specialist" 
-                    className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-200"
-                  />
-                  <h4 className="text-xl font-heading font-bold text-gray-900">Blake</h4>
-                  <p className="text-sm text-primary-600 font-medium">Distance and Trail Running Specialist</p>
-                </div>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  I've always loved pushing my physical limits to see what I'm truly capable of. For me, trail running is the perfect mix of freedom and challenge. It's not just about raw speed, but about resilience, adapting to obstacles, and embracing the unexpected challenges. Out on the trails you encounter experiences you never get in everyday life, and there is just a calmness to being in nature that's good for both mind and body.
-                </p>
-                <p className="text-gray-600 text-sm leading-relaxed mt-3">
-                  I want to coach to share my passion with others to help people build confidence, resilience, and consistency through endurance training, and to show them what they're truly capable of.
                 </p>
               </div>
             </div>
