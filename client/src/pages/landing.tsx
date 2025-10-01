@@ -8,7 +8,7 @@ import OneClickChat from "@/components/one-click-chat";
 import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X, Menu, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import coachSamiImage from "@assets/IMG_3038_1759146359558.jpg";
-import coachAlistairImage from "@assets/IMG_4492.jpeg";
+import coachAlistairImage from "@assets/63271D0E-3E21-490C-B81E-18BEF5CCB270_1759298878111.jpg";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
