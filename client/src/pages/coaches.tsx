@@ -103,7 +103,7 @@ export default function Coaches() {
                   data-testid="img-coach-alistair"
                 />
                 <h4 className="text-xl font-heading font-bold text-cyan-400" data-testid="text-coach-name-alistair">Alistair</h4>
-                <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-alistair">Head Coach</p>
+                <p className="text-sm text-gray-100 font-medium" data-testid="text-coach-title-alistair">Head Coach</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
                 Alistair started out in Little Aths, Cross Country and Fun runs and is a former National level track and field athlete (400mh) He has a Bachelor's Degree in Sports Coaching(PE) stream and has 20 years experience in coaching and is currently undertaking the Australian Athletics Level 4 High Performance coaching course.
@@ -126,7 +126,7 @@ export default function Coaches() {
                   data-testid="img-coach-sami"
                 />
                 <h4 className="text-xl font-heading font-bold text-cyan-400" data-testid="text-coach-name-sami">Sami</h4>
-                <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-sami">Distance Running Specialist</p>
+                <p className="text-sm text-gray-100 font-medium" data-testid="text-coach-title-sami">Distance Running Specialist</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
                 Sami's passion for running ignited during his soccer days when his natural speed and endurance shone through. 
@@ -147,7 +147,7 @@ export default function Coaches() {
                   data-testid="img-coach-georgia"
                 />
                 <h4 className="text-xl font-heading font-bold text-cyan-400" data-testid="text-coach-name-georgia">Georgia</h4>
-                <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-georgia">Junior Development Specialist</p>
+                <p className="text-sm text-gray-100 font-medium" data-testid="text-coach-title-georgia">Junior Development Specialist</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
                 I aspire to continuing working with primary aged children to improve their fundamental running skills for not just athletics but for any sport they wish to improve in through their running!
@@ -164,7 +164,7 @@ export default function Coaches() {
                   data-testid="img-coach-blake"
                 />
                 <h4 className="text-xl font-heading font-bold text-cyan-400" data-testid="text-coach-name-blake">Blake</h4>
-                <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-blake">Distance and Trail Running Specialist</p>
+                <p className="text-sm text-gray-100 font-medium" data-testid="text-coach-title-blake">Distance and Trail Running Specialist</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
                 I've always loved pushing my physical limits to see what I'm truly capable of. For me, trail running is the perfect mix of freedom and challenge. It's not just about raw speed, but about resilience, adapting to obstacles, and embracing the unexpected challenges. Out on the trails you encounter experiences you never get in everyday life, and there is just a calmness to being in nature that's good for both mind and body.
@@ -184,7 +184,7 @@ export default function Coaches() {
                   data-testid="img-coach-miah"
                 />
                 <h4 className="text-xl font-heading font-bold text-cyan-400" data-testid="text-coach-name-miah">Miah Noble</h4>
-                <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-miah">Trail Running Specialist</p>
+                <p className="text-sm text-gray-100 font-medium" data-testid="text-coach-title-miah">Trail Running Specialist</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
                 As a coach, my mission is to support athletes of all levels, whether you are new to running or pursuing your next big goal through smart and sustainable training. I understand the challenge of balancing over 20 hours of training with a full-time job and the everyday demands of life.
