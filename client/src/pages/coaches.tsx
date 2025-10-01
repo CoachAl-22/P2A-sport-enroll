@@ -102,7 +102,7 @@ export default function Coaches() {
                   className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-400"
                   data-testid="img-coach-alistair"
                 />
-                <h4 className="text-xl font-heading font-bold text-white" data-testid="text-coach-name-alistair">Alistair</h4>
+                <h4 className="text-xl font-heading font-bold text-teal-400" data-testid="text-coach-name-alistair">Alistair</h4>
                 <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-alistair">Head Coach</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -125,7 +125,7 @@ export default function Coaches() {
                   className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-400"
                   data-testid="img-coach-sami"
                 />
-                <h4 className="text-xl font-heading font-bold text-white" data-testid="text-coach-name-sami">Sami</h4>
+                <h4 className="text-xl font-heading font-bold text-teal-400" data-testid="text-coach-name-sami">Sami</h4>
                 <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-sami">Distance Running Specialist</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -146,7 +146,7 @@ export default function Coaches() {
                   className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-400"
                   data-testid="img-coach-georgia"
                 />
-                <h4 className="text-xl font-heading font-bold text-white" data-testid="text-coach-name-georgia">Georgia</h4>
+                <h4 className="text-xl font-heading font-bold text-teal-400" data-testid="text-coach-name-georgia">Georgia</h4>
                 <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-georgia">Junior Development Specialist</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -163,7 +163,7 @@ export default function Coaches() {
                   className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-400"
                   data-testid="img-coach-blake"
                 />
-                <h4 className="text-xl font-heading font-bold text-white" data-testid="text-coach-name-blake">Blake</h4>
+                <h4 className="text-xl font-heading font-bold text-teal-400" data-testid="text-coach-name-blake">Blake</h4>
                 <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-blake">Distance and Trail Running Specialist</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -183,7 +183,7 @@ export default function Coaches() {
                   className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-400"
                   data-testid="img-coach-miah"
                 />
-                <h4 className="text-xl font-heading font-bold text-white" data-testid="text-coach-name-miah">Miah Noble</h4>
+                <h4 className="text-xl font-heading font-bold text-teal-400" data-testid="text-coach-name-miah">Miah Noble</h4>
                 <p className="text-sm text-primary-400 font-medium" data-testid="text-coach-title-miah">Trail Running Specialist</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
