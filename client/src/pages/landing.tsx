@@ -261,7 +261,23 @@ export default function Landing() {
 
           {/* Coach Profiles */}
           <div className="mt-16">
-            <h3 className="text-2xl font-heading font-bold text-gray-900 text-center mb-12">Meet Our Coaching Team</h3>
+            <h3 className="text-2xl font-heading font-bold text-gray-900 text-center mb-8">Meet Our Coaching Team</h3>
+            
+            <div className="max-w-4xl mx-auto text-center mb-12 space-y-4">
+              <p className="text-lg text-gray-700 leading-relaxed">
+                All Power2Adapt Coaches are fully qualified athletics coaches, insured and WWC approved.
+              </p>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                They are passionate about sport, teaching movement and supporting an active and healthy lifestyle.
+              </p>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Our coaches are carefully matched to specific athletic development programs, based on their area of interest and expertise.
+              </p>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Our university degree qualified coaches work together to develop world leading, long term development programs, based on the latest scientific research and continually implement new learning strategies for children and adult athletes.
+              </p>
+            </div>
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Coach 1 - Alistair (Head Coach) */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
