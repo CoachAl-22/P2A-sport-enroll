@@ -9,6 +9,7 @@ import { Calendar, MapPin, Users, Plus, BarChart3, CreditCard, Smartphone, Rotat
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import coachSamiImage from "@assets/IMG_3038_1759146359558.jpg";
 import coachAlistairImage from "@assets/63271D0E-3E21-490C-B81E-18BEF5CCB270_1759298878111.jpg";
+import coachMiahImage from "@assets/Miah Noble trail runner_1759299110875.jpg";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -307,9 +308,11 @@ export default function Landing() {
               {/* Coach 3 - Miah Noble */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <div className="text-center mb-4">
-                  <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-purple-200">
-                    <Users className="w-10 h-10 text-purple-500" />
-                  </div>
+                  <img 
+                    src={coachMiahImage} 
+                    alt="Miah Noble - Trail Running Specialist" 
+                    className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-200"
+                  />
                   <h4 className="text-xl font-heading font-bold text-gray-900">Miah Noble</h4>
                   <p className="text-sm text-primary-600 font-medium">Trail Running Specialist</p>
                 </div>
