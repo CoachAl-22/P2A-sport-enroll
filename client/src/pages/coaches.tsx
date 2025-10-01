@@ -44,23 +44,23 @@ export default function Coaches() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="text-center p-6">
-              <div className="w-20 h-20 bg-primary-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-10 h-10 text-primary-400" />
+              <div className="w-20 h-20 bg-orange-500/30 rounded-full flex items-center justify-center mx-auto mb-4 ring-2 ring-orange-500/50">
+                <Users className="w-10 h-10 text-orange-400" />
               </div>
               <h3 className="text-xl font-heading font-bold text-white mb-2">Qualified Expertise</h3>
               <p className="text-gray-300">Our coaching team holds recognized qualifications in sports science, athletics, and youth development</p>
             </div>
             
             <div className="text-center p-6">
-              <div className="w-20 h-20 bg-secondary-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="w-10 h-10 text-secondary-400" />
+              <div className="w-20 h-20 bg-blue-500/30 rounded-full flex items-center justify-center mx-auto mb-4 ring-2 ring-blue-500/50">
+                <BarChart3 className="w-10 h-10 text-blue-400" />
               </div>
               <h3 className="text-xl font-heading font-bold text-white mb-2">Proven Track Record</h3>
               <p className="text-gray-300">Years of experience developing young athletes with state and national level achievements</p>
             </div>
             
             <div className="text-center p-6">
-              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-20 h-20 bg-green-500/30 rounded-full flex items-center justify-center mx-auto mb-4 ring-2 ring-green-500/50">
                 <Plus className="w-10 h-10 text-green-400" />
               </div>
               <h3 className="text-xl font-heading font-bold text-white mb-2">Individualized Approach</h3>
