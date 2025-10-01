@@ -310,7 +310,7 @@ export default function Landing() {
                     className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-200"
                   />
                   <h4 className="text-xl font-heading font-bold text-gray-900">Sami</h4>
-                  <p className="text-sm text-primary-600 font-medium">Running Specialist</p>
+                  <p className="text-sm text-primary-600 font-medium">Distance Running Specialist</p>
                 </div>
                 <p className="text-gray-600 text-sm leading-relaxed">
                   Sami's passion for running ignited during his soccer days when his natural speed and endurance shone through. 
