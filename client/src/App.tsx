@@ -32,6 +32,7 @@ import VideoHighlights from "@/pages/video-highlights";
 import SharedVideo from "@/pages/shared-video";
 import VideoHighlightsParent from "@/components/video-highlights-parent";
 import AthletePortal from "@/pages/athlete-portal";
+import Coaches from "@/pages/coaches";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -50,6 +51,7 @@ function Router() {
         <>
           <Route path="/" component={Landing} />
           <Route path="/classes" component={Classes} />
+          <Route path="/coaches" component={Coaches} />
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/senior-squad" component={SeniorSquad} />
           <Route path="/blog" component={Blog} />
@@ -66,6 +68,7 @@ function Router() {
           <Route path="/" component={Dashboard} />
           <Route path="/athlete-portal" component={AthletePortal} />
           <Route path="/classes" component={Classes} />
+          <Route path="/coaches" component={Coaches} />
           <Route path="/enrollment/:classId" component={Enrollment} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
           <Route path="/waitlist" component={Waitlist} />
