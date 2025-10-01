@@ -11,6 +11,7 @@ import coachSamiImage from "@assets/IMG_3038_1759146359558.jpg";
 import coachAlistairImage from "@assets/63271D0E-3E21-490C-B81E-18BEF5CCB270_1759298878111.jpg";
 import coachMiahImage from "@assets/Miah Noble trail runner_1759299110875.jpg";
 import coachBlakeImage from "@assets/IMG_1536_1759300077064.jpg";
+import coachGeorgiaImage from "@assets/4F77B27D-B978-4B9A-982D-C5BD2350E00E_1759300730112.jpg";
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -322,7 +323,23 @@ export default function Landing() {
                 </p>
               </div>
 
-              {/* Coach 3 - Miah Noble */}
+              {/* Coach 3 - Georgia */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                <div className="text-center mb-4">
+                  <img 
+                    src={coachGeorgiaImage} 
+                    alt="Georgia - Junior Development Specialist" 
+                    className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-200"
+                  />
+                  <h4 className="text-xl font-heading font-bold text-gray-900">Georgia</h4>
+                  <p className="text-sm text-primary-600 font-medium">Junior Development Specialist</p>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  I aspire to continuing working with primary aged children to improve their fundamental running skills for not just athletics but for any sport they wish to improve in through their running!
+                </p>
+              </div>
+
+              {/* Coach 4 - Miah Noble */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <div className="text-center mb-4">
                   <img 
@@ -344,7 +361,7 @@ export default function Landing() {
                 </p>
               </div>
 
-              {/* Coach 4 - Blake */}
+              {/* Coach 5 - Blake */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <div className="text-center mb-4">
                   <img 
