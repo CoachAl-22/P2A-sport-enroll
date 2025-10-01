@@ -261,7 +261,27 @@ export default function Landing() {
           <div className="mt-16">
             <h3 className="text-2xl font-heading font-bold text-gray-900 text-center mb-12">Meet Our Coaching Team</h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Coach 1 - Sami */}
+              {/* Coach 1 - Alistair (Head Coach) */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                <div className="text-center mb-4">
+                  <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-primary-200">
+                    <Users className="w-10 h-10 text-primary-500" />
+                  </div>
+                  <h4 className="text-xl font-heading font-bold text-gray-900">Alistair</h4>
+                  <p className="text-sm text-primary-600 font-medium">Head Coach</p>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Alistair started out in Little Aths, Cross Country and Fun runs and is a former National level track and field athlete (400mh) He has a Bachelor's Degree in Sports Coaching(PE) stream and has 20 years experience in coaching and is currently undertaking the Australian Athletics Level 4 High Performance coaching course.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed mt-3">
+                  Coach Al has guided athletes to World Junior u20, National and State medals, as well as helping team sport athletes improve their agilty, speed and endurance to aid selection for academy and representative teams.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed mt-3">
+                  Alistair prides himself on being an athletic movement and performance mindset specialist and is passionate about unlocking your potential to move better, live better and perform better in everything you do!
+                </p>
+              </div>
+
+              {/* Coach 2 - Sami */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <div className="text-center mb-4">
                   <img 
