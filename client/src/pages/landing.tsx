@@ -303,6 +303,26 @@ export default function Landing() {
                   Through coaching education and personal experience, Sami has developed a tailored, holistic approach to help clients achieve their goals. Whether you aim to compete at a national level or build a foundation for another sport, Sami's expertise ensures you train efficiently and effectively. Backed by a network of experts and his team at Power2Adapt, Sami is dedicated to creating personalised, research-based programs to help you reach your full athletic potential.
                 </p>
               </div>
+
+              {/* Coach 3 - Miah Noble */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                <div className="text-center mb-4">
+                  <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-purple-200">
+                    <Users className="w-10 h-10 text-purple-500" />
+                  </div>
+                  <h4 className="text-xl font-heading font-bold text-gray-900">Miah Noble</h4>
+                  <p className="text-sm text-primary-600 font-medium">Trail Running Specialist</p>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  As a coach, my mission is to support athletes of all levels, whether you are new to running or pursuing your next big goal through smart and sustainable training. I understand the challenge of balancing over 20 hours of training with a full-time job and the everyday demands of life.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed mt-3">
+                  My approach emphasizes performance and well-being, ensuring you can run long-term, remain injury-free, and enjoy the process.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed mt-3">
+                  I am dedicated to helping others cultivate strength, confidence, and resilience through running. If you're ready to run stronger, fuel better, and build genuine resilience, I'm here to guide you every step of the way.
+                </p>
+              </div>
             </div>
           </div>
         </div>
