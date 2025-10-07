@@ -150,7 +150,7 @@ export default function Coaches() {
                 <p className="text-sm text-gray-100 font-medium" data-testid="text-coach-title-georgia">Junior Development Specialist</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
-                I aspire to continuing working with primary aged children to improve their fundamental running skills for not just athletics but for any sport they wish to improve in through their running!
+                Georgia Middleton achieved early success in athletics, winning state championships in the 100m sprint. After graduating high school in 2019 she discovered a passion for coaching and inspiring the next generation of athletes. In 2022 she completed a Bachelor of Exercise and Sport Science, which deepened her understanding of the importance of physical activity and reinforced her belief that athletics is the foundation of all sports. Georgia's goal is to keep children active and help them develop a genuine love for sport. She creates a positive and engaging environment where young athletes can grow in confidence, develop their skills and enjoy every step of their journey.
               </p>
             </div>
 
