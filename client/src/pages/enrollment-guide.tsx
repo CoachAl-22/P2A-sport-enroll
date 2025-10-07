@@ -29,7 +29,7 @@ export default function EnrollmentGuide() {
             <ol className="list-decimal list-inside space-y-2 text-gray-600">
               <li>Visit the Power2ADAPT homepage: <a href="https://power2adapt.com/power-2-adapt-emerging-athlete/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline">https://power2adapt.com/power-2-adapt-emerging-athlete/</a></li>
               <li>Click the "Enrol Now" button in the top navigation</li>
-              <li>Enter your family contact details (name, email, mobile number)</li>
+              <li>If you are a new customer then enter your family contact details (name, email, mobile number). If you are an existing customer, please enter your mobile number or email address to access your account and enrol your child into the desired class</li>
               <li>Create a secure password</li>
               <li>Verify your email address</li>
             </ol>
