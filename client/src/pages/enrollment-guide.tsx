@@ -28,7 +28,7 @@ export default function EnrollmentGuide() {
             <p className="text-gray-600 mb-3">Begin your Power2ADAPT journey by creating a secure family account:</p>
             <ol className="list-decimal list-inside space-y-2 text-gray-600">
               <li>Visit the Power2ADAPT homepage: <a href="https://power2adapt.com/power-2-adapt-emerging-athlete/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline">https://power2adapt.com/power-2-adapt-emerging-athlete/</a></li>
-              <li>Click the "Sign Up" button in the top navigation</li>
+              <li>Click the "Enrol Now" button in the top navigation</li>
               <li>Enter your family contact details (name, email, mobile number)</li>
               <li>Create a secure password</li>
               <li>Verify your email address</li>
