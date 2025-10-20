@@ -1,13 +1,115 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
-import { Users, Building2, Smartphone, ArrowLeft } from "lucide-react";
+import { Users, Building2, Smartphone, ArrowLeft, Calendar, MapPin, Award, Target, Clock, Zap } from "lucide-react";
 import { Link } from "wouter";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+
+const highPerformanceSquadApplicationSchema = z.object({
+  athleteFirstName: z.string().min(1, "First name is required"),
+  athleteLastName: z.string().min(1, "Last name is required"),
+  athleteEmail: z.string().email("Valid email is required"),
+  athletePhone: z.string().min(1, "Phone number is required"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  schoolYear: z.string().min(1, "School year is required"),
+  parentGuardianName: z.string().optional(),
+  parentGuardianEmail: z.string().email().optional().or(z.literal("")),
+  parentGuardianPhone: z.string().optional(),
+  currentSports: z.string().min(1, "Please list current sports"),
+  competitionLevel: z.string().min(1, "Please describe your competition level"),
+  athleticExperience: z.string().min(1, "Please describe athletic experience"),
+  previousClubs: z.string().optional(),
+  personalBests: z.string().min(1, "Please list your personal best times/distances"),
+  coachingHistory: z.string().optional(),
+  athleticGoals: z.string().min(1, "Please describe your high-performance goals"),
+  targetCompetitions: z.string().min(1, "What competitions are you targeting?"),
+  performanceAmbitions: z.string().min(1, "Describe your performance ambitions (state, national, international)"),
+  currentTrainingLoad: z.string().min(1, "Describe your current weekly training load"),
+  trainingCommitment: z.string().min(1, "How many sessions per week can you commit to?"),
+  timeAvailability: z.string().min(1, "What days/times are you available for training?"),
+  coachingType: z.string().min(1, "What type of coaching are you looking for? (1-on-1, small group, technical, etc.)"),
+  specificNeeds: z.string().min(1, "What specific areas do you want to improve?"),
+  reasonForHighPerformance: z.string().min(1, "Why do you want High Performance coaching?"),
+  injuries: z.string().optional(),
+  additionalNotes: z.string().optional(),
+});
+
+type HighPerformanceSquadApplicationForm = z.infer<typeof highPerformanceSquadApplicationSchema>;
 
 export default function HighPerformance() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<HighPerformanceSquadApplicationForm>({
+    resolver: zodResolver(highPerformanceSquadApplicationSchema),
+    defaultValues: {
+      athleteFirstName: "",
+      athleteLastName: "",
+      athleteEmail: "",
+      athletePhone: "",
+      dateOfBirth: "",
+      schoolYear: "",
+      parentGuardianName: "",
+      parentGuardianEmail: "",
+      parentGuardianPhone: "",
+      currentSports: "",
+      competitionLevel: "",
+      athleticExperience: "",
+      previousClubs: "",
+      personalBests: "",
+      coachingHistory: "",
+      athleticGoals: "",
+      targetCompetitions: "",
+      performanceAmbitions: "",
+      currentTrainingLoad: "",
+      trainingCommitment: "",
+      timeAvailability: "",
+      coachingType: "",
+      specificNeeds: "",
+      reasonForHighPerformance: "",
+      injuries: "",
+      additionalNotes: "",
+    },
+  });
+
+  const onSubmit = async (data: HighPerformanceSquadApplicationForm) => {
+    setIsSubmitting(true);
+    try {
+      await apiRequest("POST", "/api/high-performance-squad-applications", data);
+      toast({
+        title: "Application Submitted Successfully!",
+        description: "We'll review your High Performance Squad application and contact you within 48 hours. Check your SMS for confirmation.",
+      });
+      form.reset();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error: any) {
+      toast({
+        title: "Application Failed",
+        description: error.message || "There was an error submitting your application. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="font-sans bg-gray-50">
@@ -331,10 +433,471 @@ export default function HighPerformance() {
             </div>
           </div>
 
+          {/* Application Form Section */}
+          <div className="mb-16" id="application-form">
+            <div className="bg-white rounded-xl shadow-xl p-8 max-w-5xl mx-auto">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">
+                  High Performance Squad Application
+                </h2>
+                <p className="text-lg text-gray-600">
+                  Apply for elite-level coaching and join our High Performance program
+                </p>
+              </div>
+
+              {/* Program Overview Card */}
+              <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 mb-8">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-purple-800">
+                    <Zap className="w-5 h-5" />
+                    Elite High Performance Coaching
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <Users className="w-4 h-4 text-purple-600" />
+                        <span className="text-sm">1-on-1 & Small Group Training</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <Target className="w-4 h-4 text-purple-600" />
+                        <span className="text-sm">Performance Analysis & Planning</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <Award className="w-4 h-4 text-purple-600" />
+                        <span className="text-sm">Competition Preparation</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <Calendar className="w-4 h-4 text-purple-600" />
+                        <span className="text-sm">Flexible Scheduling</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <MapPin className="w-4 h-4 text-purple-600" />
+                        <span className="text-sm">Multiple Venue Options</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <Clock className="w-4 h-4 text-purple-600" />
+                        <span className="text-sm">Custom Training Programs</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Application Form */}
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                  {/* Athlete Information Section */}
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Athlete Information</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="athleteFirstName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>First Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="John" {...field} data-testid="input-athlete-first-name" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="athleteLastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Last Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Smith" {...field} data-testid="input-athlete-last-name" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="athleteEmail"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email *</FormLabel>
+                            <FormControl>
+                              <Input type="email" placeholder="john@example.com" {...field} data-testid="input-athlete-email" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="athletePhone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="0412 345 678" {...field} data-testid="input-athlete-phone" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="dateOfBirth"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Date of Birth *</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} data-testid="input-date-of-birth" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="schoolYear"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>School Year *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Year 10" {...field} data-testid="input-school-year" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Parent/Guardian Information */}
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Parent/Guardian Contact</h3>
+                    <p className="text-sm text-gray-600 mb-4">(If different from athlete)</p>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="parentGuardianName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Parent/Guardian Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Jane Smith" {...field} data-testid="input-parent-name" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="parentGuardianEmail"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Parent/Guardian Email</FormLabel>
+                            <FormControl>
+                              <Input type="email" placeholder="parent@example.com" {...field} data-testid="input-parent-email" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="parentGuardianPhone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Parent/Guardian Phone</FormLabel>
+                            <FormControl>
+                              <Input placeholder="0412 345 678" {...field} data-testid="input-parent-phone" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Athletic Background */}
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Athletic Background & Performance Level</h3>
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="currentSports"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Current Sports *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="List all sports you currently participate in..." {...field} data-testid="input-current-sports" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="competitionLevel"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Competition Level *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Describe your current competition level (e.g., local, regional, state, national)..." {...field} data-testid="input-competition-level" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="athleticExperience"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Athletic Experience *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Years of experience, achievements, competitions..." {...field} data-testid="input-athletic-experience" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="previousClubs"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Previous Clubs/Teams</FormLabel>
+                            <FormControl>
+                              <Input placeholder="List any previous clubs or teams..." {...field} data-testid="input-previous-clubs" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="personalBests"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Personal Best Times/Distances *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="List your personal records (e.g., 100m: 12.3s, Long Jump: 5.2m)..." {...field} data-testid="input-personal-bests" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="coachingHistory"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Previous Coaching History</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Previous coaches, programs, training history..." {...field} data-testid="input-coaching-history" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* High Performance Goals */}
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">High Performance Goals</h3>
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="athleticGoals"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Athletic Goals *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Describe your high-performance goals..." {...field} data-testid="input-athletic-goals" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="targetCompetitions"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Target Competitions *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="What competitions are you targeting? (e.g., State Championships, National Junior Championships)..." {...field} data-testid="input-target-competitions" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="performanceAmbitions"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Performance Ambitions *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Describe your performance ambitions (state, national, international level)..." {...field} data-testid="input-performance-ambitions" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Training & Commitment */}
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Training & Commitment</h3>
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="currentTrainingLoad"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Current Weekly Training Load *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Describe your current weekly training schedule and volume..." {...field} data-testid="input-training-load" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="trainingCommitment"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Training Commitment *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="How many sessions per week can you commit to?" {...field} data-testid="input-training-commitment" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="timeAvailability"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Time Availability *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="What days/times are you available for training?" {...field} data-testid="input-time-availability" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Specific Coaching Needs */}
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Specific Coaching Needs</h3>
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="coachingType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Coaching Type Preference *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="What type of coaching are you looking for? (1-on-1, small group, technical, etc.)" {...field} data-testid="input-coaching-type" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="specificNeeds"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Specific Areas to Improve *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="What specific areas do you want to improve?" {...field} data-testid="input-specific-needs" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="reasonForHighPerformance"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Why High Performance Coaching? *</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Why do you want High Performance coaching?" {...field} data-testid="input-reason-hp" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Additional Information */}
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Additional Information</h3>
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="injuries"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Current or Past Injuries</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Please list any current or past injuries we should be aware of..." {...field} data-testid="input-injuries" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="additionalNotes"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Additional Notes</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Any other information you'd like to share..." {...field} data-testid="input-additional-notes" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="flex justify-center pt-4">
+                    <Button 
+                      type="submit" 
+                      disabled={isSubmitting}
+                      className="bg-purple-600 hover:bg-purple-700 px-12 py-3 text-lg"
+                      data-testid="button-submit-application"
+                    >
+                      {isSubmitting ? "Submitting..." : "Submit Application"}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </div>
+          </div>
+
           <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-8 text-center">
-            <h2 className="text-2xl font-heading font-bold mb-4">Ready to Take Your Performance to the Next Level?</h2>
+            <h2 className="text-2xl font-heading font-bold mb-4">Have Questions?</h2>
             <p className="text-lg mb-6 text-primary-100">
-              Schedule a consultation to discuss your specific goals and create a customized development plan
+              Contact us to discuss your specific goals and learn more about our High Performance program
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
