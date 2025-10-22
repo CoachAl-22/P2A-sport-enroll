@@ -9,7 +9,7 @@ import { smsService } from "./sms";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { importCustomersFromCSV, createSampleChildrenForParents } from "./csv-import";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -1751,6 +1751,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error updating High Performance Squad application:", error);
       res.status(500).json({ message: "Failed to update application" });
+    }
+  });
+
+  // Contact Enquiry endpoints
+  
+  // Create contact enquiry
+  app.post("/api/contact-enquiries", async (req, res) => {
+    try {
+      const enquiryData = insertContactEnquirySchema.parse(req.body);
+      
+      // Save to database
+      const enquiry = await storage.createContactEnquiry(enquiryData);
+      
+      // Send SMS notification to admin (you)
+      const adminPhone = "+61434679395"; // Your phone number
+      const enquiryType = enquiryData.subject.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      
+      try {
+        await smsService.sendSMS(
+          adminPhone,
+          `🔔 New Contact Enquiry!\nFrom: ${enquiryData.name}\nSubject: ${enquiryType}\nContact via: ${enquiryData.contactMethod}\nCheck your dashboard for details.`
+        );
+      } catch (smsError) {
+        console.error("Failed to send admin notification SMS:", smsError);
+        // Don't fail the enquiry submission if SMS fails
+      }
+      
+      // Send confirmation SMS to customer
+      if (enquiryData.phone) {
+        try {
+          await smsService.sendSMS(
+            enquiryData.phone,
+            `Hi ${enquiryData.name}! Thanks for contacting Power2ADAPT. We've received your enquiry and will get back to you within 24 hours. 🏃‍♂️`
+          );
+        } catch (smsError) {
+          console.error("Failed to send customer confirmation SMS:", smsError);
+        }
+      }
+      
+      // Send email notifications (if Resend is configured)
+      if (process.env.RESEND_API_KEY) {
+        try {
+          // We'll add email functionality after the integration is set up
+          console.log("Email notifications configured - would send emails here");
+        } catch (emailError) {
+          console.error("Failed to send email notifications:", emailError);
+        }
+      }
+      
+      res.status(201).json({
+        success: true,
+        message: "Enquiry submitted successfully",
+        enquiryId: enquiry.id,
+      });
+    } catch (error: any) {
+      console.error("Error creating contact enquiry:", error);
+      if (error.name === 'ZodError') {
+        res.status(400).json({ message: "Invalid enquiry data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to submit enquiry" });
+      }
+    }
+  });
+
+  // Get all contact enquiries (admin only)
+  app.get("/api/contact-enquiries", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const enquiries = await storage.getAllContactEnquiries();
+      res.json(enquiries);
+    } catch (error: any) {
+      console.error("Error fetching contact enquiries:", error);
+      res.status(500).json({ message: "Failed to fetch enquiries" });
+    }
+  });
+
+  // Update contact enquiry (admin only)
+  app.put("/api/contact-enquiries/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      const updatedEnquiry = await storage.updateContactEnquiry(id, {
+        ...updates,
+        reviewedBy: userId,
+        reviewedAt: new Date(),
+      });
+      
+      res.json(updatedEnquiry);
+    } catch (error: any) {
+      console.error("Error updating contact enquiry:", error);
+      res.status(500).json({ message: "Failed to update enquiry" });
     }
   });
 
