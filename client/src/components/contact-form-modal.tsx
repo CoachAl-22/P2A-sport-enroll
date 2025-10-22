@@ -32,12 +32,23 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch('/api/contact-enquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit enquiry');
+      }
+
+      const result = await response.json();
       
       toast({
         title: "Message Sent Successfully!",
-        description: "We'll get back to you within 24 hours to schedule your consultation.",
+        description: "We've received your enquiry and will get back to you within 24 hours. Check your SMS for confirmation.",
       });
       
       // Reset form
