@@ -1,82 +1,86 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Phone, Mail, Calendar, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { insertContactEnquirySchema } from "@shared/schema";
 
 interface ContactFormModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+// Extend the schema to add conditional validation
+const contactFormSchema = insertContactEnquirySchema.refine(
+  (data) => {
+    // If subject is performance-assessment, require performanceTestType and assessmentType
+    if (data.subject === "performance-assessment") {
+      return !!data.performanceTestType && !!data.assessmentType;
+    }
+    return true;
+  },
+  {
+    message: "Performance test type and assessment type are required for performance assessments",
+    path: ["performanceTestType"],
+  }
+);
+
+type ContactFormData = z.infer<typeof contactFormSchema>;
+
 export default function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    contactMethod: "",
-    subject: "",
-    performanceTestType: "",
-    assessmentType: "",
-    message: ""
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const form = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      contactMethod: "phone",
+      subject: "",
+      performanceTestType: "",
+      assessmentType: "",
+      message: "",
+    },
+  });
 
+  const selectedSubject = form.watch("subject");
+
+  const handleSubmit = async (data: ContactFormData) => {
     try {
       const response = await fetch('/api/contact-enquiries', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to submit enquiry');
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to submit enquiry');
       }
 
-      const result = await response.json();
-      
       toast({
         title: "Message Sent Successfully!",
         description: "We've received your enquiry and will get back to you within 24 hours. Check your SMS for confirmation.",
       });
-      
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        contactMethod: "",
-        subject: "",
-        performanceTestType: "",
-        assessmentType: "",
-        message: ""
-      });
-      
+
+      form.reset();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: error.message || "Failed to send message. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -101,166 +105,228 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
-          <div className="space-y-2">
-            <Label htmlFor="name">Full Name *</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              placeholder="Enter your full name"
-              required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            {/* Name */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name *</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Enter your full name"
+                      data-testid="input-contact-name"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Email */}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address *</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-              placeholder="Enter your email address"
-              required
+            {/* Email */}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address *</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="Enter your email address"
+                      data-testid="input-contact-email"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Phone */}
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => handleInputChange("phone", e.target.value)}
-              placeholder="Enter your phone number"
+            {/* Phone */}
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      type="tel"
+                      placeholder="Enter your phone number"
+                      data-testid="input-contact-phone"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Preferred Contact Method */}
-          <div className="space-y-2">
-            <Label htmlFor="contactMethod">Preferred Contact Method *</Label>
-            <Select value={formData.contactMethod} onValueChange={(value) => handleInputChange("contactMethod", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select preferred contact method" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="phone">
-                  <div className="flex items-center">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Phone Call
-                  </div>
-                </SelectItem>
-                <SelectItem value="email">
-                  <div className="flex items-center">
-                    <Mail className="w-4 h-4 mr-2" />
-                    Email
-                  </div>
-                </SelectItem>
-                <SelectItem value="video">
-                  <div className="flex items-center">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Video Call
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            {/* Preferred Contact Method */}
+            <FormField
+              control={form.control}
+              name="contactMethod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preferred Contact Method *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger data-testid="select-contact-method">
+                        <SelectValue placeholder="Select preferred contact method" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="phone">
+                        <div className="flex items-center">
+                          <Phone className="w-4 h-4 mr-2" />
+                          Phone Call
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="email">
+                        <div className="flex items-center">
+                          <Mail className="w-4 h-4 mr-2" />
+                          Email
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="video">
+                        <div className="flex items-center">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          Video Call
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Subject */}
-          <div className="space-y-2">
-            <Label htmlFor="subject">Subject *</Label>
-            <Select value={formData.subject} onValueChange={(value) => handleInputChange("subject", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select consultation type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="performance-assessment">Performance Assessment</SelectItem>
-                <SelectItem value="high-performance">High Performance Consultation</SelectItem>
-                <SelectItem value="senior-squad">Senior Squad Application</SelectItem>
-                <SelectItem value="youth-programs">Youth Programs</SelectItem>
-                <SelectItem value="coaching-services">Coaching Services</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            {/* Subject */}
+            <FormField
+              control={form.control}
+              name="subject"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Subject *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger data-testid="select-contact-subject">
+                        <SelectValue placeholder="Select consultation type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="performance-assessment">Performance Assessment</SelectItem>
+                      <SelectItem value="high-performance">High Performance Consultation</SelectItem>
+                      <SelectItem value="senior-squad">Senior Squad Application</SelectItem>
+                      <SelectItem value="youth-programs">Youth Programs</SelectItem>
+                      <SelectItem value="coaching-services">Coaching Services</SelectItem>
+                      <SelectItem value="general-enquiry">General Enquiry</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Performance Test Type - Only show if Performance Assessment is selected */}
-          {formData.subject === "performance-assessment" && (
-            <div className="space-y-2">
-              <Label htmlFor="performanceTestType">What type of performance test are you interested in? *</Label>
-              <Select value={formData.performanceTestType} onValueChange={(value) => handleInputChange("performanceTestType", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select performance test type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="speed">Speed</SelectItem>
-                  <SelectItem value="power">Power</SelectItem>
-                  <SelectItem value="agility">Agility</SelectItem>
-                  <SelectItem value="sport-specific">Sport Specific</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Performance Test Type - Only show if Performance Assessment is selected */}
+            {selectedSubject === "performance-assessment" && (
+              <FormField
+                control={form.control}
+                name="performanceTestType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>What type of performance test are you interested in? *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value || ""}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select performance test type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="speed">Speed</SelectItem>
+                        <SelectItem value="power">Power</SelectItem>
+                        <SelectItem value="agility">Agility</SelectItem>
+                        <SelectItem value="sport-specific">Sport Specific</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {/* Assessment Type - Only show if Performance Assessment is selected */}
+            {selectedSubject === "performance-assessment" && (
+              <FormField
+                control={form.control}
+                name="assessmentType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Individual or Team Assessment? *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value || ""}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select assessment type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="individual">Individual Assessment</SelectItem>
+                        <SelectItem value="team">Team Assessment (Minimum 20 athletes)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {/* Message */}
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Message *</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="Tell us about your athletic goals, experience level, and what you'd like to discuss..."
+                      rows={4}
+                      data-testid="input-contact-message"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Submit Button */}
+            <div className="flex space-x-3 pt-4">
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className="flex-1 bg-primary-600 hover:bg-primary-700 text-white"
+                data-testid="button-submit-contact"
+              >
+                {form.formState.isSubmitting ? "Sending..." : "Send Message"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
             </div>
-          )}
-
-          {/* Assessment Type - Only show if Performance Assessment is selected */}
-          {formData.subject === "performance-assessment" && (
-            <div className="space-y-2">
-              <Label htmlFor="assessmentType">Individual or Team Assessment? *</Label>
-              <Select value={formData.assessmentType} onValueChange={(value) => handleInputChange("assessmentType", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select assessment type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="individual">Individual Assessment</SelectItem>
-                  <SelectItem value="team">Team Assessment (Minimum 20 athletes)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {/* Message */}
-          <div className="space-y-2">
-            <Label htmlFor="message">Message *</Label>
-            <Textarea
-              id="message"
-              value={formData.message}
-              onChange={(e) => handleInputChange("message", e.target.value)}
-              placeholder="Tell us about your athletic goals, experience level, and what you'd like to discuss..."
-              rows={4}
-              required
-            />
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex space-x-3 pt-4">
-            <Button
-              type="submit"
-              disabled={
-                isSubmitting || 
-                !formData.name || 
-                !formData.email || 
-                !formData.contactMethod || 
-                !formData.subject || 
-                !formData.message ||
-                (formData.subject === "performance-assessment" && (!formData.performanceTestType || !formData.assessmentType))
-              }
-              className="flex-1 bg-primary-600 hover:bg-primary-700 text-white"
-            >
-              {isSubmitting ? "Sending..." : "Send Message"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
 
         <div className="border-t pt-4 mt-4">
           <p className="text-xs text-gray-500 text-center">
