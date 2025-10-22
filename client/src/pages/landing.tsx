@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import LoginModal from "@/components/auth/login-modal";
+import ContactFormModal from "@/components/contact-form-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
 import OneClickChat from "@/components/one-click-chat";
@@ -10,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isContactFormOpen, setIsContactFormOpen] = useState(false);
   const [isSeniorSquadModalOpen, setIsSeniorSquadModalOpen] = useState(false);
   const [isHighPerformanceSquadModalOpen, setIsHighPerformanceSquadModalOpen] = useState(false);
   const [isSchoolPartnershipsModalOpen, setIsSchoolPartnershipsModalOpen] = useState(false);
@@ -947,7 +949,7 @@ export default function Landing() {
                 <li><a href="/parent-help-center" className="hover:text-white">Parent Help Center</a></li>
                 <li><a href="/enrollment-guide" className="hover:text-white">Enrollment Guide</a></li>
                 <li><a href="/payment-support" className="hover:text-white">Payment Support</a></li>
-                <li><a href="mailto:info@power2adapt.com" className="hover:text-white">Contact Us</a></li>
+                <li><button onClick={() => setIsContactFormOpen(true)} className="hover:text-white cursor-pointer" data-testid="button-contact-us">Contact Us</button></li>
                 <li><button onClick={() => setIsSchoolPartnershipsModalOpen(true)} className="hover:text-white cursor-pointer">School Partnerships</button></li>
               </ul>
             </div>
@@ -1017,6 +1019,11 @@ export default function Landing() {
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
+      />
+      
+      <ContactFormModal 
+        isOpen={isContactFormOpen} 
+        onClose={() => setIsContactFormOpen(false)} 
       />
       
       <SeniorSquadApplication
