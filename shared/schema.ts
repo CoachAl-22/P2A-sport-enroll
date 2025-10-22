@@ -330,6 +330,27 @@ export const highPerformanceSquadApplications = pgTable("high_performance_squad_
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Contact Enquiries
+export const enquiryStatusEnum = pgEnum("enquiry_status", ["new", "in_progress", "contacted", "resolved", "closed"]);
+export const contactMethodEnum = pgEnum("contact_method", ["phone", "email", "video"]);
+
+export const contactEnquiries = pgTable("contact_enquiries", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 100 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  contactMethod: contactMethodEnum("contact_method").notNull(),
+  subject: varchar("subject", { length: 100 }).notNull(),
+  performanceTestType: varchar("performance_test_type", { length: 100 }),
+  assessmentType: varchar("assessment_type", { length: 100 }),
+  message: text("message").notNull(),
+  status: enquiryStatusEnum("status").default("new").notNull(),
+  adminNotes: text("admin_notes"),
+  reviewedBy: uuid("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Blog Articles
 export const blogArticles = pgTable("blog_articles", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -749,6 +770,15 @@ export const insertHighPerformanceSquadApplicationSchema = createInsertSchema(hi
   reviewedAt: true,
 });
 
+export const insertContactEnquirySchema = createInsertSchema(contactEnquiries).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  adminNotes: true,
+  reviewedBy: true,
+  reviewedAt: true,
+});
+
 export const insertWaitlistSchema = createInsertSchema(waitlists).omit({
   id: true,
   position: true,
@@ -827,6 +857,8 @@ export type SeniorSquadApplication = typeof seniorSquadApplications.$inferSelect
 export type InsertSeniorSquadApplication = z.infer<typeof insertSeniorSquadApplicationSchema>;
 export type HighPerformanceSquadApplication = typeof highPerformanceSquadApplications.$inferSelect;
 export type InsertHighPerformanceSquadApplication = z.infer<typeof insertHighPerformanceSquadApplicationSchema>;
+export type ContactEnquiry = typeof contactEnquiries.$inferSelect;
+export type InsertContactEnquiry = z.infer<typeof insertContactEnquirySchema>;
 export type Waitlist = typeof waitlists.$inferSelect;
 export type InsertWaitlist = z.infer<typeof insertWaitlistSchema>;
 export type BlogArticle = typeof blogArticles.$inferSelect;
