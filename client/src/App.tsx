@@ -22,6 +22,7 @@ import AdminTermConfig from "@/pages/admin-term-config";
 import AdminClasses from "@/pages/admin-classes";
 import AdminStaff from "@/pages/admin-staff";
 import AdminCustomers from "@/pages/admin-customers";
+import AdminEnquiries from "@/pages/admin-enquiries";
 import Attendance from "@/pages/attendance";
 import Waitlist from "@/pages/waitlist";
 import ParentHelpCenter from "@/pages/parent-help-center";
@@ -94,6 +95,7 @@ function Router() {
           <Route path="/admin/classes" component={AdminClasses} />
           <Route path="/admin/staff" component={AdminStaff} />
           <Route path="/admin/customers" component={AdminCustomers} />
+          <Route path="/admin/enquiries" component={AdminEnquiries} />
         </>
       )}
       <Route component={NotFound} />
