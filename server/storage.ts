@@ -9,6 +9,7 @@ import {
   notifications,
   seniorSquadApplications,
   highPerformanceSquadApplications,
+  contactEnquiries,
   waitlists,
   blogArticles,
   attendanceRecords,
@@ -36,6 +37,8 @@ import {
   type InsertSeniorSquadApplication,
   type HighPerformanceSquadApplication,
   type InsertHighPerformanceSquadApplication,
+  type ContactEnquiry,
+  type InsertContactEnquiry,
   type Waitlist,
   type InsertWaitlist,
   type BlogArticle,
@@ -148,6 +151,12 @@ export interface IStorage {
   getHighPerformanceSquadApplication(id: string): Promise<HighPerformanceSquadApplication | undefined>;
   getAllHighPerformanceSquadApplications(): Promise<HighPerformanceSquadApplication[]>;
   updateHighPerformanceSquadApplication(id: string, updates: Partial<HighPerformanceSquadApplication>): Promise<HighPerformanceSquadApplication>;
+
+  // Contact Enquiry operations
+  createContactEnquiry(enquiry: InsertContactEnquiry): Promise<ContactEnquiry>;
+  getContactEnquiry(id: string): Promise<ContactEnquiry | undefined>;
+  getAllContactEnquiries(): Promise<ContactEnquiry[]>;
+  updateContactEnquiry(id: string, updates: Partial<ContactEnquiry>): Promise<ContactEnquiry>;
 
   // Waitlist operations
   addToWaitlist(waitlistData: InsertWaitlist): Promise<Waitlist>;
@@ -761,6 +770,30 @@ export class DatabaseStorage implements IStorage {
       .update(highPerformanceSquadApplications)
       .set(updates)
       .where(eq(highPerformanceSquadApplications.id, id))
+      .returning();
+    return updated;
+  }
+
+  // Contact Enquiry operations
+  async createContactEnquiry(enquiry: InsertContactEnquiry): Promise<ContactEnquiry> {
+    const [created] = await db.insert(contactEnquiries).values(enquiry).returning();
+    return created;
+  }
+
+  async getContactEnquiry(id: string): Promise<ContactEnquiry | undefined> {
+    const [enquiry] = await db.select().from(contactEnquiries).where(eq(contactEnquiries.id, id));
+    return enquiry;
+  }
+
+  async getAllContactEnquiries(): Promise<ContactEnquiry[]> {
+    return db.select().from(contactEnquiries).orderBy(desc(contactEnquiries.createdAt));
+  }
+
+  async updateContactEnquiry(id: string, updates: Partial<ContactEnquiry>): Promise<ContactEnquiry> {
+    const [updated] = await db
+      .update(contactEnquiries)
+      .set(updates)
+      .where(eq(contactEnquiries.id, id))
       .returning();
     return updated;
   }
