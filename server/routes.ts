@@ -6,6 +6,7 @@ import session from "express-session";
 import { storage } from "./storage";
 import { ObjectStorageService } from "./objectStorage";
 import { smsService } from "./sms";
+import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
@@ -1793,10 +1794,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Send email notifications (if Resend is configured)
       if (process.env.RESEND_API_KEY) {
         try {
-          // We'll add email functionality after the integration is set up
-          console.log("Email notifications configured - would send emails here");
+          // Send admin notification email
+          const adminEmail = "admin@power2adapt.com.au"; // You can configure this
+          await emailService.sendAdminEnquiryNotification(
+            {
+              name: enquiryData.name,
+              email: enquiryData.email,
+              phone: enquiryData.phone,
+              contactMethod: enquiryData.contactMethod,
+              subject: enquiryData.subject,
+              message: enquiryData.message,
+            },
+            adminEmail
+          );
+
+          // Send customer confirmation email
+          await emailService.sendCustomerEnquiryConfirmation(
+            enquiryData.name,
+            enquiryData.email,
+            enquiryData.subject
+          );
         } catch (emailError) {
           console.error("Failed to send email notifications:", emailError);
+          // Don't fail the enquiry submission if email fails
         }
       }
       
