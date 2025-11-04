@@ -39,6 +39,9 @@ Preferred communication style: Simple, everyday language.
 - **User Identification**: Flexible login supporting email, mobile number, or custom user ID.
 
 ### Key Features and Implementations
+- **Contact Enquiry System**: Comprehensive contact form with dual notification channels (SMS + Email), admin dashboard for enquiry management, status tracking (new, in_progress, contacted, resolved, closed), and support for multiple contact methods (phone, email, video call).
+- **Email Notifications**: Resend integration for professional HTML email notifications, including admin enquiry alerts and customer confirmation emails with branded templates.
+- **Phone Number Validation**: Australian phone number validation enforced on both frontend and backend, preventing typos and ensuring valid contact information (supports mobile 04XX and landline formats, accepts +61 or 0 prefixes).
 - **Application System**: Comprehensive application forms for premium programs (e.g., Senior Squad, High Performance Squad) with database integration, SMS confirmations, and admin review workflows.
 - **Payment & Billing**: Complete Stripe integration for payment processing, including dynamic payment intent generation, comprehensive checkout flow, database payment tracking, term-based pricing, and SMS confirmations.
 - **SMS Notifications**: Twilio integration for automated SMS confirmations (enrollment, payment), class reminders, waitlist alerts, and term renewal reminders.
@@ -71,3 +74,4 @@ Preferred communication style: Simple, everyday language.
 
 ### Communication
 - **Twilio**: For SMS notification services.
+- **Resend**: For professional email notifications with HTML templates.
