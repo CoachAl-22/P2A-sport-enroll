@@ -16,20 +16,52 @@ interface ContactFormModalProps {
   onClose: () => void;
 }
 
-// Extend the schema to add conditional validation
-const contactFormSchema = insertContactEnquirySchema.refine(
-  (data) => {
-    // If subject is performance-assessment, require performanceTestType and assessmentType
-    if (data.subject === "performance-assessment") {
-      return !!data.performanceTestType && !!data.assessmentType;
+// Australian phone number regex - supports mobile (04XX XXX XXX) and landline formats
+const australianPhoneRegex = /^(?:\+?61|0)[2-478](?:[ -]?[0-9]){8}$/;
+
+// Add phone validation refinements to the base schema
+const contactFormSchema = insertContactEnquirySchema
+  .refine(
+    (data) => {
+      // If subject is performance-assessment, require performanceTestType and assessmentType
+      if (data.subject === "performance-assessment") {
+        return !!data.performanceTestType && !!data.assessmentType;
+      }
+      return true;
+    },
+    {
+      message: "Performance test type and assessment type are required for performance assessments",
+      path: ["performanceTestType"],
     }
-    return true;
-  },
-  {
-    message: "Performance test type and assessment type are required for performance assessments",
-    path: ["performanceTestType"],
-  }
-);
+  )
+  .refine(
+    (data) => {
+      // If phone is provided, it must be a valid Australian number
+      if (data.phone && data.phone.trim() !== "") {
+        // Remove spaces and dashes for validation
+        const cleanPhone = data.phone.replace(/[\s-]/g, "");
+        return australianPhoneRegex.test(cleanPhone);
+      }
+      return true;
+    },
+    {
+      message: "Please enter a valid Australian phone number (e.g., 0412 345 678 or +61 412 345 678)",
+      path: ["phone"],
+    }
+  )
+  .refine(
+    (data) => {
+      // If contact method is phone or video, phone number is required
+      if (data.contactMethod === "phone" || data.contactMethod === "video") {
+        return !!data.phone && data.phone.trim() !== "";
+      }
+      return true;
+    },
+    {
+      message: "Phone number is required when requesting a phone call or video call",
+      path: ["phone"],
+    }
+  );
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
 
@@ -51,6 +83,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
   });
 
   const selectedSubject = form.watch("subject");
+  const selectedContactMethod = form.watch("contactMethod");
 
   const handleSubmit = async (data: ContactFormData) => {
     try {
@@ -152,13 +185,15 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
+                  <FormLabel>
+                    Phone Number{(selectedContactMethod === "phone" || selectedContactMethod === "video") && " *"}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       value={field.value || ""}
                       type="tel"
-                      placeholder="Enter your phone number"
+                      placeholder="e.g. 0412 345 678 or +61 412 345 678"
                       data-testid="input-contact-phone"
                     />
                   </FormControl>

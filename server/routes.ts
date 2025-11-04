@@ -1762,6 +1762,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const enquiryData = insertContactEnquirySchema.parse(req.body);
       
+      // Validate phone number if provided (Australian format)
+      if (enquiryData.phone && enquiryData.phone.trim() !== "") {
+        const cleanPhone = enquiryData.phone.replace(/[\s-]/g, "");
+        const australianPhoneRegex = /^(?:\+?61|0)[2-478](?:[0-9]){8}$/;
+        
+        if (!australianPhoneRegex.test(cleanPhone)) {
+          return res.status(400).json({ 
+            message: "Invalid phone number format. Please use Australian format (e.g., 0412 345 678 or +61 412 345 678)" 
+          });
+        }
+      }
+      
+      // Require phone number if contact method is phone or video
+      if ((enquiryData.contactMethod === "phone" || enquiryData.contactMethod === "video") && 
+          (!enquiryData.phone || enquiryData.phone.trim() === "")) {
+        return res.status(400).json({ 
+          message: "Phone number is required when requesting a phone call or video call" 
+        });
+      }
+      
       // Save to database
       const enquiry = await storage.createContactEnquiry(enquiryData);
       
