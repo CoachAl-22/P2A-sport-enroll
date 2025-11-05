@@ -1815,7 +1815,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (process.env.RESEND_API_KEY) {
         try {
           // Send admin notification email
-          const adminEmail = "admin@power2adapt.com.au"; // You can configure this
+          const adminEmail = "info@poweradapt.com";
           await emailService.sendAdminEnquiryNotification(
             {
               name: enquiryData.name,
