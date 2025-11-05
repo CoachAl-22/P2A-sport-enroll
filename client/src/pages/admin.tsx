@@ -318,6 +318,15 @@ export default function Admin() {
               <span className="text-sm font-medium">Term Config</span>
             </a>
           </Button>
+
+          <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
+            <a href="/admin/enquiries">
+              <div className="text-orange-400 mb-2">
+                <MessageSquare className="w-6 h-6 mx-auto" />
+              </div>
+              <span className="text-sm font-medium">Contact Enquiries</span>
+            </a>
+          </Button>
           
           <Button className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
             <div className="text-green-400 mb-2">
