@@ -14,7 +14,7 @@ export class EmailService {
 
   constructor() {
     // Use verified domain email for production
-    this.fromEmail = process.env.FROM_EMAIL || 'info@power2adapt.com';
+    this.fromEmail = process.env.FROM_EMAIL || 'info@power2adapt.online';
     
     if (!process.env.RESEND_API_KEY) {
       console.warn('Resend API key not configured. Email notifications will be disabled.');
