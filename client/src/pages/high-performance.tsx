@@ -27,7 +27,7 @@ export default function HighPerformance() {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 <Link href="/" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Home</Link>
-                <Link href="/#classes" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Classes</Link>
+                <Link href="/classes" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Classes</Link>
                 <Link href="/high-performance" className="text-primary-500 bg-primary-50 px-3 py-2 rounded-md text-sm font-medium">High Performance</Link>
                 <Link href="/#contact" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Contact</Link>
               </div>
@@ -388,7 +388,7 @@ export default function HighPerformance() {
             <div>
               <h4 className="font-heading font-semibold mb-4">Services</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><Link href="/#classes" className="hover:text-white">Group Programs</Link></li>
+                <li><Link href="/classes" className="hover:text-white">Group Programs</Link></li>
                 <li><Link href="/high-performance" className="hover:text-white">1-on-1 Coaching</Link></li>
                 <li><Link href="/high-performance" className="hover:text-white">Team Consulting</Link></li>
                 <li><Link href="/high-performance" className="hover:text-white">Remote Coaching</Link></li>

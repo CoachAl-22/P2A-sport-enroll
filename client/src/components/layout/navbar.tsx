@@ -195,7 +195,7 @@ export default function Navbar() {
                       Home
                     </Button>
                   </Link>
-                  <Link href="/#classes">
+                  <Link href="/classes">
                     <Button
                       variant="ghost"
                       className="w-full justify-start"

@@ -288,7 +288,7 @@ export default function Landing() {
       <section id="classes" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Available Classes - Term 4, 2025</h2>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Available Classes - Term 1, 2026</h2>
             <p className="text-xl text-gray-600">10 weeks of professional athletic training</p>
             <p className="text-lg text-gray-500 mt-2">Senior and High Performance squads by Application</p>
           </div>
