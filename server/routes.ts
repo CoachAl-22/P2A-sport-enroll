@@ -1591,9 +1591,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const application = await storage.createSeniorSquadApplication(applicationData);
       
+      const athleteName = `${applicationData.athleteFirstName} ${applicationData.athleteLastName}`;
+      
+      // Send SMS notification to admin
+      const adminPhone = "+61434679395"; // Your phone number
+      try {
+        await smsService.sendSMS(
+          adminPhone,
+          `🔔 New Senior Squad Application!\nAthlete: ${athleteName}\nSchool Year: ${applicationData.schoolYear}\nCheck your dashboard for full details.`
+        );
+      } catch (smsError) {
+        console.error("Failed to send admin notification SMS:", smsError);
+        // Don't fail the application submission if SMS fails
+      }
+      
+      // Send email notification to admin (if Resend is configured)
+      if (process.env.RESEND_API_KEY) {
+        try {
+          const adminEmail = "info@power2adapt.com";
+          await emailService.sendAdminApplicationNotification(
+            applicationData,
+            adminEmail,
+            "Senior Squad"
+          );
+        } catch (emailError) {
+          console.error("Failed to send admin notification email:", emailError);
+          // Don't fail the application submission if email fails
+        }
+      }
+      
       // Send confirmation SMS to athlete (or parent if provided)
       const phoneNumber = applicationData.parentGuardianPhone || applicationData.athletePhone;
-      const athleteName = `${applicationData.athleteFirstName} ${applicationData.athleteLastName}`;
       
       if (phoneNumber) {
         try {

@@ -200,6 +200,110 @@ export class EmailService {
 
     return this.sendEmail(customerEmail, emailSubject, html);
   }
+
+  // Admin notification for new Senior Squad application
+  async sendAdminApplicationNotification(
+    applicationData: {
+      athleteFirstName: string;
+      athleteLastName: string;
+      athleteEmail: string;
+      athletePhone: string;
+      dateOfBirth: string;
+      schoolYear: string;
+      currentSports: string;
+      athleticGoals: string;
+      parentGuardianName?: string | null;
+      parentGuardianEmail?: string | null;
+      parentGuardianPhone?: string | null;
+    },
+    adminEmail: string,
+    applicationType: string = "Senior Squad"
+  ): Promise<boolean> {
+    const athleteName = `${applicationData.athleteFirstName} ${applicationData.athleteLastName}`;
+    const subject = `🔔 New ${applicationType} Application from ${athleteName}`;
+    
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+            .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+            .field { margin-bottom: 15px; }
+            .label { font-weight: bold; color: #667eea; }
+            .value { margin-top: 5px; padding: 10px; background: white; border-radius: 4px; border-left: 3px solid #667eea; }
+            .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2 style="margin: 0;">New ${applicationType} Application</h2>
+              <p style="margin: 5px 0 0 0;">Power2ADAPT Dashboard</p>
+            </div>
+            <div class="content">
+              <div class="field">
+                <div class="label">Athlete Name:</div>
+                <div class="value">${athleteName}</div>
+              </div>
+              
+              <div class="field">
+                <div class="label">Email:</div>
+                <div class="value"><a href="mailto:${applicationData.athleteEmail}">${applicationData.athleteEmail}</a></div>
+              </div>
+              
+              <div class="field">
+                <div class="label">Phone:</div>
+                <div class="value"><a href="tel:${applicationData.athletePhone}">${applicationData.athletePhone}</a></div>
+              </div>
+              
+              <div class="field">
+                <div class="label">Date of Birth:</div>
+                <div class="value">${applicationData.dateOfBirth}</div>
+              </div>
+              
+              <div class="field">
+                <div class="label">School Year:</div>
+                <div class="value">${applicationData.schoolYear}</div>
+              </div>
+              
+              ${applicationData.parentGuardianName ? `
+                <div class="field">
+                  <div class="label">Parent/Guardian:</div>
+                  <div class="value">
+                    ${applicationData.parentGuardianName}
+                    ${applicationData.parentGuardianEmail ? `<br><a href="mailto:${applicationData.parentGuardianEmail}">${applicationData.parentGuardianEmail}</a>` : ''}
+                    ${applicationData.parentGuardianPhone ? `<br><a href="tel:${applicationData.parentGuardianPhone}">${applicationData.parentGuardianPhone}</a>` : ''}
+                  </div>
+                </div>
+              ` : ''}
+              
+              <div class="field">
+                <div class="label">Current Sports:</div>
+                <div class="value">${applicationData.currentSports}</div>
+              </div>
+              
+              <div class="field">
+                <div class="label">Athletic Goals:</div>
+                <div class="value">${applicationData.athleticGoals}</div>
+              </div>
+              
+              <div style="margin-top: 30px; text-align: center;">
+                <p>View full application details in your <a href="https://power2adapt.online/admin" style="color: #667eea; text-decoration: none; font-weight: bold;">Admin Dashboard</a></p>
+              </div>
+            </div>
+            <div class="footer">
+              <p>Power2ADAPT Athletic Programs</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    return this.sendEmail(adminEmail, subject, html);
+  }
 }
 
 export const emailService = new EmailService();
