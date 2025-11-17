@@ -165,7 +165,7 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
                     <h4 className="font-semibold text-gray-900 mb-2">Pricing Options</h4>
                     <div className="space-y-1 text-sm text-gray-600">
                       <div>• Casual: $30 + GST per class</div>
-                      <div>• Unlimited Sessions: $300 per month</div>
+                      <div>• Unlimited sessions. for $200 per month</div>
                       <div className="text-xs text-gray-500 ml-4">(includes Final Surge app access)</div>
                     </div>
                   </div>
