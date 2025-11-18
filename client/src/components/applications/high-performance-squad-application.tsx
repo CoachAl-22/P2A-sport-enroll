@@ -113,7 +113,7 @@ export function HighPerformanceSquadApplication({ isOpen, onClose }: HighPerform
   const onSubmit = async (data: HighPerformanceSquadApplicationForm) => {
     setIsSubmitting(true);
     try {
-      await apiRequest("POST", "/api/high-performance-squad-applications", data);
+      await apiRequest("POST", "/api/applications/high-performance-squad", data);
       toast({
         title: "Application Submitted Successfully!",
         description: "We'll review your High Performance Squad application and contact you within 48 hours. Check your SMS for confirmation.",
