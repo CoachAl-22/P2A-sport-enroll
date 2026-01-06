@@ -311,7 +311,6 @@ export default function SeniorSquad() {
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
-        setIsLoginModalOpen={setIsLoginModalOpen}
       />
       
       <ContactFormModal 
