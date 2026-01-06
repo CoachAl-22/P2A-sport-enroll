@@ -64,6 +64,7 @@ interface SeniorSquadApplicationProps {
 
 export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicationProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<SeniorSquadApplicationForm>({
@@ -94,12 +95,11 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
     setIsSubmitting(true);
     try {
       await apiRequest("POST", "/api/applications/senior-squad", data);
+      setIsSubmitted(true);
       toast({
         title: "Application Submitted!",
-        description: "We'll review your application and get back to you within 48 hours.",
+        description: "Your application has been received. Please book your discovery call below.",
       });
-      form.reset();
-      onClose();
     } catch (error: any) {
       toast({
         title: "Application Failed",
@@ -111,8 +111,16 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
     }
   };
 
+  const handleClose = () => {
+    if (isSubmitted) {
+      setIsSubmitted(false);
+      form.reset();
+    }
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-y-auto p-0">
         <DialogHeader className="p-6 pb-0">
           <div className="flex items-center justify-between">
@@ -122,7 +130,7 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
             <Button
               variant="ghost"
               size="icon"
-              onClick={onClose}
+              onClick={handleClose}
               className="text-gray-400 hover:text-gray-600"
             >
               <X className="w-6 h-6" />
@@ -131,7 +139,32 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
         </DialogHeader>
 
         <div className="p-6">
-          {/* Program Overview */}
+          {isSubmitted ? (
+            <div className="text-center py-12 space-y-6">
+              <div className="bg-green-100 text-green-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-10 h-10" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Application Received!</h3>
+              <p className="text-lg text-gray-600 max-w-md mx-auto">
+                Thank you for applying to the Senior Squad. The final step is to book your 15-minute discovery call with our coaches.
+              </p>
+              <div className="pt-4">
+                <Button 
+                  size="lg"
+                  className="bg-primary-600 hover:bg-primary-700 text-white font-bold px-8 py-6 text-xl shadow-lg hover:shadow-xl transition-all"
+                  onClick={() => window.open('https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0', '_blank')}
+                >
+                  <Calendar className="w-6 h-6 mr-3" />
+                  Book My Discovery Call Now
+                </Button>
+              </div>
+              <p className="text-sm text-gray-500 pt-4">
+                Opening your booking calendar in a new tab...
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Program Overview */}
           <Card className="mb-6 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-orange-800">
