@@ -178,7 +178,7 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
                   <Button 
                     variant="outline" 
                     className="border-orange-300 text-orange-700 hover:bg-orange-100 whitespace-nowrap"
-                    onClick={() => window.open('https://calendly.com/power2adapt', '_blank')}
+                    onClick={() => window.open('https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0', '_blank')}
                   >
                     <Phone className="w-4 h-4 mr-2" />
                     Book Discovery Call

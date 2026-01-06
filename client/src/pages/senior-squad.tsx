@@ -294,7 +294,7 @@ export default function SeniorSquad() {
 
           <div className="space-y-4">
             <Button 
-              onClick={() => setIsSeniorSquadModalOpen(true)}
+              onClick={() => window.open('https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0', '_blank')}
               size="lg"
               className="bg-white text-primary-600 hover:bg-gray-100 font-bold px-8 py-3 text-lg"
             >
