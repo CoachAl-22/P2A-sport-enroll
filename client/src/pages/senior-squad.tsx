@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
+import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { Users, Building2, Smartphone, ArrowLeft, Star, CheckCircle, Trophy, Target, Clock, Heart } from "lucide-react";
 import { Link } from "wouter";
 
 export default function SeniorSquad() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
+  const [isSeniorSquadModalOpen, setIsSeniorSquadModalOpen] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -292,7 +294,7 @@ export default function SeniorSquad() {
 
           <div className="space-y-4">
             <Button 
-              onClick={() => setIsContactFormOpen(true)}
+              onClick={() => setIsSeniorSquadModalOpen(true)}
               size="lg"
               className="bg-white text-primary-600 hover:bg-gray-100 font-bold px-8 py-3 text-lg"
             >
@@ -309,11 +311,17 @@ export default function SeniorSquad() {
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
+        setIsLoginModalOpen={setIsLoginModalOpen}
       />
       
       <ContactFormModal 
         isOpen={isContactFormOpen} 
         onClose={() => setIsContactFormOpen(false)} 
+      />
+
+      <SeniorSquadApplication 
+        isOpen={isSeniorSquadModalOpen} 
+        onClose={() => setIsSeniorSquadModalOpen(false)} 
       />
     </div>
   );
