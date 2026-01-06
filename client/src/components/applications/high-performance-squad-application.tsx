@@ -116,7 +116,7 @@ export function HighPerformanceSquadApplication({ isOpen, onClose }: HighPerform
       await apiRequest("POST", "/api/applications/high-performance-squad", data);
       toast({
         title: "Application Submitted Successfully!",
-        description: "We'll review your High Performance Squad application and contact you within 48 hours. Check your SMS for confirmation.",
+        description: "We'll review your High Performance Squad application and contact you within 48 hours.",
       });
       form.reset();
       onClose();
@@ -133,170 +133,166 @@ export function HighPerformanceSquadApplication({ isOpen, onClose }: HighPerform
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="relative">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute -top-2 -right-2 h-8 w-8"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-          <DialogTitle className="text-2xl font-heading font-bold text-gray-900 pr-8">
-            High Performance Squad Application
-          </DialogTitle>
+      <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-y-auto p-0">
+        <DialogHeader className="p-6 pb-0">
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-2xl font-heading font-bold text-gray-900">
+              High Performance Squad Application
+            </DialogTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-6 h-6" />
+            </Button>
+          </div>
         </DialogHeader>
 
-        {/* Program Overview */}
-        <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-purple-800">
-              <Zap className="w-5 h-5" />
-              Elite High Performance Coaching
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Users className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm">1-on-1 & Small Group Training</span>
+        <div className="p-6">
+          {/* Program Overview */}
+          <Card className="mb-6 bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-800">
+                <Zap className="w-5 h-5" />
+                Elite High Performance Coaching
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <div className="flex items-center text-gray-700">
+                    <Users className="w-4 h-4 mr-2 text-purple-600" />
+                    <span className="text-sm">1-on-1 & Small Group Training</span>
+                  </div>
+                  <div className="flex items-center text-gray-700">
+                    <Target className="w-4 h-4 mr-2 text-purple-600" />
+                    <span className="text-sm">Performance Analysis & Planning</span>
+                  </div>
+                  <div className="flex items-center text-gray-700">
+                    <Award className="w-4 h-4 mr-2 text-purple-600" />
+                    <span className="text-sm">Competition Preparation</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Target className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm">Performance Analysis & Planning</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Award className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm">Competition Preparation</span>
+                <div className="space-y-3">
+                  <Badge className="bg-purple-100 text-purple-800">Elite Coaching</Badge>
+                  <div className="bg-white/50 backdrop-blur-sm rounded-lg p-4 border border-purple-100">
+                    <h4 className="font-semibold text-gray-900 mb-2">Program Details</h4>
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <div>• Monthly: $300</div>
+                      <div>• Annual program: $3,500</div>
+                      <div className="text-xs text-gray-500 mt-2">Individual attention & custom programs</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Calendar className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm">Flexible Scheduling</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <MapPin className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm">Multiple Venue Options</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Clock className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm">Custom Training Programs</span>
-                </div>
-              </div>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <Badge variant="secondary" className="bg-purple-100 text-purple-800">Elite Coaching</Badge>
-              <Badge variant="secondary" className="bg-purple-100 text-purple-800">Performance Focus</Badge>
-              <Badge variant="secondary" className="bg-purple-100 text-purple-800">Individual Attention</Badge>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Athlete Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Athlete Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="athleteFirstName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Athlete First Name *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter first name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="athleteLastName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Athlete Last Name *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter last name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="athleteEmail"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Athlete Email *</FormLabel>
-                        <FormControl>
-                          <Input type="email" placeholder="athlete@email.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="athletePhone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Athlete Mobile *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="0400 000 000" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="dateOfBirth"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Date of Birth *</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="schoolYear"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Current School Year *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., Year 10" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Athlete Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Athlete Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="athleteFirstName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>First Name *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Athlete's first name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="athleteLastName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Last Name *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Athlete's last name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="athleteEmail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email *</FormLabel>
+                          <FormControl>
+                            <Input type="email" placeholder="athlete@email.com" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="athletePhone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="0400 000 000" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-            {/* Parent/Guardian Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Parent/Guardian Contact (if athlete is under 18)</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="dateOfBirth"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Date of Birth *</FormLabel>
+                          <FormControl>
+                            <Input type="date" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="schoolYear"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>School Year *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Year 10" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Parent/Guardian Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Parent/Guardian Information (if under 18)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <FormField
                     control={form.control}
                     name="parentGuardianName"
@@ -310,221 +306,158 @@ export function HighPerformanceSquadApplication({ isOpen, onClose }: HighPerform
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="parentGuardianEmail"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Parent/Guardian Email</FormLabel>
-                        <FormControl>
-                          <Input type="email" placeholder="parent@email.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="parentGuardianPhone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Parent/Guardian Mobile</FormLabel>
-                        <FormControl>
-                          <Input placeholder="0400 000 000" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="parentGuardianEmail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Parent/Guardian Email</FormLabel>
+                          <FormControl>
+                            <Input type="email" placeholder="parent@email.com" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="parentGuardianPhone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Parent/Guardian Phone</FormLabel>
+                          <FormControl>
+                            <Input placeholder="0400 000 000" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Athletic Background & Performance Level */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Athletic Background & Performance Level</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="currentSports"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Current Sports *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., Athletics, Basketball, Swimming" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="competitionLevel"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Competition Level *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., School, Club, State, National" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="personalBests"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Personal Best Times/Distances/Results *</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="List your personal best performances, times, distances, or achievements..."
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="athleticExperience"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Athletic Experience *</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Describe your athletic background, years of experience, major competitions..."
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="previousClubs"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Previous Clubs/Teams</FormLabel>
-                        <FormControl>
-                          <Input placeholder="List previous clubs or teams" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="coachingHistory"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Previous Coaching Experience</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Previous coaches or programs" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+              {/* Athletic Background & Performance Level */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Athletic Background & Performance Level</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="currentSports"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Current Sports *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Athletics, Basketball" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="competitionLevel"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Competition Level *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., State, National" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-            {/* High Performance Goals */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">High Performance Goals & Ambitions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="athleticGoals"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Athletic Goals *</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Describe your short-term and long-term athletic goals..."
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="targetCompetitions"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Target Competitions *</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="What competitions are you targeting? (School Sports, State Championships, Nationals, etc.)"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="performanceAmbitions"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Performance Ambitions *</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Describe your performance ambitions (state level, national team, international competition, scholarships, etc.)"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Training & Commitment */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Training & Commitment</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="currentTrainingLoad"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Current Weekly Training Load *</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Describe your current weekly training schedule, sessions, and hours..."
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="trainingCommitment"
+                    name="personalBests"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Training Commitment *</FormLabel>
+                        <FormLabel>Personal Bests/Achievements *</FormLabel>
                         <FormControl>
-                          <Input placeholder="How many sessions per week?" {...field} />
+                          <Textarea 
+                            placeholder="List your personal best times, distances, or major achievements..."
+                            rows={3}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="athleticExperience"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Athletic Experience *</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Describe your athletic background and training history..."
+                            rows={3}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="previousClubs"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Previous Clubs/Teams</FormLabel>
+                          <FormControl>
+                            <Input placeholder="List previous clubs" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="coachingHistory"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Previous Coaching History</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Previous coaches or programs" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Goals and Ambitions */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Goals and Ambitions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="athleticGoals"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Athletic Goals *</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="What are your short-term and long-term athletic goals?"
+                            rows={3}
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -532,130 +465,222 @@ export function HighPerformanceSquadApplication({ isOpen, onClose }: HighPerform
                   />
                   <FormField
                     control={form.control}
-                    name="timeAvailability"
+                    name="targetCompetitions"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Time Availability *</FormLabel>
+                        <FormLabel>Target Competitions *</FormLabel>
                         <FormControl>
-                          <Input placeholder="What days/times are you available?" {...field} />
+                          <Textarea 
+                            placeholder="What specific competitions are you targeting?"
+                            rows={2}
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>
-              </CardContent>
-            </Card>
+                  <FormField
+                    control={form.control}
+                    name="performanceAmbitions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Performance Ambitions *</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="What are your ultimate ambitions in your sport?"
+                            rows={2}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
 
-            {/* Specific Coaching Needs */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Specific Coaching Needs</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="coachingType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Coaching Type Preference *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., 1-on-1, small group, technical focus, strength focus" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="specificNeeds"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Specific Areas for Improvement *</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="What specific areas do you want to improve? (technique, speed, strength, mental preparation, etc.)"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="reasonForHighPerformance"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Why High Performance Coaching? *</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Why are you seeking High Performance coaching? What do you hope to achieve?"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
+              {/* Training and commitment */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Training and Commitment</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="currentTrainingLoad"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Current Weekly Training Load *</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Describe your current weekly training schedule and sessions..."
+                            rows={2}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="trainingCommitment"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Training Commitment *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Sessions per week" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="timeAvailability"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Time Availability *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Available days and times" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Additional Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Additional Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="injuries"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Current or Recent Injuries</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Please list any current or recent injuries that may affect training..."
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="additionalNotes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Additional Notes</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Any additional information you'd like us to know..."
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
+              {/* Specific Needs */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Specific Coaching Needs</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="coachingType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Preferred Coaching Type *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., 1-on-1, Technical focus" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="specificNeeds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Specific Areas for Improvement *</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="What specific areas do you want to focus on?"
+                            rows={2}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="reasonForHighPerformance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Why High Performance Coaching? *</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Why do you want to join the High Performance program?"
+                            rows={3}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
 
-            <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button 
-                type="submit" 
-                disabled={isSubmitting}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                {isSubmitting ? "Submitting..." : "Submit Application"}
-              </Button>
-            </div>
-          </form>
-        </Form>
+              {/* Additional Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Additional Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="injuries"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Injury History</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="List any current or previous injuries..."
+                            rows={2}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="additionalNotes"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Additional Notes</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Any other information you'd like us to know..."
+                            rows={2}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Submit Button */}
+              <div className="flex justify-end gap-4 pb-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onClose}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Clock className="w-4 h-4 mr-2 animate-spin" />
+                      Submitting Application...
+                    </>
+                  ) : (
+                    "Submit Application"
+                  )}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );
