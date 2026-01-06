@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { X, Calendar, MapPin, Users, Award, Target, Clock } from "lucide-react";
+import { X, Calendar, MapPin, Users, Award, Target, Clock, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -132,47 +132,57 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
 
         <div className="p-6">
           {/* Program Overview */}
-          <Card className="mb-6">
+          <Card className="mb-6 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-primary-500" />
+              <CardTitle className="flex items-center gap-2 text-orange-800">
+                <Award className="w-5 h-5" />
                 Elite Senior Squad Program
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Monday, Tuesday, Thursday 5:30pm</span>
+                  <div className="flex items-center text-gray-700">
+                    <Calendar className="w-4 h-4 mr-2 text-orange-600" />
+                    <span className="text-sm">Mon, Tue, Thu 5:30pm @ Ballam Park</span>
                   </div>
-                  <div className="flex items-center text-gray-600">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Ballam Park Athletic Track</span>
+                  <div className="flex items-center text-gray-700">
+                    <Users className="w-4 h-4 mr-2 text-orange-600" />
+                    <span className="text-sm">Maximum 10 athletes per squad</span>
                   </div>
-                  <div className="flex items-center text-gray-600">
-                    <Users className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Maximum 10 athletes</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Target className="w-4 h-4 mr-2" />
+                  <div className="flex items-center text-gray-700">
+                    <Target className="w-4 h-4 mr-2 text-orange-600" />
                     <span className="text-sm">High-performance training focus</span>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <Badge className="bg-orange-100 text-orange-800">By Application Only</Badge>
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-white/50 backdrop-blur-sm rounded-lg p-4 border border-orange-100">
                     <h4 className="font-semibold text-gray-900 mb-2">Pricing Options</h4>
                     <div className="space-y-1 text-sm text-gray-600">
                       <div>• Casual: $30 + GST per class</div>
                       <div>• Unlimited sessions. for $200 per month</div>
-                      <div className="text-xs text-gray-500 ml-4">(includes Final Surge app access)</div>
+                      <div className="text-xs text-gray-500 mt-2">Elite training for serious athletes</div>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-600">
-                    Our most advanced program designed for serious athletes seeking elite-level training 
-                    and competitive performance development.
-                  </p>
+                </div>
+              </div>
+              
+              {/* Book Discovery Call Option */}
+              <div className="mt-6 pt-6 border-t border-orange-200">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Unsure if Senior Squad is right for you?</h4>
+                    <p className="text-sm text-gray-600">Speak with our elite coaches to discuss your athletic goals.</p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="border-orange-300 text-orange-700 hover:bg-orange-100 whitespace-nowrap"
+                    onClick={() => window.open('https://calendly.com/power2adapt', '_blank')}
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Book Discovery Call
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -368,41 +378,34 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="previousClubs"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Previous Clubs/Teams</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="List any previous athletic clubs, teams, or training programs..."
-                            rows={2}
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="personalBests"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Personal Bests/Achievements</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="List your personal bests, competition results, or athletic achievements..."
-                            rows={2}
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="previousClubs"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Previous Clubs/Teams</FormLabel>
+                          <FormControl>
+                            <Input placeholder="List any previous clubs" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="personalBests"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Personal Bests/Achievements</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Times, distances, etc." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </CardContent>
               </Card>
 
@@ -430,23 +433,34 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="trainingCommitment"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Training Commitment *</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="How many days per week can you commit to training? What is your current training schedule?"
-                            rows={2}
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="trainingCommitment"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Training Commitment *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Days per week" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="availableDays"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Available Days *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Mon/Tue/Thu" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -456,7 +470,7 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
                         <FormLabel>Why Senior Squad? *</FormLabel>
                         <FormControl>
                           <Textarea 
-                            placeholder="Why do you want to join the Senior Squad program? What do you hope to achieve?"
+                            placeholder="Why do you want to join the Senior Squad program?"
                             rows={3}
                             {...field} 
                           />
@@ -468,30 +482,12 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
                 </CardContent>
               </Card>
 
-              {/* Availability */}
+              {/* Additional Information */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Availability</CardTitle>
+                  <CardTitle className="text-lg">Additional Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="availableDays"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Available Days *</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Please specify which days you're available for training (Mon/Tue/Thu 5:30pm) and any scheduling constraints..."
-                            rows={2}
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
                   <FormField
                     control={form.control}
                     name="additionalNotes"
@@ -513,7 +509,7 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
               </Card>
 
               {/* Submit Button */}
-              <div className="flex justify-end gap-4">
+              <div className="flex justify-end gap-4 pb-6">
                 <Button
                   type="button"
                   variant="outline"
