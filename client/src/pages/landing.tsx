@@ -385,7 +385,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        window.open("https://docs.google.com/forms/d/e/1FAIpQLSfS_Z_jW-X7I6P_XzF_v6y_Z_z_z_z_z_z_z_z_z_z/viewform", "_blank");
+                        window.open("https://forms.gle/TsQXvtULK17c5oaB8", "_blank");
                       }}
                       className="bg-amber-500 hover:bg-amber-600 text-white"
                     >
@@ -440,7 +440,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        window.open("https://docs.google.com/forms/d/e/1FAIpQLSfS_Z_jW-X7I6P_XzF_v6y_Z_z_z_z_z_z_z_z_z_z/viewform", "_blank");
+                        window.open("https://forms.gle/TsQXvtULK17c5oaB8", "_blank");
                       }}
                       className="bg-amber-500 hover:bg-amber-600 text-white"
                     >
@@ -495,7 +495,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        window.open("https://docs.google.com/forms/d/e/1FAIpQLSfS_Z_jW-X7I6P_XzF_v6y_Z_z_z_z_z_z_z_z_z_z/viewform", "_blank");
+                        window.open("https://forms.gle/TsQXvtULK17c5oaB8", "_blank");
                       }}
                       className="bg-amber-500 hover:bg-amber-600 text-white"
                     >
