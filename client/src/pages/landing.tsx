@@ -359,8 +359,8 @@ export default function Landing() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-heading font-bold text-gray-900">Emerging Athletes</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Available
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                    Waitlist Open
                   </span>
                 </div>
                 <div className="space-y-2 mb-4">
@@ -385,11 +385,11 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        window.open("https://docs.google.com/forms/d/e/1FAIpQLSfS_Z_jW-X7I6P_XzF_v6y_Z_z_z_z_z_z_z_z_z_z/viewform", "_blank");
                       }}
-                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                      className="bg-amber-500 hover:bg-amber-600 text-white"
                     >
-                      Enroll Now
+                      Join Waitlist
                     </Button>
                   </div>
                   <Button 
@@ -469,8 +469,8 @@ export default function Landing() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-heading font-bold text-gray-900">Emerging Athletes</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Available
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                    Waitlist Open
                   </span>
                 </div>
                 <div className="space-y-2 mb-4">
@@ -495,11 +495,11 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        window.open("https://docs.google.com/forms/d/e/1FAIpQLSfS_Z_jW-X7I6P_XzF_v6y_Z_z_z_z_z_z_z_z_z_z/viewform", "_blank");
                       }}
-                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                      className="bg-amber-500 hover:bg-amber-600 text-white"
                     >
-                      Enroll Now
+                      Join Waitlist
                     </Button>
                   </div>
                   <Button 
