@@ -88,6 +88,14 @@ export default function Navbar() {
                     Education Hub
                   </Button>
                 </Link>
+                <Link href="/questionnaire">
+                  <Button
+                    variant={location === "/questionnaire" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500"
+                  >
+                    Check-In
+                  </Button>
+                </Link>
                 <Link href="/video-highlights">
                   <Button
                     variant={location === "/video-highlights" ? "default" : "ghost"}
@@ -289,6 +297,15 @@ export default function Navbar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Education Hub
+                    </Button>
+                  </Link>
+                  <Link href="/questionnaire">
+                    <Button
+                      variant={location === "/questionnaire" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Check-In
                     </Button>
                   </Link>
                   <Link href="/video-highlights">

@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track & Field — Student Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E8303A;
+    --yellow: #F5C400;
+    --black: #0D0D0D;
+    --white: #F7F4EE;
+    --grey: #2A2A2A;
+    --mid: #444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--red);
+    padding: 48px 32px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.12);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: 40px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(245,196,0,0.18);
+  }
+
+  .hero-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: var(--yellow);
+    color: var(--black);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 12vw, 90px);
+    line-height: 0.92;
+    letter-spacing: 1px;
+    color: var(--white);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero h1 span {
+    color: var(--yellow);
+  }
+
+  .hero-sub {
+    margin-top: 18px;
+    font-size: 15px;
+    line-height: 1.55;
+    opacity: 0.88;
+    max-width: 480px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-meta {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .meta-pill {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  /* FORM */
+  .form-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 48px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--yellow);
+    line-height: 1;
+    min-width: 32px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 1.5px;
+    color: var(--white);
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+
+  .section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, var(--red), transparent);
+    margin-bottom: 24px;
+  }
+
+  /* QUESTION */
+  .question {
+    margin-bottom: 28px;
+  }
+
+  .question label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+  }
+
+  .question label .q-num {
+    color: var(--red);
+    margin-right: 4px;
+  }
+
+  /* TEXT INPUT */
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%;
+    background: var(--grey);
+    border: 2px solid #3a3a3a;
+    border-radius: 8px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 3px rgba(245,196,0,0.12);
+  }
+
+  textarea { resize: vertical; min-height: 90px; }
+
+  select option { background: var(--grey); }
+
+  /* RADIO / CHECKBOX GRID */
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+
+  .option-grid.two-col {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .opt-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--grey);
+    border: 2px solid #3a3a3a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 14px;
+    font-weight: 500;
+    user-select: none;
+  }
+
+  .opt-label:hover {
+    border-color: var(--red);
+    background: #333;
+  }
+
+  .opt-label input[type="radio"],
+  .opt-label input[type="checkbox"] {
+    width: 18px; height: 18px;
+    min-width: 18px;
+    accent-color: var(--yellow);
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    border: none;
+  }
+
+  /* SCALE SLIDER */
+  .scale-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888;
+    padding: 0 2px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, var(--red), var(--yellow));
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 22px;
+    background: var(--white);
+    border: 3px solid var(--yellow);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    transition: transform 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  .scale-value {
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--yellow);
+    line-height: 1;
+    margin-top: 4px;
+  }
+
+  /* STAR RATING */
+  .star-group {
+    display: flex;
+    gap: 6px;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+
+  .star-group input { display: none; }
+
+  .star-group label {
+    font-size: 32px;
+    cursor: pointer;
+    color: #444;
+    transition: color 0.15s, transform 0.1s;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .star-group input:checked ~ label,
+  .star-group label:hover,
+  .star-group label:hover ~ label {
+    color: var(--yellow);
+    transform: scale(1.15);
+  }
+
+  /* SUBMIT */
+  .submit-section {
+    text-align: center;
+    padding-top: 16px;
+  }
+
+  .submit-btn {
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 16px 48px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(232,48,58,0.35);
+  }
+
+  .submit-btn:hover {
+    background: #c4242d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(232,48,58,0.5);
+  }
+
+  .submit-note {
+    font-size: 12px;
+    color: #666;
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* SUCCESS */
+  #success-msg {
+    display: none;
+    text-align: center;
+    padding: 60px 24px;
+  }
+
+  #success-msg .tick {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+
+  #success-msg h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--yellow);
+    margin-bottom: 10px;
+  }
+
+  #success-msg p {
+    color: #aaa;
+    font-size: 15px;
+  }
+
+  /* SEPARATOR */
+  hr.divider {
+    border: none;
+    border-top: 1px solid #2a2a2a;
+    margin: 32px 0;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.12s; }
+  .section:nth-child(3) { animation-delay: 0.19s; }
+  .section:nth-child(4) { animation-delay: 0.26s; }
+  .section:nth-child(5) { animation-delay: 0.33s; }
+  .section:nth-child(6) { animation-delay: 0.40s; }
+
+  @media (max-width: 480px) {
+    .option-grid, .option-grid.two-col { grid-template-columns: 1fr; }
+    .hero { padding: 36px 20px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">📋 Year 8 PE — Student Survey</div>
+  <h1>Track<br>&amp; <span>Field</span><br>Check-In</h1>
+  <p class="hero-sub">No right or wrong answers — we just want to hear from YOU so we can make the next 4 weeks as good as possible.</p>
+  <div class="hero-meta">
+    <span class="meta-pill">⏱ Takes ~5 mins</span>
+    <span class="meta-pill">🔒 Anonymous if you want</span>
+    <span class="meta-pill">📅 4-Week Program</span>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap">
+<form id="survey" onsubmit="handleSubmit(event)">
+
+  <!-- SECTION 1 — ABOUT YOU -->
+  <div class="section">
+    <div class="section-label">
+      <span class="section-num">01</span>
+      <span class="section-title">About You</span>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="question">
+      <label><span class="q-num">Q1.</span> What's your name? (optional)</label>
+      <input type="text" placeholder="First name is fine, or leave blank">
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q2.</span> What class / group are you in?</label>
+      <input type="text" placeholder="e.g. 8A, 8B...">
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q3.</span> How would you describe yourself as an athlete right now?</label>
+      <div class="option-grid two-col">
+        <label class="opt-label"><input type="radio" name="athlete_level" value="just_starting"> Just getting started</label>
+        <label class="opt-label"><input type="radio" name="athlete_level" value="getting_there"> Getting there</label>
+        <label class="opt-label"><input type="radio" name="athlete_level" value="pretty_fit"> Pretty fit &amp; active</label>
+        <label class="opt-label"><input type="radio" name="athlete_level" value="competitive"> Competitive athlete</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 — SPORTS & ACTIVITY -->
+  <div class="section">
+    <div class="section-label">
+      <span class="section-num">02</span>
+      <span class="section-title">Sports &amp; Activities</span>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="question">
+      <label><span class="q-num">Q4.</span> Which sports or physical activities do you do outside of school? (tick all that apply)</label>
+      <div class="option-grid">
+        <label class="opt-label"><input type="checkbox" value="football"> ⚽ Football / Soccer</label>
+        <label class="opt-label"><input type="checkbox" value="basketball"> 🏀 Basketball</label>
+        <label class="opt-label"><input type="checkbox" value="netball"> 🏐 Netball</label>
+        <label class="opt-label"><input type="checkbox" value="aussie_rules"> 🏉 Aussie Rules</label>
+        <label class="opt-label"><input type="checkbox" value="rugby"> 🏈 Rugby</label>
+        <label class="opt-label"><input type="checkbox" value="swimming"> 🏊 Swimming</label>
+        <label class="opt-label"><input type="checkbox" value="gymnastics"> 🤸 Gymnastics</label>
+        <label class="opt-label"><input type="checkbox" value="martial_arts"> 🥋 Martial Arts</label>
+        <label class="opt-label"><input type="checkbox" value="cycling"> 🚴 Cycling</label>
+        <label class="opt-label"><input type="checkbox" value="dance"> 💃 Dance</label>
+        <label class="opt-label"><input type="checkbox" value="running"> 🏃 Running / Athletics</label>
+        <label class="opt-label"><input type="checkbox" value="gym"> 🏋️ Gym / Weights</label>
+        <label class="opt-label"><input type="checkbox" value="none"> 🛋️ Not really anything</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q5.</span> Any other sports or activities not listed above?</label>
+      <input type="text" placeholder="List them here...">
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q6.</span> How many days a week are you physically active outside of school?</label>
+      <div class="option-grid two-col">
+        <label class="opt-label"><input type="radio" name="days_active" value="0"> 0 days</label>
+        <label class="opt-label"><input type="radio" name="days_active" value="1-2"> 1–2 days</label>
+        <label class="opt-label"><input type="radio" name="days_active" value="3-4"> 3–4 days</label>
+        <label class="opt-label"><input type="radio" name="days_active" value="5+"> 5+ days</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 — RUNNING & TRACK -->
+  <div class="section">
+    <div class="section-label">
+      <span class="section-num">03</span>
+      <span class="section-title">Running &amp; Track</span>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="question">
+      <label><span class="q-num">Q7.</span> Which types of running do you enjoy most? (tick all that apply)</label>
+      <div class="option-grid">
+        <label class="opt-label"><input type="checkbox" value="sprints"> ⚡ Short sprints (100m)</label>
+        <label class="opt-label"><input type="checkbox" value="mid_dist"> 🔄 Middle distance (400–800m)</label>
+        <label class="opt-label"><input type="checkbox" value="long_dist"> 🌍 Long distance (1500m+)</label>
+        <label class="opt-label"><input type="checkbox" value="hurdles"> 🚧 Hurdles</label>
+        <label class="opt-label"><input type="checkbox" value="relays"> 🤝 Relay races</label>
+        <label class="opt-label"><input type="checkbox" value="fun_runs"> 😄 Fun / social runs</label>
+        <label class="opt-label"><input type="checkbox" value="none_running"> 😬 I don't enjoy running</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q8.</span> How much do you enjoy running overall?</label>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>😩 Hate it</span><span>😐 It's OK</span><span>🔥 Love it</span></div>
+        <input type="range" min="1" max="10" value="5" oninput="document.getElementById('run-val').textContent=this.value">
+        <div class="scale-value" id="run-val">5</div>
+      </div>
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q9.</span> Which field events sound the most fun to you? (tick all that apply)</label>
+      <div class="option-grid">
+        <label class="opt-label"><input type="checkbox" value="long_jump"> 🦘 Long jump</label>
+        <label class="opt-label"><input type="checkbox" value="high_jump"> 🏔️ High jump</label>
+        <label class="opt-label"><input type="checkbox" value="shot_put"> 🪨 Shot put</label>
+        <label class="opt-label"><input type="checkbox" value="discus"> 🥏 Discus</label>
+        <label class="opt-label"><input type="checkbox" value="javelin"> 🎯 Javelin</label>
+        <label class="opt-label"><input type="checkbox" value="triple_jump"> 3️⃣ Triple jump</label>
+        <label class="opt-label"><input type="checkbox" value="pole_vault"> 🎪 Pole vault</label>
+        <label class="opt-label"><input type="checkbox" value="not_sure"> 🤷 Not sure yet</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q10.</span> What do you find hardest about running or track sessions? (pick your top one)</label>
+      <div class="option-grid two-col">
+        <label class="opt-label"><input type="radio" name="hardest" value="boredom"> 😴 Gets boring quickly</label>
+        <label class="opt-label"><input type="radio" name="hardest" value="fitness"> 💨 Running out of breath</label>
+        <label class="opt-label"><input type="radio" name="hardest" value="pain"> 😣 It hurts / too hard</label>
+        <label class="opt-label"><input type="radio" name="hardest" value="motivation"> 🧠 Staying motivated</label>
+        <label class="opt-label"><input type="radio" name="hardest" value="technique"> 🏃 Not knowing technique</label>
+        <label class="opt-label"><input type="radio" name="hardest" value="competing"> 😰 Competing against others</label>
+        <label class="opt-label"><input type="radio" name="hardest" value="nothing"> 😎 Nothing — I love it!</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 — WHAT THEY LIKE IN PE -->
+  <div class="section">
+    <div class="section-label">
+      <span class="section-num">04</span>
+      <span class="section-title">What Makes PE Good</span>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="question">
+      <label><span class="q-num">Q11.</span> What makes a PE session actually fun for you? (tick all that apply)</label>
+      <div class="option-grid">
+        <label class="opt-label"><input type="checkbox" value="games"> 🎮 Competitive games</label>
+        <label class="opt-label"><input type="checkbox" value="challenges"> 🏅 Personal challenges</label>
+        <label class="opt-label"><input type="checkbox" value="music"> 🎵 Music playing</label>
+        <label class="opt-label"><input type="checkbox" value="team"> 🤜 Working as a team</label>
+        <label class="opt-label"><input type="checkbox" value="variety"> 🌀 Lots of variety</label>
+        <label class="opt-label"><input type="checkbox" value="free_choice"> 🗽 Free choice activities</label>
+        <label class="opt-label"><input type="checkbox" value="records"> 📈 Beating your own record</label>
+        <label class="opt-label"><input type="checkbox" value="friends"> 👫 Being with friends</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q12.</span> How do you feel about competing against other classmates?</label>
+      <div class="option-grid two-col">
+        <label class="opt-label"><input type="radio" name="competing_feel" value="love"> 🔥 Love it — bring it on</label>
+        <label class="opt-label"><input type="radio" name="competing_feel" value="sometimes"> 👍 Fine sometimes</label>
+        <label class="opt-label"><input type="radio" name="competing_feel" value="prefer_self"> 🧘 Prefer personal goals</label>
+        <label class="opt-label"><input type="radio" name="competing_feel" value="dislike"> 😬 Makes me uncomfortable</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q13.</span> How engaged do you feel in PE sessions currently?</label>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>😴 Totally checked out</span><span>😐 Sometimes into it</span><span>🙌 Fully engaged</span></div>
+        <input type="range" min="1" max="10" value="5" oninput="document.getElementById('engage-val').textContent=this.value">
+        <div class="scale-value" id="engage-val">5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 — GOALS -->
+  <div class="section">
+    <div class="section-label">
+      <span class="section-num">05</span>
+      <span class="section-title">Your Goals</span>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="question">
+      <label><span class="q-num">Q14.</span> What do you most want to get out of this 4-week program? (tick up to 3)</label>
+      <div class="option-grid">
+        <label class="opt-label"><input type="checkbox" value="fitter"> 💪 Get fitter &amp; faster</label>
+        <label class="opt-label"><input type="checkbox" value="technique"> 🎯 Improve my technique</label>
+        <label class="opt-label"><input type="checkbox" value="try_events"> 🆕 Try events I've never done</label>
+        <label class="opt-label"><input type="checkbox" value="pb"> ⏱️ Set a personal best</label>
+        <label class="opt-label"><input type="checkbox" value="enjoy"> 😄 Just enjoy the sessions</label>
+        <label class="opt-label"><input type="checkbox" value="make_team"> 🏆 Make a school team</label>
+        <label class="opt-label"><input type="checkbox" value="friends_goal"> 👫 Do it with my mates</label>
+        <label class="opt-label"><input type="checkbox" value="grade"> 📝 Get a good mark</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q15.</span> Is there one specific event or skill you'd love to focus on or get better at?</label>
+      <input type="text" placeholder="e.g. 100m sprint, long jump, shot put...">
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q16.</span> In your own words — what would make this 4-week program awesome for you?</label>
+      <textarea placeholder="Be as honest as you want! What would get you excited to come to these sessions?"></textarea>
+    </div>
+  </div>
+
+  <!-- SECTION 6 — FINAL BITS -->
+  <div class="section">
+    <div class="section-label">
+      <span class="section-num">06</span>
+      <span class="section-title">Final Bits</span>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="question">
+      <label><span class="q-num">Q17.</span> Are there any physical issues or injuries your teacher should know about?</label>
+      <div class="option-grid two-col">
+        <label class="opt-label"><input type="radio" name="injury" value="no"> ✅ Nope, all good</label>
+        <label class="opt-label"><input type="radio" name="injury" value="yes"> ⚠️ Yes — see below</label>
+      </div>
+      <textarea style="margin-top:10px;" placeholder="If yes, briefly describe..."></textarea>
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q18.</span> Overall, how excited are you for this program?</label>
+      <div class="star-group">
+        <input type="radio" name="excitement" id="s5" value="5"><label for="s5">★</label>
+        <input type="radio" name="excitement" id="s4" value="4"><label for="s4">★</label>
+        <input type="radio" name="excitement" id="s3" value="3"><label for="s3">★</label>
+        <input type="radio" name="excitement" id="s2" value="2"><label for="s2">★</label>
+        <input type="radio" name="excitement" id="s1" value="1"><label for="s1">★</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label><span class="q-num">Q19.</span> Anything else you want your teacher to know?</label>
+      <textarea placeholder="Anything at all — questions, concerns, requests..."></textarea>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-section">
+    <button type="submit" class="submit-btn">Submit My Survey →</button>
+    <p class="submit-note">Your answers help us plan better sessions for everyone.</p>
+  </div>
+
+</form>
+
+<!-- SUCCESS -->
+<div id="success-msg">
+  <div class="tick">🎯</div>
+  <h2>You're All Done!</h2>
+  <p>Thanks for taking the time — your answers will genuinely shape the sessions.<br>Now go warm up! 🏃</p>
+</div>
+
+</div>
+
+<script>
+  function handleSubmit(e) {
+    e.preventDefault();
+    document.getElementById('survey').style.display = 'none';
+    const s = document.getElementById('success-msg');
+    s.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
