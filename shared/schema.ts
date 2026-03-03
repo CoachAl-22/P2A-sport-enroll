@@ -808,11 +808,41 @@ export const insertVideoShareSchema = createInsertSchema(videoShares).omit({
   viewedAt: true,
 });
 
+export const surveyResponses = pgTable("survey_responses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studentName: varchar("student_name", { length: 100 }),
+  studentClass: varchar("student_class", { length: 50 }).notNull(),
+  athleteLevel: varchar("athlete_level", { length: 50 }).notNull(),
+  outsideSports: text("outside_sports").array().notNull(),
+  otherSports: text("other_sports"),
+  daysActive: varchar("days_active", { length: 20 }).notNull(),
+  runningEnjoyed: text("running_enjoyed").array().notNull(),
+  runningEnjoymentScale: integer("running_enjoyment_scale").notNull(),
+  fieldEventsInterested: text("field_events_interested").array().notNull(),
+  hardestPart: varchar("hardest_part", { length: 50 }).notNull(),
+  funFactors: text("fun_factors").array().notNull(),
+  competingFeel: varchar("competing_feel", { length: 50 }).notNull(),
+  engagementScale: integer("engagement_scale").notNull(),
+  goals: text("goals").array().notNull(),
+  specificEvent: text("specific_event"),
+  awesomeFactor: text("awesome_factor"),
+  injuryInfo: text("injury_info"),
+  excitementLevel: integer("excitement_level").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertSurveyResponseSchema = createInsertSchema(surveyResponses).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type PerformanceVideoHighlight = typeof performanceVideoHighlights.$inferSelect;
 export type InsertPerformanceVideoHighlight = z.infer<typeof insertPerformanceVideoHighlightSchema>;
 export type VideoShare = typeof videoShares.$inferSelect;
 export type InsertVideoShare = z.infer<typeof insertVideoShareSchema>;
+export type SurveyResponse = typeof surveyResponses.$inferSelect;
+export type InsertSurveyResponse = z.infer<typeof insertSurveyResponseSchema>;
 
 
 

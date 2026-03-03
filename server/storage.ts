@@ -17,6 +17,7 @@ import {
   termHolidays,
   performanceVideoHighlights,
   videoShares,
+  surveyResponses,
   type User,
   type InsertUser,
   type Child,
@@ -53,6 +54,8 @@ import {
   type InsertPerformanceVideoHighlight,
   type VideoShare,
   type InsertVideoShare,
+  type SurveyResponse,
+  type InsertSurveyResponse,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, count, sql, gte, lte } from "drizzle-orm";
@@ -208,6 +211,10 @@ export interface IStorage {
   getVideoSharesByParent(parentId: string): Promise<VideoShare[]>;
   updateVideoShare(id: string, updates: Partial<VideoShare>): Promise<VideoShare>;
   deleteVideoShare(id: string): Promise<void>;
+
+  // Survey operations
+  createSurveyResponse(response: InsertSurveyResponse): Promise<SurveyResponse>;
+  getAllSurveyResponses(): Promise<SurveyResponse[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1370,6 +1377,16 @@ export class DatabaseStorage implements IStorage {
 
   async deleteVideoShare(id: string): Promise<void> {
     await db.delete(videoShares).where(eq(videoShares.id, id));
+  }
+
+  // Survey operations
+  async createSurveyResponse(response: InsertSurveyResponse): Promise<SurveyResponse> {
+    const [created] = await db.insert(surveyResponses).values(response).returning();
+    return created;
+  }
+
+  async getAllSurveyResponses(): Promise<SurveyResponse[]> {
+    return await db.select().from(surveyResponses).orderBy(desc(surveyResponses.createdAt));
   }
 }
 

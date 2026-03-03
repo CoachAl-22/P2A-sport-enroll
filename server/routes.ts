@@ -10,7 +10,7 @@ import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { importCustomersFromCSV, createSampleChildrenForParents } from "./csv-import";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -2993,6 +2993,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       ];
       res.json(mockClasses);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Survey Response routes
+  app.post("/api/survey-responses", async (req, res) => {
+    try {
+      const responseData = insertSurveyResponseSchema.parse(req.body);
+      const newResponse = await storage.createSurveyResponse(responseData);
+      res.json(newResponse);
+    } catch (error: any) {
+      console.error("Survey submission error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/survey-responses", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const responses = await storage.getAllSurveyResponses();
+      res.json(responses);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

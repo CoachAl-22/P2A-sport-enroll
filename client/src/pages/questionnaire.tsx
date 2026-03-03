@@ -1,16 +1,66 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Questionnaire() {
   const [submitted, setSubmitted] = useState(false);
   const [runVal, setRunVal] = useState(5);
   const [engageVal, setEngageVal] = useState(5);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsSubmitting(true);
+    
+    const formData = new FormData(e.currentTarget);
+    
+    const data = {
+      studentName: formData.get("student_name") as string || null,
+      studentClass: formData.get("student_class") as string,
+      athleteLevel: formData.get("athlete_level") as string,
+      outsideSports: formData.getAll("outside_sports") as string[],
+      otherSports: formData.get("other_sports") as string || null,
+      daysActive: formData.get("days_active") as string,
+      runningEnjoyed: formData.getAll("running_enjoyed") as string[],
+      runningEnjoymentScale: runVal,
+      fieldEventsInterested: formData.getAll("field_events") as string[],
+      hardestPart: formData.get("hardest") as string,
+      funFactors: formData.getAll("fun_factors") as string[],
+      competingFeel: formData.get("comp_feel") as string,
+      engagementScale: engageVal,
+      goals: formData.getAll("goals") as string[],
+      specificEvent: formData.get("specific_event") as string || null,
+      awesomeFactor: formData.get("awesome_factor") as string || null,
+      injuryInfo: formData.get("injury_info") as string || null,
+      excitementLevel: parseInt(formData.get("excitement") as string) || 0,
+    };
+
+    // Validation
+    if (!data.studentClass || !data.athleteLevel || !data.daysActive || !data.hardestPart || !data.competingFeel || data.excitementLevel === 0) {
+      toast({
+        title: "Missing Information",
+        description: "Please make sure you've answered all required questions (marked with * or having choices).",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      await apiRequest("POST", "/api/survey-responses", data);
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit survey. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -171,24 +221,24 @@ export default function Questionnaire() {
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
                   <span className="text-[#E8303A] mr-1">Q1.</span> What's your name? (optional)
                 </label>
-                <input type="text" className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400]" placeholder="First name is fine, or leave blank" />
+                <input type="text" name="student_name" className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400]" placeholder="First name is fine, or leave blank" />
               </div>
 
               <div className="space-y-3">
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
-                  <span className="text-[#E8303A] mr-1">Q2.</span> What class / group are you in?
+                  <span className="text-[#E8303A] mr-1">Q2.</span> What class / group are you in? *
                 </label>
-                <input type="text" className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400]" placeholder="e.g. 8A, 8B..." />
+                <input type="text" name="student_class" required className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400]" placeholder="e.g. 8A, 8B..." />
               </div>
 
               <div className="space-y-3">
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
-                  <span className="text-[#E8303A] mr-1">Q3.</span> How would you describe yourself as an athlete right now?
+                  <span className="text-[#E8303A] mr-1">Q3.</span> How would you describe yourself as an athlete right now? *
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {['Just getting started', 'Getting there', 'Pretty fit & active', 'Competitive athlete'].map((opt) => (
                     <label key={opt} className="opt-label">
-                      <input type="radio" name="athlete_level" className="w-4 h-4 accent-[#F5C400]" />
+                      <input type="radio" name="athlete_level" value={opt} required className="w-4 h-4 accent-[#F5C400]" />
                       {opt}
                     </label>
                   ))}
@@ -212,13 +262,22 @@ export default function Questionnaire() {
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                   {[
-                    { l: '⚽ Football / Soccer' }, { l: '🏀 Basketball' }, { l: '🏐 Netball' },
-                    { l: '🏉 Aussie Rules' }, { l: '🏈 Rugby' }, { l: '🏊 Swimming' },
-                    { l: '🤸 Gymnastics' }, { l: '🥋 Martial Arts' }, { l: '🚴 Cycling' },
-                    { l: '💃 Dance' }, { l: '🏃 Running' }, { l: '🏋️ Gym' }, { l: '🛋️ Nothing' }
+                    { l: '⚽ Football / Soccer', v: 'football' }, 
+                    { l: '🏀 Basketball', v: 'basketball' }, 
+                    { l: '🏐 Netball', v: 'netball' },
+                    { l: '🏉 Aussie Rules', v: 'aussie_rules' }, 
+                    { l: '🏈 Rugby', v: 'rugby' }, 
+                    { l: '🏊 Swimming', v: 'swimming' },
+                    { l: '🤸 Gymnastics', v: 'gymnastics' }, 
+                    { l: '🥋 Martial Arts', v: 'martial_arts' }, 
+                    { l: '🚴 Cycling', v: 'cycling' },
+                    { l: '💃 Dance', v: 'dance' }, 
+                    { l: '🏃 Running', v: 'running' }, 
+                    { l: '🏋️ Gym', v: 'gym' }, 
+                    { l: '🛋️ Nothing', v: 'none' }
                   ].map((s) => (
-                    <label key={s.l} className="opt-label">
-                      <input type="checkbox" className="w-4 h-4 accent-[#F5C400]" />
+                    <label key={s.v} className="opt-label">
+                      <input type="checkbox" name="outside_sports" value={s.v} className="w-4 h-4 accent-[#F5C400]" />
                       <span className="text-xs">{s.l}</span>
                     </label>
                   ))}
@@ -229,17 +288,17 @@ export default function Questionnaire() {
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
                   <span className="text-[#E8303A] mr-1">Q5.</span> Any other sports or activities?
                 </label>
-                <input type="text" className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400]" placeholder="List them here..." />
+                <input type="text" name="other_sports" className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400]" placeholder="List them here..." />
               </div>
 
               <div className="space-y-3">
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
-                  <span className="text-[#E8303A] mr-1">Q6.</span> How many days a week are you active?
+                  <span className="text-[#E8303A] mr-1">Q6.</span> How many days a week are you active? *
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   {['0 days', '1-2 days', '3-4 days', '5+ days'].map(d => (
                     <label key={d} className="opt-label">
-                      <input type="radio" name="days_active" className="w-4 h-4 accent-[#F5C400]" />
+                      <input type="radio" name="days_active" value={d} required className="w-4 h-4 accent-[#F5C400]" />
                       {d}
                     </label>
                   ))}
@@ -263,13 +322,17 @@ export default function Questionnaire() {
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
-                    '⚡ Short sprints (100m)', '🔄 Middle distance (400–800m)', 
-                    '🌍 Long distance (1500m+)', '🚧 Hurdles', 
-                    '🤝 Relay races', '😄 Fun / social runs', '😬 I don\'t enjoy running'
+                    {l: '⚡ Short sprints (100m)', v: 'sprints'}, 
+                    {l: '🔄 Middle distance (400–800m)', v: 'mid_dist'}, 
+                    {l: '🌍 Long distance (1500m+)', v: 'long_dist'}, 
+                    {l: '🚧 Hurdles', v: 'hurdles'}, 
+                    {l: '🤝 Relay races', v: 'relays'}, 
+                    {l: '😄 Fun / social runs', v: 'fun_runs'}, 
+                    {l: '😬 I don\'t enjoy running', v: 'none'}
                   ].map(r => (
-                    <label key={r} className="opt-label">
-                      <input type="checkbox" className="w-4 h-4 accent-[#F5C400]" />
-                      <span className="text-xs">{r}</span>
+                    <label key={r.v} className="opt-label">
+                      <input type="checkbox" name="running_enjoyed" value={r.v} className="w-4 h-4 accent-[#F5C400]" />
+                      <span className="text-xs">{r.l}</span>
                     </label>
                   ))}
                 </div>
@@ -294,13 +357,18 @@ export default function Questionnaire() {
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {[
-                    '🦘 Long jump', '🏔️ High jump', '🪨 Shot put', 
-                    '🥏 Discus', '🎯 Javelin', '3️⃣ Triple jump', 
-                    '🎪 Pole vault', '🤷 Not sure'
+                    {l: '🦘 Long jump', v: 'long_jump'}, 
+                    {l: '🏔️ High jump', v: 'high_jump'}, 
+                    {l: '🪨 Shot put', v: 'shot_put'}, 
+                    {l: '🥏 Discus', v: 'discus'}, 
+                    {l: '🎯 Javelin', v: 'javelin'}, 
+                    {l: '3️⃣ Triple jump', v: 'triple_jump'}, 
+                    {l: '🎪 Pole vault', v: 'pole_vault'}, 
+                    {l: '🤷 Not sure', v: 'not_sure'}
                   ].map(f => (
-                    <label key={f} className="opt-label">
-                      <input type="checkbox" className="w-4 h-4 accent-[#F5C400]" />
-                      <span className="text-xs">{f}</span>
+                    <label key={f.v} className="opt-label">
+                      <input type="checkbox" name="field_events" value={f.v} className="w-4 h-4 accent-[#F5C400]" />
+                      <span className="text-xs">{f.l}</span>
                     </label>
                   ))}
                 </div>
@@ -308,17 +376,21 @@ export default function Questionnaire() {
 
               <div className="space-y-3">
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
-                  <span className="text-[#E8303A] mr-1">Q10.</span> What do you find hardest about track?
+                  <span className="text-[#E8303A] mr-1">Q10.</span> What do you find hardest about track? *
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
-                    '😴 Gets boring quickly', '💨 Running out of breath', 
-                    '😣 It hurts / too hard', '🧠 Staying motivated', 
-                    '🏃 Not knowing technique', '😰 Competing', '😎 Nothing!'
+                    {l: '😴 Gets boring quickly', v: 'boredom'}, 
+                    {l: '💨 Running out of breath', v: 'fitness'}, 
+                    {l: '😣 It hurts / too hard', v: 'pain'}, 
+                    {l: '🧠 Staying motivated', v: 'motivation'}, 
+                    {l: '🏃 Not knowing technique', v: 'technique'}, 
+                    {l: '😰 Competing', v: 'competing'}, 
+                    {l: '😎 Nothing!', v: 'nothing'}
                   ].map(h => (
-                    <label key={h} className="opt-label">
-                      <input type="radio" name="hardest" className="w-4 h-4 accent-[#F5C400]" />
-                      <span className="text-xs">{h}</span>
+                    <label key={h.v} className="opt-label">
+                      <input type="radio" name="hardest" value={h.v} required className="w-4 h-4 accent-[#F5C400]" />
+                      <span className="text-xs">{h.l}</span>
                     </label>
                   ))}
                 </div>
@@ -341,14 +413,18 @@ export default function Questionnaire() {
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
-                    '🎮 Competitive games', '🏅 Personal challenges', 
-                    '🎵 Music playing', '🤜 Working as a team', 
-                    '🌀 Lots of variety', '🗽 Free choice', 
-                    '📈 Beating your own record', '👫 Being with friends'
+                    {l: '🎮 Competitive games', v: 'games'}, 
+                    {l: '🏅 Personal challenges', v: 'challenges'}, 
+                    {l: '🎵 Music playing', v: 'music'}, 
+                    {l: '🤜 Working as a team', v: 'team'}, 
+                    {l: '🌀 Lots of variety', v: 'variety'}, 
+                    {l: '🗽 Free choice', v: 'free_choice'}, 
+                    {l: '📈 Beating your own record', v: 'records'}, 
+                    {l: '👫 Being with friends', v: 'friends'}
                   ].map(f => (
-                    <label key={f} className="opt-label">
-                      <input type="checkbox" className="w-4 h-4 accent-[#F5C400]" />
-                      <span className="text-xs">{f}</span>
+                    <label key={f.v} className="opt-label">
+                      <input type="checkbox" name="fun_factors" value={f.v} className="w-4 h-4 accent-[#F5C400]" />
+                      <span className="text-xs">{f.l}</span>
                     </label>
                   ))}
                 </div>
@@ -356,16 +432,18 @@ export default function Questionnaire() {
 
               <div className="space-y-3">
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
-                  <span className="text-[#E8303A] mr-1">Q12.</span> How do you feel about competing?
+                  <span className="text-[#E8303A] mr-1">Q12.</span> How do you feel about competing? *
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
-                    '🔥 Love it — bring it on', '👍 Fine sometimes', 
-                    '🧘 Prefer personal goals', '😬 Uncomfortable'
+                    {l: '🔥 Love it — bring it on', v: 'love'}, 
+                    {l: '👍 Fine sometimes', v: 'sometimes'}, 
+                    {l: '🧘 Prefer personal goals', v: 'prefer_self'}, 
+                    {l: '😬 Uncomfortable', v: 'dislike'}
                   ].map(c => (
-                    <label key={c} className="opt-label">
-                      <input type="radio" name="comp_feel" className="w-4 h-4 accent-[#F5C400]" />
-                      <span className="text-xs">{c}</span>
+                    <label key={c.v} className="opt-label">
+                      <input type="radio" name="comp_feel" value={c.v} required className="w-4 h-4 accent-[#F5C400]" />
+                      <span className="text-xs">{c.l}</span>
                     </label>
                   ))}
                 </div>
@@ -397,18 +475,22 @@ export default function Questionnaire() {
             <div className="space-y-6">
               <div className="space-y-3">
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
-                  <span className="text-[#E8303A] mr-1">Q14.</span> What do you want to get out of this?
+                  <span className="text-[#E8303A] mr-1">Q14.</span> What do you want to get out of this? (Pick up to 3)
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
-                    '💪 Get fitter & faster', '🎯 Improve technique', 
-                    '🆕 Try new events', '⏱️ Set a PB', 
-                    '😄 Just enjoy it', '🏆 Make a school team', 
-                    '👫 With my mates', '📝 Get a good mark'
+                    {l: '💪 Get fitter & faster', v: 'fitter'}, 
+                    {l: '🎯 Improve technique', v: 'technique'}, 
+                    {l: '🆕 Try new events', v: 'try_events'}, 
+                    {l: '⏱️ Set a PB', v: 'pb'}, 
+                    {l: '😄 Just enjoy it', v: 'enjoy'}, 
+                    {l: '🏆 Make a school team', v: 'make_team'}, 
+                    {l: '👫 With my mates', v: 'friends_goal'}, 
+                    {l: '📝 Get a good mark', v: 'grade'}
                   ].map(g => (
-                    <label key={g} className="opt-label">
-                      <input type="checkbox" className="w-4 h-4 accent-[#F5C400]" />
-                      <span className="text-xs">{g}</span>
+                    <label key={g.v} className="opt-label">
+                      <input type="checkbox" name="goals" value={g.v} className="w-4 h-4 accent-[#F5C400]" />
+                      <span className="text-xs">{g.l}</span>
                     </label>
                   ))}
                 </div>
@@ -418,14 +500,14 @@ export default function Questionnaire() {
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
                   <span className="text-[#E8303A] mr-1">Q15.</span> One specific event or skill?
                 </label>
-                <input type="text" className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400]" placeholder="e.g. 100m, long jump..." />
+                <input type="text" name="specific_event" className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400]" placeholder="e.g. 100m, long jump..." />
               </div>
 
               <div className="space-y-3">
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
                   <span className="text-[#E8303A] mr-1">Q16.</span> What would make this awesome?
                 </label>
-                <textarea className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400] min-h-[100px]" placeholder="Be as honest as you want!" />
+                <textarea name="awesome_factor" className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400] min-h-[100px]" placeholder="Be as honest as you want!" />
               </div>
             </div>
           </section>
@@ -444,20 +526,20 @@ export default function Questionnaire() {
                   <span className="text-[#E8303A] mr-1">Q17.</span> Any injuries?
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  <label className="opt-label"><input type="radio" name="injury" className="accent-[#F5C400]" /> ✅ Nope</label>
-                  <label className="opt-label"><input type="radio" name="injury" className="accent-[#F5C400]" /> ⚠️ Yes</label>
+                  <label className="opt-label"><input type="radio" name="injury" value="no" className="accent-[#F5C400]" /> ✅ Nope</label>
+                  <label className="opt-label"><input type="radio" name="injury" value="yes" className="accent-[#F5C400]" /> ⚠️ Yes</label>
                 </div>
-                <textarea className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400] mt-2 min-h-[60px]" placeholder="If yes, briefly describe..." />
+                <textarea name="injury_info" className="w-full bg-[#2A2A2A] border-2 border-[#3a3a3a] rounded-lg p-3 outline-none focus:border-[#F5C400] mt-2 min-h-[60px]" placeholder="If yes, briefly describe..." />
               </div>
 
               <div className="space-y-3">
                 <label className="text-xs font-bold text-[#ccc] uppercase tracking-widest block">
-                  <span className="text-[#E8303A] mr-1">Q18.</span> Overall excitement level?
+                  <span className="text-[#E8303A] mr-1">Q18.</span> Overall excitement level? *
                 </label>
                 <div className="star-group">
                   {[5,4,3,2,1].map(n => (
                     <span key={n}>
-                      <input type="radio" name="excitement" id={`s${n}`} value={n} />
+                      <input type="radio" name="excitement" id={`s${n}`} value={n} required />
                       <label htmlFor={`s${n}`} className="text-4xl">★</label>
                     </span>
                   ))}
@@ -467,8 +549,12 @@ export default function Questionnaire() {
           </section>
 
           <div className="text-center pt-8">
-            <Button type="submit" className="bg-[#E8303A] hover:bg-[#c4242d] text-white rounded-lg px-12 py-8 font-['Bebas_Neue'] text-2xl tracking-[2px] shadow-[0_4px_20px_rgba(232,48,58,0.35)] hover:scale-105 transition-all">
-              Submit Check-In
+            <Button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="bg-[#E8303A] hover:bg-[#c4242d] text-white rounded-lg px-12 py-8 font-['Bebas_Neue'] text-2xl tracking-[2px] shadow-[0_4px_20px_rgba(232,48,58,0.35)] hover:scale-105 transition-all disabled:opacity-50"
+            >
+              {isSubmitting ? "Submitting..." : "Submit Check-In"}
             </Button>
             <p className="text-[10px] text-[#666] italic mt-4">Your responses help us make PE better for everyone.</p>
           </div>
