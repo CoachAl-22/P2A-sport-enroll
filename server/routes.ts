@@ -12,6 +12,7 @@ import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { importCustomersFromCSV, createSampleChildrenForParents } from "./csv-import";
+import { appendSurveyToSheet, ensureSheetHeaders } from "./googleSheets";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -2998,11 +2999,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Set up Google Sheet headers on startup
+  ensureSheetHeaders().catch(err => console.error("Failed to initialize sheet headers:", err));
+
   // Survey Response routes
   app.post("/api/survey-responses", async (req, res) => {
     try {
       const responseData = insertSurveyResponseSchema.parse(req.body);
       const newResponse = await storage.createSurveyResponse(responseData);
+
+      try {
+        await appendSurveyToSheet(responseData);
+        console.log("Survey response appended to Google Sheet");
+      } catch (sheetError) {
+        console.error("Failed to append to Google Sheet (DB save succeeded):", sheetError);
+      }
+
       res.json(newResponse);
     } catch (error: any) {
       console.error("Survey submission error:", error);
