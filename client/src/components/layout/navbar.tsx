@@ -44,6 +44,52 @@ export default function Navbar() {
             </Link>
           </div>
 
+          {!isAuthenticated && (
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-4">
+                <Link href="/">
+                  <Button
+                    variant={location === "/" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500 font-medium"
+                  >
+                    Home
+                  </Button>
+                </Link>
+                <Link href="/classes">
+                  <Button
+                    variant={location === "/classes" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500 font-medium"
+                  >
+                    Classes
+                  </Button>
+                </Link>
+                <Link href="/education">
+                  <Button
+                    variant={location === "/education" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500 font-medium"
+                  >
+                    Education Hub
+                  </Button>
+                </Link>
+                <Link href="/questionnaire">
+                  <Button
+                    variant={location === "/questionnaire" ? "default" : "ghost"}
+                    className="text-white bg-primary-500 hover:bg-primary-600 font-bold px-4 py-2 rounded-md shadow-sm ml-2"
+                  >
+                    Check-In
+                  </Button>
+                </Link>
+                <Link href="/#contact">
+                  <Button
+                    variant="ghost"
+                    className="text-gray-700 hover:text-primary-500 font-medium"
+                  >
+                    Contact
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          )}
 
           {isAuthenticated && (
             <div className="hidden md:block">
@@ -197,7 +243,7 @@ export default function Navbar() {
                   <Link href="/">
                     <Button
                       variant={location === "/" ? "default" : "ghost"}
-                      className="w-full justify-start"
+                      className="w-full justify-start text-gray-700"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Home
@@ -205,8 +251,8 @@ export default function Navbar() {
                   </Link>
                   <Link href="/classes">
                     <Button
-                      variant="ghost"
-                      className="w-full justify-start"
+                      variant={location === "/classes" ? "default" : "ghost"}
+                      className="w-full justify-start text-gray-700"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Classes
@@ -215,7 +261,7 @@ export default function Navbar() {
                   <Link href="/high-performance">
                     <Button
                       variant={location === "/high-performance" ? "default" : "ghost"}
-                      className="w-full justify-start"
+                      className="w-full justify-start text-gray-700"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       High Performance
@@ -224,7 +270,7 @@ export default function Navbar() {
                   <Link href="/senior-squad">
                     <Button
                       variant={location === "/senior-squad" ? "default" : "ghost"}
-                      className="w-full justify-start"
+                      className="w-full justify-start text-gray-700"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Senior Squad
@@ -233,16 +279,25 @@ export default function Navbar() {
                   <Link href="/education">
                     <Button
                       variant={location === "/education" ? "default" : "ghost"}
-                      className="w-full justify-start"
+                      className="w-full justify-start text-gray-700"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Education Hub
                     </Button>
                   </Link>
+                  <Link href="/questionnaire">
+                    <Button
+                      variant={location === "/questionnaire" ? "default" : "ghost"}
+                      className="w-full justify-start text-primary-600 font-bold"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Check-In
+                    </Button>
+                  </Link>
                   <Link href="/#contact">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start"
+                      className="w-full justify-start text-gray-700"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Contact
