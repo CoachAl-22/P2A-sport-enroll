@@ -16,37 +16,54 @@ export default function Questionnaire() {
     
     const formData = new FormData(e.currentTarget);
     
-    const data = {
-      studentName: formData.get("student_name") as string || null,
-      studentClass: formData.get("student_class") as string,
-      athleteLevel: formData.get("athlete_level") as string,
-      outsideSports: formData.getAll("outside_sports") as string[],
-      otherSports: formData.get("other_sports") as string || null,
-      daysActive: formData.get("days_active") as string,
-      runningEnjoyed: formData.getAll("running_enjoyed") as string[],
-      runningEnjoymentScale: runVal,
-      fieldEventsInterested: formData.getAll("field_events") as string[],
-      hardestPart: formData.get("hardest") as string,
-      funFactors: formData.getAll("fun_factors") as string[],
-      competingFeel: formData.get("comp_feel") as string,
-      engagementScale: engageVal,
-      goals: formData.getAll("goals") as string[],
-      specificEvent: formData.get("specific_event") as string || null,
-      awesomeFactor: formData.get("awesome_factor") as string || null,
-      injuryInfo: formData.get("injury_info") as string || null,
-      excitementLevel: parseInt(formData.get("excitement") as string) || 0,
-    };
+    const studentClass = (formData.get("student_class") as string) || "";
+    const athleteLevel = formData.get("athlete_level") as string | null;
+    const daysActive = formData.get("days_active") as string | null;
+    const hardestPart = formData.get("hardest") as string | null;
+    const competingFeel = formData.get("comp_feel") as string | null;
+    const excitementRaw = formData.get("excitement") as string | null;
+    const excitementLevel = excitementRaw ? parseInt(excitementRaw) : 0;
 
-    // Validation
-    if (!data.studentClass || !data.athleteLevel || !data.daysActive || !data.hardestPart || !data.competingFeel || data.excitementLevel === 0) {
+    const missing: string[] = [];
+    if (!studentClass.trim()) missing.push("Class/Group (Q2)");
+    if (!athleteLevel) missing.push("Athlete Level (Q3)");
+    if (!daysActive) missing.push("Days Active (Q6)");
+    if (!hardestPart) missing.push("Hardest Part (Q10)");
+    if (!competingFeel) missing.push("Competing Feel (Q12)");
+    if (!excitementLevel) missing.push("Excitement Level (Q18)");
+
+    if (missing.length > 0) {
       toast({
         title: "Missing Information",
-        description: "Please make sure you've answered all required questions (marked with * or having choices).",
-        variant: "destructive"
+        description: `Please answer: ${missing.join(", ")}`,
+        variant: "destructive",
+        duration: 8000,
       });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       setIsSubmitting(false);
       return;
     }
+
+    const data = {
+      studentName: (formData.get("student_name") as string) || null,
+      studentClass,
+      athleteLevel: athleteLevel!,
+      outsideSports: formData.getAll("outside_sports") as string[],
+      otherSports: (formData.get("other_sports") as string) || null,
+      daysActive: daysActive!,
+      runningEnjoyed: formData.getAll("running_enjoyed") as string[],
+      runningEnjoymentScale: runVal,
+      fieldEventsInterested: formData.getAll("field_events") as string[],
+      hardestPart: hardestPart!,
+      funFactors: formData.getAll("fun_factors") as string[],
+      competingFeel: competingFeel!,
+      engagementScale: engageVal,
+      goals: formData.getAll("goals") as string[],
+      specificEvent: (formData.get("specific_event") as string) || null,
+      awesomeFactor: (formData.get("awesome_factor") as string) || null,
+      injuryInfo: (formData.get("injury_info") as string) || null,
+      excitementLevel,
+    };
 
     try {
       await apiRequest("POST", "/api/survey-responses", data);
