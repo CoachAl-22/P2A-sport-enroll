@@ -125,7 +125,7 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
         <DialogHeader className="p-6 pb-0">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-2xl font-heading font-bold text-gray-900">
-              Senior Squad Application
+              Senior Athlete Squad Application
             </DialogTitle>
             <Button
               variant="ghost"
@@ -169,7 +169,7 @@ export function SeniorSquadApplication({ isOpen, onClose }: SeniorSquadApplicati
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-orange-800">
                     <Award className="w-5 h-5" />
-                    Elite Senior Squad Program
+                    Senior Athlete Squad - For Athletes Wanting to Take Their Training to the Next Level
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
