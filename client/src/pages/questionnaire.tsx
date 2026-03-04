@@ -380,7 +380,6 @@ export default function Questionnaire() {
                     {l: '🥏 Discus', v: 'discus'}, 
                     {l: '🎯 Javelin', v: 'javelin'}, 
                     {l: '3️⃣ Triple jump', v: 'triple_jump'}, 
-                    {l: '🎪 Pole vault', v: 'pole_vault'}, 
                     {l: '🤷 Not sure', v: 'not_sure'}
                   ].map(f => (
                     <label key={f.v} className="opt-label">
