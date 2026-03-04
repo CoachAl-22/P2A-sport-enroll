@@ -665,14 +665,26 @@ export default function Landing() {
                     <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
-                  <Button 
-                    onClick={() => {
-                      window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
-                  >
-                    Enroll Now
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => {
+                        window.open("https://power2adapt.setmore.com/", "_blank");
+                      }}
+                      variant="outline"
+                      className="border-primary-500 text-primary-500 hover:bg-primary-50"
+                    >
+                      <Calendar className="w-4 h-4 mr-1" />
+                      Book a Session
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -710,14 +722,26 @@ export default function Landing() {
                     <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
-                  <Button 
-                    onClick={() => {
-                      window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
-                  >
-                    Enroll Now
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => {
+                        window.open("https://power2adapt.setmore.com/", "_blank");
+                      }}
+                      variant="outline"
+                      className="border-primary-500 text-primary-500 hover:bg-primary-50"
+                    >
+                      <Calendar className="w-4 h-4 mr-1" />
+                      Book a Session
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
