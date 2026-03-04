@@ -676,14 +676,22 @@ export default function Landing() {
                       <Calendar className="w-4 h-4 mr-1" />
                       Book a Session
                     </Button>
-                    <Button 
-                      onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                      }}
-                      className="bg-primary-500 hover:bg-primary-600 text-white"
-                    >
-                      Enroll Now
-                    </Button>
+                    <div className="relative">
+                      <div className="absolute -top-10 -right-2 flex items-end gap-1 animate-bounce-subtle">
+                        <span className="text-xs font-bold text-primary-500 whitespace-nowrap bg-orange-50 px-2 py-1 rounded-full border border-orange-200 shadow-sm">Want long term results?</span>
+                        <svg className="w-5 h-5 text-primary-500 flex-shrink-0 translate-y-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 5v14M19 12l-7 7-7-7" />
+                        </svg>
+                      </div>
+                      <Button 
+                        onClick={() => {
+                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        }}
+                        className="bg-primary-500 hover:bg-primary-600 text-white"
+                      >
+                        Enroll Now
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -733,14 +741,22 @@ export default function Landing() {
                       <Calendar className="w-4 h-4 mr-1" />
                       Book a Session
                     </Button>
-                    <Button 
-                      onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                      }}
-                      className="bg-primary-500 hover:bg-primary-600 text-white"
-                    >
-                      Enroll Now
-                    </Button>
+                    <div className="relative">
+                      <div className="absolute -top-10 -right-2 flex items-end gap-1 animate-bounce-subtle">
+                        <span className="text-xs font-bold text-primary-500 whitespace-nowrap bg-orange-50 px-2 py-1 rounded-full border border-orange-200 shadow-sm">Want long term results?</span>
+                        <svg className="w-5 h-5 text-primary-500 flex-shrink-0 translate-y-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 5v14M19 12l-7 7-7-7" />
+                        </svg>
+                      </div>
+                      <Button 
+                        onClick={() => {
+                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        }}
+                        className="bg-primary-500 hover:bg-primary-600 text-white"
+                      >
+                        Enroll Now
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
