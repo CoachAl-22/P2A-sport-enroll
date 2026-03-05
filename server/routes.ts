@@ -10,7 +10,7 @@ import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
 import { importCustomersFromCSV, createSampleChildrenForParents } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders } from "./googleSheets";
 import { db } from "./db";
@@ -2832,71 +2832,133 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Athlete Portal API Routes
+  // Athlete Portal API Routes - Performance Records
   app.get("/api/performance-records/:childId", authMiddleware, async (req, res) => {
     try {
-      const { childId } = req.params;
-      // Mock data for now - will be replaced with real database queries
-      const mockRecords = [
-        {
-          id: "1",
-          childId,
-          recordType: "100m_sprint",
-          value: "12.45",
-          unit: "seconds",
-          recordDate: new Date("2024-12-01"),
-          isPersonalBest: true,
-          notes: "Great improvement in form"
-        },
-        {
-          id: "2", 
-          childId,
-          recordType: "long_jump",
-          value: "4.2",
-          unit: "meters",
-          recordDate: new Date("2024-11-15"),
-          isPersonalBest: false,
-          notes: "Good technique"
-        }
-      ];
-      res.json(mockRecords);
+      const records = await storage.getPerformanceRecordsByChild(req.params.childId);
+      res.json(records);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
 
+  app.post("/api/performance-records", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
+    try {
+      const recordData = insertPerformanceRecordSchema.parse(req.body);
+      const record = await storage.createPerformanceRecord(recordData);
+      res.json(record);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/performance-records/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
+    try {
+      const allowedFields = ["recordType", "value", "unit", "recordDate", "classId", "coachId", "notes", "isPersonalBest"];
+      const updates: Record<string, any> = {};
+      for (const key of allowedFields) {
+        if (key in req.body) updates[key] = req.body[key];
+      }
+      const record = await storage.updatePerformanceRecord(req.params.id, updates);
+      res.json(record);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/performance-records/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
+    try {
+      await storage.deletePerformanceRecord(req.params.id);
+      res.json({ message: "Record deleted" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Training Goals
   app.get("/api/training-goals/:childId", authMiddleware, async (req, res) => {
     try {
-      const { childId } = req.params;
-      const mockGoals = [
-        {
-          id: "1",
-          childId,
-          title: "Improve 100m Sprint Time",
-          description: "Work on starting technique and acceleration",
-          targetValue: "11.50",
-          targetUnit: "seconds",
-          currentValue: "12.45",
-          status: "active",
-          priority: "high",
-          category: "speed",
-          targetDate: new Date("2025-03-01")
-        },
-        {
-          id: "2",
-          childId,
-          title: "Increase Long Jump Distance",
-          description: "Focus on take-off technique",
-          targetValue: "5.0",
-          targetUnit: "meters", 
-          currentValue: "4.2",
-          status: "active",
-          priority: "medium",
-          category: "technique",
-          targetDate: new Date("2025-04-15")
-        }
-      ];
-      res.json(mockGoals);
+      const goals = await storage.getTrainingGoalsByChild(req.params.childId);
+      res.json(goals);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/training-goals", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
+    try {
+      const goalData = insertTrainingGoalSchema.parse(req.body);
+      const goal = await storage.createTrainingGoal(goalData);
+      res.json(goal);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/training-goals/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
+    try {
+      const allowedFields = ["title", "description", "targetValue", "targetUnit", "currentValue", "targetDate", "status", "priority", "category", "coachId"];
+      const updates: Record<string, any> = {};
+      for (const key of allowedFields) {
+        if (key in req.body) updates[key] = req.body[key];
+      }
+      if (updates.status === "achieved") updates.achievedAt = new Date();
+      const goal = await storage.updateTrainingGoal(req.params.id, updates);
+      res.json(goal);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/training-goals/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
+    try {
+      await storage.deleteTrainingGoal(req.params.id);
+      res.json({ message: "Goal deleted" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Admin: Get all children for athlete management
+  app.get("/api/admin/all-children", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
+    try {
+      const allChildren = await storage.getAllChildren();
+      res.json(allChildren);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

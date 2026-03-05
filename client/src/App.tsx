@@ -35,6 +35,7 @@ import VideoHighlightsParent from "@/components/video-highlights-parent";
 import AthletePortal from "@/pages/athlete-portal";
 import Coaches from "@/pages/coaches";
 import Questionnaire from "@/pages/questionnaire";
+import AdminAthletes from "@/pages/admin-athletes";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -101,6 +102,7 @@ function Router() {
           <Route path="/admin/staff" component={AdminStaff} />
           <Route path="/admin/customers" component={AdminCustomers} />
           <Route path="/admin/enquiries" component={AdminEnquiries} />
+          <Route path="/admin/athletes" component={AdminAthletes} />
         </>
       )}
       <Route component={NotFound} />

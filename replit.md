@@ -52,6 +52,7 @@ Preferred communication style: Simple, everyday language.
 - **Video Highlights with Skool Integration**: Complete performance video management system with one-click sharing to Skool community platform, shareable public links, and view tracking.
 - **URL Routing**: Proper browser URL routing implemented for all pages, enabling direct link sharing with clean paths (e.g., power2adapt.online/education).
 - **Student Survey (Check-In)**: Track & Field / Running Improvement survey with 18 questions, saved to database and automatically synced to Google Sheets via Replit Google Sheets integration.
+- **Athlete Performance Tracking**: Admin interface (`/admin/athletes`) for managing individual athlete performance records (sprint times, jump distances, etc.) and training goals with progress tracking, personal best markers, and priority/category management. Full CRUD with auth-protected API routes.
 - **UI/UX Refinements**: Parent-friendly messaging, simplified navigation, enhanced enrollment flows, and improved error handling.
 
 ## External Dependencies

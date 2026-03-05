@@ -15,6 +15,8 @@ import {
   attendanceRecords,
   termConfigurations,
   termHolidays,
+  performanceRecords,
+  trainingGoals,
   performanceVideoHighlights,
   videoShares,
   surveyResponses,
@@ -54,6 +56,10 @@ import {
   type InsertPerformanceVideoHighlight,
   type VideoShare,
   type InsertVideoShare,
+  type PerformanceRecord,
+  type InsertPerformanceRecord,
+  type TrainingGoal,
+  type InsertTrainingGoal,
   type SurveyResponse,
   type InsertSurveyResponse,
 } from "@shared/schema";
@@ -211,6 +217,21 @@ export interface IStorage {
   getVideoSharesByParent(parentId: string): Promise<VideoShare[]>;
   updateVideoShare(id: string, updates: Partial<VideoShare>): Promise<VideoShare>;
   deleteVideoShare(id: string): Promise<void>;
+
+  // Performance Record operations
+  getPerformanceRecordsByChild(childId: string): Promise<PerformanceRecord[]>;
+  createPerformanceRecord(record: InsertPerformanceRecord): Promise<PerformanceRecord>;
+  updatePerformanceRecord(id: string, updates: Partial<PerformanceRecord>): Promise<PerformanceRecord>;
+  deletePerformanceRecord(id: string): Promise<void>;
+
+  // Training Goal operations
+  getTrainingGoalsByChild(childId: string): Promise<TrainingGoal[]>;
+  createTrainingGoal(goal: InsertTrainingGoal): Promise<TrainingGoal>;
+  updateTrainingGoal(id: string, updates: Partial<TrainingGoal>): Promise<TrainingGoal>;
+  deleteTrainingGoal(id: string): Promise<void>;
+
+  // All children (for admin)
+  getAllChildren(): Promise<Child[]>;
 
   // Survey operations
   createSurveyResponse(response: InsertSurveyResponse): Promise<SurveyResponse>;
@@ -1377,6 +1398,44 @@ export class DatabaseStorage implements IStorage {
 
   async deleteVideoShare(id: string): Promise<void> {
     await db.delete(videoShares).where(eq(videoShares.id, id));
+  }
+
+  // Performance Record operations
+  async getPerformanceRecordsByChild(childId: string): Promise<PerformanceRecord[]> {
+    return await db.select().from(performanceRecords).where(eq(performanceRecords.childId, childId)).orderBy(desc(performanceRecords.recordDate));
+  }
+
+  async createPerformanceRecord(record: InsertPerformanceRecord): Promise<PerformanceRecord> {
+    const [created] = await db.insert(performanceRecords).values(record).returning();
+    return created;
+  }
+
+  async updatePerformanceRecord(id: string, updates: Partial<PerformanceRecord>): Promise<PerformanceRecord> {
+    const [updated] = await db.update(performanceRecords).set({ ...updates, updatedAt: new Date() }).where(eq(performanceRecords.id, id)).returning();
+    return updated;
+  }
+
+  async deletePerformanceRecord(id: string): Promise<void> {
+    await db.delete(performanceRecords).where(eq(performanceRecords.id, id));
+  }
+
+  // Training Goal operations
+  async getTrainingGoalsByChild(childId: string): Promise<TrainingGoal[]> {
+    return await db.select().from(trainingGoals).where(eq(trainingGoals.childId, childId)).orderBy(desc(trainingGoals.createdAt));
+  }
+
+  async createTrainingGoal(goal: InsertTrainingGoal): Promise<TrainingGoal> {
+    const [created] = await db.insert(trainingGoals).values(goal).returning();
+    return created;
+  }
+
+  async updateTrainingGoal(id: string, updates: Partial<TrainingGoal>): Promise<TrainingGoal> {
+    const [updated] = await db.update(trainingGoals).set({ ...updates, updatedAt: new Date() }).where(eq(trainingGoals.id, id)).returning();
+    return updated;
+  }
+
+  async deleteTrainingGoal(id: string): Promise<void> {
+    await db.delete(trainingGoals).where(eq(trainingGoals.id, id));
   }
 
   // Survey operations

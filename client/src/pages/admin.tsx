@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/layout/navbar";
 import AnalyticsCard from "@/components/admin/analytics-card";
-import { Plus, Users, Settings, BarChart3, MessageSquare, CreditCard, TrendingUp, AlertCircle, FileText, CalendarIcon, Upload, Database } from "lucide-react";
+import { Plus, Users, Settings, BarChart3, MessageSquare, CreditCard, TrendingUp, AlertCircle, FileText, CalendarIcon, Upload, Database, Trophy } from "lucide-react";
 import { Redirect } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { useState } from "react";
@@ -325,6 +325,15 @@ export default function Admin() {
                 <MessageSquare className="w-6 h-6 mx-auto" />
               </div>
               <span className="text-sm font-medium">Contact Enquiries</span>
+            </a>
+          </Button>
+
+          <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
+            <a href="/admin/athletes">
+              <div className="text-yellow-400 mb-2">
+                <Trophy className="w-6 h-6 mx-auto" />
+              </div>
+              <span className="text-sm font-medium">Athlete Performance</span>
             </a>
           </Button>
           

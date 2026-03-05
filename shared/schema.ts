@@ -848,6 +848,19 @@ export type InsertSurveyResponse = z.infer<typeof insertSurveyResponseSchema>;
 
 
 
+export const insertPerformanceRecordSchema = createInsertSchema(performanceRecords).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertTrainingGoalSchema = createInsertSchema(trainingGoals).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  achievedAt: true,
+});
+
 export const insertAttendanceRecordSchema = createInsertSchema(attendanceRecords).omit({
   id: true,
   createdAt: true,
@@ -893,6 +906,10 @@ export type Waitlist = typeof waitlists.$inferSelect;
 export type InsertWaitlist = z.infer<typeof insertWaitlistSchema>;
 export type BlogArticle = typeof blogArticles.$inferSelect;
 export type InsertBlogArticle = z.infer<typeof insertBlogArticleSchema>;
+export type PerformanceRecord = typeof performanceRecords.$inferSelect;
+export type InsertPerformanceRecord = z.infer<typeof insertPerformanceRecordSchema>;
+export type TrainingGoal = typeof trainingGoals.$inferSelect;
+export type InsertTrainingGoal = z.infer<typeof insertTrainingGoalSchema>;
 export type AttendanceRecord = typeof attendanceRecords.$inferSelect;
 export type InsertAttendanceRecord = z.infer<typeof insertAttendanceRecordSchema>;
 export type TermConfiguration = typeof termConfigurations.$inferSelect;
