@@ -683,13 +683,33 @@ export default function AdminAthletes() {
             </div>
             <div>
               <Label>Grade / Year Level</Label>
-              <Input placeholder="e.g. Year 5, Grade 3" value={newAthlete.grade} onChange={(e) => setNewAthlete({ ...newAthlete, grade: e.target.value })} />
+              <Select value={newAthlete.grade || "N/A"} onValueChange={(v) => setNewAthlete({ ...newAthlete, grade: v })}>
+                <SelectTrigger><SelectValue placeholder="Select grade..." /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="N/A">N/A</SelectItem>
+                  <SelectItem value="Prep">Prep</SelectItem>
+                  <SelectItem value="Year 1">Year 1</SelectItem>
+                  <SelectItem value="Year 2">Year 2</SelectItem>
+                  <SelectItem value="Year 3">Year 3</SelectItem>
+                  <SelectItem value="Year 4">Year 4</SelectItem>
+                  <SelectItem value="Year 5">Year 5</SelectItem>
+                  <SelectItem value="Year 6">Year 6</SelectItem>
+                  <SelectItem value="Year 7">Year 7</SelectItem>
+                  <SelectItem value="Year 8">Year 8</SelectItem>
+                  <SelectItem value="Year 9">Year 9</SelectItem>
+                  <SelectItem value="Year 10">Year 10</SelectItem>
+                  <SelectItem value="Year 11">Year 11</SelectItem>
+                  <SelectItem value="Year 12">Year 12</SelectItem>
+                  <SelectItem value="Adult">Adult</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <Label>Parent / Guardian *</Label>
-              <Select value={newAthlete.parentId} onValueChange={(v) => setNewAthlete({ ...newAthlete, parentId: v })}>
+              <Label>Parent / Guardian</Label>
+              <Select value={newAthlete.parentId || "N/A"} onValueChange={(v) => setNewAthlete({ ...newAthlete, parentId: v })}>
                 <SelectTrigger><SelectValue placeholder="Select parent..." /></SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="N/A">N/A (No parent linked)</SelectItem>
                   {customers.map((c: any) => (
                     <SelectItem key={c.id} value={c.id}>{c.firstName} {c.lastName} ({c.email})</SelectItem>
                   ))}
@@ -708,16 +728,18 @@ export default function AdminAthletes() {
               className="w-full"
               disabled={createAthleteMutation.isPending}
               onClick={() => {
-                if (!newAthlete.firstName || !newAthlete.lastName || !newAthlete.dateOfBirth || !newAthlete.parentId) {
-                  toast({ title: "Missing fields", description: "Please fill in first name, last name, date of birth, and select a parent", variant: "destructive" });
+                if (!newAthlete.firstName || !newAthlete.lastName || !newAthlete.dateOfBirth) {
+                  toast({ title: "Missing fields", description: "Please fill in first name, last name, and date of birth", variant: "destructive" });
                   return;
                 }
+                const parentValue = (!newAthlete.parentId || newAthlete.parentId === "N/A") ? user?.id : newAthlete.parentId;
+                const gradeValue = (!newAthlete.grade || newAthlete.grade === "N/A") ? null : newAthlete.grade;
                 createAthleteMutation.mutate({
                   firstName: newAthlete.firstName,
                   lastName: newAthlete.lastName,
                   dateOfBirth: new Date(newAthlete.dateOfBirth).toISOString(),
-                  grade: newAthlete.grade || null,
-                  parentId: newAthlete.parentId,
+                  grade: gradeValue,
+                  parentId: parentValue,
                   medicalInfo: newAthlete.medicalInfo || null,
                   emergencyContact: newAthlete.emergencyContact || null,
                 });
