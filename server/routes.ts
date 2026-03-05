@@ -577,7 +577,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      const childData = insertChildSchema.parse(req.body);
+      const body = { ...req.body };
+      if (body.dateOfBirth && typeof body.dateOfBirth === 'string') body.dateOfBirth = new Date(body.dateOfBirth);
+      const childData = insertChildSchema.parse(body);
       const child = await storage.createChild(childData);
       res.json(child);
     } catch (error: any) {

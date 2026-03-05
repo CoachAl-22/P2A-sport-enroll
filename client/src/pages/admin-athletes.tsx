@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/layout/navbar";
-import { PlusIcon, EditIcon, TrashIcon, Trophy, Target, TrendingUp, Search, ChevronDown } from "lucide-react";
+import { PlusIcon, EditIcon, TrashIcon, Trophy, Target, TrendingUp, Search, ChevronDown, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Redirect } from "wouter";
@@ -54,6 +54,16 @@ export default function AdminAthletes() {
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<any>(null);
   const [editingGoal, setEditingGoal] = useState<any>(null);
+  const [isAddAthleteOpen, setIsAddAthleteOpen] = useState(false);
+  const [newAthlete, setNewAthlete] = useState({
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    grade: "",
+    parentId: "",
+    medicalInfo: "",
+    emergencyContact: "",
+  });
 
   const [newRecord, setNewRecord] = useState({
     recordType: "",
@@ -78,6 +88,21 @@ export default function AdminAthletes() {
 
   const { data: children = [], isLoading: childrenLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/all-children"],
+  });
+
+  const { data: customers = [] } = useQuery<any[]>({
+    queryKey: ["/api/admin/customers"],
+  });
+
+  const createAthleteMutation = useMutation({
+    mutationFn: (data: any) => apiRequest("POST", "/api/admin/children", data),
+    onSuccess: (res: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/all-children"] });
+      setIsAddAthleteOpen(false);
+      setNewAthlete({ firstName: "", lastName: "", dateOfBirth: "", grade: "", parentId: "", medicalInfo: "", emergencyContact: "" });
+      toast({ title: "Athlete added successfully" });
+    },
+    onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
 
   const { data: records = [], isLoading: recordsLoading } = useQuery<any[]>({
@@ -217,7 +242,12 @@ export default function AdminAthletes() {
           <div className="lg:col-span-1">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Select Athlete</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Athletes</CardTitle>
+                  <Button size="sm" variant="outline" onClick={() => setIsAddAthleteOpen(true)} className="gap-1">
+                    <UserPlus className="w-4 h-4" /> Add
+                  </Button>
+                </div>
                 <div className="relative mt-2">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <Input
@@ -625,6 +655,75 @@ export default function AdminAthletes() {
               }}
             >
               {createGoalMutation.isPending || updateGoalMutation.isPending ? "Saving..." : editingGoal ? "Update Goal" : "Add Goal"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ADD ATHLETE DIALOG */}
+      <Dialog open={isAddAthleteOpen} onOpenChange={(open) => { if (!open) { setIsAddAthleteOpen(false); setNewAthlete({ firstName: "", lastName: "", dateOfBirth: "", grade: "", parentId: "", medicalInfo: "", emergencyContact: "" }); } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Athlete</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>First Name *</Label>
+                <Input placeholder="First name" value={newAthlete.firstName} onChange={(e) => setNewAthlete({ ...newAthlete, firstName: e.target.value })} />
+              </div>
+              <div>
+                <Label>Last Name *</Label>
+                <Input placeholder="Last name" value={newAthlete.lastName} onChange={(e) => setNewAthlete({ ...newAthlete, lastName: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <Label>Date of Birth *</Label>
+              <Input type="date" value={newAthlete.dateOfBirth} onChange={(e) => setNewAthlete({ ...newAthlete, dateOfBirth: e.target.value })} />
+            </div>
+            <div>
+              <Label>Grade / Year Level</Label>
+              <Input placeholder="e.g. Year 5, Grade 3" value={newAthlete.grade} onChange={(e) => setNewAthlete({ ...newAthlete, grade: e.target.value })} />
+            </div>
+            <div>
+              <Label>Parent / Guardian *</Label>
+              <Select value={newAthlete.parentId} onValueChange={(v) => setNewAthlete({ ...newAthlete, parentId: v })}>
+                <SelectTrigger><SelectValue placeholder="Select parent..." /></SelectTrigger>
+                <SelectContent>
+                  {customers.map((c: any) => (
+                    <SelectItem key={c.id} value={c.id}>{c.firstName} {c.lastName} ({c.email})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Emergency Contact</Label>
+              <Input placeholder="Phone number" value={newAthlete.emergencyContact} onChange={(e) => setNewAthlete({ ...newAthlete, emergencyContact: e.target.value })} />
+            </div>
+            <div>
+              <Label>Medical Information</Label>
+              <Textarea placeholder="Allergies, conditions, etc." value={newAthlete.medicalInfo} onChange={(e) => setNewAthlete({ ...newAthlete, medicalInfo: e.target.value })} />
+            </div>
+            <Button
+              className="w-full"
+              disabled={createAthleteMutation.isPending}
+              onClick={() => {
+                if (!newAthlete.firstName || !newAthlete.lastName || !newAthlete.dateOfBirth || !newAthlete.parentId) {
+                  toast({ title: "Missing fields", description: "Please fill in first name, last name, date of birth, and select a parent", variant: "destructive" });
+                  return;
+                }
+                createAthleteMutation.mutate({
+                  firstName: newAthlete.firstName,
+                  lastName: newAthlete.lastName,
+                  dateOfBirth: new Date(newAthlete.dateOfBirth).toISOString(),
+                  grade: newAthlete.grade || null,
+                  parentId: newAthlete.parentId,
+                  medicalInfo: newAthlete.medicalInfo || null,
+                  emergencyContact: newAthlete.emergencyContact || null,
+                });
+              }}
+            >
+              {createAthleteMutation.isPending ? "Adding..." : "Add Athlete"}
             </Button>
           </div>
         </DialogContent>
