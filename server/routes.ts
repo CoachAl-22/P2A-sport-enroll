@@ -2833,7 +2833,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Athlete Portal API Routes - Performance Records
-  app.get("/api/performance-records/:childId", authMiddleware, async (req, res) => {
+  app.get("/api/performance-records/:childId", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+
     try {
       const records = await storage.getPerformanceRecordsByChild(req.params.childId);
       res.json(records);
@@ -2849,7 +2852,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
 
     try {
-      const recordData = insertPerformanceRecordSchema.parse(req.body);
+      const body = { ...req.body };
+      if (body.recordDate && typeof body.recordDate === 'string') body.recordDate = new Date(body.recordDate);
+      const recordData = insertPerformanceRecordSchema.parse(body);
       const record = await storage.createPerformanceRecord(recordData);
       res.json(record);
     } catch (error: any) {
@@ -2869,6 +2874,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const key of allowedFields) {
         if (key in req.body) updates[key] = req.body[key];
       }
+      if (updates.recordDate && typeof updates.recordDate === 'string') updates.recordDate = new Date(updates.recordDate);
       const record = await storage.updatePerformanceRecord(req.params.id, updates);
       res.json(record);
     } catch (error: any) {
@@ -2891,7 +2897,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Training Goals
-  app.get("/api/training-goals/:childId", authMiddleware, async (req, res) => {
+  app.get("/api/training-goals/:childId", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+
     try {
       const goals = await storage.getTrainingGoalsByChild(req.params.childId);
       res.json(goals);
@@ -2907,7 +2916,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
 
     try {
-      const goalData = insertTrainingGoalSchema.parse(req.body);
+      const body = { ...req.body };
+      if (body.targetDate && typeof body.targetDate === 'string') body.targetDate = new Date(body.targetDate);
+      const goalData = insertTrainingGoalSchema.parse(body);
       const goal = await storage.createTrainingGoal(goalData);
       res.json(goal);
     } catch (error: any) {
@@ -2927,6 +2938,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const key of allowedFields) {
         if (key in req.body) updates[key] = req.body[key];
       }
+      if (updates.targetDate && typeof updates.targetDate === 'string') updates.targetDate = new Date(updates.targetDate);
       if (updates.status === "achieved") updates.achievedAt = new Date();
       const goal = await storage.updateTrainingGoal(req.params.id, updates);
       res.json(goal);
