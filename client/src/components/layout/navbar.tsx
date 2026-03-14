@@ -155,14 +155,24 @@ export default function Navbar() {
                   user?.role === "admin" ||
                   user?.email === "coach@power2adapt.com"
                 ) && (
-                  <Link href="/attendance">
-                    <Button
-                      variant={location === "/attendance" ? "default" : "ghost"}
-                      className="text-gray-700 hover:text-primary-500"
-                    >
-                      Attendance
-                    </Button>
-                  </Link>
+                  <>
+                    <Link href="/attendance">
+                      <Button
+                        variant={location === "/attendance" ? "default" : "ghost"}
+                        className="text-gray-700 hover:text-primary-500"
+                      >
+                        Attendance
+                      </Button>
+                    </Link>
+                    <Link href="/onboarding">
+                      <Button
+                        variant={location === "/onboarding" ? "default" : "ghost"}
+                        className="text-gray-700 hover:text-primary-500 font-semibold"
+                      >
+                        Onboarding
+                      </Button>
+                    </Link>
+                  </>
                 )}
                 <Link href="/admin">
                   <Button
@@ -377,15 +387,26 @@ export default function Navbar() {
                     user?.role === "admin" ||
                     user?.email === "coach@power2adapt.com"
                   ) && (
-                    <Link href="/attendance">
-                      <Button
-                        variant={location === "/attendance" ? "default" : "ghost"}
-                        className="w-full justify-start"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        Attendance
-                      </Button>
-                    </Link>
+                    <>
+                      <Link href="/attendance">
+                        <Button
+                          variant={location === "/attendance" ? "default" : "ghost"}
+                          className="w-full justify-start"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          Attendance
+                        </Button>
+                      </Link>
+                      <Link href="/onboarding">
+                        <Button
+                          variant={location === "/onboarding" ? "default" : "ghost"}
+                          className="w-full justify-start"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          Onboarding
+                        </Button>
+                      </Link>
+                    </>
                   )}
                   {(user as any)?.user?.role === "admin" && (
                     <Link href="/admin">

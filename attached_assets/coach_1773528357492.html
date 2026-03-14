@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Coach Reference Guide — Power2ADAPT</title>
+<style>
+/* ── Self-contained fonts via system stack + Google Fonts fallback ── */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --orange:       #F26522;
+  --orange-dark:  #d4541a;
+  --orange-pale:  #fff5f0;
+  --cyan:         #00B4D8;
+  --cyan-pale:    #f0fbfd;
+  --green:        #1aaa6e;
+  --green-pale:   #f0faf5;
+  --amber:        #f0a500;
+  --amber-pale:   #fffbf0;
+  --red:          #e03c3c;
+  --red-pale:     #fff5f5;
+  --purple:       #6b5ce7;
+  --purple-pale:  #f3f0ff;
+  --black:        #0a0a0a;
+  --text:         #1a1a1a;
+  --muted:        #6b7280;
+  --border:       #e5e7eb;
+  --bg:           #f4f4f5;
+  --white:        #ffffff;
+  --r:            12px;
+  --rs:           8px;
+  --font-head:    'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+  --font-body:    'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Site header bar ── */
+.site-bar {
+  background: var(--black);
+  padding: 0 24px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--orange);
+}
+
+.site-bar-logo {
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--white);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-bar-logo span { color: var(--orange); }
+
+.site-bar-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(242,101,34,0.15);
+  color: var(--orange);
+  border: 1px solid rgba(242,101,34,0.3);
+  padding: 4px 12px;
+  border-radius: 99px;
+}
+
+/* ── Page wrap ── */
+.wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 80px; }
+
+/* ── Page header ── */
+.page-hdr {
+  background: var(--black);
+  border-radius: var(--r);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hdr::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 180px; height: 100%;
+  background: linear-gradient(135deg, transparent 60%, rgba(242,101,34,0.08));
+  pointer-events: none;
+}
+
+.hdr-eye {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 6px;
+}
+
+.hdr-title {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.hdr-title span { color: var(--orange); }
+
+.hdr-sub {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  line-height: 1.65;
+  max-width: 480px;
+}
+
+.hdr-badge {
+  background: var(--orange);
+  color: var(--white);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 99px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+/* ── Tab navigation ── */
+.tab-nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.tab-btn {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 99px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+.tab-btn.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(242,101,34,0.28);
+}
+
+/* ── Panels ── */
+.panel { display: none; }
+.panel.active { display: block; animation: fadeUp 0.28s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.card-head {
+  padding: 15px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.card-icon {
+  width: 32px; height: 32px;
+  border-radius: var(--rs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.card-icon.o { background: var(--orange-pale); }
+.card-icon.c { background: var(--cyan-pale); }
+.card-icon.g { background: var(--green-pale); }
+.card-icon.a { background: var(--amber-pale); }
+
+.card-title {
+  font-family: var(--font-head);
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--black);
+}
+
+.card-sub { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+.card-body { padding: 20px 22px; }
+
+/* ── Timeline ── */
+.timeline { padding: 24px 28px; }
+.tl-title {
+  font-family: var(--font-head);
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--black);
+  margin-bottom: 20px;
+}
+
+.steps { display: flex; flex-direction: column; }
+
+.step { display: flex; gap: 16px; position: relative; }
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 15px; top: 34px; bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.step-dot {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.2s;
+}
+
+.step:hover .step-dot { transform: scale(1.1); }
+.step-dot.c { background: var(--cyan); }
+.step-dot.g { background: var(--green); }
+
+.step-body { padding-bottom: 22px; flex: 1; }
+.step-time {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 2px;
+}
+.step-time.c { color: var(--cyan); }
+.step-time.g { color: var(--green); }
+.step-head { font-weight: 700; font-size: 0.93rem; color: var(--black); margin-bottom: 3px; }
+.step-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+
+/* ── Signal grid ── */
+.sig-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+  margin-bottom: 20px;
+}
+
+.sig-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  border-top: 3px solid var(--border);
+  transition: box-shadow 0.2s;
+}
+
+.sig-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+.sig-card.g { border-top-color: var(--green); }
+.sig-card.a { border-top-color: var(--amber); }
+.sig-card.r { border-top-color: var(--red); }
+.sig-card.p { border-top-color: var(--purple); }
+
+.sig-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 11px;
+}
+.sig-label.g { color: var(--green); }
+.sig-label.a { color: var(--amber); }
+.sig-label.r { color: var(--red); }
+.sig-label.p { color: var(--purple); }
+
+.sig-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.83rem;
+  color: var(--text);
+  margin-bottom: 7px;
+  line-height: 1.5;
+}
+.sig-item:last-child { margin-bottom: 0; }
+
+.sig-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+.sig-dot.g { background: var(--green); }
+.sig-dot.a { background: var(--amber); }
+.sig-dot.r { background: var(--red); }
+.sig-dot.p { background: var(--purple); }
+
+/* ── Action rows ── */
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.col-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.act-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 0.83rem;
+  color: var(--text);
+  margin-bottom: 7px;
+  line-height: 1.5;
+}
+
+.arr { font-size: 0.7rem; color: var(--orange); flex-shrink: 0; margin-top: 3px; font-weight: 700; }
+.arr.c { color: var(--cyan); }
+
+/* ── Summary table ── */
+.sum-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+.sum-table th {
+  background: var(--black);
+  color: var(--white);
+  padding: 10px 13px;
+  text-align: left;
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.sum-table td {
+  padding: 11px 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.55;
+}
+.sum-table tr:last-child td { border-bottom: none; }
+.sum-table tr:nth-child(even) td { background: #fafafa; }
+.sum-table tr:hover td { background: var(--orange-pale); transition: background 0.15s; }
+
+.pill {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+.pill.o { background: var(--orange-pale); color: var(--orange); }
+.pill.c { background: var(--cyan-pale); color: var(--cyan); }
+.pill.g { background: var(--green-pale); color: var(--green); }
+.pill.r { background: var(--red-pale); color: var(--red); }
+
+/* ── Flag boxes ── */
+.flag-box {
+  border-radius: var(--rs);
+  padding: 14px 16px;
+  font-size: 0.84rem;
+  line-height: 1.65;
+  margin-bottom: 12px;
+  transition: transform 0.15s;
+}
+.flag-box:hover { transform: translateX(3px); }
+.flag-box:last-child { margin-bottom: 0; }
+.flag-box.r { background: var(--red-pale);    border: 1px solid rgba(224,60,60,.2);    color: #c03030; }
+.flag-box.a { background: var(--amber-pale);  border: 1px solid rgba(240,165,0,.2);    color: #9a6800; }
+.flag-box.p { background: var(--purple-pale); border: 1px solid rgba(107,92,231,.2);   color: var(--purple); }
+.flag-box strong {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* ── Print button ── */
+.print-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+
+.print-btn {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.print-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .sig-grid    { grid-template-columns: 1fr; }
+  .action-row  { grid-template-columns: 1fr; }
+  .page-hdr    { flex-direction: column; }
+  .hdr-badge   { align-self: flex-start; }
+  .wrap        { padding: 20px 14px 60px; }
+  .tab-btn     { font-size: 0.75rem; padding: 7px 12px; }
+}
+
+@media print {
+  .site-bar, .tab-nav, .print-bar { display: none !important; }
+  .panel { display: block !important; }
+  .card  { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Site bar ── -->
+<div class="site-bar">
+  <a href="/" class="site-bar-logo">POWER2<span>ADAPT</span></a>
+  <div class="site-bar-badge">Coach Reference — Internal Use Only</div>
+</div>
+
+<div class="wrap">
+
+  <!-- ── Page header ── -->
+  <div class="page-hdr">
+    <div>
+      <div class="hdr-eye">Internal Resource — Not for Public Sharing</div>
+      <div class="hdr-title">Onboarding <span>Reference Guide</span></div>
+      <div class="hdr-sub">What to look for in each athlete's onboarding responses — and how to action them within 48 hours of registration.</div>
+    </div>
+    <div class="hdr-badge">Coach Use Only</div>
+  </div>
+
+  <!-- ── Print bar ── -->
+  <div class="print-bar">
+    <button class="print-btn" onclick="window.print()">🖨️ Print this guide</button>
+  </div>
+
+  <!-- ── Tab navigation ── -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('overview', this)">📋 48hr Process</button>
+    <button class="tab-btn" onclick="showTab('junior', this)">🌱 Junior Academy</button>
+    <button class="tab-btn" onclick="showTab('dev', this)">🏃 Development Squad</button>
+    <button class="tab-btn" onclick="showTab('senior', this)">🏆 Senior Squad</button>
+    <button class="tab-btn" onclick="showTab('running', this)">👟 Running Technique</button>
+    <button class="tab-btn" onclick="showTab('flags', this)">🚩 Red Flags</button>
+  </div>
+
+
+  <!-- ═══════════════════════════════════
+       OVERVIEW — 48HR PROCESS
+  ════════════════════════════════════ -->
+  <div class="panel active" id="panel-overview">
+
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-title">The 48-Hour Onboarding Action Process</div>
+        <div class="steps">
+
+          <div class="step">
+            <div class="step-dot">1</div>
+            <div class="step-body">
+              <div class="step-time">0–2 hours</div>
+              <div class="step-head">Read the full profile — don't skim</div>
+              <div class="step-desc">Open the athlete's onboarding in Final Surge and read every answer in full. The real signal is usually in the long-text fields — injury history, "why now", how they describe their training. Note anything that stands out before moving on.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-dot">2</div>
+            <div class="step-body">
+              <div class="step-time">2–4 hours</div>
+              <div class="step-head">Flag and categorise responses</div>
+              <div class="step-desc">Use the programme-specific signal guides in this document. Green = proceed. Amber = factor into programme design or clarify first. Red = contact athlete before building anything.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-dot c">3</div>
+            <div class="step-body">
+              <div class="step-time c">4–8 hours</div>
+              <div class="step-head">Send a personal intro message</div>
+              <div class="step-desc">Reference something specific from their profile — their goal event, injury history, or their stated "why". This is not a template message. One personalised sentence builds more trust than a paragraph of boilerplate.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-dot c">4</div>
+            <div class="step-body">
+              <div class="step-time c">8–24 hours</div>
+              <div class="step-head">Build week one — conservatively</div>
+              <div class="step-desc">New athletes almost always underestimate fatigue and overestimate readiness. Start at 70–80% of what you think they can handle. You can always add load — you can't undo a first week that breaks them. Factor all amber flags before publishing.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-dot g">5</div>
+            <div class="step-body">
+              <div class="step-time g">24–36 hours</div>
+              <div class="step-head">Publish and personalise the first session note</div>
+              <div class="step-desc">Load week one and add a brief coach note to the first session that ties back to their stated goal. Makes the programme feel built for them — not dropped in generically.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-dot g">6</div>
+            <div class="step-body" style="padding-bottom:0">
+              <div class="step-time g">36–48 hours</div>
+              <div class="step-head">Follow up and close the loop</div>
+              <div class="step-desc">Send a brief check-in to confirm they've found their programme and are clear on what to do first. Ask if they have any questions. Sets the communication standard for the whole relationship.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon o">📊</div>
+        <div>
+          <div class="card-title">Programme-Specific Action Summary</div>
+          <div class="card-sub">Key differences in how to process each programme type on registration</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="sum-table">
+          <thead>
+            <tr><th>Programme</th><th>First contact priority</th><th>Week 1 approach</th><th>Key watch-out</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pill o">Junior Academy</span><br><span style="font-size:.78rem;color:var(--muted)">Ages 12–16</span></td>
+              <td>Contact parent first, then athlete. Offer a brief intro call if any flags present.</td>
+              <td>Very conservative — 2 sessions max. Fun and confidence-building over intensity.</td>
+              <td>Overloading across school sport calendar. Map all commitments before building.</td>
+            </tr>
+            <tr>
+              <td><span class="pill c">Development Squad</span><br><span style="font-size:.78rem;color:var(--muted)">Ages 17–21</span></td>
+              <td>Contact athlete directly. Reference the junior transition in your opening message.</td>
+              <td>Match current training volume — don't jump to senior-level load immediately.</td>
+              <td>Athlete underestimates how different senior training feels. Set expectations early.</td>
+            </tr>
+            <tr>
+              <td><span class="pill g">Senior Squad</span><br><span style="font-size:.78rem;color:var(--muted)">Competitive adults</span></td>
+              <td>Direct, concise message. Senior athletes value efficiency. Confirm event calendar.</td>
+              <td>Match stated current load — don't assume they're starting from scratch.</td>
+              <td>Previous coaching baggage. Understand what didn't work before replicating any structure.</td>
+            </tr>
+            <tr>
+              <td><span class="pill r">Running Technique</span><br><span style="font-size:.78rem;color:var(--muted)">Adult runners</span></td>
+              <td>Schedule first in-person session immediately — time is the main friction point.</td>
+              <td>No programme until after gait analysis. Confirm injury status and shoes first.</td>
+              <td>Unresolved injury or current pain — clarify before booking. Refer to physio if needed.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- end overview -->
+
+
+  <!-- ═══════════════════════════════════
+       JUNIOR ACADEMY
+  ════════════════════════════════════ -->
+  <div class="panel" id="panel-junior">
+
+    <div class="sig-grid">
+      <div class="sig-card g">
+        <div class="sig-label g">✅ Green Lights — Proceed with confidence</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Active in 2–3 sports — multi-sport background ideal at this age</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Parent describes athlete as "keen", "always asking to do more"</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Athlete's own Q10–12 answers are specific and enthusiastic</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Parent has realistic expectations — enjoyment and confidence over early results</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Clear 2-day availability with minimal conflicts</div>
+      </div>
+      <div class="sig-card a">
+        <div class="sig-label a">⚠️ Amber — Factor into programme design</div>
+        <div class="sig-item"><div class="sig-dot a"></div>4+ sport commitments — monitor total load; coordinate around peak competition blocks</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Parent appears to be driving the decision more than the athlete — verify actual enthusiasm at first session</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Athlete Q12 suggests anxiety — lead first session with fun, not fitness testing</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Recent injury mentioned even if "resolved" — get full detail first</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Exam periods noted — reduce volume but maintain consistency</div>
+      </div>
+      <div class="sig-card r">
+        <div class="sig-label r">🚩 Red Flags — Resolve before building</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Medical condition — confirm management plan and emergency contact before any session</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Athlete answers suggest they don't want to be here — parent-driven enrolment. Call parent before proceeding.</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Unresolved injury — do not programme until medically cleared</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Photo/content consent not confirmed — clarify before filming</div>
+      </div>
+      <div class="sig-card p">
+        <div class="sig-label p">💡 Use in Programme Design</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q11 (favourite sport) — weave elements of it into early sessions to build motivation</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q15 (learning style from parent) — shape how you deliver in-person feedback</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q13 (who to contact) — if "both", involve the athlete in comms to build ownership</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Preferred feedback channel — establish before first session, not after</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-icon o">📝</div><div><div class="card-title">Junior Academy — 48hr Checklist</div></div></div>
+      <div class="card-body">
+        <div class="action-row">
+          <div>
+            <div class="col-label">Must Do</div>
+            <div class="act-item"><span class="arr">→</span>Contact parent within 4 hours — they're the primary contact at this stage</div>
+            <div class="act-item"><span class="arr">→</span>Confirm photo/content consent from the waiver before any filming</div>
+            <div class="act-item"><span class="arr">→</span>Map all school sport commitments before building the programme</div>
+            <div class="act-item"><span class="arr">→</span>Read athlete's Q10–12 closely — shapes the entire first session tone</div>
+            <div class="act-item"><span class="arr">→</span>Build 2 sessions/week max — do not exceed agreed load</div>
+            <div class="act-item"><span class="arr">→</span>First session must feel achievable and enjoyable — confidence before fitness</div>
+          </div>
+          <div>
+            <div class="col-label">Good to Do</div>
+            <div class="act-item"><span class="arr c">→</span>Send a short separate message directly to the athlete — in their language, not parent-speak</div>
+            <div class="act-item"><span class="arr c">→</span>Reference Q11 (favourite sport) in your first session coach note</div>
+            <div class="act-item"><span class="arr c">→</span>Flag upcoming exam or competition-heavy periods and plan reduced-load weeks proactively</div>
+            <div class="act-item"><span class="arr c">→</span>Set up preferred feedback channel before first session</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end junior -->
+
+
+  <!-- ═══════════════════════════════════
+       DEVELOPMENT SQUAD
+  ════════════════════════════════════ -->
+  <div class="panel" id="panel-dev">
+
+    <div class="sig-grid">
+      <div class="sig-card g">
+        <div class="sig-label g">✅ Green Lights</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Clear event calendar with realistic A/B/C priorities</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Honest self-assessment of strengths and current weaknesses</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Has structured training history — not starting from zero</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Motivation rating 7/10 or above</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Feedback preference "direct" or "balanced" — coachable mindset</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Studying or working — shows real-world structure in their life</div>
+      </div>
+      <div class="sig-card a">
+        <div class="sig-label a">⚠️ Amber</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Q13 (transition concerns) reveals anxiety — address directly in intro message</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Very high current training volume for their age — check for burnout risk</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Motivation below 6 — direct conversation before programme build</div>
+        <div class="sig-item"><div class="sig-dot a"></div>"My last coach always did X" — philosophy clash risk. Address your approach early.</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Heavy study or work load — build flexibility for deadlines and exams</div>
+      </div>
+      <div class="sig-card r">
+        <div class="sig-label r">🚩 Red Flags</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Unresolved injury — do not build programme until cleared</div>
+        <div class="sig-item"><div class="sig-dot r"></div>"I just push through" for setbacks — address recovery culture before week one</div>
+        <div class="sig-item"><div class="sig-dot r"></div>No event calendar — periodisation impossible. Clarify before building.</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Motivation 4 or below — contact athlete before building anything</div>
+      </div>
+      <div class="sig-card p">
+        <div class="sig-label p">💡 Use in Design</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q5 (what's held them back) — this is where the real coaching work begins</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q13 (transition concerns) — shapes the emotional tone of your intro</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q17 (feedback preference) — apply from your very first session note</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Study/work context — normalise open comms about schedule conflicts upfront</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-icon c">📝</div><div><div class="card-title">Development Squad — 48hr Checklist</div></div></div>
+      <div class="card-body">
+        <div class="action-row">
+          <div>
+            <div class="col-label">Must Do</div>
+            <div class="act-item"><span class="arr">→</span>Read Q5 and Q13 before writing a word of your intro message</div>
+            <div class="act-item"><span class="arr">→</span>Acknowledge the junior-to-senior transition in your first message — it's a significant step</div>
+            <div class="act-item"><span class="arr">→</span>Map the event calendar and build periodisation backwards from the A event</div>
+            <div class="act-item"><span class="arr">→</span>Start at current training volume — do not increase load in week one</div>
+            <div class="act-item"><span class="arr">→</span>Apply Q17 feedback preference from your very first session note</div>
+          </div>
+          <div>
+            <div class="col-label">Good to Do</div>
+            <div class="act-item"><span class="arr c">→</span>Map study/work schedule and flag likely heavy periods in advance</div>
+            <div class="act-item"><span class="arr c">→</span>If Q5 reveals a clear weakness, mention it briefly in your intro — shows you read the profile</div>
+            <div class="act-item"><span class="arr c">→</span>Check for club commitments that need integrating — don't programme over them</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end dev -->
+
+
+  <!-- ═══════════════════════════════════
+       SENIOR SQUAD
+  ════════════════════════════════════ -->
+  <div class="panel" id="panel-senior">
+
+    <div class="sig-grid">
+      <div class="sig-card g">
+        <div class="sig-label g">✅ Green Lights</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Detailed event calendar with a clear A priority</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Honest PBs and competition history — not inflated</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Has used structured coaching before — understands the process</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Sleep and recovery rated "Good" or above</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Motivation rating 7–10 with a specific reason stated</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Consistent, documented current training load</div>
+      </div>
+      <div class="sig-card a">
+        <div class="sig-label a">⚠️ Amber</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Sleep rated "Poor" or "Fair" — recovery limits adaptation. Address early.</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Multiple A events close together — may need to reframe as A/B to protect peak</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Specific supplements or nutrition plan mentioned — check compatibility with training</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Previous coach mentioned negatively — understand what went wrong first</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Very high current volume — risk of compounding overtraining</div>
+      </div>
+      <div class="sig-card r">
+        <div class="sig-label r">🚩 Red Flags</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Unresolved injury — mandatory clearance before programme build</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Sleep consistently "Poor" — address before loading. Adaptation requires recovery.</div>
+        <div class="sig-item"><div class="sig-dot r"></div>No event calendar — senior athletes without goals are very hard to programme for. Clarify first.</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Motivation below 5 — direct call before investing in programme design</div>
+      </div>
+      <div class="sig-card p">
+        <div class="sig-label p">💡 Use in Design</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q3 (previous coaching) — tells you exactly how not to replicate mistakes</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q10 (success definition) — your north star for this athlete. Refer back at every review.</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q5 (typical week) — real baseline data. Trust this more than their self-rated fitness.</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Senior athletes often have strong opinions — establish your philosophy clearly and early</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-icon g">📝</div><div><div class="card-title">Senior Squad — 48hr Checklist</div></div></div>
+      <div class="card-body">
+        <div class="action-row">
+          <div>
+            <div class="col-label">Must Do</div>
+            <div class="act-item"><span class="arr">→</span>Map the full event calendar before building anything — non-negotiable for periodisation</div>
+            <div class="act-item"><span class="arr">→</span>Read Q3 (previous coaching) thoroughly — don't repeat what didn't work</div>
+            <div class="act-item"><span class="arr">→</span>Match week one to their stated current training load</div>
+            <div class="act-item"><span class="arr">→</span>Be direct in your intro — senior athletes respond to confidence and clarity</div>
+            <div class="act-item"><span class="arr">→</span>Confirm A event and align periodisation immediately</div>
+          </div>
+          <div>
+            <div class="col-label">Good to Do</div>
+            <div class="act-item"><span class="arr c">→</span>Ask one good clarifying question in your intro — shows engagement without overwhelming</div>
+            <div class="act-item"><span class="arr c">→</span>Reference their Q10 success definition — "here's what we're building toward"</div>
+            <div class="act-item"><span class="arr c">→</span>Check Q6 device/platform and connect Final Surge to Garmin/Strava if applicable</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end senior -->
+
+
+  <!-- ═══════════════════════════════════
+       RUNNING TECHNIQUE
+  ════════════════════════════════════ -->
+  <div class="panel" id="panel-running">
+
+    <div class="sig-grid">
+      <div class="sig-card g">
+        <div class="sig-label g">✅ Green Lights</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Clear articulate self-description of running style — self-aware athlete</div>
+        <div class="sig-item"><div class="sig-dot g"></div>No current injury or pain — assessment can proceed without modification</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Knows cadence — data-aware, will engage well with metrics</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Well-fitted, consistent training shoes — reliable baseline gait data</div>
+        <div class="sig-item"><div class="sig-dot g"></div>Has a clear target event — technique work has obvious context and urgency</div>
+      </div>
+      <div class="sig-card a">
+        <div class="sig-label a">⚠️ Amber — Prepare specifically</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Orthotics mentioned — understand prescription history. Don't assume they're the long-term solution.</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Significant form breakdown when fatigued — plan to film both fresh and fatigued states</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Triathlete — ask about bike fit and volume. Run-off-bike mechanics are a separate assessment layer.</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Previous conflicting gait analysis — establish your own baseline without dismissing prior work</div>
+        <div class="sig-item"><div class="sig-dot a"></div>Target event within 4 weeks — technique changes take time. Manage expectations clearly.</div>
+      </div>
+      <div class="sig-card r">
+        <div class="sig-label r">🚩 Red Flags</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Current pain during running — do not proceed until investigated. Refer to physio first.</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Recent surgery or acute injury — mandatory medical clearance before any assessment</div>
+        <div class="sig-item"><div class="sig-dot r"></div>"Pushing through" significant pain — needs direct conversation on discomfort vs injury</div>
+        <div class="sig-item"><div class="sig-dot r"></div>Physio has recommended no running — confirm clearance before booking session</div>
+      </div>
+      <div class="sig-card p">
+        <div class="sig-label p">💡 Pre-Session Prep</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q6 (self-described style) — tells you where to point the camera first</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q8 (pain/discomfort location) — tells you which movement pattern to prioritise</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Q9 (fatigue breakdown) — plan a longer filming run to capture form degradation live</div>
+        <div class="sig-item"><div class="sig-dot p"></div>Injury history often leaves compensatory patterns even after recovery — look for them</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-icon a">📝</div><div><div class="card-title">Running Technique — 48hr Checklist</div></div></div>
+      <div class="card-body">
+        <div class="action-row">
+          <div>
+            <div class="col-label">Must Do</div>
+            <div class="act-item"><span class="arr">→</span>Check injury history before confirming session — refer to physio if anything unclear</div>
+            <div class="act-item"><span class="arr">→</span>Confirm what shoes they'll bring — training AND race shoes</div>
+            <div class="act-item"><span class="arr">→</span>Note orthotic use and prepare to assess with/without where appropriate</div>
+            <div class="act-item"><span class="arr">→</span>Remind athlete not to change their running before session — include in intro message</div>
+            <div class="act-item"><span class="arr">→</span>Schedule session within 5 days — momentum matters at sign-up</div>
+            <div class="act-item"><span class="arr">→</span>Plan filming angles and location before session day — don't improvise</div>
+          </div>
+          <div>
+            <div class="col-label">Good to Do</div>
+            <div class="act-item"><span class="arr c">→</span>Re-read Q8 (pain/discomfort) the morning of the session</div>
+            <div class="act-item"><span class="arr c">→</span>If triathlete — ask about upcoming training to understand fatigue state on session day</div>
+            <div class="act-item"><span class="arr c">→</span>For one-off clients — mention the subscription in intro but don't push it. Let the session sell.</div>
+            <div class="act-item"><span class="arr c">→</span>Build drills programme within 24hrs of session while observations are fresh</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end running -->
+
+
+  <!-- ═══════════════════════════════════
+       RED FLAGS
+  ════════════════════════════════════ -->
+  <div class="panel" id="panel-flags">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon o">🚩</div>
+        <div>
+          <div class="card-title">Universal Red Flags — All Programmes</div>
+          <div class="card-sub">Never build a programme before resolving a red flag. These apply across every programme type.</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="flag-box r"><strong>🚨 Unresolved Injury</strong>Any injury described as "still there", "comes and goes", or "haven't had it checked" must be resolved before programme build. Contact the athlete directly, ask clear questions about current pain status, and refer to a physiotherapist if in any doubt. Do not programme around an undiagnosed injury.</div>
+        <div class="flag-box r"><strong>🚨 Current Pain During Exercise</strong>Different from past injury history. Current pain during running or training requires medical clearance — not a modified programme. Do not proceed with session or programme build. Refer to sports medicine or physiotherapy first.</div>
+        <div class="flag-box a"><strong>⚠️ Low Motivation Score (4/10 or below)</strong>A motivated athlete who struggles physically will push through. An unmotivated capable athlete won't engage. Call or message before building — understand what's behind the score. It may be a temporary life circumstance, or a deeper issue with their current relationship to sport.</div>
+        <div class="flag-box a"><strong>⚠️ Parent-Driven Junior Enrolment Without Athlete Buy-In</strong>Signs: athlete answers are vague, one-word, or reluctant. Parent answers are highly detailed and performance-focused. Contact the parent and gently explore whether the athlete is genuinely enthusiastic. A forced start rarely leads to a successful junior programme.</div>
+        <div class="flag-box a"><strong>⚠️ Significant Previous Coaching Conflict</strong>If an athlete describes a strongly negative prior coaching experience, understand what happened before replicating similar structure. Address your coaching philosophy directly and early — ideally in your intro message. Don't wait for the conflict to surface.</div>
+        <div class="flag-box p"><strong>💡 Medical Condition Disclosed</strong>Not automatically a red flag — but requires a clear management plan. Confirm the condition is managed, ask about protocols in place, and ensure emergency contact details are complete. For juniors, confirm the parent is aware it may be relevant to exercise.</div>
+        <div class="flag-box p"><strong>💡 Eating Disorder or Mental Health History</strong>If disclosed directly or indirectly (language around weight, restriction, or body image), approach with care. Do not programme around weight loss as a goal. Focus entirely on performance, strength, and health. A sports psychology referral alongside coaching may be appropriate.</div>
+      </div>
+    </div>
+  </div><!-- end flags -->
+
+</div><!-- end wrap -->
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

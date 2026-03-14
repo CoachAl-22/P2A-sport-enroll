@@ -36,6 +36,7 @@ import AthletePortal from "@/pages/athlete-portal";
 import Coaches from "@/pages/coaches";
 import Questionnaire from "@/pages/questionnaire";
 import AdminAthletes from "@/pages/admin-athletes";
+import Onboarding from "@/pages/onboarding";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -87,6 +88,7 @@ function Router() {
             <>
               <Route path="/attendance" component={Attendance} />
               <Route path="/video-highlights" component={VideoHighlights} />
+              <Route path="/onboarding" component={Onboarding} />
             </>
           )}
           {user?.role === "parent" && (
