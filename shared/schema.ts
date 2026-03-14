@@ -5,6 +5,7 @@ import {
   text,
   varchar,
   timestamp,
+  date,
   integer,
   decimal,
   boolean,
@@ -44,11 +45,11 @@ export const termConfigurations = pgTable("term_configurations", {
   term: termEnum("term").notNull(),
   year: integer("year").notNull(),
   name: varchar("name", { length: 100 }).notNull(), // "Term 4 2025"
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date").notNull(),
+  startDate: date("start_date", { mode: "string" }).notNull(),
+  endDate: date("end_date", { mode: "string" }).notNull(),
   weeksCount: integer("weeks_count").notNull(),
-  enrollmentOpenDate: timestamp("enrollment_open_date"),
-  enrollmentCloseDate: timestamp("enrollment_close_date"),
+  enrollmentOpenDate: date("enrollment_open_date", { mode: "string" }),
+  enrollmentCloseDate: date("enrollment_close_date", { mode: "string" }),
   pricePerWeek: decimal("price_per_week", { precision: 8, scale: 2 }).notNull(),
   gstRate: decimal("gst_rate", { precision: 3, scale: 2 }).default("0.10"), // 10% GST
   active: boolean("active").default(true),
@@ -63,7 +64,7 @@ export const holidayTypeEnum = pgEnum("holiday_type", ["public_holiday", "studen
 export const termHolidays = pgTable("term_holidays", {
   id: uuid("id").primaryKey().defaultRandom(),
   termConfigurationId: uuid("term_configuration_id").references(() => termConfigurations.id, { onDelete: "cascade" }).notNull(),
-  holidayDate: timestamp("holiday_date").notNull(),
+  holidayDate: date("holiday_date", { mode: "string" }).notNull(),
   name: varchar("name", { length: 100 }).notNull(),
   type: holidayTypeEnum("type").notNull().default("public_holiday"),
   createdAt: timestamp("created_at").defaultNow(),

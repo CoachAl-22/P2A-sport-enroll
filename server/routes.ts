@@ -2387,21 +2387,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/term-configurations", async (req, res) => {
     try {
       const createData = { ...req.body };
-      
-      // Convert date strings to Date objects
-      if (createData.startDate) {
-        createData.startDate = new Date(createData.startDate);
-      }
-      if (createData.endDate) {
-        createData.endDate = new Date(createData.endDate);
-      }
-      if (createData.enrollmentOpenDate) {
-        createData.enrollmentOpenDate = new Date(createData.enrollmentOpenDate);
-      }
-      if (createData.enrollmentCloseDate) {
-        createData.enrollmentCloseDate = new Date(createData.enrollmentCloseDate);
-      }
-      
       const termConfig = await storage.createTermConfiguration(createData);
       res.status(201).json(termConfig);
     } catch (error: any) {
@@ -2426,21 +2411,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/term-configurations/:id", async (req, res) => {
     try {
       const updateData = { ...req.body };
-      
-      // Convert date strings to Date objects
-      if (updateData.startDate) {
-        updateData.startDate = new Date(updateData.startDate);
-      }
-      if (updateData.endDate) {
-        updateData.endDate = new Date(updateData.endDate);
-      }
-      if (updateData.enrollmentOpenDate) {
-        updateData.enrollmentOpenDate = new Date(updateData.enrollmentOpenDate);
-      }
-      if (updateData.enrollmentCloseDate) {
-        updateData.enrollmentCloseDate = new Date(updateData.enrollmentCloseDate);
-      }
-      
       const termConfig = await storage.updateTermConfiguration(req.params.id, updateData);
       res.json(termConfig);
     } catch (error: any) {
