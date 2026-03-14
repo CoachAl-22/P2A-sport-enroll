@@ -3087,6 +3087,104 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ── Athlete Assessments & Feedback ──────────────────────────────
+  app.get("/api/athletes/:childId/assessments", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || !["admin", "coach"].includes(user.role)) return res.status(403).json({ message: "Access denied" });
+    try {
+      const assessments = await storage.getAthleteAssessments(req.params.childId);
+      res.json(assessments);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/athletes/:childId/assessments", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || !["admin", "coach"].includes(user.role)) return res.status(403).json({ message: "Access denied" });
+    try {
+      const { title, type, content, fileUrl, fileName, fileType, fileSize } = req.body;
+      if (!title) return res.status(400).json({ message: "Title is required" });
+      const assessment = await storage.createAthleteAssessment({
+        childId: req.params.childId,
+        title,
+        type: type || "note",
+        content: content || null,
+        fileUrl: fileUrl || null,
+        fileName: fileName || null,
+        fileType: fileType || null,
+        fileSize: fileSize || null,
+        createdById: userId,
+      });
+      res.json(assessment);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/athletes/assessments/:id", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || !["admin", "coach"].includes(user.role)) return res.status(403).json({ message: "Access denied" });
+    try {
+      await storage.deleteAthleteAssessment(req.params.id);
+      res.json({ message: "Assessment deleted" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // ── Presigned URL upload endpoint ─────────────────────────────
+  app.post("/api/uploads/request-url", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || !["admin", "coach"].includes(user.role)) return res.status(403).json({ message: "Access denied" });
+
+    try {
+      const { name, size, contentType } = req.body;
+      if (!name) return res.status(400).json({ error: "File name required" });
+
+      const { ObjectStorageService } = await import("./replit_integrations/object_storage/objectStorage.js");
+      const objService = new ObjectStorageService();
+      const uploadURL = await objService.getObjectEntityUploadURL();
+
+      // Extract the normalized object path from the signed URL so we can store it
+      const urlObj = new URL(uploadURL);
+      const rawObjectPath = urlObj.pathname;
+      const objectPath = `/objects${rawObjectPath.split("/uploads/")[1] ? "/uploads/" + rawObjectPath.split("/uploads/")[1] : rawObjectPath}`;
+
+      res.json({
+        uploadURL,
+        objectPath: rawObjectPath,
+        metadata: { name, size, contentType },
+      });
+    } catch (error: any) {
+      console.error("Upload URL error:", error.message);
+      res.status(500).json({ error: "Failed to generate upload URL", details: error.message });
+    }
+  });
+
+  // Serve stored private files
+  app.get("/api/files/*", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    try {
+      const { ObjectStorageService, ObjectNotFoundError } = await import("./replit_integrations/object_storage/objectStorage.js");
+      const objService = new ObjectStorageService();
+      const objectPath = "/" + (req.params as any)[0];
+      const file = await objService.getObjectEntityFile(objectPath);
+      await objService.downloadObject(file, res);
+    } catch (error: any) {
+      res.status(404).json({ error: "File not found" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

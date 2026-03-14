@@ -11,7 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/layout/navbar";
-import { PlusIcon, EditIcon, TrashIcon, Trophy, Target, TrendingUp, Search, ChevronDown, UserPlus } from "lucide-react";
+import { PlusIcon, EditIcon, TrashIcon, Trophy, Target, TrendingUp, Search, ChevronDown, UserPlus, FileText, Upload, X, Download, Paperclip, ClipboardList } from "lucide-react";
+import { useUpload } from "@/hooks/use-upload";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Redirect } from "wouter";
@@ -86,6 +87,28 @@ export default function AdminAthletes() {
     category: "speed",
   });
 
+  const [isAddAssessmentOpen, setIsAddAssessmentOpen] = useState(false);
+  const [newAssessment, setNewAssessment] = useState({
+    title: "",
+    type: "note",
+    content: "",
+  });
+  const [uploadedFile, setUploadedFile] = useState<{ url: string; name: string; type: string; size: number } | null>(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
+
+  const { uploadFile, isUploading } = useUpload({
+    onSuccess: (resp) => {
+      setUploadedFile({
+        url: resp.objectPath,
+        name: resp.metadata.name,
+        type: resp.metadata.contentType,
+        size: resp.metadata.size,
+      });
+      setUploadingFile(false);
+    },
+    onError: () => setUploadingFile(false),
+  });
+
   const { data: children = [], isLoading: childrenLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/all-children"],
   });
@@ -115,6 +138,32 @@ export default function AdminAthletes() {
     queryKey: ["/api/training-goals", selectedChildId],
     queryFn: () => fetch(`/api/training-goals/${selectedChildId}`).then(r => r.json()),
     enabled: !!selectedChildId,
+  });
+
+  const { data: assessments = [], isLoading: assessmentsLoading } = useQuery<any[]>({
+    queryKey: ["/api/athletes", selectedChildId, "assessments"],
+    queryFn: () => fetch(`/api/athletes/${selectedChildId}/assessments`).then(r => r.json()),
+    enabled: !!selectedChildId,
+  });
+
+  const createAssessmentMutation = useMutation({
+    mutationFn: (data: any) => apiRequest("POST", `/api/athletes/${selectedChildId}/assessments`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/athletes", selectedChildId, "assessments"] });
+      setIsAddAssessmentOpen(false);
+      setNewAssessment({ title: "", type: "note", content: "" });
+      setUploadedFile(null);
+      toast({ title: "Assessment added successfully" });
+    },
+    onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
+  });
+
+  const deleteAssessmentMutation = useMutation({
+    mutationFn: (id: string) => apiRequest("DELETE", `/api/athletes/assessments/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/athletes", selectedChildId, "assessments"] });
+      toast({ title: "Assessment deleted" });
+    },
   });
 
   const createRecordMutation = useMutation({
@@ -181,6 +230,36 @@ export default function AdminAthletes() {
 
   const resetGoalForm = () => {
     setNewGoal({ title: "", description: "", targetValue: "", targetUnit: "", currentValue: "", targetDate: "", status: "active", priority: "medium", category: "speed" });
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingFile(true);
+    await uploadFile(file);
+    e.target.value = "";
+  };
+
+  const handleSubmitAssessment = () => {
+    if (!newAssessment.title) {
+      toast({ title: "Missing fields", description: "Please enter a title", variant: "destructive" });
+      return;
+    }
+    createAssessmentMutation.mutate({
+      title: newAssessment.title,
+      type: newAssessment.type,
+      content: newAssessment.content || null,
+      fileUrl: uploadedFile?.url || null,
+      fileName: uploadedFile?.name || null,
+      fileType: uploadedFile?.type || null,
+      fileSize: uploadedFile?.size || null,
+    });
+  };
+
+  const getAssessmentIcon = (type: string) => {
+    if (type === "file") return <Paperclip className="w-4 h-4 text-blue-500" />;
+    if (type === "feedback") return <ClipboardList className="w-4 h-4 text-green-500" />;
+    return <FileText className="w-4 h-4 text-gray-500" />;
   };
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -316,6 +395,7 @@ export default function AdminAthletes() {
                   <TabsList className="mb-4">
                     <TabsTrigger value="records" className="gap-1"><TrendingUp className="w-4 h-4" /> Performance Records</TabsTrigger>
                     <TabsTrigger value="goals" className="gap-1"><Target className="w-4 h-4" /> Training Goals</TabsTrigger>
+                    <TabsTrigger value="assessments" className="gap-1"><ClipboardList className="w-4 h-4" /> Assessments & Feedback</TabsTrigger>
                   </TabsList>
 
                   {/* PERFORMANCE RECORDS TAB */}
@@ -490,6 +570,82 @@ export default function AdminAthletes() {
                       </CardContent>
                     </Card>
                   </TabsContent>
+
+                  {/* ASSESSMENTS & FEEDBACK TAB */}
+                  <TabsContent value="assessments">
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle>Assessments & Feedback</CardTitle>
+                        <Button onClick={() => setIsAddAssessmentOpen(true)} size="sm">
+                          <PlusIcon className="w-4 h-4 mr-1" /> Add Entry
+                        </Button>
+                      </CardHeader>
+                      <CardContent>
+                        {assessmentsLoading ? (
+                          <p className="text-gray-500">Loading assessments...</p>
+                        ) : assessments.length === 0 ? (
+                          <div className="text-center py-8 text-gray-500">
+                            <ClipboardList className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+                            <p>No assessments yet. Add the first entry.</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            {assessments.map((a: any) => (
+                              <div key={a.id} className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                                    <div className="mt-0.5">{getAssessmentIcon(a.type)}</div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <span className="font-medium text-gray-900">{a.title}</span>
+                                        <Badge variant="outline" className="text-xs capitalize">{a.type}</Badge>
+                                      </div>
+                                      {a.content && (
+                                        <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">{a.content}</p>
+                                      )}
+                                      {a.file_name && (
+                                        <div className="flex items-center gap-2 mt-2">
+                                          <Paperclip className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+                                          <a
+                                            href={`/api/files${a.file_url}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-sm text-blue-600 hover:underline truncate"
+                                          >
+                                            {a.file_name}
+                                          </a>
+                                          {a.file_size && (
+                                            <span className="text-xs text-gray-400 flex-shrink-0">
+                                              ({(a.file_size / 1024).toFixed(0)} KB)
+                                            </span>
+                                          )}
+                                        </div>
+                                      )}
+                                      <p className="text-xs text-gray-400 mt-2">
+                                        {a.creator_first_name ? `By ${a.creator_first_name} ${a.creator_last_name} — ` : ""}
+                                        {new Date(a.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-red-400 hover:text-red-600 flex-shrink-0"
+                                    onClick={() => {
+                                      if (confirm("Delete this assessment entry?")) deleteAssessmentMutation.mutate(a.id);
+                                    }}
+                                  >
+                                    <TrashIcon className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
                 </Tabs>
               </>
             )}
@@ -747,6 +903,99 @@ export default function AdminAthletes() {
             >
               {createAthleteMutation.isPending ? "Adding..." : "Add Athlete"}
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ADD ASSESSMENT DIALOG */}
+      <Dialog open={isAddAssessmentOpen} onOpenChange={(open) => {
+        if (!open) {
+          setIsAddAssessmentOpen(false);
+          setNewAssessment({ title: "", type: "note", content: "" });
+          setUploadedFile(null);
+        }
+      }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Add Assessment / Feedback</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Title *</Label>
+              <Input
+                placeholder="e.g. Term 1 Assessment, Sprint Feedback"
+                value={newAssessment.title}
+                onChange={(e) => setNewAssessment({ ...newAssessment, title: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label>Type</Label>
+              <Select value={newAssessment.type} onValueChange={(v) => setNewAssessment({ ...newAssessment, type: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="note">Coach Note</SelectItem>
+                  <SelectItem value="feedback">Feedback</SelectItem>
+                  <SelectItem value="assessment">Formal Assessment</SelectItem>
+                  <SelectItem value="file">File / Document</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Notes / Content</Label>
+              <Textarea
+                placeholder="Write your notes or feedback here..."
+                value={newAssessment.content}
+                onChange={(e) => setNewAssessment({ ...newAssessment, content: e.target.value })}
+                rows={4}
+              />
+            </div>
+
+            <div>
+              <Label>Attach File (PDF, Word, Image)</Label>
+              {uploadedFile ? (
+                <div className="flex items-center gap-2 mt-1 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <Paperclip className="w-4 h-4 text-green-600 flex-shrink-0" />
+                  <span className="text-sm text-green-800 truncate flex-1">{uploadedFile.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-green-600 hover:text-red-500 flex-shrink-0"
+                    onClick={() => setUploadedFile(null)}
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-1">
+                  <label className={`flex items-center gap-2 px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${isUploading || uploadingFile ? "opacity-50 cursor-not-allowed border-gray-200" : "border-gray-300 hover:border-primary-400 hover:bg-gray-50"}`}>
+                    <Upload className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-500">
+                      {isUploading || uploadingFile ? "Uploading..." : "Click to select a file"}
+                    </span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+                      disabled={isUploading || uploadingFile}
+                      onChange={handleFileSelect}
+                    />
+                  </label>
+                  <p className="text-xs text-gray-400 mt-1">PDF, Word, or image files up to 10MB</p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setIsAddAssessmentOpen(false)}>Cancel</Button>
+              <Button
+                onClick={handleSubmitAssessment}
+                disabled={createAssessmentMutation.isPending || isUploading || uploadingFile}
+              >
+                {createAssessmentMutation.isPending ? "Saving..." : "Save Entry"}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

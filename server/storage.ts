@@ -1438,6 +1438,31 @@ export class DatabaseStorage implements IStorage {
     await db.delete(trainingGoals).where(eq(trainingGoals.id, id));
   }
 
+  // Athlete Assessment operations
+  async getAthleteAssessments(childId: string): Promise<any[]> {
+    const result = await db.execute(
+      sql`SELECT aa.*, u.first_name as creator_first_name, u.last_name as creator_last_name
+          FROM athlete_assessments aa
+          LEFT JOIN users u ON aa.created_by_id = u.id
+          WHERE aa.child_id = ${childId}
+          ORDER BY aa.created_at DESC`
+    );
+    return result.rows as any[];
+  }
+
+  async createAthleteAssessment(data: any): Promise<any> {
+    const result = await db.execute(
+      sql`INSERT INTO athlete_assessments (child_id, title, type, content, file_url, file_name, file_type, file_size, created_by_id)
+          VALUES (${data.childId}, ${data.title}, ${data.type}, ${data.content ?? null}, ${data.fileUrl ?? null}, ${data.fileName ?? null}, ${data.fileType ?? null}, ${data.fileSize ?? null}, ${data.createdById ?? null})
+          RETURNING *`
+    );
+    return result.rows[0];
+  }
+
+  async deleteAthleteAssessment(id: string): Promise<void> {
+    await db.execute(sql`DELETE FROM athlete_assessments WHERE id = ${id}`);
+  }
+
   // Survey operations
   async createSurveyResponse(response: InsertSurveyResponse): Promise<SurveyResponse> {
     const [created] = await db.insert(surveyResponses).values(response).returning();

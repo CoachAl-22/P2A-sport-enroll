@@ -918,3 +918,26 @@ export type InsertTermConfiguration = z.infer<typeof insertTermConfigurationSche
 
 export type TermHoliday = typeof termHolidays.$inferSelect;
 export type InsertTermHoliday = z.infer<typeof insertTermHolidaySchema>;
+
+// ── Athlete Assessments ──────────────────────────────────────────
+export const athleteAssessments = pgTable("athlete_assessments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  childId: uuid("child_id").references(() => children.id, { onDelete: "cascade" }).notNull(),
+  title: varchar("title", { length: 200 }).notNull(),
+  type: varchar("type", { length: 50 }).notNull().default("note"),
+  content: text("content"),
+  fileUrl: text("file_url"),
+  fileName: varchar("file_name", { length: 255 }),
+  fileType: varchar("file_type", { length: 50 }),
+  fileSize: integer("file_size"),
+  createdById: uuid("created_by_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertAthleteAssessmentSchema = createInsertSchema(athleteAssessments).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type AthleteAssessment = typeof athleteAssessments.$inferSelect;
+export type InsertAthleteAssessment = z.infer<typeof insertAthleteAssessmentSchema>;
