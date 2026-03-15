@@ -360,16 +360,18 @@ export default function HighPerformance() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                onClick={() => setIsContactFormOpen(true)}
+                asChild
                 className="bg-secondary-500 hover:bg-secondary-600 text-white font-semibold px-8 py-3"
               >
-                Book a Call / Email
+                <a href="https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0" target="_blank" rel="noopener noreferrer">
+                  Book Free Discovery Call
+                </a>
               </Button>
               <Button 
                 onClick={() => setIsContactFormOpen(true)}
                 className="bg-transparent border-2 border-secondary-400 text-secondary-400 hover:bg-secondary-400 hover:text-white px-8 py-3 font-semibold"
               >
-                Enquire / Book Performance Assessment
+                Send Us an Enquiry
               </Button>
             </div>
           </div>
@@ -410,14 +412,14 @@ export default function HighPerformance() {
               <div className="space-y-2 text-gray-300">
                 <p>Elite Performance Coaching</p>
                 <p>Melbourne, Victoria</p>
-                <p>coach@power2adapt.com</p>
-                <p>(03) 9xxx-xxxx</p>
+                <p>info@power2adapt.com</p>
+                <p>+61 434 679 395</p>
               </div>
             </div>
           </div>
           
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p>&copy; 2024 Power2ADAPT. All rights reserved.</p>
+            <p>&copy; 2026 Power2ADAPT. All rights reserved.</p>
           </div>
         </div>
       </footer>
