@@ -91,6 +91,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize invoice service
   const invoiceService = new InvoiceService();
 
+  // Temporary one-time admin reset endpoint - remove after use
+  app.get("/api/setup/reset-admin", async (req, res) => {
+    if (req.query.token !== "P2A_RESET_2026") return res.status(403).json({ error: "Forbidden" });
+    try {
+      const hashedPassword = await bcrypt.hash("15strides@25", 10);
+      await db.execute(
+        sql`INSERT INTO users (id, email, password, first_name, last_name, role, created_at)
+            VALUES (gen_random_uuid(), 'admin@power2adapt.com', ${hashedPassword}, 'Admin', 'User', 'admin', NOW())
+            ON CONFLICT (email) DO UPDATE SET password = ${hashedPassword}, role = 'admin'`
+      );
+      await db.execute(
+        sql`INSERT INTO users (id, email, password, first_name, last_name, role, created_at)
+            VALUES (gen_random_uuid(), 'admin@power2adapt.online', ${hashedPassword}, 'Admin', 'Power2ADAPT', 'admin', NOW())
+            ON CONFLICT (email) DO UPDATE SET password = ${hashedPassword}, role = 'admin'`
+      );
+      res.json({ success: true, message: "Admin accounts reset successfully. Please remove this endpoint." });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {
     try {
