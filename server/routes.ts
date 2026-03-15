@@ -91,6 +91,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize invoice service
   const invoiceService = new InvoiceService();
 
+  // Serve the operations manual
+  app.get("/operations-manual", async (req, res) => {
+    const { readFileSync } = await import("fs");
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const filePath = resolve(__dirname, "../public/operations-manual.html");
+    try {
+      const content = readFileSync(filePath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(content);
+    } catch {
+      res.status(404).send("Manual not found");
+    }
+  });
+
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {
     try {

@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power2ADAPT — Staff Operations Manual</title>
+<style>
+  /* ── Reset & Base ─────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #1a202c;
+    background: #fff;
+    line-height: 1.65;
+  }
+
+  /* ── Colour palette ───────────────────────── */
+  :root {
+    --brand-blue: #1a56c4;
+    --brand-orange: #f97316;
+    --brand-green: #16a34a;
+    --brand-dark: #0f172a;
+    --grey-100: #f1f5f9;
+    --grey-200: #e2e8f0;
+    --grey-500: #64748b;
+    --grey-700: #334155;
+  }
+
+  /* ── Print helpers ────────────────────────── */
+  @media print {
+    .no-print { display: none !important; }
+    body { font-size: 11pt; }
+    h1 { font-size: 22pt; }
+    h2 { font-size: 15pt; }
+    h3 { font-size: 12pt; }
+    a { color: var(--brand-blue) !important; text-decoration: underline; }
+    .page-break { page-break-before: always; }
+    .cover { page-break-after: always; }
+    section { page-break-inside: avoid; }
+    .toc a::after { content: leader('.') target-counter(attr(href), page); }
+  }
+
+  /* ── Screen layout ────────────────────────── */
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 48px; }
+
+  /* ── Print bar ────────────────────────────── */
+  .print-bar {
+    background: var(--brand-dark);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .print-bar span { font-size: 13px; opacity: .8; }
+  .print-btn {
+    background: var(--brand-orange);
+    color: #fff;
+    border: none;
+    padding: 9px 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: .3px;
+  }
+  .print-btn:hover { background: #ea6a0a; }
+
+  /* ── Cover page ───────────────────────────── */
+  .cover {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 60px 0;
+    border-bottom: 4px solid var(--brand-blue);
+    margin-bottom: 60px;
+  }
+  .cover-badge {
+    background: var(--brand-orange);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--brand-dark);
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .cover h1 span { color: var(--brand-blue); }
+  .cover-sub {
+    font-size: 18px;
+    color: var(--grey-500);
+    margin-bottom: 40px;
+    max-width: 520px;
+  }
+  .cover-meta { display: flex; gap: 40px; flex-wrap: wrap; }
+  .cover-meta div { font-size: 13px; color: var(--grey-500); }
+  .cover-meta strong { display: block; font-size: 15px; color: var(--brand-dark); font-weight: 700; }
+  .cover-logo {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--brand-blue);
+    letter-spacing: -1px;
+    margin-bottom: 32px;
+  }
+  .cover-logo span { color: var(--brand-orange); }
+
+  /* ── Table of Contents ────────────────────── */
+  .toc { margin-bottom: 60px; }
+  .toc h2 { font-size: 22px; font-weight: 800; color: var(--brand-dark); margin-bottom: 20px; border-bottom: 2px solid var(--brand-blue); padding-bottom: 8px; }
+  .toc ol { padding-left: 0; list-style: none; counter-reset: toc-counter; }
+  .toc > ol > li { counter-increment: toc-counter; margin-bottom: 8px; }
+  .toc > ol > li > a {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-blue);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background .15s;
+  }
+  .toc > ol > li > a:hover { background: var(--grey-100); }
+  .toc > ol > li > a::before {
+    content: counter(toc-counter) ".";
+    font-size: 13px;
+    color: var(--brand-orange);
+    font-weight: 800;
+    margin-right: 10px;
+    min-width: 22px;
+  }
+  .toc-sub { padding-left: 32px; margin-top: 4px; }
+  .toc-sub li { margin-bottom: 3px; }
+  .toc-sub li a { font-size: 13px; color: var(--grey-700); text-decoration: none; }
+  .toc-sub li a:hover { color: var(--brand-blue); text-decoration: underline; }
+
+  /* ── Section headings ─────────────────────── */
+  .section-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--brand-orange);
+    margin-bottom: 6px;
+  }
+  h2.section-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--brand-dark);
+    margin-bottom: 6px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--brand-blue);
+  }
+  .section-intro {
+    font-size: 14px;
+    color: var(--grey-500);
+    margin-bottom: 28px;
+  }
+  h3.subsec {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--brand-blue);
+    margin: 28px 0 10px;
+  }
+  h4.step-head {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--grey-700);
+    margin: 16px 0 6px;
+  }
+
+  /* ── Content blocks ───────────────────────── */
+  p { margin-bottom: 12px; }
+  ul, ol { padding-left: 22px; margin-bottom: 14px; }
+  li { margin-bottom: 5px; }
+  section { margin-bottom: 64px; }
+
+  /* ── URL link pill ────────────────────────── */
+  .url-link {
+    display: inline-flex;
+    align-items: center;
+    background: var(--grey-100);
+    border: 1px solid var(--grey-200);
+    color: var(--brand-blue);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin: 2px 0;
+  }
+  .url-link:hover { background: var(--grey-200); }
+  .url-link::before { content: "↗ "; }
+
+  /* ── Step boxes ───────────────────────────── */
+  .steps { counter-reset: step-counter; padding-left: 0; list-style: none; }
+  .steps li {
+    counter-increment: step-counter;
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .steps li::before {
+    content: counter(step-counter);
+    background: var(--brand-blue);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── Role badges ──────────────────────────── */
+  .role { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 12px; letter-spacing: .5px; text-transform: uppercase; }
+  .role-admin { background: #fef3c7; color: #92400e; }
+  .role-coach { background: #dbeafe; color: #1e40af; }
+  .role-parent { background: #d1fae5; color: #065f46; }
+  .role-all { background: #f1f5f9; color: #334155; }
+
+  /* ── Info / warning / tip callout ────────── */
+  .callout {
+    display: flex;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 18px 0;
+    font-size: 13px;
+  }
+  .callout-icon { font-size: 20px; flex-shrink: 0; }
+  .callout.info { background: #eff6ff; border-left: 4px solid var(--brand-blue); }
+  .callout.tip  { background: #f0fdf4; border-left: 4px solid var(--brand-green); }
+  .callout.warn { background: #fff7ed; border-left: 4px solid var(--brand-orange); }
+
+  /* ── Feature grid ─────────────────────────── */
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .feature-card {
+    border: 1px solid var(--grey-200);
+    border-radius: 10px;
+    padding: 18px;
+    background: var(--grey-100);
+  }
+  .feature-card h4 { font-size: 14px; font-weight: 700; color: var(--brand-dark); margin-bottom: 6px; }
+  .feature-card p { font-size: 13px; color: var(--grey-700); margin: 0; }
+
+  /* ── Status table ─────────────────────────── */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  th { background: var(--brand-dark); color: #fff; text-align: left; padding: 9px 14px; font-size: 12px; letter-spacing: .5px; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--grey-200); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--grey-100); }
+
+  /* ── Divider ──────────────────────────────── */
+  hr { border: none; border-top: 1px solid var(--grey-200); margin: 40px 0; }
+
+  /* ── Footer ───────────────────────────────── */
+  .manual-footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 2px solid var(--grey-200);
+    font-size: 12px;
+    color: var(--grey-500);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- Print Bar -->
+<div class="print-bar no-print">
+  <span>Power2ADAPT — Staff Operations Manual &nbsp;|&nbsp; To save as PDF: click Print &rarr; select "Save as PDF"</span>
+  <button class="print-btn" onclick="window.print()">&#128438; Print / Save as PDF</button>
+</div>
+
+<div class="container">
+
+  <!-- ════════════════ COVER ════════════════ -->
+  <div class="cover">
+    <div class="cover-logo">Power2<span>ADAPT</span></div>
+    <div class="cover-badge">Confidential Staff Document</div>
+    <h1>Staff Operations<br><span>Manual</span></h1>
+    <p class="cover-sub">A complete reference guide for coaches and administrators covering all platform features, workflows, and daily operations for the Power2ADAPT athletic management system.</p>
+    <div class="cover-meta">
+      <div><strong>Platform</strong>www.power2adapt.online</div>
+      <div><strong>Version</strong>2026 Edition</div>
+      <div><strong>Audience</strong>Coaches &amp; Admin Staff</div>
+      <div><strong>Last Updated</strong>March 2026</div>
+    </div>
+  </div>
+
+  <!-- ════════════════ TABLE OF CONTENTS ════════════════ -->
+  <nav class="toc" id="top">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li>
+        <a href="#sec-overview">Platform Overview</a>
+        <ul class="toc-sub">
+          <li><a href="#sec-overview-roles">User Roles</a></li>
+          <li><a href="#sec-overview-login">Logging In</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#sec-parent">Parent &amp; Family Experience</a>
+        <ul class="toc-sub">
+          <li><a href="#sec-parent-homepage">Homepage &amp; Public Pages</a></li>
+          <li><a href="#sec-parent-register">Registration &amp; Login</a></li>
+          <li><a href="#sec-parent-dashboard">Family Dashboard</a></li>
+          <li><a href="#sec-parent-enrol">Enrolling in a Program</a></li>
+          <li><a href="#sec-parent-payment">Making a Payment</a></li>
+          <li><a href="#sec-parent-waitlist">Joining a Waitlist</a></li>
+          <li><a href="#sec-parent-questionnaire">Athlete Check-In Survey</a></li>
+          <li><a href="#sec-parent-videos">Viewing Performance Videos</a></li>
+          <li><a href="#sec-parent-programs">Premium Program Applications</a></li>
+          <li><a href="#sec-parent-education">Education Hub</a></li>
+          <li><a href="#sec-parent-contact">Contacting Power2ADAPT</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#sec-coach">Coach Functions</a>
+        <ul class="toc-sub">
+          <li><a href="#sec-coach-attendance">Recording Attendance</a></li>
+          <li><a href="#sec-coach-videos">Performance Video Highlights</a></li>
+          <li><a href="#sec-coach-athletes">Athlete Performance &amp; Assessments</a></li>
+          <li><a href="#sec-coach-onboarding">Coach Reference Guide (Onboarding)</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#sec-admin">Admin Functions</a>
+        <ul class="toc-sub">
+          <li><a href="#sec-admin-dashboard">Admin Dashboard</a></li>
+          <li><a href="#sec-admin-classes">Managing Classes</a></li>
+          <li><a href="#sec-admin-staff">Managing Staff Accounts</a></li>
+          <li><a href="#sec-admin-customers">Managing Customers &amp; Children</a></li>
+          <li><a href="#sec-admin-athletes">Athlete Performance Manager</a></li>
+          <li><a href="#sec-admin-term">Term &amp; Pricing Configuration</a></li>
+          <li><a href="#sec-admin-enquiries">Contact Enquiries</a></li>
+          <li><a href="#sec-admin-applications">Program Applications</a></li>
+          <li><a href="#sec-admin-sms">SMS Broadcasts</a></li>
+          <li><a href="#sec-admin-education">Education Hub (Blog)</a></li>
+          <li><a href="#sec-admin-analytics">Analytics &amp; Reporting</a></li>
+          <li><a href="#sec-admin-surveys">Survey Responses</a></li>
+        </ul>
+      </li>
+      <li><a href="#sec-notifications">SMS &amp; Email Notifications</a></li>
+      <li><a href="#sec-quick-ref">Quick Reference</a></li>
+    </ol>
+  </nav>
+
+  <!-- ════════════════ SECTION 1: OVERVIEW ════════════════ -->
+  <section id="sec-overview" class="page-break">
+    <span class="section-label">Section 1</span>
+    <h2 class="section-title">Platform Overview</h2>
+    <p class="section-intro">Power2ADAPT is a full-featured athletic program management system. It handles class discovery, enrollment, payment, athlete tracking, and communications — all in one place accessible from any device.</p>
+
+    <p>The platform lives at <a href="https://www.power2adapt.online" class="url-link" target="_blank">www.power2adapt.online</a> and is available 24/7. No app download is required — it works in any web browser on phones, tablets, and computers.</p>
+
+    <h3 class="subsec" id="sec-overview-roles">User Roles</h3>
+    <p>Every account has one of three roles that controls what they can see and do:</p>
+    <table>
+      <tr><th>Role</th><th>Who uses it</th><th>Access level</th></tr>
+      <tr><td><span class="role role-parent">Parent</span></td><td>Families with enrolled children</td><td>Family dashboard, enrolment, payments, video viewing, questionnaires</td></tr>
+      <tr><td><span class="role role-coach">Coach</span></td><td>Training staff</td><td>Attendance marking, video highlights, athlete assessments, onboarding guide</td></tr>
+      <tr><td><span class="role role-admin">Admin</span></td><td>Business owner / senior staff</td><td>Everything — full system access including all admin pages</td></tr>
+    </table>
+
+    <h3 class="subsec" id="sec-overview-login">Logging In</h3>
+    <ol class="steps">
+      <li>Go to <a href="https://www.power2adapt.online" target="_blank">www.power2adapt.online</a> and click <strong>Login</strong> in the top navigation bar.</li>
+      <li>Enter your <strong>email address</strong> (or mobile number or User ID) and your <strong>password</strong>.</li>
+      <li>Click <strong>Sign In</strong>. You will be taken directly to your dashboard.</li>
+    </ol>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div><strong>Admin login credentials</strong> are kept separately by the business owner. If a staff member needs an account created, see <a href="#sec-admin-staff">Section 4.2 — Managing Staff Accounts</a>.</div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div><strong>Tip:</strong> You can log in with your email address, Australian mobile number, or your assigned User ID — whichever is easiest to remember.</div>
+    </div>
+  </section>
+
+  <!-- ════════════════ SECTION 2: PARENT EXPERIENCE ════════════════ -->
+  <section id="sec-parent" class="page-break">
+    <span class="section-label">Section 2</span>
+    <h2 class="section-title">Parent &amp; Family Experience</h2>
+    <p class="section-intro">Understanding the parent journey helps staff provide better support. This section covers every step a family goes through, from first visiting the website to paying for a term.</p>
+
+    <!-- 2.1 Homepage -->
+    <h3 class="subsec" id="sec-parent-homepage">2.1 Homepage &amp; Public Pages</h3>
+    <p>Visitors who are not logged in can browse the following pages without creating an account:</p>
+    <table>
+      <tr><th>Page</th><th>URL</th><th>Purpose</th></tr>
+      <tr><td>Homepage</td><td><a href="https://www.power2adapt.online/" target="_blank" class="url-link">power2adapt.online</a></td><td>Overview of Power2ADAPT, programs, and call-to-action buttons</td></tr>
+      <tr><td>Classes</td><td><a href="https://www.power2adapt.online/classes" target="_blank" class="url-link">power2adapt.online/classes</a></td><td>Browse all available classes by program, age, and venue</td></tr>
+      <tr><td>Coaches</td><td><a href="https://www.power2adapt.online/coaches" target="_blank" class="url-link">power2adapt.online/coaches</a></td><td>Meet the coaching team and their specialisations</td></tr>
+      <tr><td>Senior Squad</td><td><a href="https://www.power2adapt.online/senior-squad" target="_blank" class="url-link">power2adapt.online/senior-squad</a></td><td>Application information for the Senior Squad program</td></tr>
+      <tr><td>High Performance</td><td><a href="https://www.power2adapt.online/high-performance" target="_blank" class="url-link">power2adapt.online/high-performance</a></td><td>Application information for the High Performance Squad</td></tr>
+      <tr><td>Education Hub</td><td><a href="https://www.power2adapt.online/education" target="_blank" class="url-link">power2adapt.online/education</a></td><td>Articles and resources for athletes and families</td></tr>
+      <tr><td>Athlete Survey</td><td><a href="https://www.power2adapt.online/questionnaire" target="_blank" class="url-link">power2adapt.online/questionnaire</a></td><td>18-question check-in survey (accessible without login)</td></tr>
+      <tr><td>Contact / Enquiry</td><td><a href="https://www.power2adapt.online/" target="_blank" class="url-link">Via contact form on homepage</a></td><td>Submit enquiries — triggers SMS + email notifications</td></tr>
+    </table>
+
+    <!-- 2.2 Registration -->
+    <h3 class="subsec" id="sec-parent-register">2.2 Registration &amp; Login</h3>
+    <p>Parents create their own account directly on the website. Staff do not need to create parent accounts manually.</p>
+    <ol class="steps">
+      <li>Click <strong>Get Started</strong> or <strong>Login → Create Account</strong> on the homepage.</li>
+      <li>Fill in first name, last name, email address, mobile number, and a password.</li>
+      <li>Australian mobile numbers are validated automatically (must start with 04XX or be a valid landline — +61 prefix also accepted).</li>
+      <li>Account is created immediately — no email verification required.</li>
+    </ol>
+
+    <!-- 2.3 Dashboard -->
+    <h3 class="subsec" id="sec-parent-dashboard">2.3 Family Dashboard</h3>
+    <p>After logging in, parents land on their <strong>Family Dashboard</strong> at <a href="https://www.power2adapt.online/" class="url-link" target="_blank">power2adapt.online/</a></p>
+    <p>The dashboard shows:</p>
+    <ul>
+      <li><strong>Current Programs</strong> — all active enrolments with status badges (Active, Pending Payment, Waitlisted)</li>
+      <li><strong>Quick Actions</strong> — Find New Programs, Weekly Schedule, Payments &amp; Billing</li>
+      <li><strong>Notifications</strong> — system alerts such as payment confirmations and waitlist updates</li>
+      <li><strong>Invoice Actions</strong> — view and download invoices for completed payments</li>
+    </ul>
+
+    <!-- 2.4 Enrolling -->
+    <h3 class="subsec" id="sec-parent-enrol">2.4 Enrolling in a Program</h3>
+    <ol class="steps">
+      <li>From the dashboard, click <strong>Find New Programs</strong>, or go to <a href="https://www.power2adapt.online/classes" class="url-link" target="_blank">power2adapt.online/classes</a>.</li>
+      <li>Browse available classes filtered by age group, day, or venue. Each card shows capacity, times, venue, coach, and price.</li>
+      <li>Click <strong>Enrol Now</strong> on the chosen class.</li>
+      <li>Select the child to enrol (or add a new child profile — name, date of birth, grade, any medical notes).</li>
+      <li>Review the enrolment summary and confirm. The enrolment is created with status <strong>Pending Payment</strong>.</li>
+      <li>Proceed to checkout to complete payment (see Section 2.5).</li>
+    </ol>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div>If a class is <strong>full</strong>, the Enrol Now button becomes <strong>Join Waitlist</strong>. The parent is placed on the waitlist and notified by SMS when a spot opens.</div>
+    </div>
+
+    <!-- 2.5 Payment -->
+    <h3 class="subsec" id="sec-parent-payment">2.5 Making a Payment</h3>
+    <p>All payments are processed securely through <strong>Stripe</strong>. Power2ADAPT does not store card details.</p>
+    <ol class="steps">
+      <li>After enrolling, the parent is taken to the <strong>Checkout</strong> page automatically, or can return to it from the dashboard.</li>
+      <li>Enter card details (card number, expiry, CVC) in the Stripe payment form.</li>
+      <li>Click <strong>Pay Now</strong>. Payment is processed in real time.</li>
+      <li>On success, enrolment status changes to <strong>Active</strong>, an SMS confirmation is sent, and an email receipt is generated.</li>
+      <li>Invoices are available to download from the dashboard at any time.</li>
+    </ol>
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div>Pricing is calculated automatically based on the term's price-per-week setting and the number of teaching weeks (after public holidays are subtracted). Parents always see the exact amount before paying.</div>
+    </div>
+
+    <!-- 2.6 Waitlist -->
+    <h3 class="subsec" id="sec-parent-waitlist">2.6 Joining a Waitlist</h3>
+    <ol class="steps">
+      <li>When a class is at full capacity, click <strong>Join Waitlist</strong> on the class card.</li>
+      <li>The parent's details are saved and they receive an SMS acknowledgement.</li>
+      <li>When a spot becomes available, they are notified automatically by SMS to complete enrolment.</li>
+      <li>Waitlist entries are visible on the parent dashboard.</li>
+    </ol>
+
+    <!-- 2.7 Questionnaire -->
+    <h3 class="subsec" id="sec-parent-questionnaire">2.7 Athlete Check-In Survey</h3>
+    <p>The <strong>Running Improvement Check-In</strong> is an 18-question survey that helps coaches understand each athlete's goals and areas for improvement.</p>
+    <ul>
+      <li>Available at <a href="https://www.power2adapt.online/questionnaire" class="url-link" target="_blank">power2adapt.online/questionnaire</a> — no login required.</li>
+      <li>Covers: event focus, goals, training frequency, technique issues, mental approach, injury history, and more.</li>
+      <li>Responses are saved to the database and automatically synced to a Google Spreadsheet for coach review.</li>
+      <li>Admins can view all responses at <a href="https://www.power2adapt.online/admin/surveys" class="url-link" target="_blank">power2adapt.online/admin/surveys</a>.</li>
+    </ul>
+
+    <!-- 2.8 Videos -->
+    <h3 class="subsec" id="sec-parent-videos">2.8 Viewing Performance Videos</h3>
+    <p>Coaches can share performance highlight videos with parents. Parents receive a link via SMS or email and can view the video on any device — no login required for shared links.</p>
+    <ul>
+      <li>Shared videos are accessed at a unique private link e.g. <code>power2adapt.online/video-highlights/[code]</code></li>
+      <li>Logged-in parents can also view their child's videos from the Athlete Portal.</li>
+    </ul>
+
+    <!-- 2.9 Premium Programs -->
+    <h3 class="subsec" id="sec-parent-programs">2.9 Premium Program Applications</h3>
+    <p>Two elite programs require a formal application rather than direct enrolment:</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4>Senior Squad</h4>
+        <p>For advanced athletes. Parents submit a detailed application form at <a href="https://www.power2adapt.online/senior-squad" target="_blank">power2adapt.online/senior-squad</a>. Includes event details, PBs, training history, and goals.</p>
+      </div>
+      <div class="feature-card">
+        <h4>High Performance Squad</h4>
+        <p>Elite-level program. Applications submitted at <a href="https://www.power2adapt.online/high-performance" target="_blank">power2adapt.online/high-performance</a>. Admin reviews and approves/rejects via the admin panel.</p>
+      </div>
+    </div>
+    <p>On submission, the applicant receives an SMS confirmation and the admin team receives an SMS + email alert. Admins review applications at <a href="https://www.power2adapt.online/admin/applications" class="url-link" target="_blank">power2adapt.online/admin</a>.</p>
+
+    <!-- 2.10 Education Hub -->
+    <h3 class="subsec" id="sec-parent-education">2.10 Education Hub</h3>
+    <p>The Education Hub (formerly "Blog") lives at <a href="https://www.power2adapt.online/education" class="url-link" target="_blank">power2adapt.online/education</a>.</p>
+    <ul>
+      <li>Accessible to anyone — no login required.</li>
+      <li>Contains articles on training tips, technique guidance, and athlete development.</li>
+      <li>Articles link through to the <strong>Skool community</strong> for deeper discussion.</li>
+      <li>Admins publish and manage articles from <a href="https://www.power2adapt.online/admin/blog" class="url-link" target="_blank">power2adapt.online/admin/blog</a>.</li>
+    </ul>
+
+    <!-- 2.11 Contact -->
+    <h3 class="subsec" id="sec-parent-contact">2.11 Contacting Power2ADAPT</h3>
+    <p>Parents can submit an enquiry using the contact form on the homepage. They choose their preferred contact method (phone, email, or video call) and describe their enquiry. On submission:</p>
+    <ul>
+      <li>The parent receives an <strong>email confirmation</strong> with a branded HTML receipt.</li>
+      <li>The admin team receives an <strong>SMS alert</strong> and an <strong>email notification</strong> with the enquiry details.</li>
+      <li>The enquiry is logged in the admin panel for follow-up tracking.</li>
+    </ul>
+  </section>
+
+  <!-- ════════════════ SECTION 3: COACH FUNCTIONS ════════════════ -->
+  <section id="sec-coach" class="page-break">
+    <span class="section-label">Section 3</span>
+    <h2 class="section-title">Coach Functions</h2>
+    <p class="section-intro">Coaches have access to a set of tools designed for day-to-day training operations. These pages are only visible after logging in with a coach or admin account.</p>
+
+    <!-- 3.1 Attendance -->
+    <h3 class="subsec" id="sec-coach-attendance">3.1 Recording Attendance</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/attendance" class="url-link" target="_blank">power2adapt.online/attendance</a> &nbsp;<span class="role role-coach">Coach</span> <span class="role role-admin">Admin</span></p>
+    <ol class="steps">
+      <li>Log in as a coach or admin and navigate to <strong>Attendance</strong> in the top menu.</li>
+      <li>Select the <strong>class</strong> from the dropdown (only classes assigned to that coach appear).</li>
+      <li>Select the <strong>date</strong> (defaults to today).</li>
+      <li>The roster of enrolled students loads automatically.</li>
+      <li>For each student, click one of three status buttons: <strong>Present ✓</strong>, <strong>Absent ✗</strong>, or <strong>Late ⏱</strong>.</li>
+      <li>For absent students, an optional reason field appears (e.g. illness, family commitment).</li>
+      <li>Each mark is saved instantly — no "Submit" button needed.</li>
+    </ol>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div>Today's classes appear highlighted at the top. You can also select any past date to update or review historical attendance records.</div>
+    </div>
+
+    <!-- 3.2 Video Highlights -->
+    <h3 class="subsec" id="sec-coach-videos">3.2 Performance Video Highlights</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/video-highlights" class="url-link" target="_blank">power2adapt.online/video-highlights</a> &nbsp;<span class="role role-coach">Coach</span> <span class="role role-admin">Admin</span></p>
+    <p>Coaches can upload, manage, and share performance video highlights with parents and the Skool community.</p>
+
+    <h4 class="step-head">Adding a new video highlight:</h4>
+    <ol class="steps">
+      <li>Click <strong>+ Add Video</strong>.</li>
+      <li>Fill in: Title, Description, Video Type (individual performance, class highlights, skill demonstration, progress comparison, team performance).</li>
+      <li>Select the <strong>athlete</strong> (child) and/or the <strong>class</strong> the video relates to.</li>
+      <li>Paste the <strong>video URL</strong> (e.g. YouTube or Vimeo link) and optional thumbnail URL.</li>
+      <li>Add performance notes, coach comments, skills highlighted, and tags.</li>
+      <li>Toggle <strong>Make Public</strong> if the video should be shareable without login.</li>
+      <li>Click <strong>Save</strong>.</li>
+    </ol>
+
+    <h4 class="step-head">Sharing a video with a parent:</h4>
+    <ol class="steps">
+      <li>Find the video in the list and click the <strong>Share</strong> icon.</li>
+      <li>Select the parent's account from the dropdown, or enter an email address directly.</li>
+      <li>Optionally add a personal message.</li>
+      <li>Click <strong>Send</strong> — the parent receives an SMS with the video link and an optional email notification.</li>
+    </ol>
+
+    <h4 class="step-head">One-click share to Skool:</h4>
+    <ol class="steps">
+      <li>Click the <strong>Skool</strong> button on any video card.</li>
+      <li>The video details are pre-filled — add any additional community message.</li>
+      <li>Confirm to post the highlight to the Skool community platform.</li>
+    </ol>
+
+    <!-- 3.3 Athlete Performance & Assessments -->
+    <h3 class="subsec" id="sec-coach-athletes">3.3 Athlete Performance &amp; Assessments</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin/athletes" class="url-link" target="_blank">power2adapt.online/admin/athletes</a> &nbsp;<span class="role role-coach">Coach</span> <span class="role role-admin">Admin</span></p>
+    <p>The Athlete Performance Manager has three tabs for each athlete:</p>
+
+    <h4 class="step-head">Tab 1 — Performance Records</h4>
+    <ul>
+      <li>Log timed or measured results for 16 event types: 100m, 200m, 400m, 800m, 1500m, Long Jump, High Jump, Triple Jump, Shot Put, Discus, Javelin, Hurdles, Relay, Vertical Jump, Agility Test, Beep Test.</li>
+      <li>Each record has: event type, value, unit, date, notes, and a <strong>Personal Best</strong> flag (shown with a trophy icon).</li>
+      <li>Records can be edited or deleted at any time.</li>
+    </ul>
+
+    <h4 class="step-head">Tab 2 — Training Goals</h4>
+    <ul>
+      <li>Set SMART goals with: title, description, target value and unit, current value, target date, status (Active / Achieved / Paused), priority (Low / Medium / High), and category (Speed, Strength, Technique, Endurance, Flexibility, Agility).</li>
+      <li>A progress bar automatically calculates percentage toward the target.</li>
+      <li>Goals update to <strong>Achieved</strong> status with a timestamp when marked complete.</li>
+    </ul>
+
+    <h4 class="step-head">Tab 3 — Assessments &amp; Feedback</h4>
+    <ul>
+      <li>Add coach notes, written feedback, or formal assessments with a title, entry type (Coach Note / Feedback / Formal Assessment / File Document), and free-text content.</li>
+      <li>Optionally <strong>attach a file</strong> (PDF, Word document, or image up to 10MB) — stored securely in cloud storage.</li>
+      <li>Each entry shows the author's name and date.</li>
+      <li>Attached files can be downloaded at any time via the file link.</li>
+    </ul>
+
+    <h4 class="step-head">Adding a new athlete to the system:</h4>
+    <ol class="steps">
+      <li>Click the <strong>+ Add</strong> button in the athlete sidebar.</li>
+      <li>Enter first name, last name, date of birth, year level, emergency contact, medical notes, and optionally link to an existing parent account.</li>
+      <li>Click <strong>Add Athlete</strong> — the athlete appears in the sidebar immediately.</li>
+    </ol>
+
+    <!-- 3.4 Onboarding Guide -->
+    <h3 class="subsec" id="sec-coach-onboarding">3.4 Coach Reference Guide (Onboarding)</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/onboarding" class="url-link" target="_blank">power2adapt.online/onboarding</a> &nbsp;<span class="role role-coach">Coach</span> <span class="role role-admin">Admin</span></p>
+    <p>This is an internal-only reference guide covering six coaching protocol areas:</p>
+    <table>
+      <tr><th>Tab</th><th>Contents</th></tr>
+      <tr><td>48hr Process</td><td>The 48-hour athlete follow-up workflow — assessments, communication steps, and documentation requirements</td></tr>
+      <tr><td>Junior Academy</td><td>Age-appropriate training principles, session structure, and progression guidelines for junior athletes</td></tr>
+      <tr><td>Development Squad</td><td>Middle-level program protocols, goal-setting frameworks, and parent communication standards</td></tr>
+      <tr><td>Senior Squad</td><td>Elite training standards, periodisation, competition preparation, and selection criteria</td></tr>
+      <tr><td>Running Technique</td><td>Coaching cues for sprint mechanics, stride pattern, arm drive, posture, and transition phases</td></tr>
+      <tr><td>Red Flags</td><td>Indicators requiring immediate action — injury signs, safeguarding concerns, and escalation procedures</td></tr>
+    </table>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div>This page is <strong>not accessible to parents</strong>. It is only visible to logged-in coaches and admins and does not appear in search engines.</div>
+    </div>
+  </section>
+
+  <!-- ════════════════ SECTION 4: ADMIN FUNCTIONS ════════════════ -->
+  <section id="sec-admin" class="page-break">
+    <span class="section-label">Section 4</span>
+    <h2 class="section-title">Admin Functions</h2>
+    <p class="section-intro">Admin accounts have full access to all system features. All admin pages require an admin login. Coaches cannot access admin-only pages.</p>
+
+    <!-- 4.1 Dashboard -->
+    <h3 class="subsec" id="sec-admin-dashboard">4.1 Admin Dashboard</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin" class="url-link" target="_blank">power2adapt.online/admin</a> &nbsp;<span class="role role-admin">Admin</span></p>
+    <p>The admin dashboard shows a live snapshot of the business:</p>
+    <ul>
+      <li><strong>Key metrics:</strong> Total users, active enrolments, revenue this term, pending payments</li>
+      <li><strong>Recent enrolments:</strong> Latest sign-ups with status</li>
+      <li><strong>Quick links</strong> to all admin sections</li>
+      <li><strong>Data tools:</strong> CSV import for bulk customer data, sample data generation for testing</li>
+    </ul>
+
+    <!-- 4.2 Classes -->
+    <h3 class="subsec" id="sec-admin-classes">4.2 Managing Classes</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin/classes" class="url-link" target="_blank">power2adapt.online/admin/classes</a> &nbsp;<span class="role role-admin">Admin</span></p>
+
+    <h4 class="step-head">Creating a new class:</h4>
+    <ol class="steps">
+      <li>Click <strong>+ Add Class</strong>.</li>
+      <li>Fill in: Class name, description, sport type, venue, assigned coach, term, year, day of week, start time, end time, minimum age, maximum age, maximum capacity, and price per term.</li>
+      <li>Click <strong>Create Class</strong>. The class immediately appears in the public classes page.</li>
+    </ol>
+
+    <h4 class="step-head">Editing an existing class:</h4>
+    <ol class="steps">
+      <li>Find the class in the table and click the <strong>Edit (pencil)</strong> icon.</li>
+      <li>Update any fields — all existing enrolments remain unaffected.</li>
+      <li>Click <strong>Save Changes</strong>.</li>
+    </ol>
+
+    <h4 class="step-head">Deleting a class:</h4>
+    <ol class="steps">
+      <li>Click the <strong>Delete (bin)</strong> icon on the class row.</li>
+      <li>Confirm deletion. Note: this should only be done for classes with no active enrolments.</li>
+    </ol>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div>Before creating a class, ensure the <strong>venue</strong>, <strong>coach</strong>, and <strong>term configuration</strong> already exist in the system. These are managed in Sections 4.3 and 4.5.</div>
+    </div>
+
+    <!-- 4.3 Staff -->
+    <h3 class="subsec" id="sec-admin-staff">4.3 Managing Staff Accounts</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin/staff" class="url-link" target="_blank">power2adapt.online/admin/staff</a> &nbsp;<span class="role role-admin">Admin</span></p>
+
+    <h4 class="step-head">Creating a new staff account:</h4>
+    <ol class="steps">
+      <li>Click <strong>+ Add Staff Member</strong>.</li>
+      <li>Enter: first name, last name, email address, mobile number, role (Coach, Admin, or Parent), temporary password, bio, and sport specialisations (can select multiple).</li>
+      <li>Click <strong>Create Staff Member</strong>. They can now log in with the provided credentials.</li>
+    </ol>
+
+    <p>Specialisation options include: Foundation (Prep–Year 2), Emerging (Year 3–6), Academy (Year 7+), Senior Squad, Empowered Athlete Program, Team Sport Speed, Basketball, Soccer, Tennis, Swimming, Athletics, Netball, Cricket, Volleyball, Multi-Sport.</p>
+
+    <h4 class="step-head">Editing or removing staff:</h4>
+    <ul>
+      <li>Click the <strong>Edit</strong> icon on any staff card to update details or reset their password.</li>
+      <li>Click the <strong>Delete</strong> icon to remove the account. Classes assigned to a deleted coach should be reassigned first.</li>
+    </ul>
+
+    <!-- 4.4 Customers -->
+    <h3 class="subsec" id="sec-admin-customers">4.4 Managing Customers &amp; Children</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin/customers" class="url-link" target="_blank">power2adapt.online/admin/customers</a> &nbsp;<span class="role role-admin">Admin</span></p>
+    <p>This page shows all registered parent accounts and their associated children.</p>
+    <ul>
+      <li><strong>Search</strong> customers by name or email using the search bar.</li>
+      <li><strong>View child profiles</strong> including date of birth, grade, medical notes, and emergency contact.</li>
+      <li><strong>View enrolment history</strong> for each child — current and past programs.</li>
+      <li><strong>Edit customer details</strong> — update contact information or correct data entry errors.</li>
+    </ul>
+
+    <!-- 4.5 Athlete Manager -->
+    <h3 class="subsec" id="sec-admin-athletes">4.5 Athlete Performance Manager</h3>
+    <p>See <a href="#sec-coach-athletes">Section 3.3</a> for full details. Admins have all the same capabilities as coaches, plus they can add new athlete profiles independently of parent accounts.</p>
+
+    <!-- 4.6 Term Config -->
+    <h3 class="subsec" id="sec-admin-term">4.6 Term &amp; Pricing Configuration</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin/term-config" class="url-link" target="_blank">power2adapt.online/admin/term-config</a> &nbsp;<span class="role role-admin">Admin</span></p>
+    <p>This is where term dates, pricing, and public holidays are configured. All class pricing is calculated dynamically from these settings.</p>
+
+    <h4 class="step-head">Creating a term configuration:</h4>
+    <ol class="steps">
+      <li>Click <strong>+ New Term</strong>.</li>
+      <li>Select the term (Term 1–4), year, give it a name (e.g. "Term 2 2026"), and set the start date and end date.</li>
+      <li>Enter the <strong>number of teaching weeks</strong> (the system will cross-check against public holidays).</li>
+      <li>Set the <strong>price per week</strong> (e.g. $30.00) and <strong>GST rate</strong> (default 10%).</li>
+      <li>Optionally set enrolment open and close dates.</li>
+      <li>Click <strong>Create Term</strong>.</li>
+    </ol>
+
+    <h4 class="step-head">Adding public holidays / school holidays:</h4>
+    <ol class="steps">
+      <li>Find the term in the list and click the <strong>Holidays</strong> button.</li>
+      <li>Click <strong>+ Add Holiday</strong>, enter the date, name (e.g. "King's Birthday"), and type (Public Holiday or School Holiday).</li>
+      <li>The holiday is subtracted from teaching weeks and the price recalculates automatically.</li>
+    </ol>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div>Venue-specific school holiday dates (e.g. Peninsula Grammar finishing earlier than other venues) can be added as separate holiday entries. The pricing engine accounts for all listed holidays when calculating the term fee.</div>
+    </div>
+
+    <!-- 4.7 Enquiries -->
+    <h3 class="subsec" id="sec-admin-enquiries">4.7 Contact Enquiries</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin/enquiries" class="url-link" target="_blank">power2adapt.online/admin/enquiries</a> &nbsp;<span class="role role-admin">Admin</span></p>
+    <p>All contact form submissions from the website flow into this inbox. Each enquiry shows the person's name, email, phone, preferred contact method, and their message.</p>
+
+    <h4 class="step-head">Responding to an enquiry:</h4>
+    <ol class="steps">
+      <li>Click the <strong>View</strong> (eye) icon on any enquiry row.</li>
+      <li>Review the full message, contact preferences, and any previous admin notes.</li>
+      <li>Update the <strong>Status</strong> to reflect where you are in the process.</li>
+      <li>Add internal <strong>Admin Notes</strong> (visible only to admin staff — not sent to the customer).</li>
+      <li>Click <strong>Save Changes</strong>.</li>
+    </ol>
+
+    <table>
+      <tr><th>Status</th><th>Meaning</th></tr>
+      <tr><td>New</td><td>Just received — not yet reviewed</td></tr>
+      <tr><td>In Progress</td><td>Being actioned — staff have started following up</td></tr>
+      <tr><td>Contacted</td><td>The person has been reached and is awaiting next steps</td></tr>
+      <tr><td>Resolved</td><td>Enquiry has been fully addressed</td></tr>
+      <tr><td>Closed</td><td>No further action required</td></tr>
+    </table>
+
+    <!-- 4.8 Applications -->
+    <h3 class="subsec" id="sec-admin-applications">4.8 Program Applications</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin" class="url-link" target="_blank">power2adapt.online/admin</a> (Applications section) &nbsp;<span class="role role-admin">Admin</span></p>
+    <p>Applications for Senior Squad and High Performance Squad are reviewed here.</p>
+    <ol class="steps">
+      <li>Navigate to the <strong>Applications</strong> section from the admin dashboard.</li>
+      <li>Select <strong>Senior Squad</strong> or <strong>High Performance Squad</strong> from the tabs.</li>
+      <li>Review each application — athlete name, personal bests, event focus, training background, goals.</li>
+      <li>Update the status to <strong>Under Review</strong>, <strong>Accepted</strong>, or <strong>Rejected</strong>.</li>
+      <li>Add admin notes. The applicant can be notified manually via email or SMS.</li>
+    </ol>
+
+    <!-- 4.9 SMS -->
+    <h3 class="subsec" id="sec-admin-sms">4.9 SMS Broadcasts</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin/sms" class="url-link" target="_blank">power2adapt.online/admin/sms</a> &nbsp;<span class="role role-admin">Admin</span></p>
+    <p>Send bulk SMS messages to enrolled families using Twilio integration.</p>
+    <ol class="steps">
+      <li>Choose the recipient group (all parents, specific class, specific program).</li>
+      <li>Type the message (keep under 160 characters to avoid multi-part SMS charges).</li>
+      <li>Review the recipient count and estimated cost.</li>
+      <li>Click <strong>Send SMS</strong>. Messages are delivered within seconds.</li>
+    </ol>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div>Automated SMS messages are also sent for: new enrolments, payment confirmations, waitlist movements, application confirmations, and term renewal reminders. These do not require any manual action.</div>
+    </div>
+
+    <!-- 4.10 Education Hub -->
+    <h3 class="subsec" id="sec-admin-education">4.10 Education Hub (Blog) Management</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin/blog" class="url-link" target="_blank">power2adapt.online/admin/blog</a> &nbsp;<span class="role role-admin">Admin</span></p>
+    <ol class="steps">
+      <li>Click <strong>+ New Article</strong>.</li>
+      <li>Enter the article title, content, summary, category, and featured image URL.</li>
+      <li>Set the article as <strong>Published</strong> (visible to public) or <strong>Draft</strong> (hidden).</li>
+      <li>Add a Skool community link if the article has an associated community post.</li>
+      <li>Click <strong>Save</strong>. Published articles appear on <a href="https://www.power2adapt.online/education" target="_blank">power2adapt.online/education</a> immediately.</li>
+    </ol>
+
+    <!-- 4.11 Analytics -->
+    <h3 class="subsec" id="sec-admin-analytics">4.11 Analytics &amp; Reporting</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/analytics" class="url-link" target="_blank">power2adapt.online/analytics</a> &nbsp;<span class="role role-admin">Admin</span></p>
+    <p>The analytics dashboard provides visual reporting across the business:</p>
+    <ul>
+      <li><strong>Enrolment trends</strong> — week-by-week enrolment numbers charted over time</li>
+      <li><strong>Revenue by term</strong> — total income and payment breakdown per term</li>
+      <li><strong>Program popularity</strong> — which classes have highest fill rates</li>
+      <li><strong>Demographic breakdown</strong> — age groups and grade levels across all enrolled athletes</li>
+      <li><strong>Coach performance</strong> — attendance rates per class / coach</li>
+    </ul>
+
+    <!-- 4.12 Surveys -->
+    <h3 class="subsec" id="sec-admin-surveys">4.12 Survey Responses</h3>
+    <p><strong>Page:</strong> <a href="https://www.power2adapt.online/admin/surveys" class="url-link" target="_blank">power2adapt.online/admin/surveys</a> &nbsp;<span class="role role-admin">Admin</span></p>
+    <ul>
+      <li>View all completed athlete check-in surveys in a searchable table.</li>
+      <li>Each response shows the athlete's name, date submitted, and all 18 answers.</li>
+      <li>Responses are automatically synced to the connected <strong>Google Spreadsheet</strong> for bulk analysis and sharing with coaches.</li>
+    </ul>
+  </section>
+
+  <!-- ════════════════ SECTION 5: NOTIFICATIONS ════════════════ -->
+  <section id="sec-notifications" class="page-break">
+    <span class="section-label">Section 5</span>
+    <h2 class="section-title">SMS &amp; Email Notifications</h2>
+    <p class="section-intro">The platform sends automated notifications to keep parents, athletes, and admin informed. These are triggered automatically — no manual sending is required.</p>
+
+    <table>
+      <tr><th>Trigger Event</th><th>Who receives it</th><th>Channel</th></tr>
+      <tr><td>New enquiry submitted</td><td>Admin team</td><td>SMS + Email</td></tr>
+      <tr><td>Enquiry confirmation</td><td>Parent / enquirer</td><td>Email (branded HTML)</td></tr>
+      <tr><td>Enrolment confirmed</td><td>Parent</td><td>SMS</td></tr>
+      <tr><td>Payment successful</td><td>Parent</td><td>SMS + Email receipt</td></tr>
+      <tr><td>Waitlist joined</td><td>Parent</td><td>SMS</td></tr>
+      <tr><td>Waitlist spot available</td><td>Parent</td><td>SMS</td></tr>
+      <tr><td>Senior Squad application received</td><td>Admin + Applicant</td><td>SMS (both)</td></tr>
+      <tr><td>High Performance application received</td><td>Admin + Applicant</td><td>SMS (both)</td></tr>
+      <tr><td>Performance video shared</td><td>Parent</td><td>SMS</td></tr>
+      <tr><td>Class reminder</td><td>Parent</td><td>SMS (scheduled)</td></tr>
+      <tr><td>Term renewal reminder</td><td>Parent</td><td>SMS (scheduled)</td></tr>
+      <tr><td>Survey response submitted</td><td>Auto-sync</td><td>Google Sheets</td></tr>
+    </table>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div>SMS messages are sent from the Power2ADAPT Twilio number. Email notifications use the Resend service with Power2ADAPT branding. If a parent reports not receiving a notification, check that their mobile number is correctly formatted (Australian mobile starting with 04XX or landline).</div>
+    </div>
+  </section>
+
+  <!-- ════════════════ SECTION 6: QUICK REFERENCE ════════════════ -->
+  <section id="sec-quick-ref" class="page-break">
+    <span class="section-label">Section 6</span>
+    <h2 class="section-title">Quick Reference</h2>
+
+    <h3 class="subsec">All Page URLs</h3>
+    <table>
+      <tr><th>Page</th><th>URL</th><th>Access</th></tr>
+      <tr><td>Homepage</td><td><a href="https://www.power2adapt.online/" target="_blank">power2adapt.online/</a></td><td><span class="role role-all">Public</span></td></tr>
+      <tr><td>Classes (browse)</td><td><a href="https://www.power2adapt.online/classes" target="_blank">power2adapt.online/classes</a></td><td><span class="role role-all">Public</span></td></tr>
+      <tr><td>Coaches</td><td><a href="https://www.power2adapt.online/coaches" target="_blank">power2adapt.online/coaches</a></td><td><span class="role role-all">Public</span></td></tr>
+      <tr><td>Senior Squad Application</td><td><a href="https://www.power2adapt.online/senior-squad" target="_blank">power2adapt.online/senior-squad</a></td><td><span class="role role-all">Public</span></td></tr>
+      <tr><td>High Performance Application</td><td><a href="https://www.power2adapt.online/high-performance" target="_blank">power2adapt.online/high-performance</a></td><td><span class="role role-all">Public</span></td></tr>
+      <tr><td>Education Hub</td><td><a href="https://www.power2adapt.online/education" target="_blank">power2adapt.online/education</a></td><td><span class="role role-all">Public</span></td></tr>
+      <tr><td>Athlete Check-In Survey</td><td><a href="https://www.power2adapt.online/questionnaire" target="_blank">power2adapt.online/questionnaire</a></td><td><span class="role role-all">Public</span></td></tr>
+      <tr><td>Family Dashboard</td><td><a href="https://www.power2adapt.online/" target="_blank">power2adapt.online/ (logged in)</a></td><td><span class="role role-parent">Parent</span></td></tr>
+      <tr><td>Athlete Portal</td><td><a href="https://www.power2adapt.online/athlete-portal" target="_blank">power2adapt.online/athlete-portal</a></td><td><span class="role role-parent">Parent</span></td></tr>
+      <tr><td>Attendance</td><td><a href="https://www.power2adapt.online/attendance" target="_blank">power2adapt.online/attendance</a></td><td><span class="role role-coach">Coach</span> <span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Video Highlights</td><td><a href="https://www.power2adapt.online/video-highlights" target="_blank">power2adapt.online/video-highlights</a></td><td><span class="role role-coach">Coach</span> <span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Coach Reference Guide</td><td><a href="https://www.power2adapt.online/onboarding" target="_blank">power2adapt.online/onboarding</a></td><td><span class="role role-coach">Coach</span> <span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Admin Dashboard</td><td><a href="https://www.power2adapt.online/admin" target="_blank">power2adapt.online/admin</a></td><td><span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Manage Classes</td><td><a href="https://www.power2adapt.online/admin/classes" target="_blank">power2adapt.online/admin/classes</a></td><td><span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Manage Staff</td><td><a href="https://www.power2adapt.online/admin/staff" target="_blank">power2adapt.online/admin/staff</a></td><td><span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Manage Customers</td><td><a href="https://www.power2adapt.online/admin/customers" target="_blank">power2adapt.online/admin/customers</a></td><td><span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Athlete Performance Manager</td><td><a href="https://www.power2adapt.online/admin/athletes" target="_blank">power2adapt.online/admin/athletes</a></td><td><span class="role role-coach">Coach</span> <span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Term Configuration</td><td><a href="https://www.power2adapt.online/admin/term-config" target="_blank">power2adapt.online/admin/term-config</a></td><td><span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Contact Enquiries</td><td><a href="https://www.power2adapt.online/admin/enquiries" target="_blank">power2adapt.online/admin/enquiries</a></td><td><span class="role role-admin">Admin</span></td></tr>
+      <tr><td>SMS Broadcasts</td><td><a href="https://www.power2adapt.online/admin/sms" target="_blank">power2adapt.online/admin/sms</a></td><td><span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Education Hub Admin</td><td><a href="https://www.power2adapt.online/admin/blog" target="_blank">power2adapt.online/admin/blog</a></td><td><span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Analytics</td><td><a href="https://www.power2adapt.online/analytics" target="_blank">power2adapt.online/analytics</a></td><td><span class="role role-admin">Admin</span></td></tr>
+      <tr><td>Survey Responses</td><td><a href="https://www.power2adapt.online/admin/surveys" target="_blank">power2adapt.online/admin/surveys</a></td><td><span class="role role-admin">Admin</span></td></tr>
+    </table>
+
+    <h3 class="subsec">Common Questions &amp; Answers</h3>
+
+    <h4 class="step-head">A parent says they can't log in — what do I do?</h4>
+    <p>Check their email address in <strong>Manage Customers</strong>. Confirm it matches what they registered with. If needed, an admin can update their account details. For password resets, the user can use the "Forgot Password" option on the login screen, or an admin can update their details.</p>
+
+    <h4 class="step-head">A class shows as full but a spot has opened — how does the waitlist work?</h4>
+    <p>When an enrolled student withdraws (admin removes enrolment), the system detects the capacity freed up. The next person on the waitlist receives an automatic SMS. An admin should also manually confirm with the family if needed.</p>
+
+    <h4 class="step-head">How do I add a new venue?</h4>
+    <p>Venues are managed through the backend. Contact the system administrator (business owner) to add a new venue — it requires a short technical update to the database.</p>
+
+    <h4 class="step-head">A parent didn't receive their SMS confirmation — what should I check?</h4>
+    <p>Confirm their mobile number in Manage Customers. It must be a valid Australian number: mobile starting with <strong>04</strong>, or a landline, with or without the <strong>+61</strong> country code prefix. International numbers are not supported.</p>
+
+    <h4 class="step-head">How do I know if a payment went through?</h4>
+    <p>Check the enrolment in <strong>Manage Customers</strong> or the <strong>Admin Dashboard</strong>. The enrolment status will show <strong>Active</strong> if payment was successful, or <strong>Pending Payment</strong> if it hasn't been completed yet. All successful payments are also listed in the Analytics page revenue section.</p>
+
+    <h4 class="step-head">Can I export data for reporting?</h4>
+    <p>Survey responses are automatically synced to Google Sheets. For other data (enrolments, payments, customers), use the Analytics dashboard for on-screen reporting. For bulk exports, contact the system administrator.</p>
+
+    <hr>
+
+    <h3 class="subsec">Key Contacts &amp; Login Details</h3>
+    <table>
+      <tr><th>Role</th><th>Login Email</th><th>Notes</th></tr>
+      <tr><td>Admin (Business Owner)</td><td>admin@power2adapt.com</td><td>Full system access</td></tr>
+      <tr><td>Admin (Secondary)</td><td>admin@power2adapt.online</td><td>Full system access</td></tr>
+      <tr><td colspan="3" style="font-size:12px; color:#64748b;">Passwords are managed by the business owner. Contact admin@power2adapt.com to request a new staff account or password reset.</td></tr>
+    </table>
+  </section>
+
+  <!-- Footer -->
+  <div class="manual-footer">
+    <p><strong>Power2ADAPT Staff Operations Manual</strong> &mdash; Confidential. For internal staff use only.</p>
+    <p>Platform: <a href="https://www.power2adapt.online" target="_blank">www.power2adapt.online</a> &nbsp;&bull;&nbsp; Version: March 2026</p>
+    <p style="margin-top:8px;">To save this document as a PDF: click the <strong>Print / Save as PDF</strong> button at the top of the page, then choose <strong>Save as PDF</strong> as the destination in the print dialog.</p>
+  </div>
+
+</div>
+
+</body>
+</html>
