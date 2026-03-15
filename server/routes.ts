@@ -91,8 +91,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize invoice service
   const invoiceService = new InvoiceService();
 
-  // Serve the operations manual
+  // Serve the operations manual (login required)
   app.get("/operations-manual", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) {
+      return res.redirect("/?login=required");
+    }
+    const user = await storage.getUser(userId);
+    if (!user || !["admin", "coach"].includes(user.role)) {
+      return res.status(403).send("Access denied. Admin or coach login required.");
+    }
     const { readFileSync } = await import("fs");
     const { resolve, dirname } = await import("path");
     const { fileURLToPath } = await import("url");
