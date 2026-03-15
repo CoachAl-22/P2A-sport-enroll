@@ -1,0 +1,44 @@
+Suggested Improvements
+1. Add a "New Staff Quick Start" checklist at the very beginning
+Before Section 1, coaches need a simple "Day 1" list:
+
+Log in at power2adapt.online
+Check your assigned classes (Attendance page)
+Read the Coach Reference Guide (/onboarding)
+Bookmark the attendance page on your phone
+Young coaches (18-25) will skip to this first -- walls of text won't get read.
+
+2. Add a "Before & After Session" checklist for coaches
+The most practical thing a coach needs daily isn't covered:
+
+Check class roster before leaving
+Mark attendance within 1 hour of session ending
+Any injury/incident -- record in athlete notes immediately
+3. PDF rendering artifacts to fix
+A few sections have broken formatting from the HTML-to-PDF conversion:
+
+Section 2.4 Step 1 -- "From the dashboard, click Find New Programs" renders with a mid-sentence line break
+Section 2.5 Step 1 -- "the parent is taken to the Checkout page" has a split layout
+Section 4.6 Step 3 -- "number of teaching weeks" breaks mid-phrase
+These read fine in the HTML version but look odd in the PDF. Worth either fixing the PDF styling or telling staff to use the live HTML version at /operations-manual instead of the PDF.
+
+4. Incomplete "Key Contacts" table (last page)
+The table only shows admin login emails -- no coach-specific contacts. Add:
+
+Alistair's mobile for urgent issues
+Who to call if the site is down
+Who handles parent payment disputes
+5. Setmore not mentioned
+Coaches may receive class-related information from Setmore (booking confirmations, athlete lists). Worth a brief note that Setmore is the booking system and syncs to Google Calendar -- so they know what it is if they see it.
+
+6. Consider a role-specific one-pager
+The full 20 pages is comprehensive for admin but a lot for a Level 1 coach who just needs attendance and video highlights. A single-page "Coach Quick Reference" pulling out Sections 3.1, 3.2, and the page URL table would be worth adding as an appendix.
+
+Priority Order
+Fix PDF rendering artifacts (quick)
+Add New Staff Quick Start checklist (high value, 5 mins)
+Before/After Session checklist (high value for coaches)
+Complete the Key Contacts table (important for escalation)
+Role-specific one-pager (nice to have)
+Overall it's ready to go once you've verified the functionality. The HTML version at /operations-manual is cleaner than the PDF -- I'd direct staff to that as the primary reference.
+

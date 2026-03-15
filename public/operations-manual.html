@@ -38,8 +38,63 @@
     .page-break { page-break-before: always; }
     .cover { page-break-after: always; }
     section { page-break-inside: avoid; }
+    h3, h4 { page-break-after: avoid; }
+    .steps li { page-break-inside: avoid; }
+    p { orphans: 3; widows: 3; }
     .toc a::after { content: leader('.') target-counter(attr(href), page); }
   }
+
+  /* ── Quick-start / checklist boxes ───────── */
+  .quickstart-box {
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+    border: 2px solid var(--brand-blue);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 32px 0 48px;
+  }
+  .quickstart-box h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--brand-dark);
+    margin-bottom: 6px;
+    border: none;
+    padding: 0;
+  }
+  .quickstart-box .qs-sub {
+    font-size: 13px;
+    color: var(--grey-500);
+    margin-bottom: 20px;
+  }
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--grey-200);
+    font-size: 14px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: "☐";
+    font-size: 18px;
+    color: var(--brand-blue);
+    flex-shrink: 0;
+    line-height: 1.3;
+  }
+  .checklist-two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+  .checklist-col h4 { font-size: 13px; font-weight: 700; color: var(--brand-orange); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 10px; }
+
+  /* ── Appendix / one-pager styles ─────────── */
+  .appendix-box {
+    background: var(--brand-dark);
+    color: #fff;
+    border-radius: 10px;
+    padding: 22px 28px;
+    margin: 24px 0 16px;
+  }
+  .appendix-box h3 { color: var(--brand-orange); font-size: 15px; margin-bottom: 8px; }
+  .appendix-box p { color: #cbd5e1; font-size: 13px; margin: 0; }
 
   /* ── Screen layout ────────────────────────── */
   .container { max-width: 900px; margin: 0 auto; padding: 40px 48px; }
@@ -338,10 +393,11 @@
       <li>
         <a href="#sec-coach">Coach Functions</a>
         <ul class="toc-sub">
-          <li><a href="#sec-coach-attendance">Recording Attendance</a></li>
+          <li><a href="#sec-coach-attendance">Recording Attendance &amp; Session Checklist</a></li>
           <li><a href="#sec-coach-videos">Performance Video Highlights</a></li>
           <li><a href="#sec-coach-athletes">Athlete Performance &amp; Assessments</a></li>
           <li><a href="#sec-coach-onboarding">Coach Reference Guide (Onboarding)</a></li>
+          <li><a href="#sec-coach-setmore">Setmore — External Booking System</a></li>
         </ul>
       </li>
       <li>
@@ -363,8 +419,24 @@
       </li>
       <li><a href="#sec-notifications">SMS &amp; Email Notifications</a></li>
       <li><a href="#sec-quick-ref">Quick Reference</a></li>
+      <li><a href="#sec-appendix">Appendix A — Coach Quick Reference (One-Pager)</a></li>
     </ol>
   </nav>
+
+  <!-- ════════════════ NEW STAFF QUICK START ════════════════ -->
+  <div class="quickstart-box" id="sec-quickstart">
+    <div class="cover-badge" style="margin-bottom:14px;">New Staff — Start Here</div>
+    <h2>&#127919; New Staff Quick Start</h2>
+    <p class="qs-sub">Complete these steps on your first day. Takes about 10 minutes — then you're ready to coach.</p>
+    <ul class="checklist">
+      <li>Log in at <a href="https://www.power2adapt.online" target="_blank">www.power2adapt.online</a> using the credentials provided by your admin.</li>
+      <li>Go to <a href="https://www.power2adapt.online/attendance" target="_blank">power2adapt.online/attendance</a> — confirm your assigned classes appear in the dropdown.</li>
+      <li>Read the <a href="https://www.power2adapt.online/onboarding" target="_blank">Coach Reference Guide</a> (power2adapt.online/onboarding) — covers session protocols, red flags, and communication standards.</li>
+      <li>Bookmark the <strong>Attendance page</strong> on your phone — you'll need it at every session.</li>
+      <li>Note: <strong>Setmore</strong> is used for Running Tech, Team Sport Speed, Senior Squad, and High Performance bookings. You may receive Setmore booking confirmations by email — these sync to Google Calendar. If you're unsure, ask your admin.</li>
+      <li>Save the <strong>Key Contacts</strong> from Section 6 of this manual in case you ever need urgent support.</li>
+    </ul>
+  </div>
 
   <!-- ════════════════ SECTION 1: OVERVIEW ════════════════ -->
   <section id="sec-overview" class="page-break">
@@ -560,6 +632,29 @@
       <div>Today's classes appear highlighted at the top. You can also select any past date to update or review historical attendance records.</div>
     </div>
 
+    <h4 class="step-head" style="margin-top:24px;">&#128203; Before &amp; After Session Checklist</h4>
+    <p style="font-size:13px;color:var(--grey-500);margin-bottom:12px;">Use this as your daily session routine — print and keep it in your coaching bag if helpful.</p>
+    <div class="checklist-two">
+      <div class="checklist-col">
+        <h4>&#9200; Before the Session</h4>
+        <ul class="checklist">
+          <li>Log in and open the Attendance page for today's class.</li>
+          <li>Check the class roster — note any medical alerts or new athletes.</li>
+          <li>Confirm the venue and start time (check Setmore if it's a Running Tech, Team Sport Speed, Senior Squad, or High Performance session).</li>
+          <li>Review any outstanding athlete goals or assessment notes if relevant.</li>
+        </ul>
+      </div>
+      <div class="checklist-col">
+        <h4>&#9989; After the Session</h4>
+        <ul class="checklist">
+          <li>Mark attendance within <strong>1 hour</strong> of the session ending — select Present, Absent, or Late for each athlete.</li>
+          <li>Record any injury or incident in the athlete's notes immediately (Athlete Performance Manager → Tab 3).</li>
+          <li>If a video highlight was captured, upload it to Video Highlights and share with the relevant parent.</li>
+          <li>Update any performance records or goal progress while the session is fresh.</li>
+        </ul>
+      </div>
+    </div>
+
     <!-- 3.2 Video Highlights -->
     <h3 class="subsec" id="sec-coach-videos">3.2 Performance Video Highlights</h3>
     <p><strong>Page:</strong> <a href="https://www.power2adapt.online/video-highlights" class="url-link" target="_blank">power2adapt.online/video-highlights</a> &nbsp;<span class="role role-coach">Coach</span> <span class="role role-admin">Admin</span></p>
@@ -641,6 +736,22 @@
     <div class="callout warn">
       <span class="callout-icon">⚠️</span>
       <div>This page is <strong>not accessible to parents</strong>. It is only visible to logged-in coaches and admins and does not appear in search engines.</div>
+    </div>
+
+    <!-- 3.5 Setmore -->
+    <h3 class="subsec" id="sec-coach-setmore">3.5 Setmore — External Booking System</h3>
+    <p>Some Power2ADAPT programs use <strong>Setmore</strong> as an external booking platform for session scheduling. Setmore is separate from the main website and is used for:</p>
+    <table>
+      <tr><th>Program</th><th>Why Setmore is used</th></tr>
+      <tr><td>Running Technique Sessions</td><td>Individual or small-group bookings for technique coaching</td></tr>
+      <tr><td>Team Sport Speed</td><td>Flexible session bookings outside fixed term timetables</td></tr>
+      <tr><td>Senior Squad</td><td>Supplementary session bookings and assessment appointments</td></tr>
+      <tr><td>High Performance Squad</td><td>Individual session and athlete review bookings</td></tr>
+    </table>
+    <p>If you receive a <strong>Setmore confirmation email</strong> for an upcoming session, it means an athlete or parent has booked directly through the Setmore system. These bookings automatically sync to <strong>Google Calendar</strong>. If you have not received calendar access, contact your admin to be added.</p>
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div>Setmore bookings are separate from the Power2ADAPT enrolment system. Attendance for Setmore sessions is still recorded on the <a href="https://www.power2adapt.online/attendance" target="_blank">Attendance page</a> as normal — use the correct class in the dropdown.</div>
     </div>
   </section>
 
@@ -919,10 +1030,72 @@
 
     <h3 class="subsec">Key Contacts &amp; Login Details</h3>
     <table>
-      <tr><th>Role</th><th>Login Email</th><th>Notes</th></tr>
-      <tr><td>Admin (Business Owner)</td><td>admin@power2adapt.com</td><td>Full system access</td></tr>
-      <tr><td>Admin (Secondary)</td><td>admin@power2adapt.online</td><td>Full system access</td></tr>
-      <tr><td colspan="3" style="font-size:12px; color:#64748b;">Passwords are managed by the business owner. Contact admin@power2adapt.com to request a new staff account or password reset.</td></tr>
+      <tr><th>Who to contact</th><th>Contact</th><th>When to use</th></tr>
+      <tr><td><strong>Alistair</strong> (Business Owner / Head Coach)</td><td>Mobile: <strong>0450 735 563</strong><br>Email: admin@power2adapt.com</td><td>Urgent issues, new staff accounts, platform access, anything that needs immediate attention</td></tr>
+      <tr><td><strong>Admin (Secondary)</strong></td><td>admin@power2adapt.online</td><td>General admin queries, backup admin login</td></tr>
+      <tr><td><strong>Website is down / can't log in</strong></td><td>Contact <strong>Alistair</strong> immediately on 0450 735 563</td><td>Any time the platform is unavailable or giving errors you cannot resolve</td></tr>
+      <tr><td><strong>Parent payment disputes</strong></td><td>Refer all payment issues to <strong>Alistair</strong> — do not attempt to issue refunds yourself</td><td>Parent claims a charge is wrong, double-charged, or requests a refund</td></tr>
+      <tr><td><strong>New staff account / password reset</strong></td><td>Email admin@power2adapt.com or contact Alistair directly</td><td>Onboarding a new coach, lost password</td></tr>
+    </table>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div><strong>Payment disputes:</strong> Never promise refunds or adjust payments directly. Always escalate to Alistair who manages all Stripe payment records and can issue refunds through the Stripe dashboard.</div>
+    </div>
+  </section>
+
+  <!-- ════════════════ APPENDIX A: COACH QUICK REFERENCE ════════════════ -->
+  <section id="sec-appendix" class="page-break">
+    <span class="section-label">Appendix A</span>
+    <h2 class="section-title">Coach Quick Reference</h2>
+    <p class="section-intro">A single-page summary for coaches. Everything you need for daily operations — bookmark this page or print just this section.</p>
+
+    <div class="appendix-box">
+      <h3>&#128197; Your Daily Routine</h3>
+      <p><strong>Before:</strong> Check roster &amp; medical notes &nbsp;|&nbsp; <strong>During:</strong> Coach the session &nbsp;|&nbsp; <strong>After (within 1hr):</strong> Mark attendance, record incidents, update performance notes</p>
+    </div>
+
+    <h3 class="subsec">Your Key Pages</h3>
+    <table>
+      <tr><th>Task</th><th>URL</th></tr>
+      <tr><td>&#9989; Mark attendance</td><td><a href="https://www.power2adapt.online/attendance" target="_blank">power2adapt.online/attendance</a></td></tr>
+      <tr><td>&#127909; Upload &amp; share video highlights</td><td><a href="https://www.power2adapt.online/video-highlights" target="_blank">power2adapt.online/video-highlights</a></td></tr>
+      <tr><td>&#127939; Log performance &amp; assessments</td><td><a href="https://www.power2adapt.online/admin/athletes" target="_blank">power2adapt.online/admin/athletes</a></td></tr>
+      <tr><td>&#128218; Coaching protocols &amp; red flags</td><td><a href="https://www.power2adapt.online/onboarding" target="_blank">power2adapt.online/onboarding</a></td></tr>
+      <tr><td>&#128203; This operations manual</td><td><a href="https://www.power2adapt.online/operations-manual" target="_blank">power2adapt.online/operations-manual</a></td></tr>
+    </table>
+
+    <h3 class="subsec">Marking Attendance (3.1)</h3>
+    <ol class="steps">
+      <li>Go to <a href="https://www.power2adapt.online/attendance" target="_blank">power2adapt.online/attendance</a> and select your class from the dropdown.</li>
+      <li>Select today's date (it defaults automatically).</li>
+      <li>Click <strong>Present ✓</strong>, <strong>Absent ✗</strong>, or <strong>Late ⏱</strong> for each athlete — saves instantly, no submit button.</li>
+      <li>For absences, add a brief reason in the reason field (optional but helpful).</li>
+    </ol>
+
+    <h3 class="subsec">Sharing a Video Highlight (3.2)</h3>
+    <ol class="steps">
+      <li>Go to <a href="https://www.power2adapt.online/video-highlights" target="_blank">power2adapt.online/video-highlights</a> and click <strong>+ Add Video</strong>.</li>
+      <li>Enter title, description, video URL (YouTube/Vimeo), select the athlete and class.</li>
+      <li>Click <strong>Save</strong>, then click the <strong>Share</strong> icon to send the link to the parent by SMS.</li>
+    </ol>
+
+    <h3 class="subsec">Recording a Performance / Assessment (3.3)</h3>
+    <ol class="steps">
+      <li>Go to <a href="https://www.power2adapt.online/admin/athletes" target="_blank">power2adapt.online/admin/athletes</a> and select the athlete from the sidebar.</li>
+      <li><strong>Tab 1</strong> — Add sprint times, jump distances, or other performance records. Tick "Personal Best" if applicable.</li>
+      <li><strong>Tab 3</strong> — Add a coach note, feedback entry, or attach a PDF/image file for formal assessments.</li>
+    </ol>
+
+    <h3 class="subsec">Setmore Sessions</h3>
+    <p>Running Tech, Team Sport Speed, Senior Squad, and High Performance sessions may be booked via <strong>Setmore</strong>. You'll receive booking confirmations by email, which sync to Google Calendar. Still mark attendance on the Power2ADAPT Attendance page as usual.</p>
+
+    <h3 class="subsec">Urgent Contacts</h3>
+    <table>
+      <tr><th>Situation</th><th>Who to call</th></tr>
+      <tr><td>Injury / incident during session</td><td><strong>Alistair: 0450 735 563</strong> — record details in athlete notes immediately</td></tr>
+      <tr><td>Website/app is down</td><td><strong>Alistair: 0450 735 563</strong></td></tr>
+      <tr><td>Parent payment complaint</td><td>Refer to <strong>Alistair</strong> — do not promise refunds</td></tr>
+      <tr><td>Can't see your classes in attendance</td><td>Contact Alistair to check your class assignments in the admin panel</td></tr>
     </table>
   </section>
 
