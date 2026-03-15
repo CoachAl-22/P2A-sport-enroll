@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -8,24 +8,24 @@ import Navbar from "@/components/layout/navbar";
 import { CSVUploader } from "@/components/CSVUploader";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Upload, 
-  Download, 
-  FileText, 
-  Users, 
-  Baby, 
-  AlertCircle, 
+import {
+  Upload,
+  FileText,
+  Users,
+  Baby,
+  AlertCircle,
   CheckCircle,
   Database,
-  ArrowRight
+  ArrowRight,
+  Info,
 } from "lucide-react";
 
 export default function Import() {
   const [uploadedFile, setUploadedFile] = useState<string>("");
   const [previewData, setPreviewData] = useState<any>(null);
+  const [importResult, setImportResult] = useState<any>(null);
   const { toast } = useToast();
 
-  // Mutation to preview CSV data
   const previewMutation = useMutation({
     mutationFn: async (uploadURL: string) => {
       const response = await apiRequest("POST", "/api/csv-preview", { uploadURL });
@@ -33,37 +33,31 @@ export default function Import() {
     },
     onSuccess: (data) => {
       setPreviewData(data);
-      toast({
-        title: "CSV Preview Generated",
-        description: "Review the data mapping below before importing.",
-      });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast({
         title: "Preview Failed",
-        description: error.message,
+        description: error.message || "Could not read the CSV file. Make sure it is a SportsBiz Student Export.",
         variant: "destructive",
       });
     },
   });
 
-  // Mutation to import CSV data
   const importMutation = useMutation({
     mutationFn: async (uploadURL: string) => {
       const response = await apiRequest("POST", "/api/csv-import", { uploadURL });
       return response.json();
     },
     onSuccess: (data) => {
+      setImportResult(data);
       toast({
-        title: "Import Successful",
-        description: `Imported ${data.customersImported} customers and ${data.studentsImported} students.`,
+        title: "Import Complete",
+        description: data.message,
       });
-      setPreviewData(null);
-      setUploadedFile("");
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
       queryClient.invalidateQueries({ queryKey: ["/api/children"] });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast({
         title: "Import Failed",
         description: error.message,
@@ -74,169 +68,219 @@ export default function Import() {
 
   const handleFileUpload = (uploadURL: string) => {
     setUploadedFile(uploadURL);
+    setImportResult(null);
     previewMutation.mutate(uploadURL);
   };
 
   const handleImport = () => {
-    if (uploadedFile) {
-      importMutation.mutate(uploadedFile);
-    }
+    if (uploadedFile) importMutation.mutate(uploadedFile);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
-            Data Import
-          </h1>
+          <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">Import from SportsBiz</h1>
           <p className="text-gray-600">
-            Import your existing customer and student data from CSV files
+            Upload your SportsBiz Student Export to create parent accounts and student profiles automatically.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Upload Section */}
+          {/* Upload + format guide */}
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Upload className="w-5 h-5 mr-2" />
-                Upload CSV File
+                Upload CSV
               </CardTitle>
-              <CardDescription>
-                Upload your customer and student data file
-              </CardDescription>
+              <CardDescription>SportsBiz Student Export file</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <CSVUploader
                 onComplete={handleFileUpload}
                 title="Choose CSV File"
-                description="Upload your customer and student data CSV file (max 10MB)"
+                description="Upload your SportsBiz Student Export CSV (max 10 MB)"
                 buttonClassName="w-full"
               />
-              
-              {uploadedFile && (
+
+              {uploadedFile && !previewMutation.isPending && (
                 <Alert>
                   <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    File uploaded successfully. Review the preview below.
-                  </AlertDescription>
+                  <AlertDescription>File uploaded — reviewing data below.</AlertDescription>
                 </Alert>
               )}
 
-              {/* CSV Format Help */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 mb-2 flex items-center">
-                  <FileText className="w-4 h-4 mr-2" />
-                  Expected CSV Format
+              {/* Format reference */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
+                <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-1">
+                  <Info className="w-4 h-4" /> Expected file format
                 </h4>
-                <div className="text-sm text-blue-800 space-y-2">
-                  <p><strong>SportsBiz Export columns:</strong></p>
-                  <p className="text-xs font-mono bg-white px-2 py-1 rounded">
-                    "First Name", "Last Name", "Email", "Mobile Phone 1", "Address #1", "Suburb", "Postcode", "Active"
-                  </p>
-                  <p className="mt-2"><strong>Expected format:</strong> Direct upload of SportsBiz customer export CSV files</p>
-                  <p className="text-xs">The system will only import customers marked as "Active" = "True" with default password "Power2ADAPT2024!"</p>
-                </div>
+                <p className="text-blue-800 mb-2">
+                  <strong>File:</strong> SportsBiz → Reports → Student Export
+                </p>
+                <p className="text-blue-800 mb-1 font-medium">Key columns used:</p>
+                <ul className="text-blue-800 text-xs space-y-0.5 list-disc list-inside">
+                  <li>First Name, Last Name (student)</li>
+                  <li>DOB (DD/MM/YYYY)</li>
+                  <li>Active (must be TRUE)</li>
+                  <li>Gender</li>
+                  <li>Medical Conditions</li>
+                  <li>Program, School, Year Level</li>
+                  <li>Customer First Name, Customer Last Name</li>
+                  <li>Customer Email (parent login)</li>
+                  <li>Customer Mobile Phone 1</li>
+                </ul>
+                <p className="text-blue-700 text-xs mt-2">
+                  Siblings are handled automatically — one parent account is created per unique email/mobile.
+                </p>
+                <p className="text-blue-700 text-xs mt-1">
+                  Default password: <code className="bg-white px-1 rounded">Power2ADAPT2024!</code>
+                </p>
               </div>
             </CardContent>
           </Card>
 
-          {/* Preview Section */}
+          {/* Preview + results */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Database className="w-5 h-5 mr-2" />
-                Data Preview
+                {importResult ? "Import Results" : "Data Preview"}
               </CardTitle>
               <CardDescription>
-                Review your data before importing
+                {importResult ? "Summary of what was imported" : "Review your data before importing"}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {previewMutation.isPending && (
                 <div className="text-center py-8">
                   <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-                  <p className="text-gray-500">Analyzing CSV file...</p>
+                  <p className="text-gray-500">Analysing CSV file…</p>
                 </div>
               )}
 
-              {previewData && (
-                <div className="space-y-6">
-                  {/* Statistics */}
-                  <div className="grid grid-cols-2 gap-4">
+              {importMutation.isPending && (
+                <div className="text-center py-8">
+                  <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+                  <p className="text-gray-500">Importing records — this may take a moment…</p>
+                </div>
+              )}
+
+              {/* Import results */}
+              {importResult && !importMutation.isPending && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-green-600">Customers Found</p>
-                          <p className="text-2xl font-bold text-green-900">
-                            {previewData.customersPreview?.length || 0}
-                          </p>
-                        </div>
-                        <Users className="w-8 h-8 text-green-600" />
-                      </div>
+                      <p className="text-sm text-green-600">New parents created</p>
+                      <p className="text-3xl font-bold text-green-900">{importResult.customersImported}</p>
                     </div>
-                    
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-blue-600">Students Found</p>
-                          <p className="text-2xl font-bold text-blue-900">
-                            {previewData.studentsPreview?.length || 0}
-                          </p>
-                        </div>
-                        <Baby className="w-8 h-8 text-blue-600" />
-                      </div>
+                      <p className="text-sm text-blue-600">New students created</p>
+                      <p className="text-3xl font-bold text-blue-900">{importResult.studentsImported}</p>
+                    </div>
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <p className="text-sm text-gray-600">Existing parents skipped</p>
+                      <p className="text-3xl font-bold text-gray-700">{importResult.parentsExisting}</p>
+                    </div>
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <p className="text-sm text-gray-600">Existing students skipped</p>
+                      <p className="text-3xl font-bold text-gray-700">{importResult.studentsExisting}</p>
                     </div>
                   </div>
 
-                  {/* Validation Issues */}
-                  {previewData.issues && previewData.issues.length > 0 && (
+                  {importResult.errors > 0 && (
                     <Alert variant="destructive">
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription>
-                        <div className="space-y-1">
-                          <p className="font-semibold">Data Issues Found:</p>
-                          {previewData.issues.slice(0, 5).map((issue: string, index: number) => (
-                            <p key={index} className="text-sm">• {issue}</p>
-                          ))}
-                          {previewData.issues.length > 5 && (
-                            <p className="text-sm">... and {previewData.issues.length - 5} more issues</p>
-                          )}
-                        </div>
+                        <p className="font-semibold mb-1">{importResult.errors} row(s) had errors:</p>
+                        {importResult.errorDetails?.slice(0, 5).map((e: string, i: number) => (
+                          <p key={i} className="text-sm">• {e}</p>
+                        ))}
                       </AlertDescription>
                     </Alert>
                   )}
 
-                  {/* Sample Data Preview */}
-                  {previewData.customersPreview && previewData.customersPreview.length > 0 && (
+                  <Alert>
+                    <CheckCircle className="h-4 w-4" />
+                    <AlertDescription>{importResult.message}</AlertDescription>
+                  </Alert>
+                </div>
+              )}
+
+              {/* Preview */}
+              {previewData && !importResult && !previewMutation.isPending && !importMutation.isPending && (
+                <div className="space-y-5">
+                  {/* Stats */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+                      <p className="text-xs text-blue-600 mb-1">Total rows</p>
+                      <p className="text-2xl font-bold text-blue-900">{previewData.totalRows}</p>
+                    </div>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                      <p className="text-xs text-green-600 mb-1">Active students</p>
+                      <p className="text-2xl font-bold text-green-900">{previewData.activeRows}</p>
+                    </div>
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
+                      <p className="text-xs text-purple-600 mb-1">Unique parents</p>
+                      <p className="text-2xl font-bold text-purple-900">{previewData.uniqueParents}</p>
+                    </div>
+                  </div>
+
+                  {/* Warnings */}
+                  {previewData.issues && previewData.issues.length > 0 && (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        <p className="font-semibold mb-1">Data warnings ({previewData.issues.length}):</p>
+                        {previewData.issues.slice(0, 5).map((issue: string, i: number) => (
+                          <p key={i} className="text-sm">• {issue}</p>
+                        ))}
+                        {previewData.issues.length > 5 && (
+                          <p className="text-sm text-gray-500">…and {previewData.issues.length - 5} more</p>
+                        )}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Sample rows */}
+                  {previewData.studentsPreview && previewData.studentsPreview.length > 0 && (
                     <div>
-                      <h4 className="font-semibold mb-3">Sample Customer Data</h4>
+                      <h4 className="font-semibold mb-2 text-sm text-gray-700">
+                        Sample records (first {previewData.studentsPreview.length} of {previewData.activeRows} active)
+                      </h4>
                       <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                        <table className="min-w-full bg-white border border-gray-200 rounded-lg text-xs">
                           <thead className="bg-gray-50">
                             <tr>
-                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Mobile</th>
-                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Suburb</th>
-                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                              <th className="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wide">Student</th>
+                              <th className="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wide">DOB</th>
+                              <th className="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wide">Program</th>
+                              <th className="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wide">Parent</th>
+                              <th className="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wide">Parent Email</th>
+                              <th className="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wide">Medical</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-200">
-                            {previewData.customersPreview.slice(0, 3).map((customer: any, index: number) => (
-                              <tr key={index}>
-                                <td className="px-3 py-2 text-sm">{customer.firstName} {customer.lastName}</td>
-                                <td className="px-3 py-2 text-sm">{customer.email}</td>
-                                <td className="px-3 py-2 text-sm">{customer.mobile}</td>
-                                <td className="px-3 py-2 text-sm">{customer.suburb}</td>
-                                <td className="px-3 py-2 text-sm">
-                                  <span className={`px-2 py-1 rounded text-xs ${customer.active === 'True' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                                    {customer.active === 'True' ? 'Active' : 'Inactive'}
-                                  </span>
+                            {previewData.studentsPreview.map((s: any, i: number) => (
+                              <tr key={i} className="hover:bg-gray-50">
+                                <td className="px-3 py-2 font-medium">{s.studentName}</td>
+                                <td className="px-3 py-2 text-gray-600">{s.dob}</td>
+                                <td className="px-3 py-2">
+                                  {s.program ? (
+                                    <Badge variant="outline" className="text-xs">{s.program.split(' ')[0]}</Badge>
+                                  ) : '—'}
+                                </td>
+                                <td className="px-3 py-2 text-gray-700">{s.parentName}</td>
+                                <td className="px-3 py-2 text-gray-500">{s.parentEmail || s.parentMobile || '—'}</td>
+                                <td className="px-3 py-2">
+                                  {s.medical ? (
+                                    <Badge variant="destructive" className="text-xs">Yes</Badge>
+                                  ) : (
+                                    <span className="text-gray-400">None</span>
+                                  )}
                                 </td>
                               </tr>
                             ))}
@@ -246,33 +290,20 @@ export default function Import() {
                     </div>
                   )}
 
-                  {/* Import Button */}
-                  <div className="flex justify-end pt-4 border-t">
-                    <Button 
-                      onClick={handleImport}
-                      disabled={importMutation.isPending || (previewData.issues && previewData.issues.length > 0)}
-                      className="flex items-center"
-                    >
-                      {importMutation.isPending ? (
-                        <>
-                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
-                          Importing...
-                        </>
-                      ) : (
-                        <>
-                          Import Data
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </>
-                      )}
+                  <div className="flex justify-end pt-2 border-t">
+                    <Button onClick={handleImport} disabled={importMutation.isPending} className="flex items-center gap-2">
+                      Import {previewData.activeRows} students
+                      <ArrowRight className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
               )}
 
-              {!previewData && !previewMutation.isPending && (
+              {!previewData && !importResult && !previewMutation.isPending && !importMutation.isPending && (
                 <div className="text-center py-12 text-gray-500">
                   <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p>Upload a CSV file to preview your data</p>
+                  <p className="font-medium">Upload your SportsBiz Student Export to begin</p>
+                  <p className="text-sm mt-1">A preview will appear here so you can check the data before importing.</p>
                 </div>
               )}
             </CardContent>

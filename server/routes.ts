@@ -11,7 +11,7 @@ import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
-import { importCustomersFromCSV, createSampleChildrenForParents } from "./csv-import";
+import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders } from "./googleSheets";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -1192,116 +1192,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/csv-preview", async (req, res) => {
     const userId = (req.session as any)?.userId;
-    if (!userId) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-    
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
     const user = await storage.getUser(userId);
-    if (!user || user.role !== "admin") {
-      return res.status(403).json({ message: "Admin access required" });
-    }
-    
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
     try {
       const { uploadURL } = req.body;
       const objectStorageService = new ObjectStorageService();
-      
-      // Parse the object path from the upload URL
       const url = new URL(uploadURL);
       const objectPath = url.pathname;
-      
       const csvFile = await objectStorageService.getCSVFile(objectPath);
       const csvContent = await objectStorageService.downloadCSVContent(csvFile);
-      
-      // Parse CSV content
-      const lines = csvContent.split('\n').filter(line => line.trim());
-      if (lines.length < 2) {
-        throw new Error('CSV file must have at least a header row and one data row');
-      }
-      
-      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-      const dataRows = lines.slice(1).map(line => line.split(',').map(cell => cell.trim().replace(/"/g, '')));
-      
-      // Separate customers and students data
-      const customersPreview: any[] = [];
-      const studentsPreview: any[] = [];
-      const issues: string[] = [];
-      
-      // Expected customer columns - updated for SportsBiz format
-      const sportsBizColumns = ['Email', 'Mobile Phone 1', 'First Name', 'Last Name', 'Address #1', 'Suburb', 'Postcode', 'Active'];
-      const studentColumns = ['parentEmail', 'studentFirstName', 'studentLastName', 'dateOfBirth', 'medicalInfo', 'emergencyContact'];
-      
-      // Check if we have customer or student data based on headers
-      const hasCustomerData = sportsBizColumns.some(col => headers.includes(col));
-      const hasStudentData = studentColumns.some(col => headers.includes(col));
-      
-      if (!hasCustomerData && !hasStudentData) {
-        issues.push('No recognized customer or student columns found in CSV');
-      }
-      
-      dataRows.slice(0, 50).forEach((row, index) => {
-        if (row.length !== headers.length) {
-          issues.push(`Row ${index + 2}: Column count mismatch (expected ${headers.length}, got ${row.length})`);
-          return;
-        }
-        
-        const rowData: any = {};
-        headers.forEach((header, idx) => {
-          rowData[header] = row[idx];
+
+      const preview = await previewStudentsFromCSV(csvContent);
+
+      if (!preview.isStudentFormat) {
+        return res.status(400).json({
+          message: "Unrecognised CSV format. Please upload a SportsBiz Student Export file.",
+          hint: "Required columns: First Name, Last Name, DOB, Active, Customer First Name, Customer Email, Customer Mobile Phone 1"
         });
-        
-        // Process as customer data (SportsBiz format)
-        if (hasCustomerData && rowData['Email']) {
-          const customer = {
-            email: rowData['Email'] || '',
-            mobile: rowData['Mobile Phone 1'] || '',
-            firstName: rowData['First Name'] || '',
-            lastName: rowData['Last Name'] || '',
-            address: rowData['Address #1'] || '',
-            suburb: rowData['Suburb'] || '',
-            postcode: rowData['Postcode'] || '',
-            active: rowData['Active'] || '',
-            state: rowData['State'] || '',
-          };
-          
-          // Validate required fields
-          if (!customer.email) {
-            issues.push(`Row ${index + 2}: Missing required email`);
-          }
-          if (!customer.firstName || !customer.lastName) {
-            issues.push(`Row ${index + 2}: Missing required name fields`);
-          }
-          
-          customersPreview.push(customer);
-        }
-        
-        // Process as student data
-        if (hasStudentData && rowData.parentEmail && rowData.studentFirstName) {
-          const student = {
-            parentEmail: rowData.parentEmail || '',
-            studentFirstName: rowData.studentFirstName || '',
-            studentLastName: rowData.studentLastName || '',
-            dateOfBirth: rowData.dateOfBirth || '',
-            medicalInfo: rowData.medicalInfo || '',
-            emergencyContact: rowData.emergencyContact || '',
-          };
-          
-          // Validate required fields
-          if (!student.parentEmail) {
-            issues.push(`Row ${index + 2}: Missing required parent email`);
-          }
-          if (!student.studentFirstName || !student.studentLastName) {
-            issues.push(`Row ${index + 2}: Missing required student name fields`);
-          }
-          
-          studentsPreview.push(student);
-        }
-      });
-      
+      }
+
       res.json({
-        customersPreview,
-        studentsPreview,
-        issues,
-        totalRows: dataRows.length,
+        isStudentFormat: true,
+        totalRows: preview.totalRows,
+        activeRows: preview.activeRows,
+        uniqueParents: preview.parentEmails.size,
+        studentsPreview: preview.studentsPreview.slice(0, 5),
+        issues: preview.issues,
+        customersPreview: [],
       });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -1310,110 +1229,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/csv-import", async (req, res) => {
     const userId = (req.session as any)?.userId;
-    if (!userId) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-    
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
     const user = await storage.getUser(userId);
-    if (!user || user.role !== "admin") {
-      return res.status(403).json({ message: "Admin access required" });
-    }
-    
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
     try {
       const { uploadURL } = req.body;
       const objectStorageService = new ObjectStorageService();
-      
-      // Parse the object path from the upload URL
       const url = new URL(uploadURL);
       const objectPath = url.pathname;
-      
       const csvFile = await objectStorageService.getCSVFile(objectPath);
       const csvContent = await objectStorageService.downloadCSVContent(csvFile);
-      
-      // Parse CSV content
-      const lines = csvContent.split('\n').filter(line => line.trim());
-      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-      const dataRows = lines.slice(1).map(line => line.split(',').map(cell => cell.trim().replace(/"/g, '')));
-      
-      let customersImported = 0;
-      let studentsImported = 0;
-      
-      // Expected customer columns - updated for SportsBiz format
-      const sportsBizColumns = ['Email', 'Mobile Phone 1', 'First Name', 'Last Name', 'Address #1', 'Suburb', 'Postcode', 'Active'];
-      const studentColumns = ['parentEmail', 'studentFirstName', 'studentLastName', 'dateOfBirth', 'medicalInfo', 'emergencyContact'];
-      
-      const hasCustomerData = sportsBizColumns.some(col => headers.includes(col));
-      const hasStudentData = studentColumns.some(col => headers.includes(col));
-      
-      for (const row of dataRows) {
-        if (row.length !== headers.length) continue;
-        
-        const rowData: any = {};
-        headers.forEach((header, idx) => {
-          rowData[header] = row[idx];
-        });
-        
-        // Import customer data (SportsBiz format)
-        if (hasCustomerData && rowData['Email'] && rowData['First Name'] && rowData['Last Name']) {
-          try {
-            // Only import active customers
-            if (rowData['Active'] === 'True') {
-              // Check if user already exists
-              const existingUser = await storage.getUserByEmail(rowData['Email']);
-              if (!existingUser) {
-                // Create new user with default password (they'll need to reset)
-                const hashedPassword = await bcrypt.hash('Power2ADAPT2024!', 10);
-                await storage.createUser({
-                  email: rowData['Email'],
-                  mobile: rowData['Mobile Phone 1'] || '',
-                  firstName: rowData['First Name'],
-                  lastName: rowData['Last Name'],
-                  password: hashedPassword,
-                  role: 'parent'
-                });
-                customersImported++;
-              }
-            }
-          } catch (error) {
-            console.error('Error importing customer:', error);
-          }
-        }
-        
-        // Import student data
-        if (hasStudentData && rowData.parentEmail && rowData.studentFirstName && rowData.studentLastName) {
-          try {
-            // Find parent by email
-            const parent = await storage.getUserByEmail(rowData.parentEmail);
-            if (parent) {
-              // Check if child already exists for this parent
-              const existingChildren = await storage.getChildrenByParent(parent.id);
-              const childExists = existingChildren.some(child => 
-                child.firstName === rowData.studentFirstName && 
-                child.lastName === rowData.studentLastName
-              );
-              
-              if (!childExists) {
-                await storage.createChild({
-                  parentId: parent.id,
-                  firstName: rowData.studentFirstName,
-                  lastName: rowData.studentLastName,
-                  dateOfBirth: rowData.dateOfBirth ? new Date(rowData.dateOfBirth) : new Date(),
-                  medicalInfo: rowData.medicalInfo || '',
-                  emergencyContact: rowData.emergencyContact || '',
-                });
-                studentsImported++;
-              }
-            }
-          } catch (error) {
-            console.error('Error importing student:', error);
-          }
-        }
-      }
-      
+
+      const results = await importStudentsFromCSV(csvContent);
+
       res.json({
-        customersImported,
-        studentsImported,
-        message: `Successfully imported ${customersImported} customers and ${studentsImported} students`
+        customersImported: results.parentsCreated,
+        studentsImported: results.studentsCreated,
+        parentsExisting: results.parentsExisting,
+        studentsExisting: results.studentsExisting,
+        skipped: results.skipped,
+        errors: results.errors,
+        errorDetails: results.errorDetails,
+        message: `Import complete: ${results.parentsCreated} new parents, ${results.studentsCreated} new students. Skipped ${results.parentsExisting} existing parents and ${results.studentsExisting} existing students.`
       });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -2512,53 +2350,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // CSV Import endpoints
-  app.post("/api/admin/import-csv", async (req, res) => {
-    const userId = (req.session as any)?.userId;
-    if (!userId) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-    
-    const user = await storage.getUser(userId);
-    if (!user || user.role !== "admin") {
-      return res.status(403).json({ message: "Admin access required" });
-    }
+  // CSV Import endpoints (legacy direct file import — superseded by /api/csv-import)
 
-    try {
-      const csvFilePath = './attached_assets/SportsBiz_CustomerExport_1754714208259.csv';
-      const results = await importCustomersFromCSV(csvFilePath);
-      res.json({ 
-        message: "CSV import completed",
-        results 
-      });
-    } catch (error: any) {
-      console.error('Error importing CSV:', error);
-      res.status(500).json({ message: "Failed to import CSV", error: error.message });
-    }
-  });
-
-  app.post("/api/admin/create-sample-children", async (req, res) => {
-    const userId = (req.session as any)?.userId;
-    if (!userId) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-    
-    const user = await storage.getUser(userId);
-    if (!user || user.role !== "admin") {
-      return res.status(403).json({ message: "Admin access required" });
-    }
-
-    try {
-      const results = await createSampleChildrenForParents();
-      res.json({ 
-        message: "Sample children created successfully",
-        results 
-      });
-    } catch (error: any) {
-      console.error('Error creating sample children:', error);
-      res.status(500).json({ message: "Failed to create sample children", error: error.message });
-    }
-  });
 
   // Performance Video Highlights API endpoints
 
