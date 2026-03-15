@@ -36,6 +36,7 @@ import AthletePortal from "@/pages/athlete-portal";
 import Coaches from "@/pages/coaches";
 import Questionnaire from "@/pages/questionnaire";
 import AdminAthletes from "@/pages/admin-athletes";
+import AdminApplications from "@/pages/admin-applications";
 import Onboarding from "@/pages/onboarding";
 
 function Router() {
@@ -104,6 +105,7 @@ function Router() {
           <Route path="/admin/staff" component={AdminStaff} />
           <Route path="/admin/customers" component={AdminCustomers} />
           <Route path="/admin/enquiries" component={AdminEnquiries} />
+          <Route path="/admin/applications" component={AdminApplications} />
           <Route path="/admin/athletes" component={AdminAthletes} />
         </>
       )}

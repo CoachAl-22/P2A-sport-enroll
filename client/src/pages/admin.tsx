@@ -329,6 +329,15 @@ export default function Admin() {
           </Button>
 
           <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
+            <a href="/admin/applications">
+              <div className="text-green-400 mb-2">
+                <FileText className="w-6 h-6 mx-auto" />
+              </div>
+              <span className="text-sm font-medium">Program Applications</span>
+            </a>
+          </Button>
+
+          <Button asChild className="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg text-center transition-colors h-auto flex-col">
             <a href="/admin/athletes">
               <div className="text-yellow-400 mb-2">
                 <Trophy className="w-6 h-6 mx-auto" />
