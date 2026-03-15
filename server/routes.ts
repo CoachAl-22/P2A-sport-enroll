@@ -998,6 +998,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Toggle user active status
+  app.patch("/api/admin/users/:id/active", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
+    try {
+      const { id } = req.params;
+      const { active } = req.body;
+      if (typeof active !== "boolean") return res.status(400).json({ message: "active must be a boolean" });
+      const updated = await storage.updateUser(id, { active });
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Toggle child active status
+  app.patch("/api/admin/children/:id/active", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+
+    try {
+      const { id } = req.params;
+      const { active } = req.body;
+      if (typeof active !== "boolean") return res.status(400).json({ message: "active must be a boolean" });
+      const updated = await storage.updateChild(id, { active });
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // SMS notification routes (requires admin role)
   app.post("/api/admin/send-sms", async (req, res) => {
     const userId = (req.session as any)?.userId;
@@ -1217,6 +1253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isStudentFormat: true,
         totalRows: preview.totalRows,
         activeRows: preview.activeRows,
+        inactiveRows: preview.inactiveRows,
         uniqueParents: preview.parentEmails.size,
         studentsPreview: preview.studentsPreview.slice(0, 5),
         issues: preview.issues,
@@ -1241,7 +1278,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const csvFile = await objectStorageService.getCSVFile(objectPath);
       const csvContent = await objectStorageService.downloadCSVContent(csvFile);
 
-      const results = await importStudentsFromCSV(csvContent);
+      const includeInactive = req.body.includeInactive === true;
+      const results = await importStudentsFromCSV(csvContent, includeInactive);
 
       res.json({
         customersImported: results.parentsCreated,

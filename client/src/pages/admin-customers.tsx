@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import Navbar from "@/components/layout/navbar";
-import { Users, UserCheck, Baby, Search, Mail, Phone, MapPin, Calendar, Plus } from "lucide-react";
+import { Users, UserCheck, Baby, Search, Mail, Phone, Calendar, Plus, UserX } from "lucide-react";
 import { Redirect } from "wouter";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,7 +21,6 @@ import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
-// Child form schema
 const addChildSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -34,27 +35,23 @@ type AddChildForm = z.infer<typeof addChildSchema>;
 export default function AdminCustomers() {
   const { user, isLoading: authLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
+  const [showInactive, setShowInactive] = useState(false);
   const [selectedParent, setSelectedParent] = useState<any>(null);
   const [isAddChildOpen, setIsAddChildOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch all customers with their children
   const { data: customers, isLoading: customersLoading } = useQuery({
     queryKey: ["/api/admin/customers"],
     enabled: user?.role === "admin",
   });
 
-  // Fetch all students with their parents
   const { data: students, isLoading: studentsLoading } = useQuery({
     queryKey: ["/api/admin/students"],
     enabled: user?.role === "admin",
   });
 
-  // Redirect if not admin
-  if (!authLoading && user?.role !== "admin") {
-    return <Redirect to="/" />;
-  }
+  if (!authLoading && user?.role !== "admin") return <Redirect to="/" />;
 
   if (authLoading) {
     return (
@@ -67,23 +64,26 @@ export default function AdminCustomers() {
     );
   }
 
-  // Use the fetched data directly
   const allCustomers = Array.isArray(customers) ? customers : [];
   const allStudents = Array.isArray(students) ? students : [];
 
-  // Filter functions
-  const filteredCustomers = allCustomers.filter((customer: any) =>
-    customer.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.mobile?.includes(searchTerm)
+  const activeCustomers = allCustomers.filter((c: any) => c.active !== false);
+  const inactiveCustomers = allCustomers.filter((c: any) => c.active === false);
+  const activeStudents = allStudents.filter((s: any) => s.active !== false);
+  const inactiveStudents = allStudents.filter((s: any) => s.active === false);
+
+  const displayedCustomers = (showInactive ? allCustomers : activeCustomers).filter((c: any) =>
+    c.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.mobile?.includes(searchTerm)
   );
 
-  const filteredStudents = allStudents.filter((student: any) =>
-    student.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.parent?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.parent?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+  const displayedStudents = (showInactive ? allStudents : activeStudents).filter((s: any) =>
+    s.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s.parent?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s.parent?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatDate = (dateString: string) => {
@@ -96,103 +96,101 @@ export default function AdminCustomers() {
     const today = new Date();
     const birth = new Date(dateOfBirth);
     let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
     return age;
   };
 
-  // Form setup for adding child
   const form = useForm<AddChildForm>({
     resolver: zodResolver(addChildSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      dateOfBirth: "",
-      grade: "",
-      medicalInfo: "",
-      schoolName: "",
-    },
+    defaultValues: { firstName: "", lastName: "", dateOfBirth: "", grade: "", medicalInfo: "", schoolName: "" },
   });
 
-  // Mutation to add child to parent
   const addChildMutation = useMutation({
     mutationFn: async (data: AddChildForm & { parentId: string }) => {
       const response = await fetch('/api/admin/children', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
         credentials: 'include',
       });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to add child');
-      }
-      
+      if (!response.ok) throw new Error((await response.json()).message || 'Failed to add child');
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/customers"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/students"] });
-      toast({
-        title: "Success",
-        description: "Child added successfully",
-      });
+      toast({ title: "Success", description: "Child added successfully" });
       setIsAddChildOpen(false);
       form.reset();
       setSelectedParent(null);
     },
     onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to add child",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: error.message || "Failed to add child", variant: "destructive" });
+    },
+  });
+
+  const toggleUserActive = useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const res = await apiRequest("PATCH", `/api/admin/users/${id}/active`, { active });
+      return res.json();
+    },
+    onSuccess: (_, { active }) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/customers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/students"] });
+      toast({ title: active ? "Account activated" : "Account deactivated", description: active ? "Parent account is now active." : "Parent account has been set to inactive." });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const toggleChildActive = useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const res = await apiRequest("PATCH", `/api/admin/children/${id}/active`, { active });
+      return res.json();
+    },
+    onSuccess: (_, { active }) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/customers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/students"] });
+      toast({ title: active ? "Student activated" : "Student deactivated", description: active ? "Student is now active." : "Student has been set to inactive." });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     },
   });
 
   const handleAddChild = (data: AddChildForm) => {
     if (!selectedParent) return;
-    addChildMutation.mutate({
-      ...data,
-      parentId: selectedParent.id,
-    });
-  };
-
-  const openAddChildDialog = (parent: any) => {
-    setSelectedParent(parent);
-    setIsAddChildOpen(true);
+    addChildMutation.mutate({ ...data, parentId: selectedParent.id });
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
-            Customers & Students Management
-          </h1>
-          <p className="text-gray-600">
-            Complete overview of all registered families and their children
-          </p>
+          <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">Customers & Students</h1>
+          <p className="text-gray-600">Manage all registered families, toggle active status, and add children.</p>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-6">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        {/* Search + Show Inactive toggle */}
+        <div className="mb-6 flex flex-wrap items-center gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Search customers or students..."
+              placeholder="Search by name, email, or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
+          </div>
+          <div className="flex items-center gap-2">
+            <Switch id="show-inactive" checked={showInactive} onCheckedChange={setShowInactive} />
+            <Label htmlFor="show-inactive" className="cursor-pointer text-sm text-gray-600">
+              Show inactive records
+            </Label>
           </div>
         </div>
 
@@ -201,57 +199,57 @@ export default function AdminCustomers() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                <Users className="h-4 w-4 mr-2" />
-                Total Customers
+                <Users className="h-4 w-4 mr-2" /> Active Parents
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{allCustomers.length}</div>
-              <p className="text-xs text-gray-500 mt-1">Active parent accounts</p>
+              <div className="text-2xl font-bold text-blue-600">{activeCustomers.length}</div>
+              {inactiveCustomers.length > 0 && (
+                <p className="text-xs text-gray-500 mt-1">{inactiveCustomers.length} inactive</p>
+              )}
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                <Baby className="h-4 w-4 mr-2" />
-                Total Students
+                <Baby className="h-4 w-4 mr-2" /> Active Students
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{allStudents.length}</div>
-              <p className="text-xs text-gray-500 mt-1">Registered children</p>
+              <div className="text-2xl font-bold text-green-600">{activeStudents.length}</div>
+              {inactiveStudents.length > 0 && (
+                <p className="text-xs text-gray-500 mt-1">{inactiveStudents.length} inactive</p>
+              )}
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                <UserCheck className="h-4 w-4 mr-2" />
-                Active Enrollments
+                <UserCheck className="h-4 w-4 mr-2" /> Active Enrollments
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-purple-600">
-                {allStudents.reduce((sum: number, student: any) => sum + (student.activeEnrollments || 0), 0)}
+                {allStudents.reduce((sum: number, s: any) => sum + (s.activeEnrollments || 0), 0)}
               </div>
               <p className="text-xs text-gray-500 mt-1">Currently enrolled</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                <Calendar className="h-4 w-4 mr-2" />
-                New This Month
+                <Calendar className="h-4 w-4 mr-2" /> New This Month
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-orange-600">
                 {allCustomers.filter((c: any) => {
-                  const created = new Date(c.createdAt);
-                  const now = new Date();
-                  return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+                  const d = new Date(c.createdAt);
+                  const n = new Date();
+                  return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear();
                 }).length}
               </div>
               <p className="text-xs text-gray-500 mt-1">New families</p>
@@ -259,18 +257,17 @@ export default function AdminCustomers() {
           </Card>
         </div>
 
-        {/* Tabs for Customers and Students */}
         <Tabs defaultValue="customers" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2 max-w-md">
-            <TabsTrigger value="customers">Customers ({filteredCustomers.length})</TabsTrigger>
-            <TabsTrigger value="students">Students ({filteredStudents.length})</TabsTrigger>
+            <TabsTrigger value="customers">Parents ({displayedCustomers.length})</TabsTrigger>
+            <TabsTrigger value="students">Students ({displayedStudents.length})</TabsTrigger>
           </TabsList>
 
-          {/* Customers Tab */}
+          {/* Parents Tab */}
           <TabsContent value="customers">
             <Card>
               <CardHeader>
-                <CardTitle>All Customers (Parents/Guardians)</CardTitle>
+                <CardTitle>All Parents / Guardians</CardTitle>
               </CardHeader>
               <CardContent>
                 {customersLoading ? (
@@ -283,79 +280,87 @@ export default function AdminCustomers() {
                       <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Contact</TableHead>
-                        <TableHead>Account Info</TableHead>
                         <TableHead>Children</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredCustomers.map((customer: any) => {
+                      {displayedCustomers.map((customer: any) => {
+                        const isActive = customer.active !== false;
                         const customerChildren = customer.children || [];
                         return (
-                          <TableRow key={customer.id}>
+                          <TableRow key={customer.id} className={!isActive ? "opacity-60 bg-gray-50" : ""}>
                             <TableCell>
                               <div>
                                 <div className="font-medium">{customer.firstName} {customer.lastName}</div>
-                                <div className="text-sm text-gray-500">ID: {customer.userId || customer.id}</div>
+                                <div className="text-xs text-gray-400">ID: {customer.userId || customer.id?.slice(0, 8)}</div>
                               </div>
                             </TableCell>
                             <TableCell>
-                              <div className="space-y-1">
+                              <div className="space-y-1 text-sm">
                                 {customer.email && (
-                                  <div className="flex items-center text-sm">
-                                    <Mail className="h-3 w-3 mr-1 text-gray-400" />
-                                    {customer.email}
+                                  <div className="flex items-center">
+                                    <Mail className="h-3 w-3 mr-1 text-gray-400" /> {customer.email}
                                   </div>
                                 )}
                                 {customer.mobile && (
-                                  <div className="flex items-center text-sm">
-                                    <Phone className="h-3 w-3 mr-1 text-gray-400" />
-                                    {customer.mobile}
+                                  <div className="flex items-center">
+                                    <Phone className="h-3 w-3 mr-1 text-gray-400" /> {customer.mobile}
                                   </div>
                                 )}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="text-sm">
-                                <div>Role: <Badge variant="secondary">{customer.role}</Badge></div>
-                                <div className="text-gray-500 mt-1">
-                                  Joined: {formatDate(customer.createdAt)}
-                                </div>
                               </div>
                             </TableCell>
                             <TableCell>
                               <div className="text-sm">
                                 <div className="font-medium">{customerChildren.length} child(ren)</div>
                                 {customerChildren.slice(0, 2).map((child: any, idx: number) => (
-                                  <div key={idx} className="text-gray-500">
-                                    {child.firstName} {child.lastName}
-                                  </div>
+                                  <div key={idx} className="text-gray-500 text-xs">{child.firstName} {child.lastName}</div>
                                 ))}
                                 {customerChildren.length > 2 && (
-                                  <div className="text-gray-400">+{customerChildren.length - 2} more</div>
+                                  <div className="text-gray-400 text-xs">+{customerChildren.length - 2} more</div>
                                 )}
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Badge variant="default" className="bg-green-100 text-green-800">
-                                Active
-                              </Badge>
+                              {isActive ? (
+                                <Badge className="bg-green-100 text-green-800">Active</Badge>
+                              ) : (
+                                <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                                  <UserX className="h-3 w-3 mr-1" /> Inactive
+                                </Badge>
+                              )}
                             </TableCell>
                             <TableCell>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => openAddChildDialog(customer)}
-                                className="flex items-center gap-2"
-                              >
-                                <Plus className="h-4 w-4" />
-                                Add Child
-                              </Button>
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => { setSelectedParent(customer); setIsAddChildOpen(true); }}
+                                  className="flex items-center gap-1"
+                                >
+                                  <Plus className="h-3 w-3" /> Add Child
+                                </Button>
+                                <Button
+                                  variant={isActive ? "outline" : "default"}
+                                  size="sm"
+                                  disabled={toggleUserActive.isPending}
+                                  onClick={() => toggleUserActive.mutate({ id: customer.id, active: !isActive })}
+                                >
+                                  {isActive ? "Deactivate" : "Activate"}
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         );
                       })}
+                      {displayedCustomers.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center text-gray-500 py-8">
+                            No parents found. {!showInactive && inactiveCustomers.length > 0 && "Toggle \"Show inactive\" to see inactive records."}
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                 )}
@@ -367,7 +372,7 @@ export default function AdminCustomers() {
           <TabsContent value="students">
             <Card>
               <CardHeader>
-                <CardTitle>All Students (Children)</CardTitle>
+                <CardTitle>All Students</CardTitle>
               </CardHeader>
               <CardContent>
                 {studentsLoading ? (
@@ -378,67 +383,78 @@ export default function AdminCustomers() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Student Name</TableHead>
+                        <TableHead>Student</TableHead>
                         <TableHead>Age & Grade</TableHead>
-                        <TableHead>Parent/Guardian</TableHead>
+                        <TableHead>Parent</TableHead>
                         <TableHead>Enrollments</TableHead>
-                        <TableHead>Medical Info</TableHead>
+                        <TableHead>Medical</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Action</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredStudents.map((student: any) => (
-                        <TableRow key={student.id}>
-                          <TableCell>
-                            <div>
+                      {displayedStudents.map((student: any) => {
+                        const isActive = student.active !== false;
+                        return (
+                          <TableRow key={student.id} className={!isActive ? "opacity-60 bg-gray-50" : ""}>
+                            <TableCell>
                               <div className="font-medium">{student.firstName} {student.lastName}</div>
-                              <div className="text-sm text-gray-500">
-                                DOB: {formatDate(student.dateOfBirth)}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">{getAge(student.dateOfBirth)} years old</div>
-                              {student.grade && (
-                                <div className="text-sm text-gray-500">Grade: {student.grade}</div>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">
+                              <div className="text-xs text-gray-400">DOB: {formatDate(student.dateOfBirth)}</div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="font-medium text-sm">{getAge(student.dateOfBirth)} yrs</div>
+                              {student.grade && <div className="text-xs text-gray-500">{student.grade}</div>}
+                            </TableCell>
+                            <TableCell>
+                              <div className="text-sm font-medium">
                                 {student.parent?.firstName} {student.parent?.lastName}
                               </div>
                               {student.parent?.email && (
-                                <div className="text-sm text-gray-500">{student.parent.email}</div>
+                                <div className="text-xs text-gray-500">{student.parent.email}</div>
                               )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              <div className="flex space-x-2">
-                                <Badge variant="default" className="bg-green-100 text-green-800">
-                                  {student.activeEnrollments} Active
-                                </Badge>
-                                <Badge variant="secondary">
-                                  {student.totalEnrollments} Total
-                                </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-1 flex-wrap">
+                                <Badge className="bg-green-100 text-green-800 text-xs">{student.activeEnrollments} Active</Badge>
+                                <Badge variant="secondary" className="text-xs">{student.totalEnrollments} Total</Badge>
                               </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="text-sm max-w-xs">
+                            </TableCell>
+                            <TableCell className="text-sm max-w-xs">
                               {student.medicalInfo ? (
-                                <div className="truncate" title={student.medicalInfo}>
-                                  {student.medicalInfo}
-                                </div>
+                                <span className="truncate block" title={student.medicalInfo}>{student.medicalInfo}</span>
                               ) : (
-                                <span className="text-gray-400">None specified</span>
+                                <span className="text-gray-400 text-xs">None</span>
                               )}
-                            </div>
+                            </TableCell>
+                            <TableCell>
+                              {isActive ? (
+                                <Badge className="bg-green-100 text-green-800">Active</Badge>
+                              ) : (
+                                <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                                  <UserX className="h-3 w-3 mr-1" /> Inactive
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant={isActive ? "outline" : "default"}
+                                size="sm"
+                                disabled={toggleChildActive.isPending}
+                                onClick={() => toggleChildActive.mutate({ id: student.id, active: !isActive })}
+                              >
+                                {isActive ? "Deactivate" : "Activate"}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      {displayedStudents.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center text-gray-500 py-8">
+                            No students found. {!showInactive && inactiveStudents.length > 0 && "Toggle \"Show inactive\" to see inactive records."}
                           </TableCell>
                         </TableRow>
-                      ))}
+                      )}
                     </TableBody>
                   </Table>
                 )}
@@ -452,130 +468,66 @@ export default function AdminCustomers() {
       <Dialog open={isAddChildOpen} onOpenChange={setIsAddChildOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              Add Child to {selectedParent?.firstName} {selectedParent?.lastName}
-            </DialogTitle>
+            <DialogTitle>Add Child to {selectedParent?.firstName} {selectedParent?.lastName}</DialogTitle>
           </DialogHeader>
-          
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleAddChild)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter first name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter last name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <FormField control={form.control} name="firstName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl><Input placeholder="First name" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="lastName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl><Input placeholder="Last name" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
               </div>
-
-              <FormField
-                control={form.control}
-                name="dateOfBirth"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Date of Birth</FormLabel>
+              <FormField control={form.control} name="dateOfBirth" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <FormControl><Input type="date" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="grade" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Grade (Optional)</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <SelectTrigger><SelectValue placeholder="Select grade" /></SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="grade"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Grade (Optional)</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select grade" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="prep">Prep</SelectItem>
-                        <SelectItem value="1">Grade 1</SelectItem>
-                        <SelectItem value="2">Grade 2</SelectItem>
-                        <SelectItem value="3">Grade 3</SelectItem>
-                        <SelectItem value="4">Grade 4</SelectItem>
-                        <SelectItem value="5">Grade 5</SelectItem>
-                        <SelectItem value="6">Grade 6</SelectItem>
-                        <SelectItem value="7">Year 7</SelectItem>
-                        <SelectItem value="8">Year 8</SelectItem>
-                        <SelectItem value="9">Year 9</SelectItem>
-                        <SelectItem value="10">Year 10</SelectItem>
-                        <SelectItem value="11">Year 11</SelectItem>
-                        <SelectItem value="12">Year 12</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="schoolName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>School Name (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter school name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="medicalInfo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Medical Information (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Any medical conditions or allergies" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-end gap-3 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsAddChildOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  type="submit"
-                  disabled={addChildMutation.isPending}
-                >
+                    <SelectContent>
+                      <SelectItem value="prep">Prep</SelectItem>
+                      {["1","2","3","4","5","6"].map(g => <SelectItem key={g} value={g}>Grade {g}</SelectItem>)}
+                      {["7","8","9","10","11","12"].map(g => <SelectItem key={g} value={g}>Year {g}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="schoolName" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>School (Optional)</FormLabel>
+                  <FormControl><Input placeholder="School name" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="medicalInfo" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Medical Information (Optional)</FormLabel>
+                  <FormControl><Input placeholder="Any medical conditions or allergies" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <div className="flex justify-end gap-3 pt-2">
+                <Button type="button" variant="outline" onClick={() => setIsAddChildOpen(false)}>Cancel</Button>
+                <Button type="submit" disabled={addChildMutation.isPending}>
                   {addChildMutation.isPending ? "Adding..." : "Add Child"}
                 </Button>
               </div>

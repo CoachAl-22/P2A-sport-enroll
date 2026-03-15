@@ -63,7 +63,7 @@ export function isStudentExportFormat(headers: string[]): boolean {
   return headers.includes('Customer First Name') && headers.includes('DOB') && headers.includes('Customer Email');
 }
 
-export async function importStudentsFromCSV(csvContent: string): Promise<{
+export async function importStudentsFromCSV(csvContent: string, includeInactive = false): Promise<{
   parentsCreated: number;
   parentsExisting: number;
   studentsCreated: number;
@@ -97,7 +97,7 @@ export async function importStudentsFromCSV(csvContent: string): Promise<{
     const studentLastName = record['Last Name']?.trim();
     const isActive = record['Active']?.trim().toUpperCase() === 'TRUE';
 
-    if (!isActive) {
+    if (!isActive && !includeInactive) {
       results.skipped++;
       continue;
     }
@@ -149,6 +149,7 @@ export async function importStudentsFromCSV(csvContent: string): Promise<{
           userId,
           password: hashedPassword,
           role: 'parent' as const,
+          active: isActive,
         });
 
         results.parentsCreated++;
@@ -196,6 +197,7 @@ export async function importStudentsFromCSV(csvContent: string): Promise<{
         grade: grade || null,
         medicalInfo: medicalInfo,
         emergencyContact: parentMobile || parentEmail || null,
+        active: isActive,
       });
 
       results.studentsCreated++;
@@ -216,6 +218,7 @@ export async function previewStudentsFromCSV(csvContent: string): Promise<{
   isStudentFormat: boolean;
   totalRows: number;
   activeRows: number;
+  inactiveRows: number;
   parentEmails: Set<string>;
   studentsPreview: any[];
   issues: string[];
@@ -237,10 +240,11 @@ export async function previewStudentsFromCSV(csvContent: string): Promise<{
   const studentsPreview: any[] = [];
   const parentEmails = new Set<string>();
   let activeRows = 0;
+  let inactiveRows = 0;
 
-  for (const record of records.slice(0, 200)) {
+  for (const record of records.slice(0, 500)) {
     const isActive = record['Active']?.trim().toUpperCase() === 'TRUE';
-    if (!isActive) continue;
+    if (!isActive) { inactiveRows++; continue; }
     activeRows++;
 
     const studentFirstName = record['First Name']?.trim();
@@ -282,6 +286,7 @@ export async function previewStudentsFromCSV(csvContent: string): Promise<{
     isStudentFormat,
     totalRows: records.length,
     activeRows,
+    inactiveRows,
     parentEmails,
     studentsPreview,
     issues,

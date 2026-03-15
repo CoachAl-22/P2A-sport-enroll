@@ -18,12 +18,16 @@ import {
   Database,
   ArrowRight,
   Info,
+  UserX,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export default function Import() {
   const [uploadedFile, setUploadedFile] = useState<string>("");
   const [previewData, setPreviewData] = useState<any>(null);
   const [importResult, setImportResult] = useState<any>(null);
+  const [includeInactive, setIncludeInactive] = useState(false);
   const { toast } = useToast();
 
   const previewMutation = useMutation({
@@ -45,7 +49,7 @@ export default function Import() {
 
   const importMutation = useMutation({
     mutationFn: async (uploadURL: string) => {
-      const response = await apiRequest("POST", "/api/csv-import", { uploadURL });
+      const response = await apiRequest("POST", "/api/csv-import", { uploadURL, includeInactive });
       return response.json();
     },
     onSuccess: (data) => {
@@ -112,6 +116,23 @@ export default function Import() {
                   <AlertDescription>File uploaded — reviewing data below.</AlertDescription>
                 </Alert>
               )}
+
+              {/* Include inactive toggle */}
+              <div className="border rounded-lg p-3 bg-amber-50 border-amber-200">
+                <div className="flex items-center justify-between mb-1">
+                  <Label htmlFor="include-inactive" className="font-medium text-amber-900 cursor-pointer flex items-center gap-1">
+                    <UserX className="w-4 h-4" /> Include inactive records
+                  </Label>
+                  <Switch
+                    id="include-inactive"
+                    checked={includeInactive}
+                    onCheckedChange={(val) => { setIncludeInactive(val); setImportResult(null); }}
+                  />
+                </div>
+                <p className="text-xs text-amber-700">
+                  When on, inactive students and their parents are also imported — marked as inactive. You can activate them individually from the Customers page if they re-enrol.
+                </p>
+              </div>
 
               {/* Format reference */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
@@ -214,7 +235,7 @@ export default function Import() {
               {previewData && !importResult && !previewMutation.isPending && !importMutation.isPending && (
                 <div className="space-y-5">
                   {/* Stats */}
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
                       <p className="text-xs text-blue-600 mb-1">Total rows</p>
                       <p className="text-2xl font-bold text-blue-900">{previewData.totalRows}</p>
@@ -223,6 +244,12 @@ export default function Import() {
                       <p className="text-xs text-green-600 mb-1">Active students</p>
                       <p className="text-2xl font-bold text-green-900">{previewData.activeRows}</p>
                     </div>
+                    {previewData.inactiveRows > 0 && (
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
+                        <p className="text-xs text-amber-600 mb-1">Inactive students</p>
+                        <p className="text-2xl font-bold text-amber-900">{previewData.inactiveRows}</p>
+                      </div>
+                    )}
                     <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
                       <p className="text-xs text-purple-600 mb-1">Unique parents</p>
                       <p className="text-2xl font-bold text-purple-900">{previewData.uniqueParents}</p>
@@ -292,7 +319,10 @@ export default function Import() {
 
                   <div className="flex justify-end pt-2 border-t">
                     <Button onClick={handleImport} disabled={importMutation.isPending} className="flex items-center gap-2">
-                      Import {previewData.activeRows} students
+                      Import {includeInactive ? previewData.totalRows : previewData.activeRows} students
+                      {includeInactive && previewData.inactiveRows > 0 && (
+                        <span className="text-xs opacity-75">(incl. {previewData.inactiveRows} inactive)</span>
+                      )}
                       <ArrowRight className="w-4 h-4" />
                     </Button>
                   </div>

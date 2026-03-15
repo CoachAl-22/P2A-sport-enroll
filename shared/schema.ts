@@ -122,6 +122,7 @@ export const users = pgTable("users", {
   role: userRoleEnum("role").default("parent").notNull(),
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   autoReenrollment: boolean("auto_reenrollment").default(true),
+  active: boolean("active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -136,6 +137,7 @@ export const children = pgTable("children", {
   grade: varchar("grade", { length: 20 }),
   medicalInfo: text("medical_info"),
   emergencyContact: varchar("emergency_contact", { length: 20 }),
+  active: boolean("active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
