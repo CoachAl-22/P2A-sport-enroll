@@ -294,9 +294,19 @@ export default function SeniorSquad() {
 
           <div className="space-y-4">
             <Button 
+              asChild
+              size="lg"
+              className="bg-secondary-500 hover:bg-secondary-600 text-white font-bold px-8 py-3 text-lg"
+            >
+              <a href="https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0" target="_blank" rel="noopener noreferrer">
+                Book Free Discovery Call
+              </a>
+            </Button>
+            <Button 
               onClick={() => setIsSeniorSquadModalOpen(true)}
               size="lg"
-              className="bg-white text-primary-600 hover:bg-gray-100 font-bold px-8 py-3 text-lg"
+              variant="outline"
+              className="bg-white/10 border-white text-white hover:bg-white/20 font-bold px-8 py-3 text-lg"
             >
               Apply to Join Senior Squad
             </Button>
