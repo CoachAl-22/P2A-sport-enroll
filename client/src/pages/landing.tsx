@@ -804,7 +804,7 @@ export default function Landing() {
                       By Application
                     </Button>
                     <div className="w-full">
-                      <p className="text-xs text-gray-400 text-right mb-1">Existing clients</p>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right mb-1">⬇ Existing clients</p>
                       <Button 
                         onClick={() => {
                           window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
@@ -861,7 +861,7 @@ export default function Landing() {
                       By Application
                     </Button>
                     <div className="w-full">
-                      <p className="text-xs text-gray-400 text-right mb-1">Existing clients</p>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right mb-1">⬇ Existing clients</p>
                       <Button 
                         onClick={() => {
                           window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
