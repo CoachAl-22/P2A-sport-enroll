@@ -92,6 +92,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const invoiceService = new InvoiceService();
 
   // Serve the operations manual (login required)
+  // Handle Junior Academy application form submission + send emails
+  app.post("/api/junior-academy-application", async (req, res) => {
+    try {
+      const data = req.body;
+      if (!data.parentName || !data.parentEmail || !data.parentPhone || !data.athleteName) {
+        return res.status(400).json({ success: false, message: "Missing required fields" });
+      }
+
+      const adminEmail = "info@power2adapt.com";
+
+      // Send admin notification
+      try {
+        await emailService.sendJuniorAcademyAdminNotification(data, adminEmail);
+      } catch (e) {
+        console.error("Failed to send admin notification:", e);
+      }
+
+      // Send applicant confirmation
+      try {
+        await emailService.sendJuniorAcademyApplicantConfirmation({
+          parentName: data.parentName,
+          parentEmail: data.parentEmail,
+          athleteName: data.athleteName,
+          programme: data.programme || "Junior Academy",
+        });
+      } catch (e) {
+        console.error("Failed to send applicant confirmation:", e);
+      }
+
+      res.json({ success: true, message: "Application received" });
+    } catch (error: any) {
+      console.error("Junior Academy application error:", error);
+      res.status(500).json({ success: false, message: error.message || "Failed to process application" });
+    }
+  });
+
   app.get("/junior-academy-application.html", async (req, res) => {
     const { readFileSync } = await import("fs");
     const { resolve, dirname } = await import("path");

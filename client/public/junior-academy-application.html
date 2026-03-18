@@ -1167,15 +1167,9 @@
       photoConsent: getRadioValue('qPhoto'),
     };
 
-    const FORMSPREE_ID = 'maqplzgr';
-    if (FORMSPREE_ID === 'YOUR_FORM_ID') {
-      showSuccess();
-      return;
-    }
-
-    fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+    fetch('/api/junior-academy-application', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
     .then(function(r) { r.ok ? showSuccess() : alert('Something went wrong — please try again or email info@power2adapt.com'); })
