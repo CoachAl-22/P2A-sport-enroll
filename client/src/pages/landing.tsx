@@ -36,6 +36,7 @@ export default function Landing() {
                 <a href="#features" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Features</a>
                 <a href="/coaches" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Our Coaches</a>
                 <a href="/high-performance" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">High Performance</a>
+                <a href="/junior-academy" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Junior Academy</a>
                 <a href="/senior-squad" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Senior Squad</a>
                 <a href="/education" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Education</a>
                 <a href="/questionnaire" className="bg-primary-500 text-white hover:bg-primary-600 px-4 py-2 rounded-md text-sm font-bold shadow-sm">Check-In</a>
@@ -106,6 +107,13 @@ export default function Landing() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 High Performance
+              </a>
+              <a 
+                href="/junior-academy" 
+                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Junior Academy
               </a>
               <a 
                 href="/senior-squad" 
