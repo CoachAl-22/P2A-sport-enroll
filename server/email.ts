@@ -66,7 +66,7 @@ export class EmailService {
             <div class="field"><div class="label">Preferred Contact Method:</div><div class="value">${enquiryData.contactMethod.charAt(0).toUpperCase() + enquiryData.contactMethod.slice(1)}</div></div>
             <div class="field"><div class="label">Subject:</div><div class="value">${enquiryData.subject.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div></div>
             <div class="field"><div class="label">Message:</div><div class="message-box">${enquiryData.message}</div></div>
-            <div style="margin-top:30px;text-align:center"><p>View and manage this enquiry in your <a href="https://power2adapt.online/admin/enquiries" style="color:#667eea;text-decoration:none;font-weight:bold">Admin Dashboard</a></p></div>
+            <div style="margin-top:30px;text-align:center"><p>View and manage this enquiry in your <a href="https://www.power2adapt.online/admin/enquiries" style="color:#667eea;text-decoration:none;font-weight:bold">Admin Dashboard</a></p></div>
           </div>
           <div class="footer"><p>Power2ADAPT Athletic Programs</p></div>
         </div>
@@ -99,11 +99,11 @@ export class EmailService {
                 <li>A member of our team will contact you using your preferred method</li>
                 <li>We'll answer any questions and help you find the perfect program</li>
               </ul>
-              <div style="text-align:center"><a href="https://power2adapt.online" class="cta-button">Visit Our Website</a></div>
+              <div style="text-align:center"><a href="https://www.power2adapt.online" class="cta-button">Visit Our Website</a></div>
             </div>
             <p style="color:#666;font-size:14px;margin-top:20px">If you have any urgent questions, please don't hesitate to call us directly.</p>
           </div>
-          <div class="footer"><p><strong>Power2ADAPT</strong></p><p>Building Athletic Excellence</p><p style="margin-top:10px"><a href="https://power2adapt.online" style="color:#667eea;text-decoration:none">www.power2adapt.online</a></p></div>
+          <div class="footer"><p><strong>Power2ADAPT</strong></p><p>Building Athletic Excellence</p><p style="margin-top:10px"><a href="https://www.power2adapt.online" style="color:#667eea;text-decoration:none">www.power2adapt.online</a></p></div>
         </div>
       </body></html>`;
     return this.sendEmail(customerEmail, emailSubject, html);
@@ -147,7 +147,7 @@ export class EmailService {
               </div></div>` : ''}
             <div class="field"><div class="label">Current Sports:</div><div class="value">${applicationData.currentSports}</div></div>
             <div class="field"><div class="label">Athletic Goals:</div><div class="value">${applicationData.athleticGoals}</div></div>
-            <div style="margin-top:30px;text-align:center"><p>View full application details in your <a href="https://power2adapt.online/admin" style="color:#667eea;text-decoration:none;font-weight:bold">Admin Dashboard</a></p></div>
+            <div style="margin-top:30px;text-align:center"><p>View full application details in your <a href="https://www.power2adapt.online/admin" style="color:#667eea;text-decoration:none;font-weight:bold">Admin Dashboard</a></p></div>
           </div>
           <div class="footer"><p>Power2ADAPT Athletic Programs</p></div>
         </div>
@@ -206,7 +206,7 @@ export class EmailService {
             ${row('Photo / Video Consent', data.photoConsent)}
           </table>
           <div style="text-align:center;margin-top:24px">
-            <a href="https://power2adapt.online/admin/applications" style="background:#F26522;color:#fff;padding:12px 28px;text-decoration:none;border-radius:8px;font-weight:600;font-size:0.9rem">View Admin Dashboard</a>
+            <a href="https://www.power2adapt.online/admin/applications" style="background:#F26522;color:#fff;padding:12px 28px;text-decoration:none;border-radius:8px;font-weight:600;font-size:0.9rem">View Admin Dashboard</a>
           </div>
         </div>
         <div style="text-align:center;padding:16px;background:#f9fafb;color:#9ca3af;font-size:0.75rem">Power2ADAPT Athletic Programs</div>
