@@ -27,6 +27,7 @@ export class EmailService {
       const { data, error } = await resend.emails.send({
         from: this.fromEmail,
         to: [to],
+        replyTo: 'info@power2adapt.com',
         subject,
         html,
       });
@@ -236,10 +237,10 @@ export class EmailService {
           </div>
           <p style="color:#6b7280;font-size:0.88rem">Questions in the meantime? Reply to this email or call <a href="tel:+61434679395" style="color:#F26522">+61 434 679 395</a>.</p>
           <div style="text-align:center;margin-top:28px">
-            <a href="https://power2adapt.online" style="background:#F26522;color:#fff;padding:12px 28px;text-decoration:none;border-radius:8px;font-weight:600;font-size:0.9rem">Visit Power2ADAPT</a>
+            <a href="https://www.power2adapt.online" style="background:#F26522;color:#fff;padding:12px 28px;text-decoration:none;border-radius:8px;font-weight:600;font-size:0.9rem">Visit Power2ADAPT</a>
           </div>
         </div>
-        <div style="text-align:center;padding:16px;background:#f9fafb;color:#9ca3af;font-size:0.75rem">© 2026 Power2ADAPT Athletic Programs · <a href="https://power2adapt.online" style="color:#9ca3af">power2adapt.online</a></div>
+        <div style="text-align:center;padding:16px;background:#f9fafb;color:#9ca3af;font-size:0.75rem">© 2026 Power2ADAPT Athletic Programs · <a href="https://www.power2adapt.online" style="color:#9ca3af">www.power2adapt.online</a></div>
       </div>
     </body></html>`;
     return this.sendEmail(data.parentEmail, subject, html);
