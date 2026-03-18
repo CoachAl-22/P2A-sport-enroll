@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
+import ContactFormModal from "@/components/contact-form-modal";
 import { Users, ArrowLeft, CheckCircle, Star, Target, Zap, Shield, Calendar, MessageCircle, ChevronDown, ChevronUp, Home } from "lucide-react";
 import { Link } from "wouter";
 
@@ -33,6 +34,7 @@ const faqs = [
 
 export default function JuniorAcademy() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isContactFormOpen, setIsContactFormOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
@@ -364,10 +366,10 @@ export default function JuniorAcademy() {
             <Button
               size="lg"
               variant="outline"
-              asChild
+              onClick={() => setIsContactFormOpen(true)}
               className="bg-white/10 border-white text-white hover:bg-white/20 font-bold px-8 py-3 text-lg"
             >
-              <a href="mailto:info@power2adapt.com">Email Us a Question</a>
+              Send Us a Question
             </Button>
           </div>
           <p className="text-primary-200 text-sm mt-4">Questions? Email info@power2adapt.com</p>
@@ -384,6 +386,7 @@ export default function JuniorAcademy() {
       </section>
 
       <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
+      <ContactFormModal isOpen={isContactFormOpen} onClose={() => setIsContactFormOpen(false)} />
     </div>
   );
 }
