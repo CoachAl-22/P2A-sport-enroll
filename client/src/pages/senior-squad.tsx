@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
 import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
-import { Users, Building2, Smartphone, ArrowLeft, Star, CheckCircle, Trophy, Target, Clock, Heart } from "lucide-react";
+import { Users, Building2, Smartphone, ArrowLeft, Star, CheckCircle, Trophy, Target, Clock, Heart, Home } from "lucide-react";
 import { Link } from "wouter";
 
 export default function SeniorSquad() {
@@ -313,6 +313,14 @@ export default function SeniorSquad() {
             <p className="text-primary-200 text-sm">
               * By Application Only - Assessment Required
             </p>
+            <div className="mt-8 pt-6 border-t border-white/20">
+              <Link href="/">
+                <Button variant="ghost" className="text-primary-200 hover:text-white hover:bg-white/10">
+                  <Home className="w-4 h-4 mr-2" />
+                  Return to Home
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

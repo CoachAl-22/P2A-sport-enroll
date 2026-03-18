@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import Landing from "@/pages/landing";
 import HighPerformance from "@/pages/high-performance";
 import SeniorSquad from "@/pages/senior-squad";
+import JuniorAcademy from "@/pages/junior-academy";
 import Dashboard from "@/pages/dashboard";
 import Classes from "@/pages/classes";
 import Enrollment from "@/pages/enrollment";
@@ -60,6 +61,7 @@ function Router() {
           <Route path="/coaches" component={Coaches} />
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/senior-squad" component={SeniorSquad} />
+          <Route path="/junior-academy" component={JuniorAcademy} />
           <Route path="/blog" component={Blog} />
           <Route path="/education" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />

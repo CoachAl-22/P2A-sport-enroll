@@ -63,6 +63,14 @@ export default function Navbar() {
                     Classes
                   </Button>
                 </Link>
+                <Link href="/junior-academy">
+                  <Button
+                    variant={location === "/junior-academy" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500 font-medium"
+                  >
+                    Junior Academy
+                  </Button>
+                </Link>
                 <Link href="/education">
                   <Button
                     variant={location === "/education" ? "default" : "ghost"}
@@ -275,6 +283,15 @@ export default function Navbar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       High Performance
+                    </Button>
+                  </Link>
+                  <Link href="/junior-academy">
+                    <Button
+                      variant={location === "/junior-academy" ? "default" : "ghost"}
+                      className="w-full justify-start text-gray-700"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Junior Academy
                     </Button>
                   </Link>
                   <Link href="/senior-squad">
