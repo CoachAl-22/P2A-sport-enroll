@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Junior Academy Application — Power2ADAPT</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:      #F26522;
+    --orange-dark: #d4541a;
+    --orange-pale: #fff5f0;
+    --cyan:        #00B4D8;
+    --cyan-pale:   #f0fbfd;
+    --black:       #0a0a0a;
+    --text:        #1a1a1a;
+    --muted:       #6b7280;
+    --border:      #e5e7eb;
+    --bg:          #f4f4f5;
+    --white:       #ffffff;
+    --radius:      12px;
+    --radius-sm:   8px;
+    --font-head:   'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+    --font-body:   'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --success:     #1aaa6e;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Site bar ── */
+  .site-bar {
+    background: var(--black);
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--orange);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .site-bar-logo {
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .site-bar-logo span { color: var(--orange); }
+
+  .site-bar-back {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.18s;
+  }
+  .site-bar-back:hover { color: var(--orange); }
+
+  /* ── Page layout ── */
+  .page-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 36px 20px 80px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: var(--black);
+    border-radius: var(--radius);
+    padding: 32px 36px;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 100%;
+    background: linear-gradient(135deg, transparent 50%, rgba(242,101,34,0.07));
+    pointer-events: none;
+  }
+
+  .hero-eye {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+
+  .hero-title {
+    font-family: var(--font-head);
+    font-size: 2.2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .hero-title span { color: var(--orange); }
+
+  .hero-sub {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    line-height: 1.65;
+    max-width: 480px;
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 22px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── Step panels ── */
+  .step { display: none; animation: fadeUp 0.3s ease; }
+  .step.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Section cards ── */
+  .form-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+
+  .form-card-head {
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 99px;
+    color: var(--white);
+    background: var(--cyan);
+    flex-shrink: 0;
+  }
+  .section-badge.orange { background: var(--orange); }
+
+  .form-card-title {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--black);
+  }
+
+  .form-card-body { padding: 22px; }
+
+  /* ── Who answers indicator ── */
+  .who-answers {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding: 5px 12px;
+    border-radius: 99px;
+  }
+
+  .who-answers.parent {
+    background: var(--cyan-pale);
+    color: var(--cyan);
+    border: 1px solid rgba(0,180,216,0.2);
+  }
+
+  .who-answers.athlete {
+    background: var(--orange-pale);
+    color: var(--orange);
+    border: 1px solid rgba(242,101,34,0.2);
+  }
+
+  /* ── Form fields ── */
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .field label .req {
+    color: var(--orange);
+    margin-left: 2px;
+  }
+
+  .field label .opt {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="tel"],
+  .field input[type="date"],
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 11px 14px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--text);
+    background: #fafafa;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px rgba(242,101,34,0.1);
+    background: var(--white);
+  }
+
+  .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+    cursor: pointer;
+  }
+
+  /* Checkbox group */
+  .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #fafafa;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+  }
+
+  .checkbox-option:hover { border-color: var(--orange); background: var(--orange-pale); }
+  .checkbox-option.selected { border-color: var(--orange); background: var(--orange-pale); }
+
+  .checkbox-option input[type="checkbox"] { display: none; }
+
+  .checkbox-tick {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    font-size: 0.7rem;
+    color: var(--white);
+  }
+
+  .checkbox-option.selected .checkbox-tick {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+
+  .checkbox-option.selected .checkbox-tick::after { content: '✓'; }
+
+  .checkbox-option span { font-size: 0.88rem; font-weight: 500; color: var(--text); }
+
+  /* Radio group */
+  .radio-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #fafafa;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+  }
+
+  .radio-option:hover { border-color: var(--orange); background: var(--orange-pale); }
+  .radio-option.selected { border-color: var(--orange); background: var(--orange-pale); }
+  .radio-option input[type="radio"] { display: none; }
+
+  .radio-dot {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .radio-option.selected .radio-dot {
+    border-color: var(--orange);
+    background: var(--orange);
+    box-shadow: inset 0 0 0 3px white;
+  }
+
+  .radio-option span { font-size: 0.88rem; font-weight: 500; color: var(--text); }
+
+  /* Field hint */
+  .field-hint {
+    font-size: 0.76rem;
+    color: var(--muted);
+    margin-top: 5px;
+    line-height: 1.5;
+  }
+
+  /* Error state */
+  .field-error {
+    font-size: 0.75rem;
+    color: #e03c3c;
+    margin-top: 4px;
+    display: none;
+  }
+  .field.has-error input,
+  .field.has-error select,
+  .field.has-error textarea {
+    border-color: #e03c3c;
+  }
+  .field.has-error .field-error { display: block; }
+
+  /* ── Consent box ── */
+  .consent-box {
+    background: var(--orange-pale);
+    border: 1.5px solid rgba(242,101,34,0.25);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 18px;
+  }
+
+  .consent-box h4 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+
+  .consent-box p {
+    font-size: 0.84rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  .consent-box p:last-of-type { margin-bottom: 12px; }
+
+  .consent-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .consent-check input[type="checkbox"] { margin-top: 3px; accent-color: var(--orange); }
+  .consent-check span { font-size: 0.84rem; font-weight: 600; color: var(--text); line-height: 1.5; }
+
+  /* ── Nav buttons ── */
+  .form-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+
+  .btn {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .btn-back {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-back:hover { border-color: var(--text); color: var(--text); }
+
+  .btn-next {
+    background: var(--orange);
+    color: var(--white);
+    box-shadow: 0 4px 14px rgba(242,101,34,0.3);
+  }
+  .btn-next:hover { background: var(--orange-dark); transform: translateY(-1px); }
+  .btn-next:active { transform: translateY(0); }
+
+  .btn-submit {
+    background: var(--black);
+    color: var(--white);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .btn-submit:hover { background: #222; transform: translateY(-1px); }
+
+  /* ── Success state ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 48px 24px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .success-icon {
+    width: 72px; height: 72px;
+    background: var(--success);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(26,170,110,0.3);
+  }
+
+  .success-title {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+
+  .success-title span { color: var(--orange); }
+
+  .success-sub {
+    font-size: 0.92rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin: 0 auto 24px;
+  }
+
+  .success-steps {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    text-align: left;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .success-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 0.87rem;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .success-step:last-child { margin-bottom: 0; }
+
+  .success-step-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: var(--white);
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    .hero { padding: 24px 22px; }
+    .hero-title { font-size: 1.7rem; }
+    .form-card-body { padding: 16px; }
+    .btn { padding: 11px 20px; font-size: 0.84rem; }
+  }
+
+  /* ── Day picker ── */
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+
+  .day-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .day-option input[type="checkbox"] {
+    display: none;
+  }
+
+  .day-option span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 4px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: #fafafa;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .day-option input[type="checkbox"]:checked + span {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(242,101,34,0.3);
+  }
+
+  .day-option:hover span {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  @media (max-width: 400px) {
+    .day-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ── Site bar ── -->
+<div class="site-bar">
+  <a href="/" class="site-bar-logo">POWER2<span>ADAPT</span></a>
+  <a href="/junior-academy" class="site-bar-back">← Back to Junior Academy</a>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-eye">Junior Academy — Ages 12–16</div>
+    <div class="hero-title">Apply for the<br><span>Junior Academy</span></div>
+    <div class="hero-sub">Complete this short application and Alistair will be in touch within 48 hours to confirm your child's place and next steps.</div>
+  </div>
+
+  <!-- ── Progress ── -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:25%"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">Step 1 of 4</div>
+  </div>
+
+  <!-- ══════════════════════════════
+       STEP 1 — PARENT / GUARDIAN
+  ══════════════════════════════ -->
+  <div class="step active" id="step1">
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <span class="section-badge">Step 1</span>
+        <span class="form-card-title">Parent / Guardian Details</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field" data-required>
+          <label>Your full name <span class="req">*</span></label>
+          <input type="text" id="parentName" placeholder="e.g. Sarah Johnson">
+          <div class="field-error">Please enter your full name</div>
+        </div>
+        <div class="field" data-required>
+          <label>Your email address <span class="req">*</span></label>
+          <input type="email" id="parentEmail" placeholder="e.g. sarah@email.com">
+          <div class="field-error">Please enter a valid email address</div>
+        </div>
+        <div class="field" data-required>
+          <label>Your mobile number <span class="req">*</span></label>
+          <input type="tel" id="parentPhone" placeholder="e.g. 0412 345 678">
+          <div class="field-error">Please enter your mobile number</div>
+        </div>
+        <div class="field" data-required>
+          <label>Athlete's full name <span class="req">*</span></label>
+          <input type="text" id="athleteName" placeholder="e.g. Jake Johnson">
+          <div class="field-error">Please enter your child's name</div>
+        </div>
+        <div class="field" data-required>
+          <label>Athlete's date of birth <span class="req">*</span></label>
+          <input type="date" id="athleteDob">
+          <div class="field-hint">Athletes must be aged 12–16 to join the Junior Academy.</div>
+          <div class="field-error">Please enter your child's date of birth</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-nav">
+      <button class="btn btn-next" onclick="nextStep(1)">Next — About Your Athlete →</button>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════
+       STEP 2 — ABOUT YOUR ATHLETE
+  ══════════════════════════════ -->
+  <div class="step" id="step2">
+
+    <!-- Section A: About Your Athlete -->
+    <div class="form-card">
+      <div class="form-card-head">
+        <span class="section-badge">Step 2</span>
+        <span class="form-card-title">About Your Athlete</span>
+      </div>
+      <div class="form-card-body">
+
+        <div class="who-answers parent">👨‍👩‍👧 Parent / Guardian — please complete this section</div>
+
+        <div class="field" data-required>
+          <label>What sports or physical activities does your child currently participate in? <span class="req">*</span></label>
+          <textarea id="q2" placeholder="Include any school sport, club sport, or recreational activity — e.g. football, swimming, athletics, gymnastics..."></textarea>
+          <div class="field-error">Please tell us about your child's current sports</div>
+        </div>
+
+        <div class="field" id="q3-field" data-required>
+          <label>How many days per week is your child currently active in sport or physical training? <span class="req">*</span></label>
+          <select id="q3">
+            <option value="">— Please select —</option>
+            <option value="1 day">1 day per week</option>
+            <option value="2 days">2 days per week</option>
+            <option value="3 days">3 days per week</option>
+            <option value="4+ days">4 or more days per week</option>
+            <option value="Varies">Varies a lot week to week</option>
+          </select>
+          <div class="field-error" id="q3-error">Please select an option</div>
+        </div>
+
+        <div class="field" data-required>
+          <label>Does your child have any medical conditions, allergies, or physical limitations their coach should be aware of? <span class="req">*</span></label>
+          <textarea id="q4" placeholder="Write 'None' if not applicable. Please include anything relevant — asthma, allergies, previous injuries, etc."></textarea>
+          <div class="field-error">Please complete this field (write 'None' if not applicable)</div>
+        </div>
+
+        <div class="field">
+          <label>Has your child experienced any injuries in the past 12 months that may affect their training? <span class="opt">(Optional)</span></label>
+          <textarea id="q5" placeholder="Describe the injury and whether it has fully recovered. Leave blank if no injuries."></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-nav">
+      <button class="btn btn-back" onclick="prevStep(2)">← Back</button>
+      <button class="btn btn-next" onclick="nextStep(2)">Next — Schedule & Goals →</button>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════
+       STEP 3 — SCHEDULE & GOALS
+  ══════════════════════════════ -->
+  <div class="step" id="step3">
+
+    <!-- Section B: Availability -->
+    <div class="form-card">
+      <div class="form-card-head">
+        <span class="section-badge">Step 3</span>
+        <span class="form-card-title">Availability & Scheduling</span>
+      </div>
+      <div class="form-card-body">
+
+        <div class="who-answers parent">👨‍👩‍👧 Parent / Guardian</div>
+
+        <div class="field" id="q6-field">
+          <label>Which days of the week is your child generally available for training sessions? <span class="req">*</span></label>
+          <div class="field-hint" style="margin-bottom:8px">Select all that apply. We recommend up to 2 sessions per week.</div>
+          <div class="day-grid" id="q6">
+            <label class="day-option"><input type="checkbox" name="q6days" value="Monday"><span>Mon</span></label>
+            <label class="day-option"><input type="checkbox" name="q6days" value="Tuesday"><span>Tue</span></label>
+            <label class="day-option"><input type="checkbox" name="q6days" value="Wednesday"><span>Wed</span></label>
+            <label class="day-option"><input type="checkbox" name="q6days" value="Thursday"><span>Thu</span></label>
+            <label class="day-option"><input type="checkbox" name="q6days" value="Friday"><span>Fri</span></label>
+            <label class="day-option"><input type="checkbox" name="q6days" value="Saturday"><span>Sat</span></label>
+            <label class="day-option"><input type="checkbox" name="q6days" value="Sunday"><span>Sun</span></label>
+          </div>
+          <div class="field-error" id="q6-error" style="display:none">Please select at least one day</div>
+        </div>
+
+        <div class="field">
+          <label>Are there any fixed school sport, club, or family commitments the coach should work around? <span class="opt">(Optional)</span></label>
+          <textarea id="q7" placeholder="e.g. School cricket every Tuesday afternoon, swimming squad Thursday evenings..."></textarea>
+        </div>
+
+        <div class="field" data-required>
+          <label>What equipment or facilities does your child have access to for training? <span class="req">*</span></label>
+          <textarea id="q8" placeholder="e.g. Local oval, park, home backyard, gym membership..."></textarea>
+          <div class="field-error">Please describe the available training spaces</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section C: Goals -->
+    <div class="form-card">
+      <div class="form-card-head">
+        <span class="section-badge orange">Goals</span>
+        <span class="form-card-title">Goals & Hopes</span>
+      </div>
+      <div class="form-card-body">
+
+        <div class="who-answers parent">👨‍👩‍👧 Parent / Guardian</div>
+
+        <div class="field" data-required>
+          <label>As a parent, what are your hopes for your child through this programme? What does success look like to you? <span class="req">*</span></label>
+          <textarea id="q9" placeholder="e.g. Build confidence, improve their movement, enjoy training, get faster for their sport..."></textarea>
+          <div class="field-error">Please share your hopes for your child</div>
+        </div>
+
+        <div style="height:1px;background:var(--border);margin:18px 0"></div>
+
+        <div class="who-answers athlete">🏃 Athlete — your turn! Answer the next questions yourself</div>
+
+        <div class="field" data-required>
+          <label>Hey athlete — what's ONE thing you'd love to get better at? <span class="req">*</span></label>
+          <input type="text" id="q10" placeholder="e.g. Get faster, jump higher, feel stronger, be less nervous before games...">
+          <div class="field-error">Tell us one thing you want to improve!</div>
+        </div>
+
+        <div class="field">
+          <label>What's your favourite sport or activity right now, and what do you love most about it? <span class="opt">(Optional)</span></label>
+          <input type="text" id="q11" placeholder="e.g. Football — I love the team aspect and scoring goals">
+        </div>
+
+        <div class="field">
+          <label>Is there anything that makes you nervous or unsure about starting a training programme? <span class="opt">(Optional)</span></label>
+          <input type="text" id="q12" placeholder="It's totally okay to say yes — your coach wants to know!">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section D: Communication -->
+    <div class="form-card">
+      <div class="form-card-head">
+        <span class="section-badge">Communication</span>
+        <span class="form-card-title">Communication Preferences</span>
+      </div>
+      <div class="form-card-body">
+
+        <div class="who-answers parent">👨‍👩‍👧 Parent / Guardian</div>
+
+        <div class="field" data-required>
+          <label>Who should the coach communicate with about sessions and progress? <span class="req">*</span></label>
+          <div class="radio-group" id="q13">
+            <label class="radio-option"><input type="radio" name="q13" value="Parent / Guardian only"><div class="radio-dot"></div><span>Parent / Guardian only</span></label>
+            <label class="radio-option"><input type="radio" name="q13" value="Athlete only"><div class="radio-dot"></div><span>Athlete only</span></label>
+            <label class="radio-option"><input type="radio" name="q13" value="Both"><div class="radio-dot"></div><span>Both parent and athlete</span></label>
+          </div>
+          <div class="field-error" id="q13-error" style="display:none">Please select an option</div>
+        </div>
+
+        <div class="field" data-required>
+          <label>How would you prefer to receive updates and programme feedback from the coach? <span class="req">*</span></label>
+          <div class="radio-group" id="q14">
+            <label class="radio-option"><input type="radio" name="q14" value="Final Surge app"><div class="radio-dot"></div><span>Final Surge app</span></label>
+            <label class="radio-option"><input type="radio" name="q14" value="Email"><div class="radio-dot"></div><span>Email</span></label>
+            <label class="radio-option"><input type="radio" name="q14" value="Phone call"><div class="radio-dot"></div><span>Phone call</span></label>
+            <label class="radio-option"><input type="radio" name="q14" value="Text message"><div class="radio-dot"></div><span>Text message</span></label>
+          </div>
+          <div class="field-error" id="q14-error" style="display:none">Please select an option</div>
+        </div>
+
+        <div class="field">
+          <label>Is there anything else you'd like the coach to know about your child — their personality, learning style, or what motivates them? <span class="opt">(Optional)</span></label>
+          <textarea id="q15" placeholder="e.g. Gets frustrated easily but responds well to encouragement. Very competitive. Shy at first but warms up quickly..."></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-nav">
+      <button class="btn btn-back" onclick="prevStep(3)">← Back</button>
+      <button class="btn btn-next" onclick="nextStep(3)">Next — Programme & Consent →</button>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════
+       STEP 4 — PROGRAMME & CONSENT
+  ══════════════════════════════ -->
+  <div class="step" id="step4">
+
+    <!-- Programme selection -->
+    <div class="form-card">
+      <div class="form-card-head">
+        <span class="section-badge">Step 4</span>
+        <span class="form-card-title">Programme Selection</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field" data-required>
+          <label>Which programme option are you applying for? <span class="req">*</span></label>
+          <div class="radio-group" id="qProgramme">
+            <label class="radio-option" style="border-left:3px solid var(--border)">
+              <input type="radio" name="qProgramme" value="Starter - 1 session per week ($100+GST/month)">
+              <div class="radio-dot"></div>
+              <div>
+                <span style="display:block;font-weight:600">Starter — 1 session per week</span>
+                <span style="font-size:0.78rem;color:var(--muted)">$100 + GST per month</span>
+              </div>
+            </label>
+            <label class="radio-option" style="border-left:3px solid var(--border)">
+              <input type="radio" name="qProgramme" value="Performance - 2 sessions per week ($200+GST/month)">
+              <div class="radio-dot"></div>
+              <div>
+                <span style="display:block;font-weight:600">Performance — 2 sessions per week</span>
+                <span style="font-size:0.78rem;color:var(--muted)">$200 + GST per month</span>
+              </div>
+            </label>
+          </div>
+          <div class="field-error" id="qProgramme-error" style="display:none">Please select a programme</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consent -->
+    <div class="consent-box">
+      <h4>Parent / Guardian Consent & Agreement</h4>
+      <p><strong>Parental Consent:</strong> I confirm that I am the parent or legal guardian of the athlete registered in this programme and that I consent to their participation in structured athletic training delivered by Power2ADAPT.</p>
+      <p><strong>Health & Safety:</strong> I confirm that the health information provided is accurate and complete to the best of my knowledge. I understand that Power2ADAPT coaching is not a substitute for medical advice, and I will inform the coach of any changes to my child's health or physical condition.</p>
+      <p><strong>Communication & Safeguarding:</strong> I understand that all coaching communication will take place through appropriate channels (Final Surge, email, or agreed contact methods) and that Power2ADAPT is committed to the safety and wellbeing of all junior athletes.</p>
+      <p><strong>Programme Expectations:</strong> I understand that this is a development-focused programme and that results build over time through consistency. I commit to supporting my child's attendance and to communicating openly with the coach about schedule changes, fatigue, or any concerns.</p>
+
+      <label class="consent-check" id="consentCheck">
+        <input type="checkbox" id="consentCB" onchange="document.getElementById('consentCheck').style.color = this.checked ? 'var(--success)' : ''">
+        <span>I have read and agree to the above — I consent to my child's participation in the Power2ADAPT Junior Academy.</span>
+      </label>
+    </div>
+
+    <!-- Photo consent -->
+    <div class="form-card">
+      <div class="form-card-head">
+        <span class="section-badge">Photo & Content</span>
+        <span class="form-card-title">Photo & Video Consent</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field" data-required>
+          <label>May Power2ADAPT photograph or film your child during sessions? <span class="req">*</span></label>
+          <div class="radio-group" id="qPhoto">
+            <label class="radio-option"><input type="radio" name="qPhoto" value="Yes - coaching use only"><div class="radio-dot"></div><span>Yes — for coaching use only (not shared publicly)</span></label>
+            <label class="radio-option"><input type="radio" name="qPhoto" value="Yes - including social media"><div class="radio-dot"></div><span>Yes — may also be shared on Power2ADAPT social media and website</span></label>
+            <label class="radio-option"><input type="radio" name="qPhoto" value="No"><div class="radio-dot"></div><span>No — please do not photograph or film my child</span></label>
+          </div>
+          <div class="field-error" id="qPhoto-error" style="display:none">Please select an option</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-nav">
+      <button class="btn btn-back" onclick="prevStep(4)">← Back</button>
+      <button class="btn btn-submit" onclick="submitForm()">Submit Application ✓</button>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════
+       SUCCESS SCREEN
+  ══════════════════════════════ -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">You're in — <span>welcome!</span></div>
+    <p class="success-sub">Your application has been received. Alistair will review everything personally and be in touch within 48 hours.</p>
+    <div class="success-steps">
+      <div class="success-step"><div class="success-step-dot">1</div><div><strong>Profile review</strong> — Alistair will go through your application and start building a personalised programme around your child's schedule, sport commitments, and goals.</div></div>
+      <div class="success-step"><div class="success-step-dot">2</div><div><strong>Personal intro</strong> — Alistair will reach out to introduce himself and make sure your athlete feels comfortable before training begins.</div></div>
+      <div class="success-step"><div class="success-step-dot">3</div><div><strong>Programme delivery</strong> — once confirmed, the programme will be delivered through Final Surge. Check your inbox for your login details.</div></div>
+    </div>
+  </div>
+
+</div><!-- end page-wrap -->
+
+<script>
+  // ── State ──
+  let currentStep = 1;
+  const totalSteps = 4;
+
+  // ── Radio selection — simple direct approach ──
+  function selectRadio(groupId, value) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.radio-option').forEach(opt => {
+      const inp = opt.querySelector('input[type="radio"]');
+      const isThis = inp.value === value;
+      inp.checked = isThis;
+      opt.classList.toggle('selected', isThis);
+    });
+    const errEl = document.getElementById(groupId + '-error');
+    if (errEl) errEl.style.display = 'none';
+  }
+
+  // Attach click listeners to all radio options on load
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.radio-option').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        const inp = opt.querySelector('input[type="radio"]');
+        const groupId = opt.closest('.radio-group').id;
+        if (groupId) selectRadio(groupId, inp.value);
+      });
+    });
+
+    document.querySelectorAll('.checkbox-option').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        opt.classList.toggle('selected');
+        const cb = opt.querySelector('input[type="checkbox"]');
+        cb.checked = opt.classList.contains('selected');
+        const checkedCount = document.querySelectorAll('#q6 input:checked').length;
+        if (checkedCount > 0) document.getElementById('q6-error').style.display = 'none';
+      });
+    });
+
+    document.querySelectorAll('input, textarea, select').forEach(function(el) {
+      el.addEventListener('input', function() {
+        el.closest('.field')?.classList.remove('has-error');
+      });
+    });
+  });
+
+  // ── Navigation ──
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    document.getElementById('progressFill').style.width = (n / totalSteps * 100) + '%';
+    document.getElementById('progressLabel').textContent = 'Step ' + n + ' of ' + totalSteps;
+    currentStep = n;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep(from) {
+    if (!validateStep(from)) return;
+    showStep(from + 1);
+  }
+
+  function prevStep(from) {
+    showStep(from - 1);
+  }
+
+  // ── Validation ──
+  function getRadioValue(groupId) {
+    const checked = document.querySelector('#' + groupId + ' input[type="radio"]:checked');
+    return checked ? checked.value : null;
+  }
+
+  function validateStep(step) {
+    let valid = true;
+
+    if (step === 1) {
+      ['parentName','parentEmail','parentPhone','athleteName','athleteDob'].forEach(function(id) {
+        const el = document.getElementById(id);
+        const field = el.closest('.field');
+        if (!el.value.trim()) {
+          field.classList.add('has-error');
+          field.querySelector('.field-error').textContent = 'This field is required';
+          valid = false;
+        } else {
+          field.classList.remove('has-error');
+        }
+      });
+      const dob = document.getElementById('athleteDob').value;
+      if (dob) {
+        const age = Math.floor((new Date() - new Date(dob)) / (365.25 * 24 * 3600 * 1000));
+        if (age < 12 || age > 16) {
+          const field = document.getElementById('athleteDob').closest('.field');
+          field.classList.add('has-error');
+          field.querySelector('.field-error').textContent = 'The Junior Academy is for athletes aged 12–16.';
+          valid = false;
+        }
+      }
+    }
+
+    if (step === 2) {
+      ['q2','q4'].forEach(function(id) {
+        const el = document.getElementById(id);
+        const field = el.closest('.field');
+        if (!el.value.trim()) {
+          field.classList.add('has-error');
+          valid = false;
+        } else {
+          field.classList.remove('has-error');
+        }
+      });
+      const q3Val = document.getElementById('q3').value;
+      if (!q3Val) {
+        const q3f = document.getElementById('q3').closest('.field');
+        q3f.classList.add('has-error');
+        valid = false;
+      } else {
+        document.getElementById('q3').closest('.field').classList.remove('has-error');
+      }
+    }
+
+    if (step === 3) {
+      const checkedDays = document.querySelectorAll('#q6 input[type="checkbox"]:checked');
+      if (checkedDays.length === 0) {
+        document.getElementById('q6-error').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('q6-error').style.display = 'none';
+      }
+      ['q8','q9'].forEach(function(id) {
+        const el = document.getElementById(id);
+        const field = el.closest('.field');
+        if (!el.value.trim()) { field.classList.add('has-error'); valid = false; }
+        else field.classList.remove('has-error');
+      });
+      const el10 = document.getElementById('q10');
+      if (!el10.value.trim()) { el10.closest('.field').classList.add('has-error'); valid = false; }
+      else el10.closest('.field').classList.remove('has-error');
+      ['q13','q14'].forEach(function(name) {
+        if (!getRadioValue(name)) {
+          document.getElementById(name + '-error').style.display = 'block';
+          valid = false;
+        } else {
+          document.getElementById(name + '-error').style.display = 'none';
+        }
+      });
+    }
+
+    if (!valid) {
+      const firstError = document.querySelector('.has-error, [style*="block"]');
+      if (firstError) window.scrollTo({ top: firstError.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+    }
+    return valid;
+  }
+
+  function submitForm() {
+    let valid = true;
+    if (!getRadioValue('qProgramme')) {
+      document.getElementById('qProgramme-error').style.display = 'block';
+      valid = false;
+    } else {
+      document.getElementById('qProgramme-error').style.display = 'none';
+    }
+    if (!document.getElementById('consentCB').checked) {
+      alert('Please read and agree to the consent statement before submitting.');
+      valid = false;
+    }
+    if (!getRadioValue('qPhoto')) {
+      document.getElementById('qPhoto-error').style.display = 'block';
+      valid = false;
+    } else {
+      document.getElementById('qPhoto-error').style.display = 'none';
+    }
+    if (!valid) return;
+
+    const data = {
+      parentName:   document.getElementById('parentName').value,
+      parentEmail:  document.getElementById('parentEmail').value,
+      parentPhone:  document.getElementById('parentPhone').value,
+      athleteName:  document.getElementById('athleteName').value,
+      athleteDob:   document.getElementById('athleteDob').value,
+      sports:       document.getElementById('q2').value,
+      activityDays: document.getElementById('q3').value,
+      medical:      document.getElementById('q4').value,
+      injuries:     document.getElementById('q5').value,
+      availDays:    [...document.querySelectorAll('#q6 input[type="checkbox"]:checked')].map(i=>i.value).join(', '),
+      commitments:  document.getElementById('q7').value,
+      facilities:   document.getElementById('q8').value,
+      parentGoals:  document.getElementById('q9').value,
+      athleteGoal:  document.getElementById('q10').value,
+      favSport:     document.getElementById('q11').value,
+      nervous:      document.getElementById('q12').value,
+      contactPref:  getRadioValue('q13'),
+      feedbackPref: getRadioValue('q14'),
+      coachNotes:   document.getElementById('q15').value,
+      programme:    getRadioValue('qProgramme'),
+      photoConsent: getRadioValue('qPhoto'),
+    };
+
+    const FORMSPREE_ID = 'maqplzgr';
+    if (FORMSPREE_ID === 'YOUR_FORM_ID') {
+      showSuccess();
+      return;
+    }
+
+    fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(function(r) { r.ok ? showSuccess() : alert('Something went wrong — please try again or email info@power2adapt.com'); })
+    .catch(function() { alert('Something went wrong — please try again or email info@power2adapt.com'); });
+  }
+
+  function showSuccess() {
+    document.getElementById('progressWrap').style.display = 'none';
+    document.querySelector('.step.active').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+</script>
+
+</body>
+</html>

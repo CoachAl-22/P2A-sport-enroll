@@ -795,14 +795,23 @@ export default function Landing() {
                     <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
-                  <Button 
-                    onClick={() => {
-                      window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
-                  >
-                    Enroll Now
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => window.open("/junior-academy-application.html", "_blank")}
+                      className="border-primary-500 text-primary-500 hover:bg-primary-50"
+                    >
+                      By Application
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -840,14 +849,23 @@ export default function Landing() {
                     <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
-                  <Button 
-                    onClick={() => {
-                      window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
-                  >
-                    Enroll Now
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => window.open("/junior-academy-application.html", "_blank")}
+                      className="border-primary-500 text-primary-500 hover:bg-primary-50"
+                    >
+                      By Application
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                      }}
+                      className="bg-primary-500 hover:bg-primary-600 text-white"
+                    >
+                      Enroll Now
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
