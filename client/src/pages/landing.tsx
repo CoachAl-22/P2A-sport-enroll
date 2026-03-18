@@ -795,22 +795,25 @@ export default function Landing() {
                     <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2 items-end">
                     <Button
                       variant="outline"
                       onClick={() => window.open("/junior-academy-application.html", "_blank")}
-                      className="border-primary-500 text-primary-500 hover:bg-primary-50"
+                      className="border-primary-500 text-primary-500 hover:bg-primary-50 w-full"
                     >
                       By Application
                     </Button>
-                    <Button 
-                      onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                      }}
-                      className="bg-primary-500 hover:bg-primary-600 text-white"
-                    >
-                      Enroll Now
-                    </Button>
+                    <div className="w-full">
+                      <p className="text-xs text-gray-400 text-right mb-1">Existing clients</p>
+                      <Button 
+                        onClick={() => {
+                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        }}
+                        className="bg-primary-500 hover:bg-primary-600 text-white w-full"
+                      >
+                        Enroll Now
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -849,22 +852,25 @@ export default function Landing() {
                     <span className="text-2xl font-heading font-bold text-primary-500">$30</span>
                     <span className="text-gray-500 text-sm"> + GST per class</span>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2 items-end">
                     <Button
                       variant="outline"
                       onClick={() => window.open("/junior-academy-application.html", "_blank")}
-                      className="border-primary-500 text-primary-500 hover:bg-primary-50"
+                      className="border-primary-500 text-primary-500 hover:bg-primary-50 w-full"
                     >
                       By Application
                     </Button>
-                    <Button 
-                      onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                      }}
-                      className="bg-primary-500 hover:bg-primary-600 text-white"
-                    >
-                      Enroll Now
-                    </Button>
+                    <div className="w-full">
+                      <p className="text-xs text-gray-400 text-right mb-1">Existing clients</p>
+                      <Button 
+                        onClick={() => {
+                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        }}
+                        className="bg-primary-500 hover:bg-primary-600 text-white w-full"
+                      >
+                        Enroll Now
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
