@@ -3270,6 +3270,11 @@ const MAJ_CONTENT = {
     }
     updateXP();
     showOverlay(icon, `+${xpEarned} XP!`, sub);
+    // Auto-advance to Reflect tab after overlay closes
+    setTimeout(() => {
+      const reflectBtn = document.querySelectorAll('.tab-btn')[2];
+      if (reflectBtn) reflectBtn.click();
+    }, 1800);
     checkWeekComplete();
   }
 
