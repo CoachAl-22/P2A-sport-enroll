@@ -126,6 +126,14 @@ export default function Navbar() {
                     Athlete Portal
                   </Button>
                 </Link>
+                <a href="/my-athletic-journey" target="_blank" rel="noopener noreferrer">
+                  <Button
+                    variant="ghost"
+                    className="text-gray-700 hover:text-primary-500 font-semibold"
+                  >
+                    My Journey
+                  </Button>
+                </a>
                 <Link href="/waitlist">
                   <Button
                     variant={location === "/waitlist" ? "default" : "ghost"}
@@ -363,6 +371,15 @@ export default function Navbar() {
                       Athlete Portal
                     </Button>
                   </Link>
+                  <a href="/my-athletic-journey" target="_blank" rel="noopener noreferrer" className="block w-full">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start font-semibold text-primary-600"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      My Journey ✦
+                    </Button>
+                  </a>
                   <Link href="/waitlist">
                     <Button
                       variant={location === "/waitlist" ? "default" : "ghost"}
