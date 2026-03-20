@@ -3518,7 +3518,7 @@ const MAJ_CONTENT = {
       const def = SKILL_ASSESSMENTS[a.assessment_type];
       const results = a.criteria_results || {};
       const total = Object.keys(results).length;
-      const passed = Object.values(results).filter((r) => (r as any).result === 'Y').length;
+      const passed = Object.values(results).filter((r) => r && r.result === 'Y').length;
       const date = new Date(a.created_at).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
       return `<div class="sa-past-card">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
