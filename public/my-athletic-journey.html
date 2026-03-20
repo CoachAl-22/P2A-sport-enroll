@@ -1332,28 +1332,7 @@
       </div>
 
       <div class="section-label">My badges</div>
-      <div class="badge-scroll" style="margin-bottom:22px;">
-        <div class="badge-chip" onclick="toast('Engine Ignited — Completed all 8 Module 1 sessions')">
-          <div class="badge-ring">🔥</div>
-          <span class="badge-chip-name">Engine Ignited</span>
-        </div>
-        <div class="badge-chip" onclick="toast('Voice of an Athlete — All 8 reflections submitted')">
-          <div class="badge-ring">✍️</div>
-          <span class="badge-chip-name">Voice</span>
-        </div>
-        <div class="badge-chip" onclick="toast('Sharp Shooter — 10 points in Tennis Ball Target!')">
-          <div class="badge-ring"><span class="new-tag">NEW</span>🎯</div>
-          <span class="badge-chip-name">Sharp Shooter</span>
-        </div>
-        <div class="badge-chip" onclick="navTo('thisweek')">
-          <div class="badge-ring locked">⚡</div>
-          <span class="badge-chip-name dim">Power Up</span>
-        </div>
-        <div class="badge-chip" onclick="toast('Module 1 Master — Complete all of Module 1 to unlock')">
-          <div class="badge-ring locked">🏆</div>
-          <span class="badge-chip-name dim">Mod 1 Master</span>
-        </div>
-      </div>
+      <div class="badge-scroll" id="dash-badge-scroll" style="margin-bottom:22px;"></div>
 
       <div class="section-label">My journey</div>
       <div class="module-item mod-active" onclick="navTo('thisweek')">
@@ -3052,9 +3031,35 @@ const MAJ_CONTENT = {
       document.querySelector('.mission-xp-tag').innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${xpAvail} XP available`;
     }
 
+    const earnedKeys = a.earnedBadgeKeys || [];
     document.querySelectorAll('.stat-val')[0].textContent = a.sessionsCompleted;
     document.querySelectorAll('.stat-val')[1].textContent = a.reflectionsSubmitted;
-    document.querySelectorAll('.stat-val')[2].textContent = a.earnedBadgeKeys.length;
+    document.querySelectorAll('.stat-val')[2].textContent = earnedKeys.length;
+
+    // Build badge lookup map from content library
+    const badgeMap = {};
+    MAJ_CONTENT.modules.forEach(m => {
+      m.weeks.forEach(w => { if (w.do.badge) badgeMap[w.do.badge.key] = w.do.badge; });
+      badgeMap[m.moduleBadge.key] = m.moduleBadge;
+      badgeMap[m.num + '_sessions'] = { key: m.num + '_sessions', name: 'All Sessions', icon: m.icon, xp: 80 };
+      badgeMap[m.num + '_reflections'] = { key: m.num + '_reflections', name: 'All Reflections', icon: '✍️', xp: 80 };
+    });
+
+    // Render badge scroll dynamically
+    const scroll = document.getElementById('dash-badge-scroll');
+    if (scroll) {
+      if (earnedKeys.length === 0) {
+        scroll.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:8px 0;">Complete your first challenge to earn a badge!</div>`;
+      } else {
+        scroll.innerHTML = earnedKeys.map(key => {
+          const b = badgeMap[key] || { name: key, icon: '⭐', xp: 0 };
+          return `<div class="badge-chip" onclick="toast('${b.name} — ${b.xp} XP earned ✓')">
+            <div class="badge-ring">${b.icon}</div>
+            <span class="badge-chip-name">${b.name}</span>
+          </div>`;
+        }).join('');
+      }
+    }
 
     document.querySelector('.module-caption').textContent = `Week ${a.currentWeek} of 8 · ${mod.pillar}`;
   }
