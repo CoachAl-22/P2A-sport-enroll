@@ -1878,10 +1878,10 @@
           <span class="ca-cred-label">Password</span>
           <span class="ca-cred-val" id="ca-s-pass"></span>
         </div>
-        <div style="margin-top:10px;font-size:12px;color:var(--text3);">
-          Login at: <strong style="color:var(--text);">power2adapt.online/my-athletic-journey</strong>
-        </div>
-        <button class="ca-btn-primary" style="margin-top:14px;width:100%;" onclick="closeCreateAthlete(null, true)">Done</button>
+        <button class="ca-btn-primary" id="ca-copy-btn" style="margin-top:14px;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);" onclick="copyAthleteInvite()">
+          📋 Copy invite message
+        </button>
+        <button class="ca-btn-primary" style="margin-top:10px;width:100%;" onclick="closeCreateAthlete(null, true)">Done</button>
       </div>
     </div>
   </div>
@@ -3272,6 +3272,26 @@ const MAJ_CONTENT = {
       const suggested = (parts[0] + '_' + parts[parts.length - 1][0]).toLowerCase().replace(/[^a-z0-9_]/g, '');
       document.getElementById('ca-username').value = suggested;
     }
+  }
+
+  function copyAthleteInvite() {
+    const name = document.getElementById('ca-s-name').textContent;
+    const user = document.getElementById('ca-s-user').textContent;
+    const pass = document.getElementById('ca-s-pass').textContent;
+    const msg = `Hi ${name}! 👋\n\nYour My Athletic Journey account is ready.\n\n🔗 Login at: https://www.power2adapt.online/my-athletic-journey\n👤 Username: ${user}\n🔑 Password: ${pass}\n\nSave this page to your home screen so it works like an app. See you on the track! 🏃`;
+    navigator.clipboard.writeText(msg).then(() => {
+      const btn = document.getElementById('ca-copy-btn');
+      btn.textContent = '✓ Copied!';
+      btn.style.background = 'rgba(74,222,128,0.15)';
+      btn.style.borderColor = '#4ade80';
+      btn.style.color = '#4ade80';
+      setTimeout(() => {
+        btn.textContent = '📋 Copy invite message';
+        btn.style.background = 'var(--surface2)';
+        btn.style.borderColor = 'var(--border2)';
+        btn.style.color = 'var(--text)';
+      }, 2500);
+    }).catch(() => toast('Could not copy — please copy manually.'));
   }
 
   async function submitCreateAthlete() {
