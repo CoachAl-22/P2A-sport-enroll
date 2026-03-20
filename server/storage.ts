@@ -1604,6 +1604,34 @@ export class DatabaseStorage implements IStorage {
     const [coach] = await db.select().from(majCoaches).where(eq(majCoaches.username, username));
     return coach;
   }
+
+  async createRunAssessment(data: Record<string, any>): Promise<any> {
+    const [row] = await db.execute(
+      sql`INSERT INTO maj_run_assessments (
+        athlete_id, coach_name, assessment_date,
+        a1_c1, a1_c2, a1_c3, a1_c4, a1_c5, a1_c6,
+        a2_c1, a2_c2, a2_c3, a2_c4, a2_c5, a2_c6,
+        a3_c1, a3_c2, a3_c3, a3_c4, a3_c5, a3_c6,
+        notes_focus, notes_arm, notes_knee, notes_foot, notes_heel, notes_trunk,
+        reassessment_required
+      ) VALUES (
+        ${data.athleteId}, ${data.coachName}, ${data.assessmentDate || new Date().toISOString().slice(0,10)},
+        ${data.a1c1||null}, ${data.a1c2||null}, ${data.a1c3||null}, ${data.a1c4||null}, ${data.a1c5||null}, ${data.a1c6||null},
+        ${data.a2c1||null}, ${data.a2c2||null}, ${data.a2c3||null}, ${data.a2c4||null}, ${data.a2c5||null}, ${data.a2c6||null},
+        ${data.a3c1||null}, ${data.a3c2||null}, ${data.a3c3||null}, ${data.a3c4||null}, ${data.a3c5||null}, ${data.a3c6||null},
+        ${data.notesFocus||''}, ${data.notesArm||''}, ${data.notesKnee||''}, ${data.notesFoot||''}, ${data.notesHeel||''}, ${data.notesTrunk||''},
+        ${data.reassessmentRequired||false}
+      ) RETURNING *`
+    ) as any;
+    return row;
+  }
+
+  async getRunAssessmentsForAthlete(athleteId: string): Promise<any[]> {
+    const rows = await db.execute(
+      sql`SELECT * FROM maj_run_assessments WHERE athlete_id = ${athleteId} ORDER BY created_at DESC`
+    ) as any;
+    return Array.isArray(rows) ? rows : [];
+  }
 }
 
 export const storage = new DatabaseStorage();

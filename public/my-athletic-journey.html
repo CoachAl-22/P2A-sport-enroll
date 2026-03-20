@@ -1323,6 +1323,39 @@
   .ad-ref-saved { font-size: 12px; color: #4ade80; margin-top: 6px; display: none; }
   .ad-pending-row { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; gap: 10px; }
 
+  /* ── RUN ASSESSMENT FORM ────────────────────────────────────────── */
+  .ra-criteria-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .ra-criteria-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; background: var(--card); border-bottom: 1px solid var(--border); }
+  .ra-criteria-row:last-child { border-bottom: none; }
+  .ra-criteria-info { flex: 1; min-width: 0; }
+  .ra-criteria-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .ra-criteria-desc { font-size: 11px; color: var(--text3); margin-top: 2px; line-height: 1.4; }
+  .ra-pir-group { display: flex; gap: 4px; flex-shrink: 0; }
+  .ra-pir-btn {
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border2);
+    background: none; font-size: 13px; font-weight: 700; color: var(--text3);
+    cursor: pointer; font-family: var(--font-body); transition: all 0.15s;
+  }
+  .ra-pir-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .ra-pir-btn.active-P { background: #4ade80; border-color: #4ade80; color: #0a0a0a; }
+  .ra-pir-btn.active-I { background: #f87171; border-color: #f87171; color: #fff; }
+  .ra-pir-btn.active-R { background: #fb923c; border-color: #fb923c; color: #fff; }
+  .ra-note-field { margin-bottom: 12px; }
+  .ra-past-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
+  .ra-past-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .ra-past-date { font-size: 13px; font-weight: 600; color: var(--text); }
+  .ra-past-coach { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .ra-past-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .ra-past-round { }
+  .ra-past-round-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .ra-past-pills { display: flex; gap: 3px; flex-wrap: wrap; }
+  .ra-pill { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+  .ra-pill-P { background: rgba(74,222,128,0.15); color: #4ade80; }
+  .ra-pill-I { background: rgba(248,113,113,0.15); color: #f87171; }
+  .ra-pill-R { background: rgba(251,146,60,0.15); color: #fb923c; }
+  .ra-pill-null { background: var(--border); color: var(--text3); }
+  .ra-reassess-badge { font-size: 11px; background: rgba(248,113,113,0.15); color: #f87171; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+
   /* ── CREATE ATHLETE MODAL ─────────────────────────────────────────── */
   .ca-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.6);
@@ -1711,6 +1744,18 @@
     <div class="coach-athlete-list" id="coach-athlete-list">
       <div class="coach-loading">Loading athletes…</div>
     </div>
+  </div>
+
+  <!-- ══ RUN ASSESSMENT PAGE ══════════════════════════════════════════ -->
+  <div id="page-run-assessment" class="page">
+    <div class="ad-topbar">
+      <button class="ad-back-btn" onclick="navTo('athlete-detail')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="ad-topbar-name">🏃 Run Assessment</div>
+    </div>
+    <div id="ra-athlete-bar" style="padding:12px 16px;background:var(--card);border-bottom:1px solid var(--border);"></div>
+    <div id="ra-body"></div>
   </div>
 
   <!-- ══ ATHLETE DETAIL PAGE ══════════════════════════════════════════ -->
@@ -3209,24 +3254,181 @@ const MAJ_CONTENT = {
     }
   }
 
+  // ── RUN ASSESSMENT ───────────────────────────────────────────────────
+  const RA_CRITERIA = [
+    { key: 'c1', label: 'Eyes & Focus', desc: 'Head still and level, eyes looking forward throughout' },
+    { key: 'c2', label: 'Arm Action', desc: 'Arms at right angles, move forward/back (not across body)' },
+    { key: 'c3', label: 'Knee Position', desc: 'Knees bend at right angles during recovery phase' },
+    { key: 'c4', label: 'Foot Position', desc: 'Toes dorsiflex towards shin, front-of-foot ground contact' },
+    { key: 'c5', label: 'Heel Position', desc: 'Heels in line with body, lift adequately toward buttocks' },
+    { key: 'c6', label: 'Trunk Position', desc: 'Body leans slightly forward throughout' },
+  ];
+  const RA_NOTES = [
+    { key: 'focus', label: 'Focus' }, { key: 'arm', label: 'Arm Action' },
+    { key: 'knee', label: 'Knee Position' }, { key: 'foot', label: 'Foot Position' },
+    { key: 'heel', label: 'Heel Position' }, { key: 'trunk', label: 'Trunk Position' },
+  ];
+  const RA_ROUNDS = ['No Coaching Cues', 'Detailed Corrective Cues', 'Brief Cues'];
+
+  let currentAssessmentAthleteId = null;
+  let currentAssessmentAthleteName = null;
+
+  function openRunAssessment(athleteId, athleteName) {
+    currentAssessmentAthleteId = athleteId;
+    currentAssessmentAthleteName = athleteName;
+    document.getElementById('ra-athlete-bar').innerHTML =
+      `<div style="font-size:14px;font-weight:600;color:var(--text);">${athleteName}</div>
+       <div style="font-size:12px;color:var(--text3);margin-top:2px;">Running Action Assessment · ${new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})}</div>`;
+    let html = '';
+    for (let r = 1; r <= 3; r++) {
+      html += `<div class="ad-section">
+        <div class="ad-section-title">Assessment ${r} — ${RA_ROUNDS[r-1]}</div>
+        <div class="ra-criteria-list">
+          ${RA_CRITERIA.map(c => `
+            <div class="ra-criteria-row">
+              <div class="ra-criteria-info">
+                <div class="ra-criteria-name">${c.label}</div>
+                <div class="ra-criteria-desc">${c.desc}</div>
+              </div>
+              <div class="ra-pir-group" id="pir-a${r}-${c.key}">
+                <button class="ra-pir-btn" data-val="P" onclick="selectPIR(this,'a${r}-${c.key}')">P</button>
+                <button class="ra-pir-btn" data-val="I" onclick="selectPIR(this,'a${r}-${c.key}')">I</button>
+                <button class="ra-pir-btn" data-val="R" onclick="selectPIR(this,'a${r}-${c.key}')">R</button>
+              </div>
+            </div>`).join('')}
+        </div>
+        <div style="margin-top:8px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;color:var(--text3);">
+          P = Pass &nbsp;·&nbsp; I = Intervention Required &nbsp;·&nbsp; R = Reassess after coaching
+        </div>
+      </div>`;
+    }
+    html += `<div class="ad-section">
+      <div class="ad-section-title">Coach Discussion Notes</div>
+      ${RA_NOTES.map(n => `
+        <div class="ra-note-field">
+          <label class="ca-label">${n.label}</label>
+          <textarea class="ad-ref-note-area" id="ra-note-${n.key}" placeholder="Observations on ${n.label.toLowerCase()}…" rows="2" style="margin-top:0;"></textarea>
+        </div>`).join('')}
+    </div>
+    <div class="ad-section">
+      <label style="display:flex;align-items:center;gap:12px;cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;">
+        <input type="checkbox" id="ra-reassess" style="width:18px;height:18px;accent-color:var(--orange);flex-shrink:0;">
+        <div>
+          <div style="font-size:14px;font-weight:500;color:var(--text);">Re-assessment required</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">Flag this athlete for a follow-up session</div>
+        </div>
+      </label>
+    </div>
+    <div style="padding:0 16px 32px;">
+      <div id="ra-save-msg" style="display:none;color:#4ade80;font-size:13px;font-weight:500;margin-bottom:10px;text-align:center;">✓ Assessment saved!</div>
+      <button class="ca-btn-primary" id="ra-save-btn" onclick="saveRunAssessment()">Save Assessment</button>
+    </div>`;
+    document.getElementById('ra-body').innerHTML = html;
+    navTo('run-assessment');
+  }
+
+  function selectPIR(btn, groupKey) {
+    const group = document.getElementById(`pir-${groupKey}`);
+    group.querySelectorAll('.ra-pir-btn').forEach(b => {
+      b.classList.remove('active-P','active-I','active-R');
+    });
+    btn.classList.add(`active-${btn.dataset.val}`);
+  }
+
+  async function saveRunAssessment() {
+    const getVal = (round, key) => {
+      const group = document.getElementById(`pir-a${round}-${key}`);
+      if (!group) return null;
+      const active = group.querySelector('[class*="active-"]');
+      return active ? active.dataset.val : null;
+    };
+    const data = {
+      athleteId: currentAssessmentAthleteId,
+      coachName: state.athlete.fullName || 'Coach',
+      a1c1: getVal(1,'c1'), a1c2: getVal(1,'c2'), a1c3: getVal(1,'c3'),
+      a1c4: getVal(1,'c4'), a1c5: getVal(1,'c5'), a1c6: getVal(1,'c6'),
+      a2c1: getVal(2,'c1'), a2c2: getVal(2,'c2'), a2c3: getVal(2,'c3'),
+      a2c4: getVal(2,'c4'), a2c5: getVal(2,'c5'), a2c6: getVal(2,'c6'),
+      a3c1: getVal(3,'c1'), a3c2: getVal(3,'c2'), a3c3: getVal(3,'c3'),
+      a3c4: getVal(3,'c4'), a3c5: getVal(3,'c5'), a3c6: getVal(3,'c6'),
+      notesFocus: document.getElementById('ra-note-focus')?.value || '',
+      notesArm:   document.getElementById('ra-note-arm')?.value || '',
+      notesKnee:  document.getElementById('ra-note-knee')?.value || '',
+      notesFoot:  document.getElementById('ra-note-foot')?.value || '',
+      notesHeel:  document.getElementById('ra-note-heel')?.value || '',
+      notesTrunk: document.getElementById('ra-note-trunk')?.value || '',
+      reassessmentRequired: document.getElementById('ra-reassess')?.checked || false,
+    };
+    const btn = document.getElementById('ra-save-btn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      await apiPost('/api/maj/assessments', data);
+      document.getElementById('ra-save-msg').style.display = 'block';
+      toast('✓ Run assessment saved!');
+      setTimeout(() => navTo('athlete-detail'), 1600);
+    } catch (e) {
+      toast('Error: ' + e.message);
+      btn.disabled = false; btn.textContent = 'Save Assessment';
+    }
+  }
+
+  function renderPastAssessments(assessments) {
+    if (!assessments || assessments.length === 0) return '<div style="font-size:13px;color:var(--text3);">No assessments recorded yet.</div>';
+    return assessments.map(a => {
+      const date = new Date(a.created_at).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
+      const roundData = [
+        { label: 'No Cues', vals: [a.a1_c1,a.a1_c2,a.a1_c3,a.a1_c4,a.a1_c5,a.a1_c6] },
+        { label: 'Detail Cues', vals: [a.a2_c1,a.a2_c2,a.a2_c3,a.a2_c4,a.a2_c5,a.a2_c6] },
+        { label: 'Brief Cues', vals: [a.a3_c1,a.a3_c2,a.a3_c3,a.a3_c4,a.a3_c5,a.a3_c6] },
+      ];
+      const criteriaLabels = ['Focus','Arms','Knees','Feet','Heels','Trunk'];
+      return `<div class="ra-past-card">
+        <div class="ra-past-header">
+          <div>
+            <div class="ra-past-date">${date}</div>
+            <div class="ra-past-coach">by ${a.coach_name || 'Coach'}</div>
+          </div>
+          ${a.reassessment_required ? '<span class="ra-reassess-badge">Reassess Required</span>' : ''}
+        </div>
+        <div class="ra-past-grid">
+          ${roundData.map(rd => `
+            <div class="ra-past-round">
+              <div class="ra-past-round-label">${rd.label}</div>
+              <div class="ra-past-pills">
+                ${rd.vals.map((v,i) => `<span class="ra-pill ra-pill-${v||'null'}" title="${criteriaLabels[i]}">${v||'—'}</span>`).join('')}
+              </div>
+            </div>`).join('')}
+        </div>
+        ${[a.notes_focus,a.notes_arm,a.notes_knee,a.notes_foot,a.notes_heel,a.notes_trunk].some(n=>n) ? `
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+            ${['Focus','Arm Action','Knee Position','Foot Position','Heel Position','Trunk Position'].map((label,i) => {
+              const note = [a.notes_focus,a.notes_arm,a.notes_knee,a.notes_foot,a.notes_heel,a.notes_trunk][i];
+              return note ? `<div style="font-size:12px;color:var(--text2);margin-bottom:4px;"><span style="color:var(--text3);font-weight:600;">${label}:</span> ${note}</div>` : '';
+            }).join('')}
+          </div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
   // ── ATHLETE DETAIL VIEW ──────────────────────────────────────────────
   async function openAthleteDetail(athleteId) {
     navTo('athlete-detail');
     document.getElementById('ad-topbar-name').textContent = 'Loading…';
     document.getElementById('ad-body').innerHTML = '<div class="coach-loading">Loading…</div>';
     try {
-      const [athlete, reflections] = await Promise.all([
+      const [athlete, reflections, assessments] = await Promise.all([
         apiGet(`/api/maj/athlete/${athleteId}`),
-        apiGet(`/api/maj/athlete/${athleteId}/reflections`)
+        apiGet(`/api/maj/athlete/${athleteId}/reflections`),
+        apiGet(`/api/maj/athlete/${athleteId}/assessments`),
       ]);
       document.getElementById('ad-topbar-name').textContent = athlete.fullName;
-      renderAthleteDetail(athlete, reflections);
+      renderAthleteDetail(athlete, reflections, assessments);
     } catch (e) {
       document.getElementById('ad-body').innerHTML = `<div class="coach-empty">Error: ${e.message}</div>`;
     }
   }
 
-  function renderAthleteDetail(a, reflections) {
+  function renderAthleteDetail(a, reflections, assessments = []) {
     const initials = a.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
     const modData = MAJ_CONTENT.modules[(a.currentModule || 1) - 1] || MAJ_CONTENT.modules[0];
     const tier = MAJ_CONTENT.getTier(a.totalXp || 0);
@@ -3314,6 +3516,14 @@ const MAJ_CONTENT = {
       <div class="ad-section">
         <div class="ad-section-title">Reflections (${reflections.length})</div>
         ${reflectionsHtml}
+      </div>
+      <div class="ad-section">
+        <div class="ad-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+          <span>Run Assessments (${assessments.length})</span>
+          <button class="coach-award-btn" style="padding:6px 14px;font-size:12px;"
+            onclick="openRunAssessment('${a.id}','${a.fullName.replace(/'/g,"\\'")}')">+ New Assessment</button>
+        </div>
+        ${renderPastAssessments(assessments)}
       </div>`;
   }
 

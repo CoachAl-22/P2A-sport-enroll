@@ -313,6 +313,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/maj/athlete/:id/assessments", async (req, res) => {
+    try {
+      const assessments = await storage.getRunAssessmentsForAthlete(req.params.id);
+      res.json(assessments);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/maj/assessments", async (req, res) => {
+    try {
+      const assessment = await storage.createRunAssessment(req.body);
+      res.status(201).json(assessment);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/maj/athlete/:id/reflections", async (req, res) => {
     try {
       const reflections = await storage.getMajReflectionsForAthlete(req.params.id);
