@@ -10,7 +10,7 @@ import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches } from "@shared/schema";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders } from "./googleSheets";
 import { db } from "./db";
@@ -3359,6 +3359,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(404).json({ error: "File not found" });
     }
   });
+
+  // ── Seed MAJ coach account on startup ────────────────────────────
+  (async () => {
+    try {
+      const existing = await db.select().from(majCoaches).where(eq(majCoaches.username, "coach_al"));
+      if (existing.length === 0) {
+        const hash = await bcrypt.hash("Level4_HP", 10);
+        await db.insert(majCoaches).values({
+          username: "coach_al",
+          fullName: "Coach Al",
+          password: hash,
+        });
+        console.log("[seed] MAJ coach_al account created");
+      }
+    } catch (e) {
+      console.error("[seed] Failed to seed MAJ coach:", e);
+    }
+  })();
 
   const httpServer = createServer(app);
   return httpServer;
