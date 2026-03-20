@@ -1280,6 +1280,54 @@
   .coach-award-btn:disabled { opacity: 0.45; cursor: default; }
   .coach-no-badges { font-size: 13px; color: var(--text3); padding: 2px 0; text-align: center; }
   .coach-empty, .coach-loading { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 14px; }
+
+  /* ── CREATE ATHLETE MODAL ─────────────────────────────────────────── */
+  .ca-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 200; display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .ca-overlay.open { opacity: 1; pointer-events: all; }
+  .ca-sheet {
+    background: var(--bg); border-radius: 20px 20px 0 0;
+    width: 100%; max-width: 480px; padding: 24px 20px 36px;
+    transform: translateY(100%); transition: transform 0.3s cubic-bezier(.32,.72,0,1);
+  }
+  .ca-overlay.open .ca-sheet { transform: translateY(0); }
+  .ca-title { font-size: 18px; font-weight: 700; color: var(--text); font-family: var(--font-head); margin-bottom: 4px; }
+  .ca-sub { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
+  .ca-field { margin-bottom: 14px; }
+  .ca-label { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; display: block; }
+  .ca-input {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 14px; font-size: 15px;
+    color: var(--text); font-family: var(--font-body); box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .ca-input:focus { outline: none; border-color: var(--orange); }
+  .ca-row { display: flex; gap: 10px; }
+  .ca-row .ca-field { flex: 1; }
+  .ca-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .ca-btn-primary {
+    flex: 1; background: var(--orange); color: #fff; border: none;
+    border-radius: var(--radius-sm); padding: 14px; font-size: 15px;
+    font-weight: 600; font-family: var(--font-body); cursor: pointer; transition: opacity 0.2s;
+  }
+  .ca-btn-primary:disabled { opacity: 0.5; cursor: default; }
+  .ca-btn-cancel {
+    background: none; border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    padding: 14px 18px; font-size: 15px; color: var(--text2);
+    font-family: var(--font-body); cursor: pointer;
+  }
+  .ca-error { color: #f87171; font-size: 13px; margin-top: 8px; display: none; }
+  .ca-success {
+    background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3);
+    border-radius: var(--radius-sm); padding: 16px; margin-top: 16px;
+  }
+  .ca-success-title { font-size: 14px; font-weight: 600; color: #4ade80; margin-bottom: 8px; }
+  .ca-cred-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .ca-cred-label { font-size: 12px; color: var(--text3); }
+  .ca-cred-val { font-size: 14px; font-weight: 600; color: var(--text); font-family: monospace; }
 </style>
 </head>
 <body>
@@ -1615,8 +1663,72 @@
       </div>
       <button onclick="doLogout()" style="background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 14px;font-size:13px;color:#f87171;cursor:pointer;font-family:var(--font-body);">Sign out</button>
     </div>
+    <div style="padding:14px 16px 0;">
+      <button class="coach-award-btn" style="width:100%;padding:13px;" onclick="openCreateAthlete()">+ Add New Athlete</button>
+    </div>
     <div class="coach-athlete-list" id="coach-athlete-list">
       <div class="coach-loading">Loading athletes…</div>
+    </div>
+  </div>
+
+  <!-- ══ CREATE ATHLETE MODAL ══════════════════════════════════════════ -->
+  <div class="ca-overlay" id="ca-overlay" onclick="closeCreateAthlete(event)">
+    <div class="ca-sheet">
+      <div class="ca-title">Add New Athlete</div>
+      <div class="ca-sub">Create login credentials to share with the athlete and their family.</div>
+
+      <div class="ca-field">
+        <label class="ca-label">Full Name</label>
+        <input class="ca-input" id="ca-name" type="text" placeholder="e.g. Sarah Thompson"
+          oninput="autoFillUsername()" autocomplete="off">
+      </div>
+      <div class="ca-row">
+        <div class="ca-field">
+          <label class="ca-label">Username</label>
+          <input class="ca-input" id="ca-username" type="text" placeholder="e.g. sarah_t" autocomplete="off">
+        </div>
+        <div class="ca-field">
+          <label class="ca-label">Temporary Password</label>
+          <input class="ca-input" id="ca-password" type="text" placeholder="e.g. Track2025" autocomplete="off">
+        </div>
+      </div>
+      <div class="ca-row">
+        <div class="ca-field">
+          <label class="ca-label">Year Level (optional)</label>
+          <input class="ca-input" id="ca-grade" type="text" placeholder="e.g. Year 9">
+        </div>
+        <div class="ca-field">
+          <label class="ca-label">Program (optional)</label>
+          <input class="ca-input" id="ca-program" type="text" placeholder="e.g. Senior Squad">
+        </div>
+      </div>
+
+      <div class="ca-error" id="ca-error"></div>
+
+      <div class="ca-actions">
+        <button class="ca-btn-cancel" onclick="closeCreateAthlete()">Cancel</button>
+        <button class="ca-btn-primary" id="ca-submit-btn" onclick="submitCreateAthlete()">Create Athlete</button>
+      </div>
+
+      <div class="ca-success" id="ca-success" style="display:none;">
+        <div class="ca-success-title">✓ Athlete created! Share these login details:</div>
+        <div class="ca-cred-row">
+          <span class="ca-cred-label">Name</span>
+          <span class="ca-cred-val" id="ca-s-name"></span>
+        </div>
+        <div class="ca-cred-row">
+          <span class="ca-cred-label">Username</span>
+          <span class="ca-cred-val" id="ca-s-user"></span>
+        </div>
+        <div class="ca-cred-row">
+          <span class="ca-cred-label">Password</span>
+          <span class="ca-cred-val" id="ca-s-pass"></span>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:var(--text3);">
+          Login at: <strong style="color:var(--text);">power2adapt.online/my-athletic-journey</strong>
+        </div>
+        <button class="ca-btn-primary" style="margin-top:14px;width:100%;" onclick="closeCreateAthlete(null, true)">Done</button>
+      </div>
     </div>
   </div>
 
@@ -2978,6 +3090,68 @@ const MAJ_CONTENT = {
       document.getElementById('mod1-fill').style.width = Math.round(((a.currentWeek - 1) / 8) * 100) + '%';
     }, 300);
     toast(`Week ${a.currentWeek} of Module ${a.currentModule} unlocked! 🚀`);
+  }
+
+  // ── CREATE ATHLETE MODAL ─────────────────────────────────────────────
+  function openCreateAthlete() {
+    ['ca-name','ca-username','ca-password','ca-grade','ca-program'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('ca-error').style.display = 'none';
+    document.getElementById('ca-success').style.display = 'none';
+    document.getElementById('ca-submit-btn').style.display = '';
+    document.querySelector('.ca-actions').style.display = 'flex';
+    document.getElementById('ca-overlay').classList.add('open');
+    setTimeout(() => document.getElementById('ca-name').focus(), 350);
+  }
+
+  function closeCreateAthlete(event, reload = false) {
+    if (event && event.target !== document.getElementById('ca-overlay')) return;
+    document.getElementById('ca-overlay').classList.remove('open');
+    if (reload) renderCoachPanel(state.athlete.fullName);
+  }
+
+  function autoFillUsername() {
+    const name = document.getElementById('ca-name').value.trim();
+    const parts = name.split(' ');
+    if (parts.length >= 2) {
+      const suggested = (parts[0] + '_' + parts[parts.length - 1][0]).toLowerCase().replace(/[^a-z0-9_]/g, '');
+      document.getElementById('ca-username').value = suggested;
+    }
+  }
+
+  async function submitCreateAthlete() {
+    const fullName = document.getElementById('ca-name').value.trim();
+    const username = document.getElementById('ca-username').value.trim();
+    const password = document.getElementById('ca-password').value.trim();
+    const grade = document.getElementById('ca-grade').value.trim();
+    const program = document.getElementById('ca-program').value.trim();
+    const errEl = document.getElementById('ca-error');
+    const btn = document.getElementById('ca-submit-btn');
+
+    errEl.style.display = 'none';
+    if (!fullName || !username || !password) {
+      errEl.textContent = 'Please fill in Full Name, Username, and Password.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Creating…';
+    try {
+      await apiPost('/api/maj/athletes', { fullName, username, password, grade, program });
+      document.getElementById('ca-s-name').textContent = fullName;
+      document.getElementById('ca-s-user').textContent = username;
+      document.getElementById('ca-s-pass').textContent = password;
+      document.getElementById('ca-success').style.display = 'block';
+      document.querySelector('.ca-actions').style.display = 'none';
+    } catch (e) {
+      errEl.textContent = e.message || 'Error creating athlete.';
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Create Athlete';
+    }
   }
 
   // ── COACH PANEL ──────────────────────────────────────────────────────

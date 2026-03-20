@@ -237,6 +237,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/maj/athletes", async (req, res) => {
+    try {
+      const { fullName, username, password, grade, program } = req.body;
+      if (!fullName || !username || !password) {
+        return res.status(400).json({ message: "Full name, username, and password are required" });
+      }
+      const existing = await storage.getMajAthleteByUsername(username.trim().toLowerCase());
+      if (existing) {
+        return res.status(409).json({ message: "Username already taken — please choose another" });
+      }
+      const hashed = await bcrypt.hash(password, 10);
+      const athlete = await storage.createMajAthlete({
+        username: username.trim().toLowerCase(),
+        password: hashed,
+        fullName: fullName.trim(),
+        grade: grade?.trim() || undefined,
+        program: program?.trim() || undefined,
+      });
+      const { password: _, ...safe } = athlete;
+      res.status(201).json(safe);
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
   app.get("/api/maj/athlete/:id", async (req, res) => {
     try {
       const athlete = await storage.getMajAthleteById(req.params.id);
