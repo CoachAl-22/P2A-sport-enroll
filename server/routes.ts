@@ -368,6 +368,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/p2a-logo-dark.png", async (req, res) => {
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    res.sendFile(resolve(__dirname, "../public/p2a-logo-dark.png"));
+  });
+
+  app.get("/p2a-logo.png", async (req, res) => {
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    res.sendFile(resolve(__dirname, "../public/p2a-logo.png"));
+  });
+
   app.get("/my-athletic-journey", async (req, res) => {
     const { readFileSync } = await import("fs");
     const { resolve, dirname } = await import("path");
