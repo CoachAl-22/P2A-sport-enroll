@@ -100,6 +100,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ success: false, message: "Missing required fields" });
       }
 
+      // Save to database
+      let savedApplication;
+      try {
+        savedApplication = await storage.createJuniorAcademyApplication({
+          parentName: data.parentName,
+          parentEmail: data.parentEmail,
+          parentPhone: data.parentPhone,
+          athleteName: data.athleteName,
+          athleteDob: data.athleteDob || null,
+          sports: data.sports || null,
+          activityDays: data.activityDays || null,
+          medical: data.medical || null,
+          injuries: data.injuries || null,
+          availDays: data.availDays || null,
+          commitments: data.commitments || null,
+          facilities: data.facilities || null,
+          parentGoals: data.parentGoals || null,
+          athleteGoal: data.athleteGoal || null,
+          favSport: data.favSport || null,
+          nervous: data.nervous || null,
+          contactPref: data.contactPref || null,
+          feedbackPref: data.feedbackPref || null,
+          coachNotes: data.coachNotes || null,
+          programme: data.programme || null,
+          photoConsent: data.photoConsent || null,
+          status: "pending",
+        });
+      } catch (e) {
+        console.error("Failed to save Junior Academy application to database:", e);
+      }
+
       const adminEmail = "info@power2adapt.com";
 
       // Send admin notification
@@ -125,6 +156,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Junior Academy application error:", error);
       res.status(500).json({ success: false, message: error.message || "Failed to process application" });
+    }
+  });
+
+  app.get("/api/applications/junior-academy", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) return res.status(401).json({ message: "Not authenticated" });
+      const user = await storage.getUser(userId);
+      if (!user || !["admin", "coach"].includes(user.role)) return res.status(403).json({ message: "Access denied" });
+      const applications = await storage.getAllJuniorAcademyApplications();
+      res.json(applications);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/applications/junior-academy/:id", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) return res.status(401).json({ message: "Not authenticated" });
+      const user = await storage.getUser(userId);
+      if (!user || !["admin", "coach"].includes(user.role)) return res.status(403).json({ message: "Access denied" });
+      const { id } = req.params;
+      const { status, reviewNotes } = req.body;
+      const updated = await storage.updateJuniorAcademyApplication(id, {
+        status,
+        reviewNotes,
+        reviewedBy: userId,
+        reviewedAt: new Date(),
+      });
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
   });
 

@@ -903,6 +903,44 @@ export type SeniorSquadApplication = typeof seniorSquadApplications.$inferSelect
 export type InsertSeniorSquadApplication = z.infer<typeof insertSeniorSquadApplicationSchema>;
 export type HighPerformanceSquadApplication = typeof highPerformanceSquadApplications.$inferSelect;
 export type InsertHighPerformanceSquadApplication = z.infer<typeof insertHighPerformanceSquadApplicationSchema>;
+
+// ── Junior Academy Applications ──────────────────────────────────────────
+export const juniorAcademyApplications = pgTable("junior_academy_applications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  parentName: varchar("parent_name", { length: 100 }).notNull(),
+  parentEmail: varchar("parent_email", { length: 255 }).notNull(),
+  parentPhone: varchar("parent_phone", { length: 30 }).notNull(),
+  athleteName: varchar("athlete_name", { length: 100 }).notNull(),
+  athleteDob: varchar("athlete_dob", { length: 20 }),
+  sports: text("sports"),
+  activityDays: text("activity_days"),
+  medical: text("medical"),
+  injuries: text("injuries"),
+  availDays: text("avail_days"),
+  commitments: text("commitments"),
+  facilities: text("facilities"),
+  parentGoals: text("parent_goals"),
+  athleteGoal: text("athlete_goal"),
+  favSport: text("fav_sport"),
+  nervous: text("nervous"),
+  contactPref: varchar("contact_pref", { length: 50 }),
+  feedbackPref: varchar("feedback_pref", { length: 50 }),
+  coachNotes: text("coach_notes"),
+  programme: varchar("programme", { length: 100 }),
+  photoConsent: varchar("photo_consent", { length: 100 }),
+  status: varchar("status", { length: 20 }).default("pending").notNull(),
+  reviewedBy: uuid("reviewed_by").references(() => users.id),
+  reviewNotes: text("review_notes"),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertJuniorAcademyApplicationSchema = createInsertSchema(juniorAcademyApplications).omit({
+  id: true,
+  createdAt: true,
+});
+export type JuniorAcademyApplication = typeof juniorAcademyApplications.$inferSelect;
+export type InsertJuniorAcademyApplication = z.infer<typeof insertJuniorAcademyApplicationSchema>;
 export type ContactEnquiry = typeof contactEnquiries.$inferSelect;
 export type InsertContactEnquiry = z.infer<typeof insertContactEnquirySchema>;
 export type Waitlist = typeof waitlists.$inferSelect;

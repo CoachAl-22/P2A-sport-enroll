@@ -9,6 +9,7 @@ import {
   notifications,
   seniorSquadApplications,
   highPerformanceSquadApplications,
+  juniorAcademyApplications,
   contactEnquiries,
   waitlists,
   blogArticles,
@@ -40,6 +41,8 @@ import {
   type InsertSeniorSquadApplication,
   type HighPerformanceSquadApplication,
   type InsertHighPerformanceSquadApplication,
+  type JuniorAcademyApplication,
+  type InsertJuniorAcademyApplication,
   type ContactEnquiry,
   type InsertContactEnquiry,
   type Waitlist,
@@ -160,6 +163,12 @@ export interface IStorage {
   getHighPerformanceSquadApplication(id: string): Promise<HighPerformanceSquadApplication | undefined>;
   getAllHighPerformanceSquadApplications(): Promise<HighPerformanceSquadApplication[]>;
   updateHighPerformanceSquadApplication(id: string, updates: Partial<HighPerformanceSquadApplication>): Promise<HighPerformanceSquadApplication>;
+
+  // Junior Academy Application operations
+  createJuniorAcademyApplication(application: InsertJuniorAcademyApplication): Promise<JuniorAcademyApplication>;
+  getJuniorAcademyApplication(id: string): Promise<JuniorAcademyApplication | undefined>;
+  getAllJuniorAcademyApplications(): Promise<JuniorAcademyApplication[]>;
+  updateJuniorAcademyApplication(id: string, updates: Partial<JuniorAcademyApplication>): Promise<JuniorAcademyApplication>;
 
   // Contact Enquiry operations
   createContactEnquiry(enquiry: InsertContactEnquiry): Promise<ContactEnquiry>;
@@ -798,6 +807,30 @@ export class DatabaseStorage implements IStorage {
       .update(highPerformanceSquadApplications)
       .set(updates)
       .where(eq(highPerformanceSquadApplications.id, id))
+      .returning();
+    return updated;
+  }
+
+  // Junior Academy Application operations
+  async createJuniorAcademyApplication(application: InsertJuniorAcademyApplication): Promise<JuniorAcademyApplication> {
+    const [created] = await db.insert(juniorAcademyApplications).values(application).returning();
+    return created;
+  }
+
+  async getJuniorAcademyApplication(id: string): Promise<JuniorAcademyApplication | undefined> {
+    const [application] = await db.select().from(juniorAcademyApplications).where(eq(juniorAcademyApplications.id, id));
+    return application;
+  }
+
+  async getAllJuniorAcademyApplications(): Promise<JuniorAcademyApplication[]> {
+    return await db.select().from(juniorAcademyApplications).orderBy(desc(juniorAcademyApplications.createdAt));
+  }
+
+  async updateJuniorAcademyApplication(id: string, updates: Partial<JuniorAcademyApplication>): Promise<JuniorAcademyApplication> {
+    const [updated] = await db
+      .update(juniorAcademyApplications)
+      .set(updates)
+      .where(eq(juniorAcademyApplications.id, id))
       .returning();
     return updated;
   }
