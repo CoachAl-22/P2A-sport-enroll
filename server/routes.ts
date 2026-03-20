@@ -192,6 +192,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ── MAJ (My Athletic Journey) API ────────────────────────────────
+
+  app.post("/api/maj/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      if (!username || !password) return res.status(400).json({ message: "Username and password required" });
+
+      const u = username.trim().toLowerCase();
+
+      // Try athlete first
+      const athlete = await storage.getMajAthleteByUsername(u);
+      if (athlete) {
+        const valid = await bcrypt.compare(password, athlete.password);
+        if (!valid) return res.status(401).json({ message: "Invalid credentials" });
+        const { password: _, ...safe } = athlete;
+        return res.json({ role: "athlete", ...safe });
+      }
+
+      // Try coach
+      const coach = await storage.getMajCoachByUsername(u);
+      if (coach) {
+        const valid = await bcrypt.compare(password, coach.password);
+        if (!valid) return res.status(401).json({ message: "Invalid credentials" });
+        const { password: _, ...safe } = coach;
+        // Return all athletes for coach view
+        const athletes = await storage.getAllMajAthletes();
+        return res.json({ role: "coach", ...safe, athletes });
+      }
+
+      return res.status(401).json({ message: "Invalid credentials" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/maj/athlete/:id", async (req, res) => {
+    try {
+      const athlete = await storage.getMajAthleteById(req.params.id);
+      if (!athlete) return res.status(404).json({ message: "Athlete not found" });
+      const { password: _, ...safe } = athlete;
+      const reflections = await storage.getMajReflectionsForAthlete(athlete.id);
+      res.json({ ...safe, reflections });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/maj/athlete/:id/progress", async (req, res) => {
+    try {
+      const { xp, currentModule, currentWeek, streak, sessionsCompleted, reflectionsSubmitted, earnedBadgeKeys, completedWeeks } = req.body;
+      const updated = await storage.updateMajAthleteProgress(req.params.id, {
+        xp, currentModule, currentWeek, streak, sessionsCompleted, reflectionsSubmitted, earnedBadgeKeys, completedWeeks
+      });
+      const { password: _, ...safe } = updated;
+      res.json(safe);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/maj/reflection", async (req, res) => {
+    try {
+      const { athleteId, moduleNum, weekNum, prompt, response: reflResponse } = req.body;
+      if (!athleteId || !moduleNum || !weekNum || !prompt || !reflResponse) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+      const reflection = await storage.createMajReflection({ athleteId, moduleNum, weekNum, prompt, response: reflResponse });
+      res.json(reflection);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/maj/badge", async (req, res) => {
+    try {
+      const { athleteId, badgeKey, badgeName, badgeIcon, xpAwarded, awardedBy } = req.body;
+      if (!athleteId || !badgeKey || !badgeName || !badgeIcon) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+      const badge = await storage.awardMajBadge({ athleteId, badgeKey, badgeName, badgeIcon, xpAwarded: xpAwarded ?? 0, awardedBy });
+      res.json(badge);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/maj/reflection/:id/note", async (req, res) => {
+    try {
+      const { coachNote } = req.body;
+      const updated = await storage.updateMajReflectionCoachNote(req.params.id, coachNote);
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/my-athletic-journey", async (req, res) => {
     const { readFileSync } = await import("fs");
     const { resolve, dirname } = await import("path");

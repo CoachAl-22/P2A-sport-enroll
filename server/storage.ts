@@ -21,6 +21,14 @@ import {
   performanceVideoHighlights,
   videoShares,
   surveyResponses,
+  majAthletes,
+  majReflections,
+  majBadges,
+  majCoaches,
+  type MajAthlete,
+  type MajReflection,
+  type MajBadge,
+  type MajCoach,
   type User,
   type InsertUser,
   type Child,
@@ -1504,6 +1512,97 @@ export class DatabaseStorage implements IStorage {
 
   async getAllSurveyResponses(): Promise<SurveyResponse[]> {
     return await db.select().from(surveyResponses).orderBy(desc(surveyResponses.createdAt));
+  }
+
+  // ── MAJ (My Athletic Journey) ────────────────────────────────────
+
+  async getMajAthleteByUsername(username: string): Promise<MajAthlete | undefined> {
+    const [athlete] = await db.select().from(majAthletes).where(eq(majAthletes.username, username));
+    return athlete;
+  }
+
+  async getMajAthleteById(id: string): Promise<MajAthlete | undefined> {
+    const [athlete] = await db.select().from(majAthletes).where(eq(majAthletes.id, id));
+    return athlete;
+  }
+
+  async getAllMajAthletes(): Promise<MajAthlete[]> {
+    return await db.select().from(majAthletes).orderBy(majAthletes.fullName);
+  }
+
+  async updateMajAthleteProgress(id: string, data: {
+    xp?: number;
+    currentModule?: number;
+    currentWeek?: number;
+    streak?: number;
+    sessionsCompleted?: number;
+    reflectionsSubmitted?: number;
+    earnedBadgeKeys?: string[];
+    completedWeeks?: any[];
+  }): Promise<MajAthlete> {
+    const [updated] = await db.update(majAthletes)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(majAthletes.id, id))
+      .returning();
+    return updated;
+  }
+
+  async createMajAthlete(data: {
+    username: string;
+    password: string;
+    fullName: string;
+    grade?: string;
+    program?: string;
+    coach?: string;
+  }): Promise<MajAthlete> {
+    const [athlete] = await db.insert(majAthletes).values(data).returning();
+    return athlete;
+  }
+
+  async createMajReflection(data: {
+    athleteId: string;
+    moduleNum: number;
+    weekNum: number;
+    prompt: string;
+    response: string;
+  }): Promise<MajReflection> {
+    const [reflection] = await db.insert(majReflections).values(data).returning();
+    return reflection;
+  }
+
+  async getMajReflectionsForAthlete(athleteId: string): Promise<MajReflection[]> {
+    return await db.select().from(majReflections)
+      .where(eq(majReflections.athleteId, athleteId))
+      .orderBy(desc(majReflections.submittedAt));
+  }
+
+  async updateMajReflectionCoachNote(id: string, coachNote: string): Promise<MajReflection> {
+    const [updated] = await db.update(majReflections)
+      .set({ coachNote })
+      .where(eq(majReflections.id, id))
+      .returning();
+    return updated;
+  }
+
+  async awardMajBadge(data: {
+    athleteId: string;
+    badgeKey: string;
+    badgeName: string;
+    badgeIcon: string;
+    xpAwarded: number;
+    awardedBy?: string;
+  }): Promise<MajBadge> {
+    const [badge] = await db.insert(majBadges).values(data).returning();
+    // Also add badge key to athlete's earned_badge_keys array
+    await db.execute(
+      sql`UPDATE maj_athletes SET earned_badge_keys = array_append(earned_badge_keys, ${data.badgeKey}), updated_at = NOW() WHERE id = ${data.athleteId} AND NOT (${data.badgeKey} = ANY(earned_badge_keys))`
+    );
+    return badge;
+  }
+
+  async getMajCoachByUsername(username: string): Promise<MajCoach | undefined> {
+    const [coach] = await db.select().from(majCoaches).where(eq(majCoaches.username, username));
+    return coach;
   }
 }
 

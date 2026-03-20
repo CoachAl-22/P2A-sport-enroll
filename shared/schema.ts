@@ -12,6 +12,7 @@ import {
   uuid,
   pgEnum,
   unique,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -981,3 +982,69 @@ export const insertAthleteAssessmentSchema = createInsertSchema(athleteAssessmen
 
 export type AthleteAssessment = typeof athleteAssessments.$inferSelect;
 export type InsertAthleteAssessment = z.infer<typeof insertAthleteAssessmentSchema>;
+
+// ── My Athletic Journey (MAJ) Tables ─────────────────────────────
+
+export const majAthletes = pgTable("maj_athletes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  username: varchar("username", { length: 100 }).notNull().unique(),
+  password: text("password").notNull(),
+  fullName: varchar("full_name", { length: 200 }).notNull(),
+  grade: varchar("grade", { length: 50 }),
+  program: varchar("program", { length: 100 }),
+  coach: varchar("coach", { length: 100 }),
+  currentModule: integer("current_module").notNull().default(1),
+  currentWeek: integer("current_week").notNull().default(1),
+  xp: integer("xp").notNull().default(0),
+  streak: integer("streak").notNull().default(0),
+  sessionsCompleted: integer("sessions_completed").notNull().default(0),
+  reflectionsSubmitted: integer("reflections_submitted").notNull().default(0),
+  earnedBadgeKeys: text("earned_badge_keys").array().notNull().default(sql`'{}'::text[]`),
+  completedWeeks: jsonb("completed_weeks").notNull().default(sql`'[]'::jsonb`),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const majReflections = pgTable("maj_reflections", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  athleteId: uuid("athlete_id").references(() => majAthletes.id, { onDelete: "cascade" }).notNull(),
+  moduleNum: integer("module_num").notNull(),
+  weekNum: integer("week_num").notNull(),
+  prompt: text("prompt").notNull(),
+  response: text("response").notNull(),
+  submittedAt: timestamp("submitted_at").defaultNow(),
+  coachNote: text("coach_note"),
+});
+
+export const majBadges = pgTable("maj_badges", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  athleteId: uuid("athlete_id").references(() => majAthletes.id, { onDelete: "cascade" }).notNull(),
+  badgeKey: varchar("badge_key", { length: 100 }).notNull(),
+  badgeName: varchar("badge_name", { length: 200 }).notNull(),
+  badgeIcon: varchar("badge_icon", { length: 20 }).notNull(),
+  xpAwarded: integer("xp_awarded").notNull().default(0),
+  awardedAt: timestamp("awarded_at").defaultNow(),
+  awardedBy: varchar("awarded_by", { length: 100 }),
+});
+
+export const majCoaches = pgTable("maj_coaches", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  username: varchar("username", { length: 100 }).notNull().unique(),
+  password: text("password").notNull(),
+  fullName: varchar("full_name", { length: 200 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertMajAthleteSchema = createInsertSchema(majAthletes).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertMajReflectionSchema = createInsertSchema(majReflections).omit({ id: true, submittedAt: true });
+export const insertMajBadgeSchema = createInsertSchema(majBadges).omit({ id: true, awardedAt: true });
+export const insertMajCoachSchema = createInsertSchema(majCoaches).omit({ id: true, createdAt: true });
+
+export type MajAthlete = typeof majAthletes.$inferSelect;
+export type InsertMajAthlete = z.infer<typeof insertMajAthleteSchema>;
+export type MajReflection = typeof majReflections.$inferSelect;
+export type InsertMajReflection = z.infer<typeof insertMajReflectionSchema>;
+export type MajBadge = typeof majBadges.$inferSelect;
+export type InsertMajBadge = z.infer<typeof insertMajBadgeSchema>;
+export type MajCoach = typeof majCoaches.$inferSelect;
+export type InsertMajCoach = z.infer<typeof insertMajCoachSchema>;

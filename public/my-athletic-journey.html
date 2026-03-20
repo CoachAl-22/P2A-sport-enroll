@@ -2788,43 +2788,209 @@ const MAJ_CONTENT = {
   // ── APP STATE ────────────────────────────────────────────────────────
   const state = {
     currentPage: 'login',
+    athleteId: null,
+    role: 'athlete',
     athlete: {
-      name: 'Jordan',
-      fullName: 'Jordan Taylor',
-      initials: 'JT',
-      grade: 'Grade 5',
-      program: 'Emerging Athlete',
-      coach: 'Al Tait',
+      name: '',
+      fullName: '',
+      initials: '',
+      grade: '',
+      program: '',
+      coach: '',
       currentModule: 1,
-      currentWeek: 4,
-      xp: 580,
-      streak: 5,
-      sessionsCompleted: 14,
-      reflectionsSubmitted: 11,
-      earnedBadgeKeys: ['engine_ignited','voice','sharp_shooter']
+      currentWeek: 1,
+      xp: 0,
+      streak: 0,
+      sessionsCompleted: 0,
+      reflectionsSubmitted: 0,
+      earnedBadgeKeys: [],
+      completedWeeks: []
     },
     challengeDone: false,
     reflectDone: false,
     activeTab: 'learn'
   };
 
-  const DEMO_USERS = { jordan: 'athlete1', coach: 'coach1' };
+  // ── API HELPERS ───────────────────────────────────────────────────────
+  async function apiPost(url, body) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error((await res.json()).message || 'Request failed');
+    return res.json();
+  }
+
+  async function apiGet(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error((await res.json()).message || 'Request failed');
+    return res.json();
+  }
+
+  // ── SAVE STATE → DB ───────────────────────────────────────────────────
+  async function saveState() {
+    if (!state.athleteId || state.role !== 'athlete') return;
+    const a = state.athlete;
+    try {
+      await apiPost(`/api/maj/athlete/${state.athleteId}/progress`, {
+        xp: a.xp,
+        currentModule: a.currentModule,
+        currentWeek: a.currentWeek,
+        streak: a.streak,
+        sessionsCompleted: a.sessionsCompleted,
+        reflectionsSubmitted: a.reflectionsSubmitted,
+        earnedBadgeKeys: a.earnedBadgeKeys,
+        completedWeeks: a.completedWeeks || []
+      });
+    } catch (e) {
+      console.warn('saveState failed:', e.message);
+    }
+  }
+
+  // ── POPULATE STATE FROM API RESPONSE ─────────────────────────────────
+  function populateAthleteState(data) {
+    state.athleteId = data.id;
+    const nameParts = (data.fullName || '').split(' ');
+    const initials = nameParts.map(p => p[0] || '').join('').slice(0,2).toUpperCase();
+    state.athlete = {
+      name: nameParts[0] || data.fullName,
+      fullName: data.fullName,
+      initials,
+      grade: data.grade || '',
+      program: data.program || '',
+      coach: data.coach || '',
+      currentModule: data.currentModule || 1,
+      currentWeek: data.currentWeek || 1,
+      xp: data.xp || 0,
+      streak: data.streak || 0,
+      sessionsCompleted: data.sessionsCompleted || 0,
+      reflectionsSubmitted: data.reflectionsSubmitted || 0,
+      earnedBadgeKeys: data.earnedBadgeKeys || [],
+      completedWeeks: data.completedWeeks || []
+    };
+  }
+
+  // ── WEEK COMPLETION KEY ───────────────────────────────────────────────
+  function weekKey(mod, wk) { return `m${mod}w${wk}`; }
+
+  function isWeekCompleted(mod, wk) {
+    return (state.athlete.completedWeeks || []).includes(weekKey(mod, wk));
+  }
+
+  // ── CHECK IF WEEK IS NOW FULLY DONE ──────────────────────────────────
+  function checkWeekComplete() {
+    if (!state.challengeDone || !state.reflectDone) return;
+    const a = state.athlete;
+    const key = weekKey(a.currentModule, a.currentWeek);
+    if (!isWeekCompleted(a.currentModule, a.currentWeek)) {
+      if (!a.completedWeeks) a.completedWeeks = [];
+      a.completedWeeks.push(key);
+      a.sessionsCompleted += 1;
+      document.querySelectorAll('.stat-val')[0].textContent = a.sessionsCompleted;
+    }
+    saveState();
+    showNextWeekBanner();
+  }
+
+  // ── NEXT WEEK BANNER ─────────────────────────────────────────────────
+  function showNextWeekBanner() {
+    let banner = document.getElementById('next-week-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'next-week-banner';
+      banner.style.cssText = `
+        margin: 20px; padding: 18px 20px; background: var(--green); border-radius: var(--radius);
+        display: flex; align-items: center; justify-content: space-between; gap: 12px;`;
+      banner.innerHTML = `
+        <div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:800;color:#fff;margin-bottom:3px">Week Complete! 🎉</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.85)">Both challenge and reflection done.</div>
+        </div>
+        <button onclick="advanceToNextWeek()" style="background:#fff;color:var(--green);border:none;border-radius:var(--radius-sm);padding:10px 16px;font-size:14px;font-family:var(--font-display);font-weight:700;cursor:pointer;white-space:nowrap;">
+          Next Week →
+        </button>`;
+      const tabPanes = document.querySelectorAll('.tab-pane');
+      const lastPane = tabPanes[tabPanes.length - 1];
+      if (lastPane) lastPane.appendChild(banner);
+    }
+    banner.style.display = 'flex';
+  }
+
+  // ── ADVANCE TO NEXT WEEK / MODULE ────────────────────────────────────
+  function advanceToNextWeek() {
+    const a = state.athlete;
+    let nextMod = a.currentModule;
+    let nextWeek = a.currentWeek + 1;
+    if (nextWeek > 8) {
+      nextMod = a.currentModule + 1;
+      nextWeek = 1;
+      if (nextMod > 4) {
+        toast('🏆 You have completed all 4 modules — Year 1 complete!');
+        saveState();
+        return;
+      }
+      const mod = MAJ_CONTENT.modules[nextMod - 1];
+      showOverlay('🏆', `Module Complete!`, `You've finished ${MAJ_CONTENT.modules[a.currentModule - 1].title}. Starting ${mod.title}!`);
+    }
+    a.currentModule = nextMod;
+    a.currentWeek = nextWeek;
+    state.challengeDone = false;
+    state.reflectDone = false;
+    const banner = document.getElementById('next-week-banner');
+    if (banner) banner.style.display = 'none';
+    saveState();
+    renderDashboard();
+    renderThisWeek();
+    renderProfile();
+    navTo('thisweek');
+    document.querySelectorAll('.tab-btn')[0].click();
+    setTimeout(() => {
+      document.getElementById('mod1-fill').style.width = Math.round(((a.currentWeek - 1) / 8) * 100) + '%';
+    }, 300);
+    toast(`Week ${a.currentWeek} of Module ${a.currentModule} unlocked! 🚀`);
+  }
 
   // ── LOGIN ────────────────────────────────────────────────────────────
-  function doLogin() {
+  async function doLogin() {
     const u = document.getElementById('login-user').value.trim().toLowerCase();
     const p = document.getElementById('login-pass').value;
     const err = document.getElementById('login-error');
-    if (DEMO_USERS[u] && DEMO_USERS[u] === p) {
+    const btn = document.querySelector('.btn-primary');
+
+    if (!u || !p) { err.textContent = 'Please enter your username and password.'; err.style.display = 'block'; return; }
+
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+
+    try {
+      const data = await apiPost('/api/maj/login', { username: u, password: p });
       err.style.display = 'none';
-      document.getElementById('bottom-nav').style.display = 'flex';
-      initApp();
-      navTo('home');
-    } else {
+      state.role = data.role;
+
+      if (data.role === 'athlete') {
+        populateAthleteState(data);
+        document.getElementById('bottom-nav').style.display = 'flex';
+        initApp();
+        navTo('home');
+      } else if (data.role === 'coach') {
+        document.getElementById('bottom-nav').style.display = 'flex';
+        // Coach sees athlete list — basic view for now
+        state.athlete.name = data.fullName.split(' ')[0];
+        state.athlete.fullName = data.fullName;
+        state.athlete.initials = data.fullName.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+        initApp();
+        navTo('home');
+        toast(`Welcome, ${data.fullName}! Coach view active.`);
+      }
+    } catch (e) {
+      err.textContent = e.message === 'Invalid credentials' ? 'Incorrect username or password.' : 'Connection error — please try again.';
       err.style.display = 'block';
-      const f = document.getElementById('login-user');
-      f.style.borderColor = '#f87171';
-      setTimeout(() => f.style.borderColor = '', 1500);
+      document.getElementById('login-user').style.borderColor = '#f87171';
+      setTimeout(() => { document.getElementById('login-user').style.borderColor = ''; }, 1500);
+    } finally {
+      btn.textContent = 'Sign in';
+      btn.disabled = false;
     }
   }
 
@@ -2835,6 +3001,8 @@ const MAJ_CONTENT = {
     document.getElementById('bottom-nav').style.display = 'none';
     document.getElementById('login-user').value = '';
     document.getElementById('login-pass').value = '';
+    state.athleteId = null;
+    state.role = 'athlete';
     state.challengeDone = false;
     state.reflectDone = false;
     navTo('login', true);
@@ -3075,7 +3243,7 @@ const MAJ_CONTENT = {
   }
 
   // ── CHALLENGE COMPLETE ───────────────────────────────────────────────
-  function markChallengeComplete() {
+  async function markChallengeComplete() {
     if (state.challengeDone) return;
     state.challengeDone = true;
     const btn = document.getElementById('do-complete-btn');
@@ -3089,8 +3257,20 @@ const MAJ_CONTENT = {
       ? `${badgeName} badge unlocked! Your coach will confirm at your next session.`
       : `Challenge logged! Keep it up — your coach will see this.`;
     state.athlete.xp += xpEarned;
+    // Award badge if applicable and not coach-required
+    if (week && week.do.badge && !week.do.badge.coachRequired && state.athleteId) {
+      const b = week.do.badge;
+      if (!state.athlete.earnedBadgeKeys.includes(b.key)) {
+        state.athlete.earnedBadgeKeys = [...state.athlete.earnedBadgeKeys, b.key];
+        try {
+          await apiPost('/api/maj/badge', { athleteId: state.athleteId, badgeKey: b.key, badgeName: b.name, badgeIcon: b.icon, xpAwarded: b.xp });
+        } catch(e) { console.warn('badge award failed:', e.message); }
+        renderBadges();
+      }
+    }
     updateXP();
     showOverlay(icon, `+${xpEarned} XP!`, sub);
+    checkWeekComplete();
   }
 
   // ── REFLECT ──────────────────────────────────────────────────────────
@@ -3105,18 +3285,33 @@ const MAJ_CONTENT = {
     btn.disabled = words < 5;
   }
 
-  function submitReflection() {
+  async function submitReflection() {
     if (state.reflectDone) return;
     state.reflectDone = true;
+    const responseText = document.getElementById('reflect-input').value.trim();
     document.getElementById('reflect-form-area').style.display = 'none';
     document.getElementById('reflect-done').classList.add('show');
     state.athlete.xp += 15;
     state.athlete.reflectionsSubmitted += 1;
     updateXP();
+    // Save reflection to DB
+    if (state.athleteId) {
+      const week = MAJ_CONTENT.getWeek(state.athlete.currentModule, state.athlete.currentWeek);
+      try {
+        await apiPost('/api/maj/reflection', {
+          athleteId: state.athleteId,
+          moduleNum: state.athlete.currentModule,
+          weekNum: state.athlete.currentWeek,
+          prompt: week ? week.reflect.prompt : '',
+          response: responseText
+        });
+      } catch(e) { console.warn('reflection save failed:', e.message); }
+    }
     setTimeout(() => {
       showOverlay('✍️', '+15 XP!',
-        `Reflection submitted! Your coach Al will read this. Reflections submitted: ${state.athlete.reflectionsSubmitted} of 32.`);
+        `Reflection submitted! Your coach ${state.athlete.coach || 'Al'} will read this. Reflections submitted: ${state.athlete.reflectionsSubmitted} of 32.`);
     }, 600);
+    checkWeekComplete();
   }
 
   // ── XP UPDATE ────────────────────────────────────────────────────────
