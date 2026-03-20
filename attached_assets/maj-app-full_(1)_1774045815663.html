@@ -1,0 +1,3569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Athletic Journey — Power2ADAPT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F26522;
+    --orange-dim: rgba(242,101,34,0.15);
+    --orange-border: rgba(242,101,34,0.25);
+    --cyan: #00B4D8;
+    --cyan-dim: rgba(0,180,216,0.15);
+    --black: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --surface3: #222222;
+    --border: #1e1e1e;
+    --border2: #2a2a2a;
+    --text: #ffffff;
+    --text2: #888888;
+    --text3: #444444;
+    --green: #22c55e;
+    --green-dim: rgba(34,197,94,0.12);
+    --font-display: 'Barlow Condensed', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 14px;
+    --radius-sm: 10px;
+    --radius-pill: 100px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    background: var(--black);
+    font-family: var(--font-body);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  /* ── APP SHELL ─────────────────────────────────────── */
+  #app {
+    width: 100%;
+    max-width: 430px;
+    height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background: var(--black);
+  }
+
+  .page {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    padding-bottom: 80px;
+  }
+  .page::-webkit-scrollbar { display: none; }
+  .page.active { display: flex; }
+
+  /* ── BOTTOM NAV ────────────────────────────────────── */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(10,10,10,0.97);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 6px 0 max(12px, env(safe-area-inset-bottom));
+    z-index: 50;
+    backdrop-filter: blur(20px);
+  }
+
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-family: var(--font-body);
+    transition: color 0.2s;
+  }
+
+  .nav-btn.active { color: var(--orange); }
+
+  .nav-icon {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .nav-icon svg { width: 20px; height: 20px; }
+  .nav-label { font-size: 10px; font-weight: 500; letter-spacing: 0.3px; }
+
+  /* ── TOP BAR ───────────────────────────────────────── */
+  .top-bar {
+    padding: 14px 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--black);
+    flex-shrink: 0;
+  }
+
+  .top-bar-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--orange);
+    text-transform: uppercase;
+  }
+
+  .icon-btn {
+    width: 36px; height: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text2);
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .icon-btn:active { background: var(--surface2); }
+  .notif-dot {
+    width: 7px; height: 7px;
+    background: var(--orange);
+    border-radius: 50%;
+    position: absolute;
+    top: 6px; right: 6px;
+    border: 2px solid var(--black);
+  }
+
+  /* ── STREAK PILL ───────────────────────────────────── */
+  .streak-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--orange-dim);
+    border: 1px solid var(--orange-border);
+    border-radius: var(--radius-pill);
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--orange);
+  }
+
+  /* ── SECTION LABEL ─────────────────────────────────── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .pad { padding: 0 20px; }
+
+  /* ════════════════════════════════════════════════════
+     PAGE: LOGIN
+  ════════════════════════════════════════════════════ */
+  #page-login {
+    background: var(--black);
+    justify-content: center;
+    align-items: center;
+    padding: 40px 32px;
+    min-height: 100vh;
+  }
+
+  .login-logo {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--orange);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .login-title {
+    font-family: var(--font-display);
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--text);
+    text-align: center;
+    line-height: 1;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .login-sub {
+    font-size: 13px;
+    color: var(--text2);
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .login-form { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+
+  .input-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .input-label { font-size: 12px; font-weight: 500; color: var(--text2); letter-spacing: 0.5px; }
+
+  .input-field {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 15px;
+    font-family: var(--font-body);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .input-field:focus { border-color: var(--orange); }
+  .input-field::placeholder { color: var(--text3); }
+
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 15px;
+    font-size: 16px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  .btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+
+  .login-error {
+    font-size: 13px;
+    color: #f87171;
+    text-align: center;
+    display: none;
+    margin-top: -4px;
+  }
+
+  .login-hint {
+    font-size: 12px;
+    color: var(--text3);
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .login-hint span { color: var(--text2); }
+
+  /* ════════════════════════════════════════════════════
+     PAGE: DASHBOARD (HOME)
+  ════════════════════════════════════════════════════ */
+  .hero {
+    padding: 22px 20px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-greeting { font-size: 12px; color: var(--text3); font-weight: 500; letter-spacing: 0.5px; margin-bottom: 3px; }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+
+  .tier-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-pill);
+    padding: 5px 14px 5px 5px;
+  }
+
+  .tier-dot {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+
+  .tier-text {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--orange);
+  }
+
+  /* XP Bar */
+  .xp-wrap {
+    padding: 14px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .xp-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .xp-label-text { font-size: 11px; color: var(--text3); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+
+  .xp-numbers {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .xp-cur { color: var(--cyan); }
+  .xp-sep { color: var(--text3); margin: 0 2px; }
+  .xp-max { color: var(--text3); }
+
+  .xp-track {
+    height: 7px;
+    background: var(--surface2);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+
+  .xp-fill {
+    height: 100%;
+    background: var(--cyan);
+    border-radius: var(--radius-pill);
+    width: 0%;
+    transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .xp-caption { font-size: 11px; color: var(--text3); text-align: right; }
+  .xp-caption em { color: var(--cyan); font-style: normal; }
+
+  /* Mission Card */
+  .mission-card {
+    background: var(--orange);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  .mission-card:active { transform: scale(0.98); }
+
+  .mission-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -20px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+  }
+
+  .mission-card::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: 30px;
+    width: 90px; height: 90px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+
+  .mission-week-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .mission-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+    max-width: 75%;
+  }
+
+  .mission-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+
+  .mission-xp-tag {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--radius-pill);
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .mission-go-btn {
+    background: #fff;
+    color: var(--orange);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  .mission-go-btn:active { transform: scale(0.96); }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-lbl { font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Badge Row */
+  .badge-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    margin-bottom: 22px;
+  }
+
+  .badge-scroll::-webkit-scrollbar { display: none; }
+
+  .badge-chip {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+  }
+
+  .badge-ring {
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    position: relative;
+    transition: transform 0.15s;
+  }
+
+  .badge-chip:active .badge-ring { transform: scale(0.9); }
+
+  .badge-ring.locked { filter: grayscale(1) opacity(0.3); }
+
+  .badge-ring .new-tag {
+    position: absolute;
+    top: -5px; right: -5px;
+    background: var(--orange);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 5px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+  }
+
+  .badge-chip-name { font-size: 10px; color: var(--text2); text-align: center; max-width: 62px; line-height: 1.3; }
+  .badge-chip-name.dim { color: var(--text3); }
+
+  /* Module List */
+  .module-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .module-item:active { border-color: var(--border2); }
+  .module-item.mod-active { border-color: var(--orange); }
+
+  .module-thumb {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .mod-active .module-thumb { background: var(--orange-dim); }
+  .mod-locked .module-thumb { background: var(--surface2); filter: grayscale(1) opacity(0.4); }
+  .mod-done .module-thumb { background: var(--cyan-dim); }
+
+  .module-body { flex: 1; min-width: 0; }
+
+  .module-name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mod-locked .module-name { color: var(--text3); }
+
+  .mini-track {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+
+  .mini-fill {
+    height: 100%;
+    border-radius: var(--radius-pill);
+    transition: width 1s ease;
+  }
+
+  .fill-orange { background: var(--orange); }
+  .fill-cyan { background: var(--cyan); }
+
+  .module-caption { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .mod-locked .module-caption { color: var(--surface3); }
+
+  .module-arrow { font-size: 16px; color: var(--text3); flex-shrink: 0; }
+  .mod-locked .module-arrow { opacity: 0.2; }
+
+  /* ════════════════════════════════════════════════════
+     PAGE: THIS WEEK
+  ════════════════════════════════════════════════════ */
+  .week-hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 20px 18px;
+    flex-shrink: 0;
+  }
+
+  .week-meta { font-size: 11px; color: var(--text3); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+
+  .week-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.3px;
+    margin-bottom: 10px;
+  }
+
+  .week-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--orange-dim);
+    border: 1px solid var(--orange-border);
+    border-radius: var(--radius-pill);
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--orange);
+  }
+
+  /* Tab Bar */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text3);
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  .tab-pane { display: none; padding: 20px; }
+  .tab-pane.active { display: block; }
+
+  /* Learn Tab */
+  .learn-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--cyan);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+
+  .learn-tag { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: var(--cyan); text-transform: uppercase; margin-bottom: 8px; }
+
+  .learn-heading {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .learn-intro { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 14px; }
+
+  .learn-points { display: flex; flex-direction: column; gap: 10px; }
+
+  .learn-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .learn-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .learn-closing {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--cyan-dim);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--cyan);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* Do Tab */
+  .do-card {
+    background: var(--orange);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .do-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+  }
+
+  .do-tag { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-bottom: 6px; }
+
+  .do-heading {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .do-setup { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 14px; position: relative; z-index: 1; }
+
+  .do-steps { display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+
+  .do-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+  }
+
+  .step-num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .do-changeit {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--radius-sm);
+    position: relative;
+    z-index: 1;
+  }
+
+  .do-changeit-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-bottom: 4px; }
+  .do-changeit-text { font-size: 13px; color: rgba(255,255,255,0.75); font-style: italic; line-height: 1.5; }
+
+  .do-complete-btn {
+    width: 100%;
+    background: #fff;
+    color: var(--orange);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 15px;
+    font-size: 15px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    margin-top: 4px;
+  }
+
+  .do-complete-btn:active { transform: scale(0.98); opacity: 0.9; }
+  .do-complete-btn.done { background: var(--green); color: #fff; }
+
+  /* Reflect Tab */
+  .reflect-prompt-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+
+  .reflect-tag { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: var(--green); text-transform: uppercase; margin-bottom: 8px; }
+
+  .reflect-question {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    font-style: italic;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .reflect-hint { font-size: 13px; color: var(--text3); line-height: 1.6; font-style: italic; }
+
+  .reflect-textarea {
+    width: 100%;
+    min-height: 140px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 15px;
+    font-family: var(--font-body);
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    line-height: 1.6;
+    transition: border-color 0.2s;
+    margin-bottom: 8px;
+  }
+
+  .reflect-textarea:focus { border-color: var(--green); }
+  .reflect-textarea::placeholder { color: var(--text3); }
+
+  .reflect-counter { font-size: 12px; color: var(--text3); text-align: right; margin-bottom: 14px; }
+  .reflect-counter em { color: var(--green); font-style: normal; }
+
+  .reflect-submit-btn {
+    width: 100%;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 15px;
+    font-size: 15px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .reflect-submit-btn:active { transform: scale(0.98); }
+  .reflect-submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .reflect-done-state {
+    display: none;
+    text-align: center;
+    padding: 30px 20px;
+  }
+
+  .reflect-done-state.show { display: block; }
+
+  .done-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .done-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .done-sub { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+  .xp-earned-pop {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--cyan-dim);
+    border: 1px solid rgba(0,180,216,0.3);
+    border-radius: var(--radius-pill);
+    padding: 6px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-top: 14px;
+    font-family: var(--font-display);
+    letter-spacing: 1px;
+  }
+
+  /* ════════════════════════════════════════════════════
+     PAGE: BADGES
+  ════════════════════════════════════════════════════ */
+  .badge-tier-section { margin-bottom: 28px; }
+
+  .badge-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .badge-grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+  }
+
+  .badge-grid-ring {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    position: relative;
+    transition: transform 0.15s;
+  }
+
+  .badge-grid-item:active .badge-grid-ring { transform: scale(0.9); }
+
+  .badge-grid-ring.locked { filter: grayscale(1) opacity(0.25); }
+
+  .badge-grid-ring.earned {
+    border-color: rgba(242,101,34,0.4);
+    background: var(--orange-dim);
+  }
+
+  .badge-grid-ring.master {
+    width: 80px; height: 80px;
+    font-size: 34px;
+    border-color: rgba(242,101,34,0.6);
+    background: var(--orange-dim);
+    box-shadow: 0 0 0 4px rgba(242,101,34,0.1);
+  }
+
+  .badge-new-tag {
+    position: absolute;
+    top: -4px; right: -4px;
+    background: var(--orange);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+  }
+
+  .badge-grid-name {
+    font-size: 11px;
+    color: var(--text2);
+    text-align: center;
+    max-width: 72px;
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  .badge-grid-name.dim { color: var(--text3); }
+
+  .badge-xp {
+    font-size: 10px;
+    color: var(--orange);
+    font-weight: 600;
+    font-family: var(--font-display);
+    letter-spacing: 0.5px;
+  }
+
+  .badge-xp.dim { color: var(--text3); }
+
+  /* Journey Tiers */
+  .tier-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .tier-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+
+  .tier-item.current { border-color: var(--orange); background: var(--orange-dim); }
+  .tier-item.achieved { border-color: rgba(0,180,216,0.3); }
+
+  .tier-emoji { font-size: 22px; flex-shrink: 0; }
+
+  .tier-info { flex: 1; }
+
+  .tier-name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .tier-item.current .tier-name { color: var(--orange); }
+  .tier-item.achieved .tier-name { color: var(--cyan); }
+  .tier-item:not(.current):not(.achieved) .tier-name { color: var(--text3); }
+
+  .tier-req { font-size: 11px; color: var(--text3); }
+  .tier-item.current .tier-req { color: rgba(242,101,34,0.7); }
+
+  .tier-status {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+  }
+
+  .status-current { background: var(--orange-dim); color: var(--orange); }
+  .status-done { background: var(--cyan-dim); color: var(--cyan); }
+  .status-locked { background: var(--surface2); color: var(--text3); }
+
+  /* ════════════════════════════════════════════════════
+     PAGE: PROFILE
+  ════════════════════════════════════════════════════ */
+  .profile-hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 20px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .profile-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .profile-info { flex: 1; }
+
+  .profile-name {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .profile-program { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+
+  .profile-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .profile-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 8px;
+    text-align: center;
+  }
+
+  .profile-stat-val {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  .profile-stat-lbl { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .profile-section { padding: 18px 20px; border-bottom: 1px solid var(--border); }
+
+  .profile-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .profile-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .profile-row:last-child { border-bottom: none; }
+
+  .profile-row-label { font-size: 14px; color: var(--text); }
+  .profile-row-value { font-size: 14px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+
+  .logout-btn {
+    width: 100%;
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 14px;
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: #f87171;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 16px;
+  }
+
+  .logout-btn:active { background: rgba(248,113,113,0.1); }
+
+  /* ════════════════════════════════════════════════════
+     XP CELEBRATION OVERLAY
+  ════════════════════════════════════════════════════ */
+  .xp-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .xp-overlay.show { opacity: 1; pointer-events: all; }
+
+  .xp-popup {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 24px;
+    padding: 36px 32px;
+    text-align: center;
+    max-width: 300px;
+    width: 90%;
+    transform: scale(0.85) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .xp-overlay.show .xp-popup { transform: scale(1) translateY(0); }
+
+  .xp-pop-icon { font-size: 52px; margin-bottom: 12px; display: block; }
+
+  .xp-pop-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--cyan);
+    margin-bottom: 4px;
+  }
+
+  .xp-pop-sub { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
+
+  .xp-pop-close {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 12px 28px;
+    font-size: 14px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .xp-pop-close:active { background: var(--surface3); }
+
+  /* ── TOAST ─────────────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 90px; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-pill);
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    opacity: 0;
+    transition: all 0.25s;
+    white-space: nowrap;
+    z-index: 150;
+    pointer-events: none;
+    max-width: 90%;
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── COACH BANNER ──────────────────────────────────── */
+  .coach-banner {
+    background: var(--cyan-dim);
+    border: 1px solid rgba(0,180,216,0.2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+    cursor: pointer;
+  }
+
+  .coach-banner-icon { font-size: 20px; flex-shrink: 0; }
+  .coach-banner-text { flex: 1; }
+  .coach-banner-title { font-size: 13px; font-weight: 600; color: var(--cyan); margin-bottom: 2px; }
+  .coach-banner-sub { font-size: 12px; color: var(--text3); }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .anim-in { animation: fadeInUp 0.4s ease forwards; }
+
+  @keyframes pulse-once {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  .pulse { animation: pulse-once 0.5s ease; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ LOGIN PAGE ══════════════════════════════════════════════════════ -->
+  <div id="page-login" class="page active" style="padding-bottom:0;">
+    <div style="width:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1;padding:40px 32px;">
+      <div style="margin-bottom:32px;text-align:center;">
+        <div class="login-logo">Power2ADAPT</div>
+        <div class="login-title">My Athletic<br>Journey</div>
+        <div class="login-sub">Your personal performance hub</div>
+      </div>
+
+      <div class="login-form">
+        <div class="input-group">
+          <label class="input-label">Username</label>
+          <input class="input-field" id="login-user" type="text" placeholder="Enter your username" autocomplete="off" autocapitalize="none">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Password</label>
+          <input class="input-field" id="login-pass" type="password" placeholder="Enter your password">
+        </div>
+        <div class="login-error" id="login-error">Incorrect username or password. Try: jordan / athlete1</div>
+        <button class="btn-primary" onclick="doLogin()">Let's Go</button>
+      </div>
+
+      <div class="login-hint">Demo login: <span>jordan</span> / <span>athlete1</span></div>
+    </div>
+  </div>
+
+  <!-- ══ DASHBOARD PAGE ══════════════════════════════════════════════════ -->
+  <div id="page-home" class="page">
+    <div class="top-bar">
+      <span class="top-bar-title">My Athletic Journey</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="streak-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#F26522"><path d="M12 2C8.5 9 6 12 6 16a6 6 0 0012 0c0-4-2.5-7-6-14z"/></svg>
+          5 week streak
+        </div>
+        <div class="icon-btn" onclick="toast('No new notifications')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notif-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-greeting">Welcome back</div>
+      <div class="hero-name" id="dash-name">Jordan</div>
+      <div class="tier-badge">
+        <div class="tier-dot">⭐</div>
+        <span class="tier-text">Contender</span>
+      </div>
+    </div>
+
+    <div class="xp-wrap">
+      <div class="xp-row">
+        <span class="xp-label-text">XP Progress</span>
+        <span class="xp-numbers"><span class="xp-cur" id="dash-xp">580</span><span class="xp-sep">/</span><span class="xp-max">870</span></span>
+      </div>
+      <div class="xp-track"><div class="xp-fill" id="dash-xp-bar"></div></div>
+      <div class="xp-caption">290 XP to reach <em>Athlete</em> tier</div>
+    </div>
+
+    <div class="pad" style="padding-top:20px;">
+
+      <div class="section-label">This week's mission</div>
+      <div class="mission-card" onclick="navTo('thisweek')">
+        <div class="mission-week-tag">Module 1 · Week 4 of 8</div>
+        <div class="mission-title">Power Up — Squat Jump Challenge</div>
+        <div class="mission-footer">
+          <div class="mission-xp-tag">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            +35 XP available
+          </div>
+          <button class="mission-go-btn">Start now</button>
+        </div>
+      </div>
+
+      <div class="section-label">Quick stats</div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-val" style="color:var(--orange)">14</div><div class="stat-lbl">Sessions</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--cyan)">11</div><div class="stat-lbl">Reflections</div></div>
+        <div class="stat-card"><div class="stat-val">4</div><div class="stat-lbl">Badges</div></div>
+      </div>
+
+      <div class="section-label">My badges</div>
+      <div class="badge-scroll" style="margin-bottom:22px;">
+        <div class="badge-chip" onclick="toast('Engine Ignited — Completed all 8 Module 1 sessions')">
+          <div class="badge-ring">🔥</div>
+          <span class="badge-chip-name">Engine Ignited</span>
+        </div>
+        <div class="badge-chip" onclick="toast('Voice of an Athlete — All 8 reflections submitted')">
+          <div class="badge-ring">✍️</div>
+          <span class="badge-chip-name">Voice</span>
+        </div>
+        <div class="badge-chip" onclick="toast('Sharp Shooter — 10 points in Tennis Ball Target!')">
+          <div class="badge-ring"><span class="new-tag">NEW</span>🎯</div>
+          <span class="badge-chip-name">Sharp Shooter</span>
+        </div>
+        <div class="badge-chip" onclick="navTo('thisweek')">
+          <div class="badge-ring locked">⚡</div>
+          <span class="badge-chip-name dim">Power Up</span>
+        </div>
+        <div class="badge-chip" onclick="toast('Module 1 Master — Complete all of Module 1 to unlock')">
+          <div class="badge-ring locked">🏆</div>
+          <span class="badge-chip-name dim">Mod 1 Master</span>
+        </div>
+      </div>
+
+      <div class="section-label">My journey</div>
+      <div class="module-item mod-active" onclick="navTo('thisweek')">
+        <div class="module-thumb">🔥</div>
+        <div class="module-body">
+          <div class="module-name">Module 1: Ignite Your Engine</div>
+          <div class="mini-track"><div class="mini-fill fill-orange" id="mod1-fill" style="width:0%"></div></div>
+          <div class="module-caption">Week 4 of 8 · Athletic Ability</div>
+        </div>
+        <div class="module-arrow">›</div>
+      </div>
+      <div class="module-item mod-locked" onclick="toast('Complete Module 1 to unlock Module 2')">
+        <div class="module-thumb">🎯</div>
+        <div class="module-body">
+          <div class="module-name">Module 2: Sharpen the Tools</div>
+          <div class="mini-track"><div class="mini-fill fill-orange" style="width:0%"></div></div>
+          <div class="module-caption">Locked · Skill</div>
+        </div>
+        <div class="module-arrow">🔒</div>
+      </div>
+      <div class="module-item mod-locked" onclick="toast('Complete Module 2 to unlock Module 3')">
+        <div class="module-thumb">🧠</div>
+        <div class="module-body">
+          <div class="module-name">Module 3: Train the Mind</div>
+          <div class="mini-track"><div class="mini-fill" style="width:0%"></div></div>
+          <div class="module-caption">Locked · Focus</div>
+        </div>
+        <div class="module-arrow">🔒</div>
+      </div>
+      <div class="module-item mod-locked" onclick="toast('Complete Module 3 to unlock Module 4')">
+        <div class="module-thumb">🤝</div>
+        <div class="module-body">
+          <div class="module-name">Module 4: Lead Yourself</div>
+          <div class="mini-track"><div class="mini-fill" style="width:0%"></div></div>
+          <div class="module-caption">Locked · Leadership</div>
+        </div>
+        <div class="module-arrow">🔒</div>
+      </div>
+
+      <div class="coach-banner" onclick="toast('Your coach Al will review your reflections and award badges')">
+        <div class="coach-banner-icon">👟</div>
+        <div class="coach-banner-text">
+          <div class="coach-banner-title">Coach Al reviewed your Week 3 reflection</div>
+          <div class="coach-banner-sub">Nice work on the relay focus — keep driving those arms!</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00B4D8" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ THIS WEEK PAGE ══════════════════════════════════════════════════ -->
+  <div id="page-thisweek" class="page">
+    <div class="top-bar">
+      <span class="top-bar-title">This Week</span>
+      <div class="streak-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="#F26522"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        +35 XP this week
+      </div>
+    </div>
+
+    <div class="week-hero">
+      <div class="week-meta">Module 1 · Week 4 of 8</div>
+      <div class="week-title">Power</div>
+      <div class="week-pill">Athletic Ability · 8-week module</div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(this,'learn')">Learn</button>
+      <button class="tab-btn" onclick="switchTab(this,'do')">Do</button>
+      <button class="tab-btn" onclick="switchTab(this,'reflect')">Reflect</button>
+    </div>
+
+    <!-- LEARN TAB -->
+    <div class="tab-pane active" id="tab-learn">
+      <div class="learn-card">
+        <div class="learn-tag">This week's concept</div>
+        <div class="learn-heading">The Difference Between Strength and Explosive Power</div>
+        <div class="learn-intro">Strength and power are related — but they're not the same thing. Understanding the difference will change how you train.</div>
+        <div class="learn-points">
+          <div class="learn-point"><div class="learn-dot"></div><span>Strength is how much force your muscles can produce. Power is how <em>fast</em> you can produce that force.</span></div>
+          <div class="learn-point"><div class="learn-dot"></div><span>An athlete who can jump high and explode off the mark has power — even if they don't look "strong" in the traditional sense.</span></div>
+          <div class="learn-point"><div class="learn-dot"></div><span>Power training focuses on explosive movements: jumping, bounding, and quick changes of direction.</span></div>
+          <div class="learn-point"><div class="learn-dot"></div><span>Every time you jump and land well, you're training your body to produce and absorb power safely.</span></div>
+          <div class="learn-point"><div class="learn-dot"></div><span>Soft, controlled landings protect your joints. Always land with bent knees and quiet feet.</span></div>
+        </div>
+        <div class="learn-closing">Power is the combination of strength and speed. Build both, and your athletic ability jumps to a new level.</div>
+      </div>
+      <button class="btn-primary" id="learn-xp-btn" onclick="markLearnComplete()" style="margin-bottom:12px;">Mark as read — earn 10 XP</button>
+      <button class="btn-primary" onclick="switchTab(document.querySelectorAll('.tab-btn')[1],'do')" style="background:var(--surface2);border:1px solid var(--border2);color:var(--text2);">Ready — show me the challenge →</button>
+    </div>
+
+    <!-- DO TAB -->
+    <div class="tab-pane" id="tab-do">
+      <div class="do-card">
+        <div class="do-tag">Your challenge this week</div>
+        <div class="do-heading">Power Up — Squat Jump Challenge</div>
+        <div class="do-setup">This challenge is about quality explosive movement. You'll complete 10 squat jumps. The goal is not height — it's landing well and jumping again immediately.</div>
+        <div class="do-steps">
+          <div class="do-step"><div class="step-num">1</div><span>Stand with feet shoulder-width apart. Lower into a squat position.</span></div>
+          <div class="do-step"><div class="step-num">2</div><span>Explode up as high as you can, swinging your arms to help.</span></div>
+          <div class="do-step"><div class="step-num">3</div><span>Land softly with bent knees — feet should be quiet on impact.</span></div>
+          <div class="do-step"><div class="step-num">4</div><span>Immediately drop into your squat again and repeat for 10 reps.</span></div>
+          <div class="do-step"><div class="step-num">5</div><span>Your coach will watch your landing. Once you nail it, add height.</span></div>
+        </div>
+        <div class="do-changeit">
+          <div class="do-changeit-label">Change it up</div>
+          <div class="do-changeit-text">Can you do 10 clean squat jumps with your hands on your hips (no arm swing)? Much harder — and great for leg power.</div>
+        </div>
+      </div>
+
+      <button class="do-complete-btn" id="do-complete-btn" onclick="markChallengeComplete()">
+        Mark challenge complete ⚡
+      </button>
+
+      <div style="margin-top:16px;padding:14px;background:var(--orange-dim);border:1px solid var(--orange-border);border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px;" id="badge-hint">
+        <span style="font-size:20px;" class="badge-hint-icon">⚡</span>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--orange);margin-bottom:2px;" class="badge-hint-title">Badge unlock available</div>
+          <div style="font-size:12px;color:var(--text3);" class="badge-hint-sub">Complete this week's challenge to earn a badge</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REFLECT TAB -->
+    <div class="tab-pane" id="tab-reflect">
+      <div id="reflect-form-area">
+        <div class="reflect-prompt-box">
+          <div class="reflect-tag">Weekly reflection</div>
+          <div class="reflect-question">"Where in your body did you feel most powerful today — and what surprised you about that?"</div>
+          <div class="reflect-hint">Think about your legs, your core, even your arms. Power comes from the whole body working together.</div>
+        </div>
+
+        <textarea class="reflect-textarea" id="reflect-input" placeholder="Write your thoughts here... There are no wrong answers." oninput="updateCounter()"></textarea>
+        <div class="reflect-counter" id="reflect-counter">0 words — <em>aim for 30+</em></div>
+
+        <button class="reflect-submit-btn" id="reflect-submit" onclick="submitReflection()" disabled>
+          Submit reflection — earn 15 XP
+        </button>
+      </div>
+
+      <div class="reflect-done-state" id="reflect-done">
+        <span class="done-icon">✅</span>
+        <div class="done-title">Reflection submitted!</div>
+        <div class="done-sub">Your coach Al will read this and may leave you a note. Keep going — you're building the habits of a great athlete.</div>
+        <div class="xp-earned-pop">+15 XP earned</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BADGES PAGE ════════════════════════════════════════════════════ -->
+  <div id="page-badges" class="page">
+    <div class="top-bar">
+      <span class="top-bar-title">My Badges</span>
+      <div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--orange);letter-spacing:1px;">4 / 20 earned</div>
+    </div>
+
+    <div style="padding:20px;">
+      <div id="badges-grid-container"></div>
+      <div class="section-label" style="margin-top:8px;">Journey Tiers</div>
+      <div class="tier-list" id="tiers-container"></div>
+    </div>
+  </div>
+
+  <!-- ══ PROFILE PAGE ═══════════════════════════════════════════════════ -->
+  <div id="page-profile" class="page">
+    <div class="top-bar">
+      <span class="top-bar-title">My Profile</span>
+    </div>
+
+    <div class="profile-hero">
+      <div class="profile-avatar" id="profile-avatar">JT</div>
+      <div class="profile-info">
+        <div class="profile-name" id="profile-name">Jordan Taylor</div>
+        <div class="profile-program">Emerging Athlete · Grade 5</div>
+        <div class="tier-badge" style="display:inline-flex;">
+          <div class="tier-dot" style="width:22px;height:22px;font-size:10px;" id="profile-tier-icon">⭐</div>
+          <span class="tier-text" style="font-size:12px;" id="profile-tier-text">Contender</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-stats-row">
+      <div class="profile-stat">
+        <div class="profile-stat-val" style="color:var(--orange)" id="profile-xp">580</div>
+        <div class="profile-stat-lbl">Total XP</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val" style="color:var(--cyan)" id="profile-sessions">14</div>
+        <div class="profile-stat-lbl">Sessions</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val" id="profile-badges">4</div>
+        <div class="profile-stat-lbl">Badges</div>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">My details</div>
+      <div class="profile-row" onclick="toast('Contact your coach to update your details')">
+        <span class="profile-row-label">Program</span>
+        <span class="profile-row-value">Emerging Athlete <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+      <div class="profile-row" onclick="toast('Contact your coach to update your details')">
+        <span class="profile-row-label">Coach</span>
+        <span class="profile-row-value">Al Tait <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+      <div class="profile-row" onclick="toast('Contact your coach to update your details')">
+        <span class="profile-row-label">Year</span>
+        <span class="profile-row-value">Year 1 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">Progress summary</div>
+      <div class="profile-row">
+        <span class="profile-row-label">Current module</span>
+        <span class="profile-row-value" style="color:var(--orange)" id="profile-module-val">Module 1 — Week 4</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-row-label">Reflections submitted</span>
+        <span class="profile-row-value" style="color:var(--cyan)" id="profile-reflects-val">11 of 32</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-row-label">Streak</span>
+        <span class="profile-row-value" style="color:var(--orange)" id="profile-streak-val">🔥 5 weeks</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-row-label">Next tier</span>
+        <span class="profile-row-value" id="profile-next-tier-val">Athlete — 290 XP away</span>
+      </div>
+    </div>
+
+    <div style="padding:16px 20px 20px;">
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <!-- ══ BOTTOM NAV ════════════════════════════════════════════════════ -->
+  <nav class="bottom-nav" id="bottom-nav" style="display:none;">
+    <button class="nav-btn active" data-page="home" onclick="navTo('home')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" data-page="thisweek" onclick="navTo('thisweek')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <span class="nav-label">This Week</span>
+    </button>
+    <button class="nav-btn" data-page="badges" onclick="navTo('badges')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      </div>
+      <span class="nav-label">Badges</span>
+    </button>
+    <button class="nav-btn" data-page="profile" onclick="navTo('profile')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span class="nav-label">Profile</span>
+    </button>
+  </nav>
+
+  <!-- XP Celebration Overlay -->
+  <div class="xp-overlay" id="xp-overlay" onclick="closeOverlay()">
+    <div class="xp-popup" onclick="event.stopPropagation()">
+      <span class="xp-pop-icon" id="overlay-icon">⚡</span>
+      <div class="xp-pop-title" id="overlay-title">+25 XP!</div>
+      <div class="xp-pop-sub" id="overlay-sub">Power Up badge unlocked! You completed 10 clean squat jumps.</div>
+      <button class="xp-pop-close" onclick="closeOverlay()">Keep going 🔥</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast-el"></div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// MY ATHLETIC JOURNEY — FULL CONTENT LIBRARY
+// Power2ADAPT · Emerging Athlete Program · Grade 3-6
+// 4 Modules × 8 Weeks = 32 weeks of content
+//
+// HOW TO EDIT:
+// Each week has three sections: learn, do, reflect
+// learn  → concept, intro, points[], closing
+// do     → title, setup, steps[], changeIt, badge (optional), badgeKey, badgeXP
+// reflect → prompt, hint
+//
+// XP per week: LEARN = 10, DO = 10, REFLECT = 15 (+ badge bonus if applicable)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const MAJ_CONTENT = {
+
+  modules: [
+    {
+      num: 1,
+      title: "Ignite Your Engine",
+      pillar: "Athletic Ability",
+      icon: "🔥",
+      color: "#F26522",
+      totalWeeks: 8,
+      moduleBadge: { key: "mod1_master", name: "Module 1 Master", icon: "🏆", xp: 50 },
+      weeks: [
+        {
+          num: 1,
+          theme: "Know Your Engine",
+          learn: {
+            concept: "What is Athletic Ability — and Why Does it Matter?",
+            intro: "Every athlete has an engine. Your engine is made up of the physical qualities that help you run, jump, throw, change direction, and keep going when things get hard. This module is all about understanding your engine — and starting to build it.",
+            points: [
+              "Athletic ability is not something you are born with or without. It is something you build through training and effort.",
+              "The key parts of your athletic engine are Speed, Power, Coordination, Endurance, and Movement Quality.",
+              "Every session you complete this term adds fuel to your engine.",
+              "This week you are going to find out where your engine is at right now — your starting point."
+            ],
+            closing: "Remember: Every elite athlete started exactly where you are now. The journey starts today."
+          },
+          do: {
+            title: "Baseline Movement Assessment",
+            setup: "Your coach will run you through a short movement assessment today. This is not a test — it is a starting point. There are no scores. Just honest effort.",
+            steps: [
+              "Complete the warm-up circuit your coach sets.",
+              "Work through each movement your coach observes — run, jump, throw, and change of direction.",
+              "After the session, ask your coach: What is one thing I do well, and one thing I can improve? Write both down.",
+              "Keep your notes — you will compare these to Week 8."
+            ],
+            changeIt: "If something feels too easy, ask your coach to add a challenge. If something feels hard, slow down and focus on doing it well.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What does being an athlete mean to me?",
+            hint: "Think about what kind of athlete you want to become — not just what you can do now, but who you want to be."
+          }
+        },
+        {
+          num: 2,
+          theme: "Move Well",
+          learn: {
+            concept: "Why Movement Quality Comes Before Everything Else",
+            intro: "Before you can go fast, you need to move well. Movement quality means your body moves the right way — with control, balance, and good technique. Athletes who skip this step often get injured or hit a ceiling they cannot break through.",
+            points: [
+              "Good movement is the foundation that every other athletic quality is built on.",
+              "If your technique is wrong, going faster just makes the problem worse — not better.",
+              "Skipping, jumping, and running all require your body to work in a coordinated pattern.",
+              "This week you are going to focus on one movement pattern and do it as well as you possibly can — not as fast as you can."
+            ],
+            closing: "Coach tip: Slow is smooth. Smooth is fast. Quality first, speed second."
+          },
+          do: {
+            title: "Movement Pattern Focus Challenge",
+            setup: "Your coach will assign you one movement to focus on this session. It could be your skipping technique, your landing from a jump, or your running arm drive. Your job is to do it as well as you can — all session.",
+            steps: [
+              "Before the session starts, ask your coach what movement you will be focused on.",
+              "During warm-up, pay close attention to that movement every time you do it.",
+              "Halfway through the session, check in with your coach: Am I doing it better?",
+              "At the end of the session, do 5 repetitions of that movement at your absolute best quality."
+            ],
+            changeIt: "Challenge yourself to coach a teammate on the same movement — teaching something is the best way to understand it.",
+            badge: null
+          },
+          reflect: {
+            prompt: "Which movement felt hardest today — and why do you think that is?",
+            hint: "Was it a coordination thing? Did you get tired and your technique broke down? What does that tell you?"
+          }
+        },
+        {
+          num: 3,
+          theme: "Speed",
+          learn: {
+            concept: "What Creates Speed — Mechanics, Arm Drive, and Effort",
+            intro: "Speed is one of the most exciting athletic qualities — and it is also one of the most trainable. Most young athletes think speed is just about trying harder. It is actually about moving smarter.",
+            points: [
+              "Speed comes from three things: powerful push-off from the ground, fast arm drive, and a forward lean from the ankles.",
+              "Your arms control your legs. When your arms pump faster and harder, your legs follow.",
+              "Looking down or tensing your shoulders slows you down. Stay tall, stay relaxed, and drive those arms.",
+              "You can get faster at any age with the right training — speed is a skill, not a gift."
+            ],
+            closing: "This week think about one cue: Tall, relaxed, and drive. Say it to yourself when you run."
+          },
+          do: {
+            title: "Sprint Relay Challenge",
+            setup: "Your team will run a relay this session. Your job is not just to win — it is to run with the best technique you can while also competing hard.",
+            steps: [
+              "Before the relay, spend 2 minutes practising your arm drive — big, fast, straight.",
+              "During the relay, focus on staying tall and driving your arms, especially in the first 5 metres.",
+              "After your first run, your coach will give you one technique tip. Apply it in your next run.",
+              "At the end, compare your team's times from the first relay to the last. Did you improve?"
+            ],
+            changeIt: "Time how quick your team can complete the relay. Try to beat that time on the next attempt by improving technique, not just trying harder.",
+            badge: null
+          },
+          reflect: {
+            prompt: "When did you feel fastest this week — and what were you doing differently in that moment?",
+            hint: "Was it your arm drive? Were you more relaxed? Did a specific cue from your coach help? Be specific."
+          }
+        },
+        {
+          num: 4,
+          theme: "Power",
+          learn: {
+            concept: "The Difference Between Strength and Explosive Power",
+            intro: "Strength and power are related — but they are not the same thing. Understanding the difference will change how you train.",
+            points: [
+              "Strength is how much force your muscles can produce. Power is how fast you can produce that force.",
+              "An athlete who can jump high and explode off the mark has power — even if they do not look strong in the traditional sense.",
+              "Power training for young athletes focuses on explosive movements: jumping, bounding, and quick changes of direction.",
+              "Every time you jump and land well, you are training your body to produce and absorb power safely.",
+              "Soft, controlled landings protect your joints. Always land with bent knees and quiet feet."
+            ],
+            closing: "Power is the combination of strength and speed. Build both, and your athletic ability jumps to a new level."
+          },
+          do: {
+            title: "Power Up — Squat Jump Challenge",
+            setup: "This challenge is about quality explosive movement. You will complete 10 squat jumps. The goal is not height — it is landing well and jumping again immediately.",
+            steps: [
+              "Stand with feet shoulder-width apart. Lower into a squat position.",
+              "Explode up as high as you can, swinging your arms to help.",
+              "Land softly with bent knees — feet should be quiet on impact.",
+              "Immediately drop into your squat again and repeat for 10 reps.",
+              "Your coach will watch your landing technique. Once you nail it, try to add height."
+            ],
+            changeIt: "Can you do 10 clean squat jumps with your hands on your hips (no arm swing)? Much harder — and great for leg power.",
+            badge: { key: "power_up", name: "Power Up", icon: "⚡", xp: 25 }
+          },
+          reflect: {
+            prompt: "Where in your body did you feel most powerful today — and what surprised you about that?",
+            hint: "Think about your legs, your core, even your arms. Power comes from the whole body working together."
+          }
+        },
+        {
+          num: 5,
+          theme: "Accuracy & Coordination",
+          learn: {
+            concept: "Why Eye-Hand Coordination is a Core Athletic Skill",
+            intro: "Coordination is the ability to make different parts of your body work together smoothly and accurately. Eye-hand coordination is one of the most important athletic skills — and it shows up in almost every sport.",
+            points: [
+              "Eye-hand coordination means your eyes and hands are communicating fast and accurately.",
+              "It is a trainable skill — the more you practise throwing, catching, and tracking objects, the better your brain-body connection becomes.",
+              "Accuracy under pressure is different from accuracy when relaxed. Great athletes can be accurate when it counts.",
+              "Throwing technique affects accuracy: grip, stance, follow-through, and target focus all matter.",
+              "This week you will practise the overarm throw for accuracy."
+            ],
+            closing: "Every time you throw and miss, your brain is learning. Do not get frustrated — get focused."
+          },
+          do: {
+            title: "Tennis Ball Target — 10 Point Challenge",
+            setup: "Set up the target zones as your coach instructs. You have 3 tennis balls per attempt. Your goal is to score 10 points total across multiple attempts.",
+            steps: [
+              "Start at the throwing line. Get your stance right — non-throwing foot forward, side-on to the target.",
+              "Focus on your target before you throw. Pick the zone you are aiming for.",
+              "Follow through toward the target with your throwing hand after you release.",
+              "Track your score. Adjust your aim between throws — do not just repeat the same throw.",
+              "Keep going until you reach 10 points. Count how many throws it takes you."
+            ],
+            changeIt: "Move one step further back each time you hit your target zone. How accurate can you be from distance?",
+            badge: { key: "sharp_shooter", name: "Sharp Shooter", icon: "🎯", xp: 25 }
+          },
+          reflect: {
+            prompt: "What did you do differently to improve your throw — and did it actually work?",
+            hint: "Think about your footwork, your aim, your follow-through, or your focus. What adjustment made the biggest difference?"
+          }
+        },
+        {
+          num: 6,
+          theme: "Endurance",
+          learn: {
+            concept: "Building Your Aerobic Base — Effort and Energy Management",
+            intro: "Endurance is your ability to keep going. It is what separates athletes who are brilliant for one minute from athletes who perform consistently across an entire session, game, or race.",
+            points: [
+              "Your aerobic base is built by training at a sustained, moderate effort level — not by going flat out all the time.",
+              "Energy management is a skill. Athletes who learn to pace themselves can perform better for longer.",
+              "You have different energy systems for short bursts (sprinting) and longer efforts (sustained activity). Both are trainable.",
+              "Breathing is a key signal — if you cannot speak in short sentences, you are working too hard to build aerobic base.",
+              "Consistency builds endurance. One hard session does not do it — it is what you do every week that counts."
+            ],
+            closing: "This week your focus is on staying in the game — managing your energy so you perform well from start to finish."
+          },
+          do: {
+            title: "Full Session Effort Tracker",
+            setup: "For every activity in today's session, you will rate your effort level out of 10 (1 = barely trying, 10 = maximum effort). Your goal is to finish at the same effort level you started.",
+            steps: [
+              "Before the session, decide your target effort level for today — for example, 7 out of 10.",
+              "After each activity, check in with yourself: What was my effort level just then?",
+              "Try to stay consistent — do not go 10 out of 10 in warm-up and have nothing left for the main activity.",
+              "At the end of the session, write down your effort level for each activity from memory.",
+              "Show your effort tracker to your coach at the end."
+            ],
+            changeIt: "Can you deliberately lower your effort in one activity to save energy for the next — and notice whether it works?",
+            badge: null
+          },
+          reflect: {
+            prompt: "How did you manage your energy across the session today — and what would you do differently next time?",
+            hint: "Were you more tired at the end than usual? Did pacing yourself help? Was it hard to hold back when things got exciting?"
+          }
+        },
+        {
+          num: 7,
+          theme: "Putting it Together",
+          learn: {
+            concept: "How Speed, Power, Coordination, and Endurance All Connect",
+            intro: "You have spent six weeks building the individual parts of your athletic engine. This week, it all comes together. Great athletes do not just have one quality — they have all of them working as a system.",
+            points: [
+              "Speed without endurance means you can only perform for a few seconds.",
+              "Power without coordination means your explosive efforts go in the wrong direction.",
+              "Coordination without endurance means your technique breaks down when you get tired.",
+              "When all four qualities work together, you become a complete athlete capable of performing at a high level for the whole session.",
+              "This week's challenge will ask you to use everything you have trained this term."
+            ],
+            closing: "Notice this week how much more capable you are than you were in Week 1. That is your engine talking."
+          },
+          do: {
+            title: "Full Athletic Circuit — Best Effort",
+            setup: "Your coach will set up a full circuit that includes speed, power, coordination, and endurance elements. Your job is simple: bring your best effort to every station.",
+            steps: [
+              "Before you start, set one personal goal for the circuit — something specific you want to do well.",
+              "At each station, apply the technique cues you have learned over the past six weeks.",
+              "When you feel tired, use your breathing and effort management to keep your technique sharp.",
+              "After the circuit, your coach will give you feedback on what they observed.",
+              "Write down your personal goal from the start — did you achieve it?"
+            ],
+            changeIt: "Challenge a teammate to match your effort level across the full circuit. Lift each other up.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What has improved most since Week 1 — and how do you know?",
+            hint: "Think about a specific moment this session where you noticed you were better than when you started. What was different?"
+          }
+        },
+        {
+          num: 8,
+          theme: "Capstone — My Athletic Highlight Reel",
+          learn: {
+            concept: "Looking Back to See How Far You Have Come",
+            intro: "This is Week 8 — your Module 1 capstone. Before your coach assessment today, take a moment to reflect on your full journey through this module.",
+            points: [
+              "In Week 1, you found your starting point. This week, you get to see how far your engine has come.",
+              "Athletic development is not always a straight line. Some weeks were harder than others. That is normal.",
+              "Every session you showed up for, every reflection you wrote, every challenge you attempted — it all counts.",
+              "Today is not a test. It is a celebration of effort and a measurement of progress.",
+              "After today, Module 1 is complete. Module 2 — Skill — begins next term."
+            ],
+            closing: "You have ignited your engine. Now it is time to sharpen the tools."
+          },
+          do: {
+            title: "Coach Assessment + Personal Best Attempt",
+            setup: "Your coach will assess your movement quality and athletic ability today — comparing what they see to your Week 1 baseline. You will also get to attempt a personal best in your strongest area.",
+            steps: [
+              "Warm up well — this is your best performance session.",
+              "Complete the coach-led movement assessment. Focus on quality in every movement.",
+              "Choose your personal best challenge: Sprint relay, Squat jump, or Tennis Ball Target — whichever is your strongest.",
+              "Give it your absolute best attempt. This is your highlight reel moment.",
+              "Sit with your coach after the session for 5 minutes and ask: What is the biggest improvement you have seen in me this term?"
+            ],
+            changeIt: null,
+            badge: { key: "mod1_master", name: "Module 1 Master", icon: "🏆", xp: 50, coachRequired: true }
+          },
+          reflect: {
+            prompt: "What does your athletic engine look like now — compared to Week 1?",
+            hint: "Be specific. What can you do now that you could not do before? What feels different in your body? What do you understand about being an athlete that you did not understand before?"
+          }
+        }
+      ]
+    },
+
+    {
+      num: 2,
+      title: "Sharpen the Tools",
+      pillar: "Skill",
+      icon: "🎯",
+      color: "#F26522",
+      totalWeeks: 8,
+      moduleBadge: { key: "mod2_master", name: "Module 2 Master", icon: "🏆", xp: 50 },
+      weeks: [
+        {
+          num: 1,
+          theme: "What is Skill?",
+          learn: {
+            concept: "Skill is Repeating a Movement Correctly Under Pressure",
+            intro: "This module is about developing your skills as an athlete. Skill is not about being talented — it is about being deliberate. The most skilled athletes got there through focused repetition, not accident.",
+            points: [
+              "A skill is any movement you can perform reliably and accurately, even when tired or under pressure.",
+              "Skills are built through repetition — but not just any repetition. Deliberate, focused practice where you pay attention to what you are doing.",
+              "Every athlete has a skill they are strongest at and skills they need to develop. Both matter.",
+              "This module you will choose one skill to focus on and build it across 8 weeks."
+            ],
+            closing: "The goal this week is to choose your skill, set your target, and start building."
+          },
+          do: {
+            title: "Choose Your Skill — Set Your Goal",
+            setup: "This week you will choose one skill to focus on for the whole module. Work with your coach to pick something that challenges you but is achievable in 8 weeks.",
+            steps: [
+              "Talk with your coach about your skill options — throwing, catching, footwork, jumping, or a sport-specific skill.",
+              "Choose your skill and write it down: My skill focus for Module 2 is...",
+              "With your coach, agree on what good looks like — what will success at Week 8 look like?",
+              "Complete 15 quality repetitions of your chosen skill today.",
+              "Rate your current skill level out of 10. You will rate it again at Week 8."
+            ],
+            changeIt: "Share your skill goal with a teammate. Ask them what skill they are working on. You can support each other.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What skill do I most want to improve — and why does it matter to me?",
+            hint: "Think about how this skill connects to the sports or activities you love. Why is getting better at it important to you personally?"
+          }
+        },
+        {
+          num: 2,
+          theme: "Repetition",
+          learn: {
+            concept: "Why Repetition Builds Skill — The Brain-Body Connection",
+            intro: "When you repeat a movement over and over, your brain builds a physical pathway — like a trail through a forest. The more you walk the trail, the clearer it becomes. That is exactly how skill works.",
+            points: [
+              "The brain learns movement through repetition. Every rep you do strengthens the signal between your brain and your muscles.",
+              "Early reps are slow and inconsistent. Later reps are smooth and automatic. That progression is normal.",
+              "Quality matters more than quantity. 20 focused reps beat 100 lazy ones every time.",
+              "Mistakes are part of the process. Your brain learns from errors — as long as you pay attention to them."
+            ],
+            closing: "This week your job is simple: 20 quality reps of your chosen skill. Pay attention to every single one."
+          },
+          do: {
+            title: "20 Quality Repetitions Challenge",
+            setup: "This is not a speed challenge. It is a quality challenge. Your job is to complete 20 repetitions of your chosen skill with full focus on technique.",
+            steps: [
+              "Before you start, remind yourself of what good technique looks like for your skill.",
+              "Complete 20 repetitions, one at a time. Do not rush.",
+              "After every 5 reps, stop and check in: Am I still doing it correctly?",
+              "If your technique breaks down, slow down — do not keep repeating the error.",
+              "After 20 reps, rate the quality of your performance out of 10."
+            ],
+            changeIt: "Ask your coach to film your last 5 reps on a phone. Watch it back — what do you notice?",
+            badge: { key: "rep_champion", name: "Rep Champion", icon: "🔁", xp: 25 }
+          },
+          reflect: {
+            prompt: "What did you notice about your movement after 20 focused repetitions?",
+            hint: "Did it start to feel more automatic? Did you find something that was not quite right? What will you focus on fixing next week?"
+          }
+        },
+        {
+          num: 3,
+          theme: "Footwork",
+          learn: {
+            concept: "Footwork is the Foundation of All Athletic Skill",
+            intro: "Every skill in sport starts with your feet. Where your feet are, how fast they move, and how they connect with the ground determines almost everything else your body can do.",
+            points: [
+              "Good footwork puts you in the right position to execute your skill cleanly.",
+              "Poor footwork forces your upper body to compensate — which creates errors and injury risk.",
+              "Footwork can be trained independently through ladder drills, cone patterns, and directional movement.",
+              "Fast feet come from light contact with the ground — think quick, not heavy.",
+              "The best athletes in every sport have exceptional footwork. It is never an accident."
+            ],
+            closing: "This week focus on your feet first. Get your base right and your skill will follow."
+          },
+          do: {
+            title: "Footwork Ladder or Cone Drill Challenge",
+            setup: "Your coach will set up a footwork challenge — either a ladder drill or a cone pattern. Your goal is to complete it cleanly first, then build speed.",
+            steps: [
+              "Walk through the pattern slowly before adding any speed.",
+              "Run through the pattern 3 times focusing on foot placement, not speed.",
+              "Your coach records your time on the 4th run.",
+              "Complete 3 more runs trying to improve your time while maintaining clean footwork.",
+              "Note your fastest clean time — you will try to beat this in a future session."
+            ],
+            changeIt: "Create your own footwork pattern using 4 cones. Teach it to a teammate and time each other.",
+            badge: null
+          },
+          reflect: {
+            prompt: "How does your footwork affect everything else you do as an athlete?",
+            hint: "Think about a moment today when your feet were in a bad position. What happened to the rest of your movement as a result?"
+          }
+        },
+        {
+          num: 4,
+          theme: "Throw and Catch",
+          learn: {
+            concept: "How Accuracy and Timing Work Together",
+            intro: "Throwing and catching are fundamental athletic skills that develop your hand-eye coordination, timing, and communication with teammates. Even if your sport does not involve throwing, the coordination it builds transfers to everything.",
+            points: [
+              "Accuracy in throwing comes from a consistent release point and follow-through every time.",
+              "Catching starts with your eyes — track the object all the way into your hands.",
+              "Timing means adjusting your movement to meet the ball at the right moment.",
+              "Communication between passer and receiver makes both better — call your throws and signal your readiness.",
+              "Pressure reveals your true skill level. Practise under mild pressure to build real competence."
+            ],
+            closing: "Today focus on communication — call every throw and confirm every catch."
+          },
+          do: {
+            title: "20 Consecutive Catches — Partner Challenge",
+            setup: "Work with a partner to complete 20 consecutive catches without a drop. When you drop, you restart from zero. This builds focus as much as skill.",
+            steps: [
+              "Start close together — about 3 metres apart.",
+              "Count every clean catch aloud together.",
+              "When you drop, reset immediately without frustration. Say: Reset — let us go again.",
+              "When you reach 20, take one step back each and try for 20 again from the new distance.",
+              "Record your longest streak and your furthest distance for 20 clean catches."
+            ],
+            changeIt: "Add a challenge: throw with your non-dominant hand for 5 reps in the sequence.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What did your partner do that helped you catch better — and what did you do to help them?",
+            hint: "Think about the quality of the throws, the communication, the encouragement. How did working together change your performance?"
+          }
+        },
+        {
+          num: 5,
+          theme: "Agility",
+          learn: {
+            concept: "Agility — Changing Direction Without Losing Speed",
+            intro: "Agility is one of the most valued qualities in sport. It is the ability to change direction quickly and under control — without losing your speed or your balance.",
+            points: [
+              "True agility is reactive — it is responding to something happening around you, not just running a set pattern.",
+              "Change of direction speed depends on a good deceleration — you have to slow down to change direction fast.",
+              "Low body position and bent knees give you a stable base to push off from.",
+              "Your eyes lead your body — look where you are going before you start moving there.",
+              "Agility is trainable. Cone drills and reaction games are the best way to develop it."
+            ],
+            closing: "This week focus on sharp, clean direction changes. One good rep at full speed beats ten sloppy ones."
+          },
+          do: {
+            title: "Agility Course — Time Trial",
+            setup: "Your coach will set up an agility course with cones. Your goal is to complete it as fast as possible while staying in control — no knocking over cones.",
+            steps: [
+              "Walk through the course once to learn the pattern.",
+              "Complete the course at 70% speed — focus on clean direction changes.",
+              "Your coach records your time on your first full-speed attempt.",
+              "Complete 3 more attempts. Try to improve your time without losing control.",
+              "Record your best time. You will test this again in Week 7."
+            ],
+            changeIt: "Add a reaction element: your coach calls Left or Right at a decision cone and you react.",
+            badge: { key: "agility_ace", name: "Agility Ace", icon: "💨", xp: 25 }
+          },
+          reflect: {
+            prompt: "What slowed you down on the agility course — and what is your plan to fix it?",
+            hint: "Was it your body position? Your foot placement on the turns? Your acceleration out of the change? Be honest and specific."
+          }
+        },
+        {
+          num: 6,
+          theme: "Skill Under Pressure",
+          learn: {
+            concept: "Why Skills Break Down When You Are Tired or Competing",
+            intro: "You have been building your skill in a relatively controlled environment. This week we add something new: pressure. Performing your skill when you are tired or when it matters is a completely different challenge.",
+            points: [
+              "Under pressure, your brain reverts to older, less refined movement patterns — this is why skills break down.",
+              "Physical fatigue makes technique harder to maintain. Your body takes shortcuts when it is tired.",
+              "Mental pressure — like competing, being watched, or high stakes — creates tension that disrupts smooth movement.",
+              "The solution is to practise your skill in pressured conditions so your brain learns to execute it anyway.",
+              "Focusing on the process rather than the outcome helps your skill hold up under pressure."
+            ],
+            closing: "This week you will do your skill when your body is already working hard. That is where real skill lives."
+          },
+          do: {
+            title: "Skill Under Fatigue Challenge",
+            setup: "Complete your chosen skill challenge from Week 2 — but this time, you will do it after a full warm-up circuit that leaves you genuinely tired.",
+            steps: [
+              "Complete the full warm-up circuit at strong effort — this is deliberate.",
+              "Immediately after the circuit, attempt your 20 quality skill repetitions.",
+              "Notice how your technique feels different when your body is tired.",
+              "Apply the same focus and cues you use when fresh — this is the challenge.",
+              "Rate your quality out of 10. Compare it to your Week 2 rating."
+            ],
+            changeIt: "Ask your coach to add a competitive element — score points or beat a teammate while tired.",
+            badge: null
+          },
+          reflect: {
+            prompt: "Was your skill better or worse when you were tired — and what did you do to keep going?",
+            hint: "What strategy helped you maintain your technique when things got hard? What fell apart first? What held up best?"
+          }
+        },
+        {
+          num: 7,
+          theme: "Game Situation",
+          learn: {
+            concept: "Applying Your Skill in a Team Game Context",
+            intro: "Skills trained in isolation need to be tested in a game situation. A game introduces unpredictability, teammates, opponents, and decisions — all of which make executing your skill harder and more meaningful.",
+            points: [
+              "Game situations require you to read what is happening around you and then execute your skill.",
+              "Decision-making speed is part of skill in a game — the right skill at the wrong time is still an error.",
+              "Communication with teammates makes game skills more effective.",
+              "Mistakes in games are normal and expected. What matters is your response — reset and go again.",
+              "Today you will look for specific moments to use your skill within the game activity."
+            ],
+            closing: "Do not just play the game. Play the game with your skill focus in mind."
+          },
+          do: {
+            title: "Game Activity — Skill in Action",
+            setup: "Your coach will run a game activity — relay, team challenge, or sport-based game. Your job is to consciously apply your Module 2 skill focus during the game.",
+            steps: [
+              "Before the game, remind yourself of your skill focus for this module.",
+              "During the game, look for moments to use your skill — do not force it, but do not avoid it either.",
+              "After each round, check in with yourself: Did I use my skill? Was it effective?",
+              "After the game, ask a teammate: Did you notice me using my skill? What did it look like?",
+              "Share one moment with your coach where you used your skill well in the game."
+            ],
+            changeIt: "Set a target: use your skill successfully at least 5 times in the game. Count each one.",
+            badge: null
+          },
+          reflect: {
+            prompt: "When in the game did you use your skill well — and what made that moment possible?",
+            hint: "Think about your positioning, your decision-making, your timing. What set you up to execute your skill successfully in a live situation?"
+          }
+        },
+        {
+          num: 8,
+          theme: "Skill Showcase — Capstone",
+          learn: {
+            concept: "Showing What You Have Learned",
+            intro: "This is your Module 2 capstone week. Eight weeks ago you chose a skill, rated yourself, and started building. Today you get to demonstrate what you have developed.",
+            points: [
+              "Skill development is a process, not an event. You have been building this for 8 weeks.",
+              "Your Week 8 performance will look different from Week 1 — not just technically, but in your confidence and understanding.",
+              "A showcase is not about perfection. It is about demonstrating honest progress and the habits that created it.",
+              "After today, Module 2 is complete. Module 3 — Focus — begins next term.",
+              "The skills you have built this module are yours forever. They do not go away."
+            ],
+            closing: "Show your coach and yourself what 8 weeks of deliberate practice looks like."
+          },
+          do: {
+            title: "Coach-Assessed Skill Demonstration",
+            setup: "Your coach will observe and assess your chosen skill today — comparing what they see to your Week 1 baseline. Give your best performance.",
+            steps: [
+              "Warm up specifically for your skill — prepare your body and your focus.",
+              "Complete your chosen skill demonstration: 20 quality reps with your coach observing.",
+              "Rate your skill level out of 10 — compare to your Week 1 rating.",
+              "Ask your coach: What is the biggest technical improvement you have seen over 8 weeks?",
+              "Set one skill goal to continue working on into Module 3 and beyond."
+            ],
+            changeIt: null,
+            badge: { key: "mod2_master", name: "Module 2 Master", icon: "🏆", xp: 50, coachRequired: true }
+          },
+          reflect: {
+            prompt: "How has this skill changed for me over 8 weeks — and what made the difference?",
+            hint: "Think about the specific habits, cues, and moments that created your improvement. What will you keep doing? What did you learn about how you develop as an athlete?"
+          }
+        }
+      ]
+    },
+
+    {
+      num: 3,
+      title: "Train the Mind",
+      pillar: "Focus",
+      icon: "🧠",
+      color: "#00B4D8",
+      totalWeeks: 8,
+      moduleBadge: { key: "mod3_master", name: "Module 3 Master", icon: "🏆", xp: 50 },
+      weeks: [
+        {
+          num: 1,
+          theme: "What is Focus?",
+          learn: {
+            concept: "Focus is a Skill You Can Train — Not Something You Either Have or Do Not",
+            intro: "Module 3 is about the mental side of athletic performance. Focus, like physical skill, is something you can deliberately build. The athletes who train their minds alongside their bodies are the ones who perform when it counts.",
+            points: [
+              "Focus means directing your attention to what matters most, right now.",
+              "Most athletes have never been taught how to focus — they just hope it happens.",
+              "Distractions are everywhere: noise, teammates, mistakes, what is coming next. Focus is choosing what to pay attention to despite those distractions.",
+              "The good news: attention is trainable. Eight weeks of mental practice will change how you perform."
+            ],
+            closing: "This week start noticing when your focus is sharp and when it drifts. Awareness is the first step."
+          },
+          do: {
+            title: "Mindful Warm-Up Challenge",
+            setup: "Your coach will lead a 2-minute quiet focus routine before the session begins. This is new — stay with it even if it feels unusual.",
+            steps: [
+              "Find a space and stand still. Close your eyes if you are comfortable.",
+              "Your coach will guide you through 2 minutes of focused breathing and body awareness.",
+              "During the session, notice 3 moments when your attention fully locks in.",
+              "Notice 3 moments when your attention drifts. What caused it to drift?",
+              "After the session, write down what you noticed in your reflect section."
+            ],
+            changeIt: "Try the 2-minute focus routine before something hard at school or at home this week. Notice if it helps.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What makes it hard for me to focus during training — and when is my focus at its best?",
+            hint: "Think about what was happening around you when your focus was sharp. What conditions help you lock in? What pulls you away?"
+          }
+        },
+        {
+          num: 2,
+          theme: "Breathing and Calm",
+          learn: {
+            concept: "How Breathing Controls Your Body and Your Mind",
+            intro: "Breathing is the only automatic body function you can also control consciously. That makes it one of the most powerful performance tools you have — and it is always available.",
+            points: [
+              "When you are stressed or nervous, your breathing becomes shallow and fast. This sends a signal to your brain that there is danger.",
+              "Slow, deep breathing reverses this. It tells your brain: we are safe, we are in control.",
+              "Athletes use breathing to calm nerves before competition, reset after a mistake, and stay focused under pressure.",
+              "The 4-7-8 technique: breathe in for 4 counts, hold for 7, breathe out slowly for 8. Try it now.",
+              "Breathing cannot remove pressure — but it can change how your body and mind respond to it."
+            ],
+            closing: "This week use your breathing as a reset tool. Every time something goes wrong, breathe before you respond."
+          },
+          do: {
+            title: "4-7-8 Breathing Before Your Hardest Activity",
+            setup: "Before the hardest activity in your session today, you will use the 4-7-8 breathing technique. Your coach will cue you when it is time.",
+            steps: [
+              "When your coach signals, find a standing position and relax your shoulders.",
+              "Breathe in through your nose for 4 slow counts.",
+              "Hold your breath for 7 counts.",
+              "Breathe out slowly through your mouth for 8 counts.",
+              "Repeat twice, then go straight into the activity. Notice if it changes how you feel."
+            ],
+            changeIt: "Use the breathing technique after a mistake or frustration during the session. Reset, breathe, continue.",
+            badge: null
+          },
+          reflect: {
+            prompt: "Did breathing help you feel more in control — and how did it change your performance?",
+            hint: "Compare how you felt going into the hardest activity on a normal day versus after the breathing exercise. Was there a difference? What was it?"
+          }
+        },
+        {
+          num: 3,
+          theme: "Self-Talk",
+          learn: {
+            concept: "The Words in Your Head Affect Your Performance",
+            intro: "Every athlete has a constant conversation happening inside their head during training and competition. What you say to yourself — your self-talk — has a direct impact on how you perform.",
+            points: [
+              "Negative self-talk (I am terrible at this, I always mess up) creates tension and reduces performance.",
+              "Positive self-talk is not pretending everything is fine — it is choosing words that help rather than words that hurt.",
+              "Cue words are short, powerful phrases you say at key moments: Drive, Relax, Reset, Trust it.",
+              "Your self-talk can be changed. It takes practice, but it is one of the most powerful skills in sport.",
+              "Elite athletes all use self-talk deliberately. It is not accidental — it is trained."
+            ],
+            closing: "This week write your 3 personal encouragements. Use them when things get hard."
+          },
+          do: {
+            title: "Build Your Self-Talk Toolkit",
+            setup: "Today you will identify and practise your personal self-talk cues — the words that help you perform at your best.",
+            steps: [
+              "Write down 3 encouraging phrases you can say to yourself when training gets hard. Make them personal — they should feel true to you.",
+              "Choose one cue word to use today: a single word that reminds you to focus, stay tall, or keep going.",
+              "Use your cue word out loud (quietly) at least 5 times during the session.",
+              "After a mistake or tough moment, use your self-talk instead of going silent or negative.",
+              "At the end of the session, tell your coach one moment when your self-talk helped."
+            ],
+            changeIt: "Share your cue word with a teammate. Encourage each other using your cue words during the session.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What did you say to yourself when things got tough today — and did it help?",
+            hint: "Think about the words you used. Were they helpful or unhelpful? What is one phrase you will keep using because it genuinely helped you?"
+          }
+        },
+        {
+          num: 4,
+          theme: "Attention Control",
+          learn: {
+            concept: "The Difference Between Focusing on the Task and Focusing on the Outcome",
+            intro: "There are two types of focus in sport: task focus (what you are doing right now) and outcome focus (what might happen as a result). The best athletes have learned to stay in task focus — especially when the pressure is on.",
+            points: [
+              "Task focus means concentrating on your technique, your movement, your immediate action.",
+              "Outcome focus means thinking about the score, what people will think, or whether you will succeed.",
+              "Outcome focus during execution creates anxiety and disrupts automatic movement.",
+              "When you focus on the task, your body can do what it has been trained to do.",
+              "The simple cue: What do I need to do RIGHT NOW? Answer that, and do it."
+            ],
+            closing: "This week practise the switch: when you notice your mind going to the outcome, bring it back to the task."
+          },
+          do: {
+            title: "Task Focus Drill — Process Over Outcome",
+            setup: "In one activity today, you will consciously focus only on your body — not the score, the outcome, or what anyone else is doing.",
+            steps: [
+              "Choose one activity in the session to be your task focus activity.",
+              "Before it starts, identify your specific task focus: for example, arm drive, soft landing, or eyes on target.",
+              "During the activity, every time your mind goes to the score or outcome, gently bring it back to your task cue.",
+              "After the activity, rate your task focus out of 10.",
+              "Tell your coach what your task focus was and whether it helped your performance."
+            ],
+            changeIt: "Try this in a competitive part of the session — the hardest place to stay task-focused.",
+            badge: { key: "calm_performer", name: "Calm Under Pressure", icon: "🌬️", xp: 25 }
+          },
+          reflect: {
+            prompt: "What happened to your performance when you focused only on the task — not the outcome?",
+            hint: "Did things feel more automatic? More controlled? Was it hard to stop thinking about the score? What does that tell you about where your attention usually goes?"
+          }
+        },
+        {
+          num: 5,
+          theme: "Pressure and Nerves",
+          learn: {
+            concept: "Why Nerves are Normal — and How to Use Them",
+            intro: "Every athlete gets nervous. The difference between athletes who perform well under pressure and those who do not is not whether they feel nervous — it is what they do with those nerves.",
+            points: [
+              "Nerves are your body getting ready to perform. Increased heart rate, alert senses, and adrenaline are all performance tools.",
+              "The feeling you call nerves is almost identical to the feeling of excitement. You can choose which label you give it.",
+              "Trying to make nerves disappear usually makes them worse. Accepting them and working with them is more effective.",
+              "Your pre-performance routine — breathing, self-talk, physical movement — channels nervous energy into readiness.",
+              "Repeated exposure to pressure situations builds confidence. The more you compete, the better you handle nerves."
+            ],
+            closing: "This week when you feel nervous, try saying to yourself: I am ready, not I am nervous."
+          },
+          do: {
+            title: "Mini Competition — Pre-Performance Routine",
+            setup: "Your coach will set up a mini competition today. Before your turn, you will practise your personal pre-performance focus routine.",
+            steps: [
+              "Before the competition begins, design your 30-second pre-performance routine: breathing, cue word, and one physical reset (roll your shoulders, shake your hands).",
+              "Use your routine before every turn in the competition.",
+              "Notice how you feel before your first turn compared to your last turn.",
+              "After the competition, ask yourself: Did my routine help me settle?",
+              "Share your routine with your coach. They may have suggestions to refine it."
+            ],
+            changeIt: "Challenge yourself to use your routine in a non-sport situation this week — before a test or a difficult conversation.",
+            badge: null
+          },
+          reflect: {
+            prompt: "How did you feel before the challenge — and what helped you settle and perform?",
+            hint: "Describe your nerves honestly. What did they feel like? What did you do? What made the biggest difference to how you performed once it started?"
+          }
+        },
+        {
+          num: 6,
+          theme: "Consistency",
+          learn: {
+            concept: "Focus and Consistency are Directly Connected",
+            intro: "Consistent performance does not come from talent — it comes from consistent focus. Athletes who can bring the same mental quality to every session, every week, are the ones who develop the fastest.",
+            points: [
+              "Consistency means showing up mentally, not just physically.",
+              "It is easy to focus when you are fresh, excited, or performing well. The real skill is focusing when you are tired, bored, or struggling.",
+              "Building a pre-session routine helps create consistency — you arrive mentally prepared every time.",
+              "Self-monitoring — checking in on your own effort and focus during a session — is a powerful consistency tool.",
+              "Consistent focus compounds over time. Small improvements each week add up to major development over a season."
+            ],
+            closing: "This week track your focus and effort every activity. Data from yourself is the most useful feedback you can get."
+          },
+          do: {
+            title: "Full Session Focus and Effort Log",
+            setup: "For every activity in today's session, you will rate both your effort (physical output) and your focus (mental engagement) out of 10.",
+            steps: [
+              "Before the session, write your target for today: effort goal and focus goal (e.g. effort 8, focus 7).",
+              "After each activity, quickly rate: effort out of 10, focus out of 10.",
+              "At the end of the session, look at your ratings. Where was your focus highest? What was happening at those moments?",
+              "Identify your lowest focus moment. What caused it to drop?",
+              "Show your log to your coach and discuss one insight from the data."
+            ],
+            changeIt: "Compare your focus log with a teammate. Look for patterns — when do both of you focus well? When do both of you struggle?",
+            badge: { key: "consistent_performer", name: "Consistent Performer", icon: "📊", xp: 25 }
+          },
+          reflect: {
+            prompt: "When was your focus highest this session — and what was different at those moments?",
+            hint: "Look at your log. What activity, what moment, what condition produced your best focus? Can you recreate that deliberately next time?"
+          }
+        },
+        {
+          num: 7,
+          theme: "Focus in a Team",
+          learn: {
+            concept: "How Your Focus — or Lack of It — Affects the People Around You",
+            intro: "Focus is not just a personal performance tool — it is a team one. Athletes who are mentally present and locked in create an environment that lifts everyone around them. Distracted athletes do the opposite.",
+            points: [
+              "Your energy and attention are contagious. A focused athlete raises the standard around them.",
+              "When one teammate loses focus, it often triggers a chain reaction through the team.",
+              "Team focus is built through shared purpose: agreeing before an activity on what the team is concentrating on.",
+              "As a leader, your job is not just to focus yourself — it is to help bring focus back when your team loses it.",
+              "The most focused teams communicate more, reset faster after mistakes, and maintain higher intensity for longer."
+            ],
+            closing: "Today your job is to be the most focused person in the session — and to bring others with you."
+          },
+          do: {
+            title: "Team Relay — Pre-Activity Focus Agreement",
+            setup: "Before the relay activity today, your team will spend 60 seconds agreeing on a shared focus. Everyone on the team commits to the same mental cue.",
+            steps: [
+              "As a team, choose one focus cue for the relay: for example, drive hard off the mark, clean handover, or stay tall.",
+              "Before each race, say the cue together as a team.",
+              "During the relay, if focus drops, one teammate calls the cue to re-engage the group.",
+              "After the relay, discuss as a team: Did our shared focus help? When did we lose it?",
+              "Tell your coach one moment when the team focus made a difference."
+            ],
+            changeIt: "Add a challenge: the team must maintain focus for 3 consecutive clean relay runs before celebrating.",
+            badge: null
+          },
+          reflect: {
+            prompt: "How did our team's collective focus change the result — and what was your role in maintaining it?",
+            hint: "Think about moments when the team's focus was strong and moments when it dropped. What did you do personally to keep it or bring it back?"
+          }
+        },
+        {
+          num: 8,
+          theme: "My Focus Toolkit — Capstone",
+          learn: {
+            concept: "Building a Mental Performance Toolkit You Will Use for Life",
+            intro: "This is your Module 3 capstone. Over the past 8 weeks you have learned and practised breathing, self-talk, attention control, pressure management, and consistent focus. Today you solidify your personal toolkit.",
+            points: [
+              "Your mental performance toolkit is the collection of strategies that work best for you personally.",
+              "Different athletes respond to different tools — the key is knowing which ones work for you.",
+              "A toolkit is only useful if you actually use it. The goal is to make these tools automatic.",
+              "After today, Module 3 is complete. Module 4 — Leadership — begins next term.",
+              "The mental skills you have built here will serve you in sport, school, and life long after this program."
+            ],
+            closing: "You have trained your mind. That is something most athletes never do. It will set you apart."
+          },
+          do: {
+            title: "Full Session Using Your Complete Toolkit",
+            setup: "Today you will use all three of your mental performance tools in the session: breathing, your cue word, and task focus. Your coach will observe your mental performance alongside your physical performance.",
+            steps: [
+              "Before the session, write down your three tools and when you plan to use each one.",
+              "Complete the full session using your tools deliberately — especially under pressure and after mistakes.",
+              "After each activity, do a quick mental check: Did I use my tools? Did they help?",
+              "At the end of the session, tell your coach your three tools and give an example of using each one today.",
+              "Write your Focus Toolkit summary in your reflection — the 3 tools you will keep using beyond this module."
+            ],
+            changeIt: null,
+            badge: { key: "mod3_master", name: "Module 3 Master", icon: "🏆", xp: 50, coachRequired: true }
+          },
+          reflect: {
+            prompt: "What are the 3 focus tools I will keep using beyond this module — and why do they work for me?",
+            hint: "Be specific about each tool. When do you use it? What does it feel like? What does it do for your performance? These are yours to keep forever."
+          }
+        }
+      ]
+    },
+
+    {
+      num: 4,
+      title: "Lead Yourself and Others",
+      pillar: "Leadership",
+      icon: "🤝",
+      color: "#F26522",
+      totalWeeks: 8,
+      moduleBadge: { key: "mod4_master", name: "Module 4 Master", icon: "🏆", xp: 50 },
+      weeks: [
+        {
+          num: 1,
+          theme: "What is Leadership?",
+          learn: {
+            concept: "Leadership Starts With Leading Yourself — Before Leading Others",
+            intro: "Module 4 is about leadership. But before you can lead others, you need to lead yourself — your effort, your attitude, your response to difficulty. Self-leadership is the foundation of every other kind of leadership.",
+            points: [
+              "Self-leadership means taking responsibility for your own effort, attitude, and growth — without being told.",
+              "You do not need a title or a role to be a leader. You lead through your actions every session.",
+              "The athletes who improve fastest are the ones who lead themselves hardest — in training, in recovery, and in their mindset.",
+              "Leadership is not about being loud or being the best. It is about being consistent and trustworthy.",
+              "This module you will develop your leadership identity — who you are as an athlete and teammate."
+            ],
+            closing: "The first question of leadership is always: Am I leading myself well today?"
+          },
+          do: {
+            title: "My Self-Leadership Commitment",
+            setup: "Today you will identify one area of self-leadership to work on this module and write a personal commitment.",
+            steps: [
+              "Think about three areas of self-leadership: effort (how hard you work), attitude (how you respond to difficulty), and reliability (showing up consistently).",
+              "Choose one area that you want to develop most over the next 8 weeks.",
+              "Write your personal commitment: This module I will lead myself better by...",
+              "Share your commitment with your coach.",
+              "During the session today, make one deliberate action that reflects your commitment."
+            ],
+            changeIt: "Share your commitment with a teammate and ask them to hold you accountable. Do the same for them.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What kind of leader am I right now — and what kind of leader do I want to become?",
+            hint: "Think honestly about your current self. What are you already doing well as a self-leader? What is your biggest growth area? Where do you want to be at the end of Module 4?"
+          }
+        },
+        {
+          num: 2,
+          theme: "Being a Great Teammate",
+          learn: {
+            concept: "The Difference Between Being Good and Being Great to Be Around",
+            intro: "You can be highly skilled and still be a poor teammate. The athletes that teams want most are the ones who make everyone around them better — through their attitude, their effort, and their encouragement.",
+            points: [
+              "Great teammates encourage others, especially when things are going wrong.",
+              "Being a great teammate does not mean being soft — it means being supportive AND demanding high standards.",
+              "The way you respond to your own mistakes sets the tone for how the whole team responds to mistakes.",
+              "Noticing and celebrating others' good work is a leadership act. It costs nothing and builds everything.",
+              "The best teams are built by teammates who compete hard with each other and celebrate each other equally."
+            ],
+            closing: "Today focus on giving, not just performing. What can you add to your teammates' experience?"
+          },
+          do: {
+            title: "Encourage 3 Teammates — Intentional Support Challenge",
+            setup: "Today you will deliberately and specifically encourage 3 different teammates during the session. The encouragement must be genuine and specific — not just Good job.",
+            steps: [
+              "Before the session, identify 3 teammates you will focus on encouraging today.",
+              "During the session, look for a specific moment where each teammate does something well — and name it: Great arm drive on that sprint, or Brilliant reset after that drop.",
+              "Deliver your encouragement in the moment — not afterwards.",
+              "Notice how your encouragement affects the teammate and how it makes you feel.",
+              "After the session, tell your coach which teammate responded most positively and why."
+            ],
+            changeIt: "Try encouraging a teammate who is struggling, not just one who is performing well. That is the harder and more important version.",
+            badge: { key: "encourager", name: "Encourager", icon: "💬", xp: 30, coachRequired: true }
+          },
+          reflect: {
+            prompt: "How did encouraging others change how you felt and performed in the session?",
+            hint: "Did focusing outward take your mind off your own performance? Did it increase your energy? How did the session feel different from normal?"
+          }
+        },
+        {
+          num: 3,
+          theme: "Communication",
+          learn: {
+            concept: "How Athletes Communicate — Words, Body Language, and Energy",
+            intro: "Communication in sport is about much more than words. Your body language, your eye contact, your energy, and your positioning all send messages to your teammates — whether you intend them to or not.",
+            points: [
+              "Positive body language — head up, shoulders back, moving with purpose — lifts the energy of everyone around you.",
+              "Closed body language — head down, slumped shoulders, slow movement — drags others down even when you say nothing.",
+              "Clear verbal communication in sport: call for the ball, signal your intent, confirm your understanding.",
+              "Listening is as important as speaking. Great communicators know when to talk and when to be still.",
+              "Your communication under pressure is your real communication — anyone can be composed when things are easy."
+            ],
+            closing: "Today you will communicate more than you normally would. Be deliberate, be clear, be positive."
+          },
+          do: {
+            title: "Relay Communication Challenge",
+            setup: "During the relay activity today, every handover must include a clear verbal and physical signal. No silent handovers — every exchange must be communicated.",
+            steps: [
+              "Before the relay, agree as a team on your handover signal — a word and a gesture.",
+              "Practice the handover signal 5 times standing still before the relay starts.",
+              "During every relay run, call your signal clearly before each handover.",
+              "If a handover is silent, that team runs the lap again. The standard is clear communication every time.",
+              "After the relay, discuss: How did communication change your performance compared to a normal relay?"
+            ],
+            changeIt: "Add a decision point: the runner calls Left or Right to indicate which side to receive the handover. Receiver must adjust.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What did you do to communicate better with your team today — and what impact did it have?",
+            hint: "Think about both verbal and non-verbal communication. When did clear communication help the most? When did poor communication cause a problem?"
+          }
+        },
+        {
+          num: 4,
+          theme: "Handling Mistakes",
+          learn: {
+            concept: "How Leaders Respond to Errors — Their Own and Others",
+            intro: "Every athlete makes mistakes. What separates leaders from everyone else is not that they make fewer mistakes — it is that they respond to mistakes in a way that helps rather than hurts.",
+            points: [
+              "Your response to a mistake is more important than the mistake itself.",
+              "Anger, frustration, or dwelling on errors takes mental energy away from the next performance.",
+              "A reset cue is a physical or verbal action that signals to your brain: that is done, I am moving on.",
+              "How you respond to your own mistakes teaches your teammates how to respond to theirs.",
+              "Accountability without self-punishment: acknowledge the error, identify what to do differently, move on."
+            ],
+            closing: "Your reset cue is your most important leadership tool. Build it, practise it, use it every session."
+          },
+          do: {
+            title: "Reset Cue Practice",
+            setup: "Your coach will model a reset cue at the start of the session. Today you will build and practise your own personal reset cue.",
+            steps: [
+              "Choose your reset cue: a physical action (clap your hands, short breath out, tap your thigh) combined with a word (Next, Reset, or Done).",
+              "Practise your reset cue 10 times before the session starts.",
+              "During the session, use your reset cue every time you make a mistake — before moving on to the next action.",
+              "Notice whether your reset cue helps you let go of the mistake faster.",
+              "At the end of the session, tell your coach your cue and demonstrate it."
+            ],
+            changeIt: "Use your reset cue when a teammate makes a mistake, not just when you do. Model the response you want to see.",
+            badge: null
+          },
+          reflect: {
+            prompt: "How did you handle a mistake or frustration today — and what would you do the same or differently next time?",
+            hint: "Be honest. Did your reset cue help? Was there a moment you responded poorly? What triggered that response, and what would a leader have done instead?"
+          }
+        },
+        {
+          num: 5,
+          theme: "Giving and Receiving Feedback",
+          learn: {
+            concept: "Feedback is a Leadership Tool — Giving it Well is a Skill",
+            intro: "Giving and receiving feedback well is one of the most underrated leadership skills in sport. Most athletes either avoid giving feedback or deliver it poorly. Learning to do it right makes you a better athlete and a better teammate.",
+            points: [
+              "Effective feedback is specific, timely, and focused on the action, not the person.",
+              "Feedback sandwich: one positive observation, one specific improvement, one encouraging close.",
+              "Receiving feedback requires humility. The athletes who improve fastest are the ones who welcome honest feedback.",
+              "Asking for feedback is a sign of strength, not weakness. Elite athletes constantly seek it.",
+              "Feedback creates a culture of growth. Teams that give and receive it well improve faster than teams that avoid it."
+            ],
+            closing: "Today you will practise both sides: giving specific feedback and receiving it with openness."
+          },
+          do: {
+            title: "Feedback Partner Challenge",
+            setup: "Pair up with a teammate. During the session you will each give and receive one piece of specific, positive technique feedback.",
+            steps: [
+              "Agree with your partner on what skill or movement you will observe each other performing.",
+              "Watch your partner carefully during one activity. Look for something specific they are doing well.",
+              "Deliver your feedback: I noticed that you..., and it works because...",
+              "Receive your partner's feedback with: Thanks — that helps. Ask a follow-up question if you want more.",
+              "Tell your coach what feedback you received and whether you agree with it."
+            ],
+            changeIt: "Give one piece of improvement-focused feedback (as well as positive) using the feedback sandwich method.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What was hard about giving feedback — and what was hard about receiving it?",
+            hint: "Most people find one harder than the other. Which was harder for you, and why? What does that tell you about your leadership strengths and growth areas?"
+          }
+        },
+        {
+          num: 6,
+          theme: "Leading in Competition",
+          learn: {
+            concept: "How Pressure Reveals Leadership — Staying Steady When it Counts",
+            intro: "Competition is the ultimate test of leadership. When the score is close, when things go wrong, when the team is under pressure — that is when real leaders emerge. Not by being superhuman, but by staying steady.",
+            points: [
+              "Steady leadership under pressure means: same effort, same communication, same reset response regardless of the score.",
+              "Panic is contagious. So is calm. The leader who stays composed gives everyone else permission to do the same.",
+              "Your job in a close competition is not to be a hero — it is to execute your role and support your teammates.",
+              "After a mistake in competition, your response in the next 10 seconds defines your leadership.",
+              "Winning and losing both teach leadership lessons. The lessons from losing are often more valuable."
+            ],
+            closing: "Today your job is to lift the team regardless of the score. That is what leaders do."
+          },
+          do: {
+            title: "Team Competition — Lift the Team Regardless of the Score",
+            setup: "Your coach will run a competitive team activity today. Your specific leadership mission is to raise the team's energy and focus — especially if you are behind.",
+            steps: [
+              "Before the competition, agree with your team on one leadership behaviour you will all bring: encouragement, communication, or reset speed.",
+              "During the competition, focus on your leadership mission more than the score.",
+              "When your team is behind, find a way to lift the energy — a word, a reset cue, a physical signal.",
+              "After the competition (win or lose), lead the team reflection: What did we do well? What do we build on?",
+              "Tell your coach one specific leadership moment you are proud of from the competition."
+            ],
+            changeIt: "After the competition, write down one leadership moment where you made a positive difference to your team.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What did you do to help your team when things were hard — and how did they respond?",
+            hint: "Think about a specific moment of difficulty. What did you do? What impact did it have on the team's energy or performance? What would you do differently?"
+          }
+        },
+        {
+          num: 7,
+          theme: "My Leadership Style",
+          learn: {
+            concept: "There is No One Type of Leader — Finding What Works for You",
+            intro: "There is a common myth that leaders must be loud, confident, and outspoken. In reality, some of the best leaders in sport are quiet, consistent, and lead entirely through their actions. The key is knowing your style and using it intentionally.",
+            points: [
+              "Leadership styles include: vocal and energetic, quiet and consistent, leading by example, leading through encouragement, and leading through challenge.",
+              "Your most effective leadership style is the one that is authentic to who you are.",
+              "Different situations call for different leadership approaches. Great leaders can adapt.",
+              "Self-awareness is the foundation of leadership — you cannot lead effectively if you do not understand yourself.",
+              "Your leadership style will evolve as you grow as an athlete and a person. That is normal and healthy."
+            ],
+            closing: "Today you will try a leadership role in the session. Notice what feels natural and what feels forced."
+          },
+          do: {
+            title: "Session Leadership Rotation",
+            setup: "Your coach will nominate a different session leader for each rotation today. When it is your turn, step into the role — even if it feels uncomfortable.",
+            steps: [
+              "When your coach nominates you as session leader for a rotation, your role is to lead the warm-up or activity setup.",
+              "Give clear instructions, encourage your teammates, and manage the activity.",
+              "After your rotation, ask two teammates: How did I go as a leader? What could I do better?",
+              "Observe other athletes in their leadership rotation. Note what you want to borrow from their style.",
+              "After the session, write down two words that describe your natural leadership style."
+            ],
+            changeIt: "Swap styles with a teammate. If you are naturally quiet, try being more vocal. If you are naturally vocal, try leading silently through example only.",
+            badge: null
+          },
+          reflect: {
+            prompt: "What style of leadership felt most natural for me today — and what does that tell me about the leader I am becoming?",
+            hint: "Think about when you felt most comfortable and confident in your leadership role. Was it when you were vocal, or when you were leading through action? What did your teammates respond to best?"
+          }
+        },
+        {
+          num: 8,
+          theme: "The Athlete I Am Becoming — Capstone",
+          learn: {
+            concept: "Year 1 Is Complete — Reflecting on the Full Journey",
+            intro: "This is Week 8 of Module 4 — and the final week of your Year 1 Athletic Journey. You have completed 32 weeks of training, reflection, and growth across Athletic Ability, Skill, Focus, and Leadership.",
+            points: [
+              "You are not the same athlete you were at the start of Year 1. Every module, every session, every reflection has changed you.",
+              "The four pillars — Athletic Ability, Skill, Focus, and Leadership — are not separate. They work together as one complete athlete.",
+              "The habits you have built this year are your foundation for Year 2, Year 3, and everything beyond.",
+              "Excellence Through Consistency is not a tagline. It is what you have lived this year.",
+              "Year 2 will build on everything you have done here — with greater complexity, challenge, and reward."
+            ],
+            closing: "You showed up. You reflected. You grew. That is what an athlete does."
+          },
+          do: {
+            title: "Year 1 Athletic Journey Reflection — Share With Your Coach",
+            setup: "Today you will complete your Year 1 reflection and share it with your coach in a 5-minute conversation. This is the most important session of the year.",
+            steps: [
+              "Complete your Year 1 reflection in the Reflect tab — this is a longer reflection than normal. Give it your full effort.",
+              "After completing your reflection, sit with your coach for 5 minutes.",
+              "Share one thing you are most proud of from Year 1.",
+              "Share one thing you still want to develop in Year 2.",
+              "Your coach will present your Year 1 completion and your Journey Tier achievement."
+            ],
+            changeIt: null,
+            badge: { key: "mod4_master", name: "Year 1 Complete — Legacy Athlete", icon: "👑", xp: 100, coachRequired: true }
+          },
+          reflect: {
+            prompt: "What has changed about me as an athlete and a person across this year — and what am I most proud of?",
+            hint: "Take your time with this one. Think across all four modules. What can you do now that you could not do before — physically, mentally, as a teammate, as a leader? What moment this year meant the most to you? What are you taking into Year 2?"
+          }
+        }
+      ]
+    }
+  ],
+
+  // ── JOURNEY TIERS ─────────────────────────────────────────────────────────
+  tiers: [
+    { name: "Rookie",     icon: "🌱", minXP: 0,    req: "Complete Module 1",           reward: "P2A sticker pack + digital Rookie badge" },
+    { name: "Contender",  icon: "⭐", minXP: 290,  req: "Complete Modules 1 + 2",      reward: "P2A water bottle + social media spotlight" },
+    { name: "Athlete",    icon: "💪", minXP: 580,  req: "Complete Modules 1, 2 + 3",   reward: "P2A training cap + certificate" },
+    { name: "Elite",      icon: "🔥", minXP: 870,  req: "Complete all 4 modules",      reward: "P2A training top + early camp access" },
+    { name: "Legacy",     icon: "👑", minXP: 1800, req: "Complete Year 2 or Year 3",   reward: "Named P2A legacy honours + full gear pack" }
+  ],
+
+  // ── HELPER: Get current week data ──────────────────────────────────────────
+  getWeek(moduleNum, weekNum) {
+    const mod = this.modules.find(m => m.num === moduleNum);
+    if (!mod) return null;
+    return mod.weeks.find(w => w.num === weekNum) || null;
+  },
+
+  // ── HELPER: Get tier from XP ───────────────────────────────────────────────
+  getTier(xp) {
+    let current = this.tiers[0];
+    for (const t of this.tiers) {
+      if (xp >= t.minXP) current = t;
+    }
+    return current;
+  },
+
+  // ── HELPER: Get next tier ──────────────────────────────────────────────────
+  getNextTier(xp) {
+    for (const t of this.tiers) {
+      if (t.minXP > xp) return t;
+    }
+    return null;
+  }
+};
+
+
+  // ── CONTENT LIBRARY END ────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════
+
+  // ═══════════════════════════════════════════════════════════════════
+  // API LAYER — Neon PostgreSQL + Drizzle ORM via Replit
+  // Base: https://power2adapt.replit.app/api/maj
+  // ═══════════════════════════════════════════════════════════════════
+
+  const API = 'https://power2adapt.replit.app/api/maj';
+
+  async function apiPost(path, body) {
+    const res = await fetch(`${API}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`API error ${res.status}: ${path}`);
+    return res.json();
+  }
+
+  async function apiGet(path) {
+    const res = await fetch(`${API}${path}`, {
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error(`API error ${res.status}: ${path}`);
+    return res.json();
+  }
+
+  async function apiPatch(path, body) {
+    const res = await fetch(`${API}${path}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`API error ${res.status}: ${path}`);
+    return res.json();
+  }
+
+  // ── DEFAULT ATHLETE STATE ─────────────────────────────────────────────
+  const DEFAULT_ATHLETE = {
+    id: null,
+    name: '',
+    fullName: '',
+    initials: '',
+    grade: '',
+    program: 'Emerging Athlete',
+    coach: 'Al Tait',
+    currentModule: 1,
+    currentWeek: 1,
+    xp: 0,
+    streak: 0,
+    sessionsCompleted: 0,
+    reflectionsSubmitted: 0,
+    earnedBadgeKeys: [],
+    completedWeeks: {}
+  };
+
+  // ── APP STATE ─────────────────────────────────────────────────────────
+  const state = {
+    currentPage: 'login',
+    role: null,           // 'athlete' or 'coach'
+    athlete: Object.assign({}, DEFAULT_ATHLETE),
+    learnDone: false,
+    challengeDone: false,
+    reflectDone: false,
+    activeTab: 'learn',
+    saving: false
+  };
+
+  // ── WEEK KEY HELPER ───────────────────────────────────────────────────
+  function weekKey(mod, wk) { return `${mod}-${wk}`; }
+
+  function getWeekProgress(mod, wk) {
+    const cw = state.athlete.completedWeeks || {};
+    // completedWeeks stored as array of strings e.g. ["1-1-learn","1-1-challenge"]
+    // or as object — handle both formats
+    if (Array.isArray(cw)) {
+      return {
+        learn:     cw.includes(`${mod}-${wk}-learn`),
+        challenge: cw.includes(`${mod}-${wk}-challenge`),
+        reflect:   cw.includes(`${mod}-${wk}-reflect`)
+      };
+    }
+    return cw[weekKey(mod, wk)] || { learn: false, challenge: false, reflect: false };
+  }
+
+  function markWeekProgress(mod, wk, part) {
+    // Normalise to object format in memory
+    const cw = state.athlete.completedWeeks;
+    if (Array.isArray(cw)) {
+      // Convert array format to object format
+      const obj = {};
+      cw.forEach(entry => {
+        const parts = entry.split('-');
+        const k = `${parts[0]}-${parts[1]}`;
+        if (!obj[k]) obj[k] = { learn: false, challenge: false, reflect: false };
+        if (parts[2]) obj[k][parts[2]] = true;
+      });
+      state.athlete.completedWeeks = obj;
+    }
+    const k = weekKey(mod, wk);
+    if (!state.athlete.completedWeeks[k]) state.athlete.completedWeeks[k] = {};
+    state.athlete.completedWeeks[k][part] = true;
+  }
+
+  // ── SAVE TO API ───────────────────────────────────────────────────────
+  async function saveState() {
+    if (!state.athlete.id || state.saving) return;
+    state.saving = true;
+    try {
+      const a = state.athlete;
+      await apiPost(`/athlete/${a.id}/progress`, {
+        xp: a.xp,
+        currentModule: a.currentModule,
+        currentWeek: a.currentWeek,
+        streak: a.streak,
+        sessionsCompleted: a.sessionsCompleted,
+        reflectionsSubmitted: a.reflectionsSubmitted,
+        earnedBadgeKeys: a.earnedBadgeKeys,
+        completedWeeks: JSON.stringify(a.completedWeeks)
+      });
+    } catch(e) {
+      console.warn('Save failed, using localStorage fallback', e);
+      try { localStorage.setItem('maj_fallback', JSON.stringify(state.athlete)); } catch(_) {}
+    } finally {
+      state.saving = false;
+    }
+  }
+
+  // ── MAP API RESPONSE TO ATHLETE STATE ─────────────────────────────────
+  function mapAthleteFromAPI(data) {
+    // Drizzle returns camelCase — map to our state shape
+    let completedWeeks = {};
+    try {
+      if (typeof data.completedWeeks === 'string') {
+        completedWeeks = JSON.parse(data.completedWeeks);
+      } else if (Array.isArray(data.completedWeeks)) {
+        // Array of strings like "1-1-learn" — convert to object
+        data.completedWeeks.forEach(entry => {
+          const parts = entry.split('-');
+          const k = `${parts[0]}-${parts[1]}`;
+          if (!completedWeeks[k]) completedWeeks[k] = { learn: false, challenge: false, reflect: false };
+          if (parts[2]) completedWeeks[k][parts[2]] = true;
+        });
+      } else if (data.completedWeeks && typeof data.completedWeeks === 'object') {
+        completedWeeks = data.completedWeeks;
+      }
+    } catch(e) { completedWeeks = {}; }
+
+    const fullName = data.fullName || data.full_name || '';
+    const nameParts = fullName.split(' ');
+    const initials = nameParts.map(p => p[0]).join('').toUpperCase().slice(0, 2);
+
+    return {
+      id: data.id,
+      name: nameParts[0] || fullName,
+      fullName,
+      initials,
+      grade: data.grade || '',
+      program: data.program || 'Emerging Athlete',
+      coach: data.coach || 'Al Tait',
+      currentModule: parseInt(data.currentModule || data.current_module || 1),
+      currentWeek: parseInt(data.currentWeek || data.current_week || 1),
+      xp: parseInt(data.xp || 0),
+      streak: parseInt(data.streak || 0),
+      sessionsCompleted: parseInt(data.sessionsCompleted || data.sessions_completed || 0),
+      reflectionsSubmitted: parseInt(data.reflectionsSubmitted || data.reflections_submitted || 0),
+      earnedBadgeKeys: data.earnedBadgeKeys || data.earned_badge_keys || [],
+      completedWeeks
+    };
+  }
+
+  // ── LOGIN ─────────────────────────────────────────────────────────────
+  async function doLogin() {
+    const u = document.getElementById('login-user').value.trim().toLowerCase();
+    const p = document.getElementById('login-pass').value;
+    const err = document.getElementById('login-error');
+    const btn = document.querySelector('#page-login .btn-primary');
+
+    btn.textContent = 'Signing in...';
+    btn.disabled = true;
+    err.style.display = 'none';
+
+    try {
+      const data = await apiPost('/login', { username: u, password: p });
+
+      state.role = data.role; // 'athlete' or 'coach'
+
+      if (data.role === 'coach') {
+        // Coach login — load coach dashboard
+        state.coach = data;
+        document.getElementById('bottom-nav').style.display = 'flex';
+        await loadCoachDashboard();
+        navTo('home');
+      } else {
+        // Athlete login
+        state.athlete = mapAthleteFromAPI(data);
+        document.getElementById('bottom-nav').style.display = 'flex';
+        initApp();
+        navTo('home');
+      }
+    } catch(e) {
+      err.style.display = 'block';
+      err.textContent = 'Incorrect username or password. Please try again.';
+      const f = document.getElementById('login-user');
+      f.style.borderColor = '#f87171';
+      setTimeout(() => f.style.borderColor = '', 1500);
+    } finally {
+      btn.textContent = "Let's Go";
+      btn.disabled = false;
+    }
+  }
+
+  document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('login-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-pass').focus(); });
+
+  function doLogout() {
+    document.getElementById('bottom-nav').style.display = 'none';
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+    state.role = null;
+    state.learnDone = false;
+    state.challengeDone = false;
+    state.reflectDone = false;
+    state.athlete = Object.assign({}, DEFAULT_ATHLETE);
+    navTo('login', true);
+  }
+
+  // ── COACH DASHBOARD LOADER ────────────────────────────────────────────
+  async function loadCoachDashboard() {
+    try {
+      const athletes = await apiGet('/athletes');
+      renderCoachView(athletes);
+    } catch(e) {
+      toast('Could not load athlete list — check connection');
+    }
+  }
+
+  function renderCoachView(athletes) {
+    // Inject a simple coach athlete list into the home dashboard
+    const coachHtml = `
+      <div style="padding:20px;">
+        <div style="font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:4px;">Coach Dashboard</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Power2ADAPT · My Athletic Journey</div>
+        <div class="section-label">Your Athletes</div>
+        ${athletes.map(a => {
+          const tier = MAJ_CONTENT.getTier(a.xp || 0);
+          return `<div class="module-item" onclick="toast('${a.fullName || a.full_name} — Module ${a.currentModule || 1}, Week ${a.currentWeek || 1}')">
+            <div class="module-thumb mod-active" style="font-family:var(--font-display);font-size:14px;font-weight:800;">
+              ${((a.fullName || a.full_name || '?').split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2))}
+            </div>
+            <div class="module-body">
+              <div class="module-name">${a.fullName || a.full_name}</div>
+              <div class="mini-track"><div class="mini-fill fill-orange" style="width:${Math.round(((a.currentWeek||1)-1)/8*100)}%"></div></div>
+              <div class="module-caption">Module ${a.currentModule||1} · Week ${a.currentWeek||1} · ${a.xp||0} XP · ${tier.name}</div>
+            </div>
+            <div class="module-arrow">›</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    document.getElementById('page-home').innerHTML = coachHtml;
+  }
+
+  // ── INIT APP ─────────────────────────────────────────────────────────
+  function initApp() {
+    const a = state.athlete;
+    // Restore this week's completion states from the loaded athlete data
+    const wp = getWeekProgress(a.currentModule, a.currentWeek);
+    state.learnDone = wp.learn;
+    state.challengeDone = wp.challenge;
+    state.reflectDone = wp.reflect;
+
+    renderDashboard();
+    renderThisWeek();
+    renderBadges();
+    renderProfile();
+
+    setTimeout(() => {
+      const tier = MAJ_CONTENT.getTier(a.xp);
+      const nextTier = MAJ_CONTENT.getNextTier(a.xp);
+      const maxXP = nextTier ? nextTier.minXP : tier.minXP + 290;
+      const base = tier.minXP;
+      const pct = Math.min(100, Math.round(((a.xp - base) / (maxXP - base)) * 100));
+      document.getElementById('dash-xp-bar').style.width = pct + '%';
+      const weekPct = Math.round(((a.currentWeek - 1) / 8) * 100);
+      document.getElementById('mod1-fill').style.width = weekPct + '%';
+    }, 400);
+  }
+
+  // ── RENDER DASHBOARD ─────────────────────────────────────────────────
+  function renderDashboard() {
+    const a = state.athlete;
+    const tier = MAJ_CONTENT.getTier(a.xp);
+    const nextTier = MAJ_CONTENT.getNextTier(a.xp);
+    const week = MAJ_CONTENT.getWeek(a.currentModule, a.currentWeek);
+    const mod = MAJ_CONTENT.modules[a.currentModule - 1];
+
+    document.getElementById('dash-name').textContent = a.name;
+    document.getElementById('dash-xp').textContent = a.xp;
+
+    const maxXP = nextTier ? nextTier.minXP : tier.minXP + 290;
+    document.querySelector('.xp-max').textContent = maxXP;
+    document.querySelector('.xp-caption').innerHTML = nextTier
+      ? `${nextTier.minXP - a.xp} XP to reach <em>${nextTier.name}</em> tier`
+      : '<em>Maximum tier reached — Legend!</em>';
+
+    document.querySelector('.tier-text').textContent = tier.name.toUpperCase();
+    document.querySelector('.tier-dot').textContent = tier.icon;
+
+    if (week) {
+      document.querySelector('.mission-week-tag').textContent = `Module ${a.currentModule} · Week ${a.currentWeek} of 8`;
+      document.querySelector('.mission-title').textContent = week.do.title;
+      const xpAvail = 10 + 10 + 15 + (week.do.badge ? week.do.badge.xp : 0);
+      document.querySelector('.mission-xp-tag').innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${xpAvail} XP available`;
+    }
+
+    document.querySelectorAll('.stat-val')[0].textContent = a.sessionsCompleted;
+    document.querySelectorAll('.stat-val')[1].textContent = a.reflectionsSubmitted;
+    document.querySelectorAll('.stat-val')[2].textContent = a.earnedBadgeKeys.length;
+
+    document.querySelector('.module-caption').textContent = `Week ${a.currentWeek} of 8 · ${mod.pillar}`;
+  }
+
+  // ── RENDER THIS WEEK ─────────────────────────────────────────────────
+  function renderThisWeek() {
+    const a = state.athlete;
+    const week = MAJ_CONTENT.getWeek(a.currentModule, a.currentWeek);
+    const mod = MAJ_CONTENT.modules[a.currentModule - 1];
+    if (!week) return;
+
+    const wp = getWeekProgress(a.currentModule, a.currentWeek);
+
+    // Header
+    document.querySelector('.week-meta').textContent = `Module ${a.currentModule} · Week ${a.currentWeek} of 8`;
+    document.querySelector('.week-title').textContent = week.theme;
+
+    // LEARN tab
+    document.querySelector('.learn-tag').textContent = 'This week\'s concept';
+    document.querySelector('.learn-heading').textContent = week.learn.concept;
+    document.querySelector('.learn-intro').textContent = week.learn.intro;
+    const pointsEl = document.querySelector('.learn-points');
+    pointsEl.innerHTML = week.learn.points.map(p =>
+      `<div class="learn-point"><div class="learn-dot"></div><span>${p}</span></div>`
+    ).join('');
+    if (week.learn.closing) {
+      document.querySelector('.learn-closing').textContent = week.learn.closing;
+      document.querySelector('.learn-closing').style.display = 'block';
+    } else {
+      document.querySelector('.learn-closing').style.display = 'none';
+    }
+
+    // Fix #2: Learn XP button — shows done state if already earned
+    const learnBtn = document.getElementById('learn-xp-btn');
+    if (wp.learn) {
+      learnBtn.textContent = 'Concept read ✓ (+10 XP earned)';
+      learnBtn.style.background = 'var(--cyan)';
+      learnBtn.style.color = '#fff';
+      learnBtn.disabled = true;
+    } else {
+      learnBtn.textContent = 'Mark as read — earn 10 XP';
+      learnBtn.style.background = '';
+      learnBtn.style.color = '';
+      learnBtn.disabled = false;
+    }
+
+    // DO tab
+    document.querySelector('.do-tag').textContent = 'Your challenge this week';
+    document.querySelector('.do-heading').textContent = week.do.title;
+    document.querySelector('.do-setup').textContent = week.do.setup;
+    const stepsEl = document.querySelector('.do-steps');
+    stepsEl.innerHTML = week.do.steps.map((s, i) =>
+      `<div class="do-step"><div class="step-num">${i + 1}</div><span>${s}</span></div>`
+    ).join('');
+    const changeEl = document.querySelector('.do-changeit');
+    if (week.do.changeIt) {
+      document.querySelector('.do-changeit-text').textContent = week.do.changeIt;
+      changeEl.style.display = 'block';
+    } else {
+      changeEl.style.display = 'none';
+    }
+    const badgeHint = document.getElementById('badge-hint');
+    if (week.do.badge) {
+      badgeHint.style.display = 'flex';
+      badgeHint.querySelector('.badge-hint-icon').textContent = week.do.badge.icon;
+      badgeHint.querySelector('.badge-hint-title').textContent = week.do.badge.coachRequired
+        ? 'Coach-awarded badge available' : 'Badge unlock available';
+      badgeHint.querySelector('.badge-hint-sub').textContent =
+        `${week.do.badge.name} — ${week.do.badge.xp} XP${week.do.badge.coachRequired ? ' (coach confirms at your next session)' : ''}`;
+    } else {
+      badgeHint.style.display = 'none';
+    }
+
+    // DO button state
+    const doBtn = document.getElementById('do-complete-btn');
+    if (wp.challenge) {
+      doBtn.textContent = 'Challenge complete! ✓';
+      doBtn.classList.add('done');
+    } else {
+      doBtn.textContent = 'Mark challenge complete ⚡';
+      doBtn.classList.remove('done');
+    }
+
+    // REFLECT tab
+    document.querySelector('.reflect-question').textContent = `"${week.reflect.prompt}"`;
+    document.querySelector('.reflect-hint').textContent = week.reflect.hint;
+    if (wp.reflect) {
+      document.getElementById('reflect-form-area').style.display = 'none';
+      document.getElementById('reflect-done').classList.add('show');
+    } else {
+      document.getElementById('reflect-form-area').style.display = 'block';
+      document.getElementById('reflect-done').classList.remove('show');
+      document.getElementById('reflect-input').value = '';
+      document.getElementById('reflect-counter').innerHTML = `0 words — <em>aim for 30+</em>`;
+      document.getElementById('reflect-submit').disabled = true;
+    }
+
+    // Fix #1: Next Week button — show only when all 3 parts done
+    renderNextWeekButton();
+
+    // XP pill
+    const xpAvail = 10 + 10 + 15 + (week.do.badge && !week.do.badge.coachRequired ? week.do.badge.xp : 0);
+    document.querySelector('.week-pill').textContent = `${mod.pillar} · +${xpAvail} XP this week`;
+  }
+
+  // ── NEXT WEEK BUTTON ─────────────────────────────────────────────────
+  function renderNextWeekButton() {
+    const a = state.athlete;
+    const wp = getWeekProgress(a.currentModule, a.currentWeek);
+    const allDone = wp.learn && wp.challenge && wp.reflect;
+    let btn = document.getElementById('next-week-btn');
+
+    if (!btn) {
+      // Create the button once and append to reflect done area
+      btn = document.createElement('button');
+      btn.id = 'next-week-btn';
+      btn.className = 'btn-primary';
+      btn.style.marginTop = '16px';
+      btn.onclick = advanceWeek;
+      document.getElementById('reflect-done').appendChild(btn);
+    }
+
+    // Determine label
+    const isLastWeek = a.currentWeek === 8;
+    const isLastModule = a.currentModule === 4;
+    if (isLastWeek && isLastModule) {
+      btn.textContent = '🏆 Year 1 Complete!';
+    } else if (isLastWeek) {
+      btn.textContent = `Start Module ${a.currentModule + 1} →`;
+    } else {
+      btn.textContent = `Next: Week ${a.currentWeek + 1} →`;
+    }
+
+    btn.style.display = allDone ? 'block' : 'none';
+  }
+
+  // ── RENDER BADGES PAGE ───────────────────────────────────────────────
+  function renderBadges() {
+    const a = state.athlete;
+    const earned = a.earnedBadgeKeys;
+    const container = document.getElementById('badges-grid-container');
+
+    let html = '';
+    MAJ_CONTENT.modules.forEach(mod => {
+      html += `<div class="badge-tier-section">
+        <div class="section-label">Module ${mod.num} — ${mod.title}</div>
+        <div class="badge-grid">`;
+
+      const allBadges = [
+        { key: mod.num + '_sessions', name: 'All Sessions', icon: mod.icon, xp: 80 },
+        { key: mod.num + '_reflections', name: 'All Reflections', icon: '✍️', xp: 80 },
+        ...mod.weeks.filter(w => w.do.badge).map(w => w.do.badge),
+        mod.moduleBadge
+      ];
+
+      allBadges.forEach(badge => {
+        const isEarned = earned.includes(badge.key);
+        const isNew = badge.key === 'sharp_shooter';
+        html += `<div class="badge-grid-item" onclick="toast('${badge.name} — ${badge.xp} XP${isEarned ? " ✓ Earned" : " — keep going!"}')">
+          <div class="badge-grid-ring ${isEarned ? (badge.key.includes('master') ? 'master earned' : 'earned') : 'locked'}">
+            ${isNew ? '<span class="badge-new-tag">NEW</span>' : ''}
+            ${badge.icon}
+          </div>
+          <span class="badge-grid-name ${isEarned ? '' : 'dim'}">${badge.name}</span>
+          <span class="badge-xp ${isEarned ? '' : 'dim'}">${badge.xp} XP${isEarned ? ' ✓' : ''}</span>
+        </div>`;
+      });
+
+      html += `</div></div>`;
+    });
+
+    container.innerHTML = html;
+
+    // Render tiers
+    const tierContainer = document.getElementById('tiers-container');
+    const currentTier = MAJ_CONTENT.getTier(a.xp);
+    tierContainer.innerHTML = MAJ_CONTENT.tiers.map(t => {
+      const isCurrent = t.name === currentTier.name;
+      const isAchieved = a.xp > t.minXP && !isCurrent;
+      const cls = isCurrent ? 'current' : isAchieved ? 'achieved' : '';
+      const statusCls = isCurrent ? 'status-current' : isAchieved ? 'status-done' : 'status-locked';
+      const statusText = isCurrent ? 'Current' : isAchieved ? 'Achieved' : 'Locked';
+      return `<div class="tier-item ${cls}">
+        <div class="tier-emoji">${t.icon}</div>
+        <div class="tier-info">
+          <div class="tier-name">${t.name}</div>
+          <div class="tier-req">${t.req}</div>
+        </div>
+        <div class="tier-status ${statusCls}">${statusText}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── RENDER PROFILE ───────────────────────────────────────────────────
+  function renderProfile() {
+    const a = state.athlete;
+    const tier = MAJ_CONTENT.getTier(a.xp);
+    const nextTier = MAJ_CONTENT.getNextTier(a.xp);
+    document.getElementById('profile-avatar').textContent = a.initials;
+    document.getElementById('profile-name').textContent = a.fullName;
+    document.getElementById('profile-xp').textContent = a.xp;
+    document.getElementById('profile-sessions').textContent = a.sessionsCompleted;
+    document.getElementById('profile-badges').textContent = a.earnedBadgeKeys.length;
+    document.getElementById('profile-tier-text').textContent = tier.name.toUpperCase();
+    document.getElementById('profile-tier-icon').textContent = tier.icon;
+    document.getElementById('profile-module-val').textContent = `Module ${a.currentModule} — Week ${a.currentWeek}`;
+    document.getElementById('profile-reflects-val').textContent = `${a.reflectionsSubmitted} of 32`;
+    document.getElementById('profile-streak-val').textContent = `${a.icon || '🔥'} ${a.streak} weeks`;
+    document.getElementById('profile-next-tier-val').textContent = nextTier
+      ? `${nextTier.name} — ${nextTier.minXP - a.xp} XP away`
+      : 'Maximum tier reached!';
+  }
+
+  // ── NAVIGATION ───────────────────────────────────────────────────────
+  function navTo(pageId, isLogin = false) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageId).classList.add('active');
+    if (!isLogin) {
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.page === pageId);
+      });
+    }
+    state.currentPage = pageId;
+  }
+
+  // ── TABS (THIS WEEK) ─────────────────────────────────────────────────
+  function switchTab(btn, tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + tabId).classList.add('active');
+    state.activeTab = tabId;
+  }
+
+  // ── MARK LEARN COMPLETE ───────────────────────────────────────────────
+  async function markLearnComplete() {
+    const a = state.athlete;
+    const wp = getWeekProgress(a.currentModule, a.currentWeek);
+    if (wp.learn) return;
+
+    markWeekProgress(a.currentModule, a.currentWeek, 'learn');
+    state.learnDone = true;
+    a.xp += 10;
+
+    const btn = document.getElementById('learn-xp-btn');
+    btn.textContent = 'Concept read ✓ (+10 XP earned)';
+    btn.style.background = 'var(--cyan)';
+    btn.style.color = '#fff';
+    btn.disabled = true;
+
+    updateXP();
+    renderNextWeekButton();
+    showOverlay('📖', '+10 XP!', "Concept learned! Head to the DO tab for this week's challenge.");
+
+    await saveState();
+  }
+
+  // ── CHALLENGE COMPLETE ────────────────────────────────────────────────
+  async function markChallengeComplete() {
+    const a = state.athlete;
+    const wp = getWeekProgress(a.currentModule, a.currentWeek);
+    if (wp.challenge) return;
+
+    markWeekProgress(a.currentModule, a.currentWeek, 'challenge');
+    state.challengeDone = true;
+
+    const week = MAJ_CONTENT.getWeek(a.currentModule, a.currentWeek);
+    const xpEarned = 10 + (week && week.do.badge && !week.do.badge.coachRequired ? week.do.badge.xp : 0);
+    a.xp += xpEarned;
+    a.sessionsCompleted += 1;
+
+    const btn = document.getElementById('do-complete-btn');
+    btn.textContent = 'Challenge complete! ✓';
+    btn.classList.add('done');
+
+    updateXP();
+    renderNextWeekButton();
+
+    // Award badge to API if this week has a non-coach-required badge
+    if (week && week.do.badge && !week.do.badge.coachRequired) {
+      try {
+        await apiPost('/badge', {
+          athleteId: a.id,
+          badgeKey: week.do.badge.key,
+          badgeName: week.do.badge.name,
+          badgeIcon: week.do.badge.icon,
+          xpAwarded: week.do.badge.xp,
+          awardedBy: 'system'
+        });
+        if (!a.earnedBadgeKeys.includes(week.do.badge.key)) {
+          a.earnedBadgeKeys.push(week.do.badge.key);
+        }
+        renderBadges();
+      } catch(e) { console.warn('Badge award failed', e); }
+    }
+
+    const badgeName = week && week.do.badge ? week.do.badge.name : null;
+    const icon = week && week.do.badge ? week.do.badge.icon : '⚡';
+    const sub = badgeName
+      ? `${badgeName} badge unlocked! Your coach will confirm at your next session.`
+      : `Challenge logged! Head to REFLECT to complete the week.`;
+
+    showOverlay(icon, `+${xpEarned} XP!`, sub);
+    document.querySelectorAll('.stat-val')[0].textContent = a.sessionsCompleted;
+
+    await saveState();
+  }
+
+  // ── REFLECT ──────────────────────────────────────────────────────────
+  function updateCounter() {
+    const val = document.getElementById('reflect-input').value.trim();
+    const words = val ? val.split(/\s+/).length : 0;
+    const counter = document.getElementById('reflect-counter');
+    const btn = document.getElementById('reflect-submit');
+    counter.innerHTML = words >= 30
+      ? `<em>${words} words — great reflection!</em>`
+      : `${words} words — <em>aim for 30+</em>`;
+    btn.disabled = words < 5;
+  }
+
+  async function submitReflection() {
+    const a = state.athlete;
+    const wp = getWeekProgress(a.currentModule, a.currentWeek);
+    if (wp.reflect) return;
+
+    const responseText = document.getElementById('reflect-input').value.trim();
+    const week = MAJ_CONTENT.getWeek(a.currentModule, a.currentWeek);
+
+    // Save reflection to API
+    try {
+      await apiPost('/reflection', {
+        athleteId: a.id,
+        moduleNum: a.currentModule,
+        weekNum: a.currentWeek,
+        prompt: week ? week.reflect.prompt : '',
+        response: responseText
+      });
+    } catch(e) {
+      console.warn('Reflection save failed', e);
+      toast('Saved locally — will sync when connection restores');
+    }
+
+    markWeekProgress(a.currentModule, a.currentWeek, 'reflect');
+    state.reflectDone = true;
+    a.xp += 15;
+    a.reflectionsSubmitted += 1;
+
+    document.getElementById('reflect-form-area').style.display = 'none';
+    document.getElementById('reflect-done').classList.add('show');
+
+    updateXP();
+    renderNextWeekButton();
+
+    setTimeout(() => {
+      showOverlay('✍️', '+15 XP!',
+        `Reflection submitted! Coach Al will read this. Reflections: ${a.reflectionsSubmitted} of 32.`);
+    }, 600);
+
+    document.querySelectorAll('.stat-val')[1].textContent = a.reflectionsSubmitted;
+
+    await saveState();
+  }
+
+  // ── ADVANCE WEEK / MODULE ─────────────────────────────────────────────
+  async function advanceWeek() {
+    const a = state.athlete;
+    const isLastWeek = a.currentWeek === 8;
+    const isLastModule = a.currentModule === 4;
+
+    if (isLastWeek && isLastModule) {
+      showOverlay('👑', 'Year 1 Complete!',
+        'You have completed all 4 modules. Talk to Coach Al about your Year 2 journey!');
+      return;
+    }
+
+    if (isLastWeek) {
+      const nextMod = a.currentModule + 1;
+      a.currentModule = nextMod;
+      a.currentWeek = 1;
+      const newMod = MAJ_CONTENT.modules[nextMod - 1];
+      showOverlay(newMod.icon, `Module ${nextMod} Unlocked!`,
+        `${newMod.title} begins now. Pillar: ${newMod.pillar}. Keep going!`);
+    } else {
+      a.currentWeek += 1;
+      showOverlay('🔥', `Week ${a.currentWeek} Unlocked!`,
+        `Week ${a.currentWeek - 1} complete! Week ${a.currentWeek} is now open.`);
+    }
+
+    state.learnDone = false;
+    state.challengeDone = false;
+    state.reflectDone = false;
+
+    await saveState();
+    renderDashboard();
+    renderThisWeek();
+    renderBadges();
+    renderProfile();
+
+    setTimeout(() => {
+      document.getElementById('mod1-fill').style.width =
+        Math.round(((a.currentWeek - 1) / 8) * 100) + '%';
+    }, 300);
+  }
+
+  // ── XP UPDATE ────────────────────────────────────────────────────────
+  function updateXP() {
+    const a = state.athlete;
+    const el = document.getElementById('dash-xp');
+    if (!el) return;
+    el.textContent = a.xp;
+    const tier = MAJ_CONTENT.getTier(a.xp);
+    const nextTier = MAJ_CONTENT.getNextTier(a.xp);
+    const maxXP = nextTier ? nextTier.minXP : tier.minXP + 290;
+    const pct = Math.min(100, Math.round(((a.xp - tier.minXP) / (maxXP - tier.minXP)) * 100));
+    document.getElementById('dash-xp-bar').style.width = pct + '%';
+    document.querySelector('.xp-max').textContent = maxXP;
+    document.querySelector('.xp-caption').innerHTML = nextTier
+      ? `${nextTier.minXP - a.xp} XP to reach <em>${nextTier.name}</em> tier`
+      : '<em>Maximum tier — Legend!</em>';
+    el.classList.add('pulse');
+    setTimeout(() => el.classList.remove('pulse'), 500);
+    document.getElementById('profile-xp').textContent = a.xp;
+  }
+
+  // ── WEEK NAVIGATION ───────────────────────────────────────────────────
+  function goToWeek(moduleNum, weekNum) {
+    const week = MAJ_CONTENT.getWeek(moduleNum, weekNum);
+    if (!week) { toast('This week is not yet available'); return; }
+    state.athlete.currentModule = moduleNum;
+    state.athlete.currentWeek = weekNum;
+    state.challengeDone = false;
+    state.reflectDone = false;
+    renderThisWeek();
+    navTo('thisweek');
+    // Reset to learn tab
+    document.querySelectorAll('.tab-btn')[0].click();
+  }
+
+  // ── OVERLAY ──────────────────────────────────────────────────────────
+  function showOverlay(icon, title, sub) {
+    document.getElementById('overlay-icon').textContent = icon;
+    document.getElementById('overlay-title').textContent = title;
+    document.getElementById('overlay-sub').textContent = sub;
+    document.getElementById('xp-overlay').classList.add('show');
+  }
+
+  function closeOverlay() {
+    document.getElementById('xp-overlay').classList.remove('show');
+  }
+
+  // ── TOAST ─────────────────────────────────────────────────────────────
+  let toastTimer;
+  function toast(msg) {
+    const el = document.getElementById('toast-el');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+</script>
+</body>
+</html>
