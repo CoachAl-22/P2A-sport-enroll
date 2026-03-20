@@ -1356,6 +1356,48 @@
   .ra-pill-null { background: var(--border); color: var(--text3); }
   .ra-reassess-badge { font-size: 11px; background: rgba(248,113,113,0.15); color: #f87171; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
 
+  /* ── SKILL ASSESSMENT ───────────────────────────────────────────── */
+  .sa-type-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+  .sa-type-btn {
+    background: var(--card); border: 2px solid var(--border); border-radius: var(--radius);
+    padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.15s; font-family: var(--font-body);
+  }
+  .sa-type-btn:hover { border-color: var(--orange); }
+  .sa-type-btn.selected { border-color: var(--orange); background: rgba(249,115,22,0.08); }
+  .sa-type-emoji { font-size: 28px; display: block; margin-bottom: 6px; }
+  .sa-type-name { font-size: 13px; font-weight: 700; color: var(--text); display: block; }
+  .sa-type-target { font-size: 10px; color: var(--text3); display: block; margin-top: 2px; }
+  .sa-section-header { background: rgba(249,115,22,0.08); border-left: 3px solid var(--orange); padding: 10px 14px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin-bottom: 0; }
+  .sa-section-header-text { font-size: 13px; font-weight: 700; color: var(--orange); }
+  .yn-group { display: flex; gap: 4px; flex-shrink: 0; }
+  .yn-btn {
+    height: 34px; border-radius: 8px; border: 1px solid var(--border2);
+    background: none; font-size: 11px; font-weight: 700; color: var(--text3);
+    cursor: pointer; font-family: var(--font-body); transition: all 0.15s; padding: 0 8px; white-space: nowrap;
+  }
+  .yn-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .yn-btn.active-Y  { background: #4ade80; border-color: #4ade80; color: #0a0a0a; }
+  .yn-btn.active-NI { background: #fb923c; border-color: #fb923c; color: #fff; }
+  .yn-btn.active-NO { background: var(--border2); border-color: var(--border2); color: var(--text3); }
+  .rating-group { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+  .rating-btn {
+    background: var(--card); border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    padding: 12px 8px; font-size: 13px; font-weight: 600; color: var(--text2);
+    cursor: pointer; font-family: var(--font-body); transition: all 0.15s; text-align: center;
+  }
+  .rating-btn.active-excellent    { background: #4ade80; border-color: #4ade80; color: #0a0a0a; }
+  .rating-btn.active-good         { background: #60a5fa; border-color: #60a5fa; color: #fff; }
+  .rating-btn.active-satisfactory { background: #fb923c; border-color: #fb923c; color: #fff; }
+  .rating-btn.active-needs        { background: #f87171; border-color: #f87171; color: #fff; }
+  .sa-past-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
+  .sa-past-type { font-size: 13px; font-weight: 700; color: var(--text); }
+  .sa-past-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .sa-rating-chip { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-top: 8px; }
+  .sa-rating-excellent    { background: rgba(74,222,128,0.15); color: #4ade80; }
+  .sa-rating-good         { background: rgba(96,165,250,0.15); color: #60a5fa; }
+  .sa-rating-satisfactory { background: rgba(251,146,60,0.15);  color: #fb923c; }
+  .sa-rating-needs        { background: rgba(248,113,113,0.15); color: #f87171; }
+
   /* ── CREATE ATHLETE MODAL ─────────────────────────────────────────── */
   .ca-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.6);
@@ -1744,6 +1786,18 @@
     <div class="coach-athlete-list" id="coach-athlete-list">
       <div class="coach-loading">Loading athletes…</div>
     </div>
+  </div>
+
+  <!-- ══ SKILL ASSESSMENT PAGE ════════════════════════════════════════ -->
+  <div id="page-skill-assessment" class="page">
+    <div class="ad-topbar">
+      <button class="ad-back-btn" onclick="navTo('athlete-detail')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="ad-topbar-name">📋 Skill Assessment</div>
+    </div>
+    <div id="sa-athlete-bar" style="padding:12px 16px;background:var(--card);border-bottom:1px solid var(--border);"></div>
+    <div id="sa-body"></div>
   </div>
 
   <!-- ══ RUN ASSESSMENT PAGE ══════════════════════════════════════════ -->
@@ -3254,6 +3308,237 @@ const MAJ_CONTENT = {
     }
   }
 
+  // ── SKILL ASSESSMENTS ────────────────────────────────────────────────
+  const SKILL_ASSESSMENTS = {
+    leap: {
+      name: 'Leap Technique', emoji: '🦘', target: 'Foundation & Emerging Athletes',
+      sections: [
+        { name: 'Take-Off and Preparation', criteria: ['Forward lean during take-off', 'Arms drive forward for momentum'] },
+        { name: 'Flight Phase', criteria: ['Maintains balance and control mid-flight', 'Lead leg extended and prepared for landing'] },
+        { name: 'Landing', criteria: ['Lands with bent knees for shock absorption', 'Controlled and stable landing without falling'] },
+        { name: 'Effort and Coordination', criteria: ['Displays confidence and commitment during leap', 'Synchronisation between upper and lower body'] },
+      ]
+    },
+    jump: {
+      name: 'Jump Technique', emoji: '⬆️', target: 'Primary Aged Children',
+      sections: [
+        { name: 'Preparation Phase', criteria: ['Proper arm swing for momentum', 'Balanced and aligned body position before take-off'] },
+        { name: 'Take-Off Phase', criteria: ['Drives upward with force from legs', 'Maintains good posture during lift'] },
+        { name: 'Flight Phase', criteria: ['Knees and arms coordinated mid-air', 'Maintains stable position in flight'] },
+        { name: 'Landing Phase', criteria: ['Lands with knees bent for safety', 'Controlled landing with minimal imbalance'] },
+      ]
+    },
+    throw: {
+      name: 'Throw Technique', emoji: '🥏', target: 'Primary Aged Children',
+      sections: [
+        { name: 'Preparation Phase', criteria: ['Proper grip and alignment of object', 'Stable stance and body alignment'] },
+        { name: 'Throw Execution', criteria: ['Proper arm extension and release point', 'Full body rotation through the throw'] },
+        { name: 'Follow-Through', criteria: ['Complete follow-through motion after release', 'Body balanced and stable after throw'] },
+        { name: 'Effort and Accuracy', criteria: ['Confident and committed action', 'Controlled direction and target focus'] },
+      ]
+    },
+    sprint: {
+      name: 'Sprint Start', emoji: '🚀', target: 'All Athletes',
+      sections: [
+        { name: 'Set Position', criteria: ['Feet correctly positioned in blocks or set position', 'Weight distributed forward over front foot', 'Hips raised above shoulder height'] },
+        { name: 'Drive Phase', criteria: ['Explosive push-off at start signal', 'Low body angle maintained in first 10m', 'Powerful arm drive from the shoulder'] },
+        { name: 'Transition to Upright', criteria: ['Gradual rise to full sprint position by 20–30m', 'Head neutral, eyes forward', 'Maintains stride rhythm and frequency'] },
+      ]
+    },
+  };
+
+  const SA_RATINGS = [
+    { key: 'excellent',    label: '⭐ Excellent',         cls: 'active-excellent' },
+    { key: 'good',         label: '✓ Good',              cls: 'active-good' },
+    { key: 'satisfactory', label: '~ Satisfactory',      cls: 'active-satisfactory' },
+    { key: 'needs',        label: '⚠ Needs Improvement', cls: 'active-needs' },
+  ];
+
+  let currentSkillAthleteId = null;
+  let currentSkillAthleteName = null;
+  let currentSkillType = null;
+
+  function openSkillAssessment(athleteId, athleteName) {
+    currentSkillAthleteId = athleteId;
+    currentSkillAthleteName = athleteName;
+    currentSkillType = null;
+    document.getElementById('sa-athlete-bar').innerHTML =
+      `<div style="font-size:14px;font-weight:600;color:var(--text);">${athleteName}</div>
+       <div style="font-size:12px;color:var(--text3);margin-top:2px;">Select assessment type below</div>`;
+    renderSkillForm();
+    navTo('skill-assessment');
+  }
+
+  function renderSkillForm() {
+    const typeHtml = `
+      <div class="ad-section">
+        <div class="ad-section-title">Assessment Type</div>
+        <div class="sa-type-grid">
+          ${Object.entries(SKILL_ASSESSMENTS).map(([key, t]) => `
+            <button class="sa-type-btn${currentSkillType === key ? ' selected' : ''}" onclick="selectSkillType('${key}')">
+              <span class="sa-type-emoji">${t.emoji}</span>
+              <span class="sa-type-name">${t.name}</span>
+              <span class="sa-type-target">${t.target}</span>
+            </button>`).join('')}
+        </div>
+      </div>`;
+
+    if (!currentSkillType) {
+      document.getElementById('sa-body').innerHTML = typeHtml +
+        `<div style="padding:20px;text-align:center;color:var(--text3);font-size:14px;">Select an assessment type above to begin.</div>`;
+      return;
+    }
+
+    const def = SKILL_ASSESSMENTS[currentSkillType];
+    let criteriaHtml = '';
+    def.sections.forEach((section, si) => {
+      criteriaHtml += `
+        <div style="margin-bottom:0;">
+          <div class="sa-section-header"><div class="sa-section-header-text">${section.name}</div></div>
+          <div class="ra-criteria-list" style="border-top:none;border-radius:0 0 var(--radius) var(--radius);">
+            ${section.criteria.map((c, ci) => {
+              const id = `yn-${si}-${ci}`;
+              return `<div class="ra-criteria-row">
+                <div class="ra-criteria-info">
+                  <div class="ra-criteria-name" style="font-size:13px;">${c}</div>
+                </div>
+                <div class="yn-group" id="${id}">
+                  <button class="yn-btn" data-val="Y"  onclick="selectYN(this,'${id}')">Yes</button>
+                  <button class="yn-btn" data-val="NI" onclick="selectYN(this,'${id}')">Needs Work</button>
+                  <button class="yn-btn" data-val="NO" onclick="selectYN(this,'${id}')">N/O</button>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+    });
+
+    const notesHtml = `
+      <div class="ad-section">
+        <div class="ad-section-title">Coach Notes</div>
+        <div class="ra-note-field">
+          <label class="ca-label">Strengths Observed</label>
+          <textarea class="ad-ref-note-area" id="sa-strengths" placeholder="What did the athlete do well?" rows="2" style="margin-top:0;"></textarea>
+        </div>
+        <div class="ra-note-field">
+          <label class="ca-label">Areas for Improvement</label>
+          <textarea class="ad-ref-note-area" id="sa-improvements" placeholder="What needs work?" rows="2" style="margin-top:0;"></textarea>
+        </div>
+        <div class="ra-note-field">
+          <label class="ca-label">Recommended Next Steps</label>
+          <textarea class="ad-ref-note-area" id="sa-nextsteps" placeholder="Drills, cues, or goals for next session…" rows="2" style="margin-top:0;"></textarea>
+        </div>
+      </div>
+      <div class="ad-section">
+        <div class="ad-section-title">Overall Rating</div>
+        <div class="rating-group" id="sa-rating-group">
+          ${SA_RATINGS.map(r => `<button class="rating-btn" data-key="${r.key}" data-cls="${r.cls}" onclick="selectRating(this)">${r.label}</button>`).join('')}
+        </div>
+      </div>
+      <div class="ad-section">
+        <label style="display:flex;align-items:center;gap:12px;cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;">
+          <input type="checkbox" id="sa-reassess" style="width:18px;height:18px;accent-color:var(--orange);flex-shrink:0;">
+          <div>
+            <div style="font-size:14px;font-weight:500;color:var(--text);">Re-assessment required</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px;">Flag this athlete for a follow-up session</div>
+          </div>
+        </label>
+      </div>
+      <div style="padding:0 16px 32px;">
+        <div id="sa-save-msg" style="display:none;color:#4ade80;font-size:13px;font-weight:500;margin-bottom:10px;text-align:center;">✓ Assessment saved!</div>
+        <button class="ca-btn-primary" id="sa-save-btn" onclick="saveSkillAssessment()">Save Assessment</button>
+      </div>`;
+
+    document.getElementById('sa-body').innerHTML = typeHtml +
+      `<div class="ad-section" style="padding-bottom:0;">${criteriaHtml}</div>` + notesHtml;
+  }
+
+  function selectSkillType(key) {
+    currentSkillType = key;
+    document.getElementById('sa-athlete-bar').innerHTML =
+      `<div style="font-size:14px;font-weight:600;color:var(--text);">${currentSkillAthleteName}</div>
+       <div style="font-size:12px;color:var(--text3);margin-top:2px;">${SKILL_ASSESSMENTS[key].emoji} ${SKILL_ASSESSMENTS[key].name} · ${new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})}</div>`;
+    renderSkillForm();
+  }
+
+  function selectYN(btn, groupId) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('active-Y','active-NI','active-NO'));
+    btn.classList.add(`active-${btn.dataset.val}`);
+  }
+
+  function selectRating(btn) {
+    document.querySelectorAll('#sa-rating-group .rating-btn').forEach(b => {
+      b.classList.remove('active-excellent','active-good','active-satisfactory','active-needs');
+    });
+    btn.classList.add(btn.dataset.cls);
+  }
+
+  async function saveSkillAssessment() {
+    if (!currentSkillType) { toast('Please select an assessment type first.'); return; }
+    const def = SKILL_ASSESSMENTS[currentSkillType];
+    const criteriaResults = {};
+    def.sections.forEach((section, si) => {
+      section.criteria.forEach((c, ci) => {
+        const group = document.getElementById(`yn-${si}-${ci}`);
+        const active = group ? group.querySelector('[class*="active-"]') : null;
+        criteriaResults[`${si}_${ci}`] = { criterion: c, result: active ? active.dataset.val : null };
+      });
+    });
+    const ratingBtn = document.querySelector('#sa-rating-group .rating-btn[class*="active-"]');
+    const data = {
+      athleteId: currentSkillAthleteId,
+      coachName: state.athlete.fullName || 'Coach',
+      assessmentType: currentSkillType,
+      criteriaResults,
+      strengths: document.getElementById('sa-strengths')?.value || '',
+      areasForImprovement: document.getElementById('sa-improvements')?.value || '',
+      nextSteps: document.getElementById('sa-nextsteps')?.value || '',
+      overallRating: ratingBtn ? ratingBtn.dataset.key : null,
+      reassessmentRequired: document.getElementById('sa-reassess')?.checked || false,
+    };
+    const btn = document.getElementById('sa-save-btn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      await apiPost('/api/maj/skill-assessments', data);
+      document.getElementById('sa-save-msg').style.display = 'block';
+      toast('✓ Assessment saved!');
+      setTimeout(() => navTo('athlete-detail'), 1600);
+    } catch (e) {
+      toast('Error: ' + e.message);
+      btn.disabled = false; btn.textContent = 'Save Assessment';
+    }
+  }
+
+  function renderSkillAssessmentHistory(assessments) {
+    if (!assessments || assessments.length === 0) return '<div style="font-size:13px;color:var(--text3);">No skill assessments recorded yet.</div>';
+    const ratingClass = { excellent: 'sa-rating-excellent', good: 'sa-rating-good', satisfactory: 'sa-rating-satisfactory', needs: 'sa-rating-needs' };
+    const ratingLabel = { excellent: '⭐ Excellent', good: '✓ Good', satisfactory: '~ Satisfactory', needs: '⚠ Needs Improvement' };
+    return assessments.map(a => {
+      const def = SKILL_ASSESSMENTS[a.assessment_type];
+      const results = a.criteria_results || {};
+      const total = Object.keys(results).length;
+      const passed = Object.values(results).filter((r) => (r as any).result === 'Y').length;
+      const date = new Date(a.created_at).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
+      return `<div class="sa-past-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="sa-past-type">${def ? def.emoji + ' ' + def.name : a.assessment_type}</div>
+            <div class="sa-past-meta">${date} · by ${a.coach_name || 'Coach'}</div>
+            ${total ? `<div style="font-size:12px;color:var(--text3);margin-top:4px;">${passed}/${total} criteria passed</div>` : ''}
+          </div>
+          <div>
+            ${a.overall_rating ? `<span class="sa-rating-chip ${ratingClass[a.overall_rating] || ''}">${ratingLabel[a.overall_rating] || a.overall_rating}</span>` : ''}
+            ${a.reassessment_required ? '<div class="ra-reassess-badge" style="margin-top:4px;">Reassess</div>' : ''}
+          </div>
+        </div>
+        ${a.strengths ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--text2);"><span style="color:var(--text3);font-weight:600;">Strengths:</span> ${a.strengths}</div>` : ''}
+        ${a.areas_for_improvement ? `<div style="font-size:12px;color:var(--text2);margin-top:4px;"><span style="color:var(--text3);font-weight:600;">Improve:</span> ${a.areas_for_improvement}</div>` : ''}
+        ${a.next_steps ? `<div style="font-size:12px;color:var(--text2);margin-top:4px;"><span style="color:var(--text3);font-weight:600;">Next Steps:</span> ${a.next_steps}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
   // ── RUN ASSESSMENT ───────────────────────────────────────────────────
   const RA_CRITERIA = [
     { key: 'c1', label: 'Eyes & Focus', desc: 'Head still and level, eyes looking forward throughout' },
@@ -3416,19 +3701,20 @@ const MAJ_CONTENT = {
     document.getElementById('ad-topbar-name').textContent = 'Loading…';
     document.getElementById('ad-body').innerHTML = '<div class="coach-loading">Loading…</div>';
     try {
-      const [athlete, reflections, assessments] = await Promise.all([
+      const [athlete, reflections, assessments, skillAssessments] = await Promise.all([
         apiGet(`/api/maj/athlete/${athleteId}`),
         apiGet(`/api/maj/athlete/${athleteId}/reflections`),
         apiGet(`/api/maj/athlete/${athleteId}/assessments`),
+        apiGet(`/api/maj/athlete/${athleteId}/skill-assessments`),
       ]);
       document.getElementById('ad-topbar-name').textContent = athlete.fullName;
-      renderAthleteDetail(athlete, reflections, assessments);
+      renderAthleteDetail(athlete, reflections, assessments, skillAssessments);
     } catch (e) {
       document.getElementById('ad-body').innerHTML = `<div class="coach-empty">Error: ${e.message}</div>`;
     }
   }
 
-  function renderAthleteDetail(a, reflections, assessments = []) {
+  function renderAthleteDetail(a, reflections, assessments = [], skillAssessments = []) {
     const initials = a.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
     const modData = MAJ_CONTENT.modules[(a.currentModule || 1) - 1] || MAJ_CONTENT.modules[0];
     const tier = MAJ_CONTENT.getTier(a.totalXp || 0);
@@ -3521,9 +3807,17 @@ const MAJ_CONTENT = {
         <div class="ad-section-title" style="display:flex;align-items:center;justify-content:space-between;">
           <span>Run Assessments (${assessments.length})</span>
           <button class="coach-award-btn" style="padding:6px 14px;font-size:12px;"
-            onclick="openRunAssessment('${a.id}','${a.fullName.replace(/'/g,"\\'")}')">+ New Assessment</button>
+            onclick="openRunAssessment('${a.id}','${a.fullName.replace(/'/g,"\\'")}')">+ New</button>
         </div>
         ${renderPastAssessments(assessments)}
+      </div>
+      <div class="ad-section">
+        <div class="ad-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+          <span>Skill Assessments (${skillAssessments.length})</span>
+          <button class="coach-award-btn" style="padding:6px 14px;font-size:12px;"
+            onclick="openSkillAssessment('${a.id}','${a.fullName.replace(/'/g,"\\'")}')">+ New</button>
+        </div>
+        ${renderSkillAssessmentHistory(skillAssessments)}
       </div>`;
   }
 

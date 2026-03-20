@@ -1632,6 +1632,30 @@ export class DatabaseStorage implements IStorage {
     ) as any;
     return Array.isArray(rows) ? rows : [];
   }
+
+  async createSkillAssessment(data: Record<string, any>): Promise<any> {
+    const [row] = await db.execute(
+      sql`INSERT INTO maj_skill_assessments
+        (athlete_id, coach_name, assessment_type, assessment_date, criteria_results,
+         strengths, areas_for_improvement, next_steps, overall_rating, reassessment_required)
+        VALUES (
+          ${data.athleteId}, ${data.coachName}, ${data.assessmentType},
+          ${data.assessmentDate || new Date().toISOString().slice(0,10)},
+          ${JSON.stringify(data.criteriaResults || {})}::jsonb,
+          ${data.strengths||''}, ${data.areasForImprovement||''},
+          ${data.nextSteps||''}, ${data.overallRating||null},
+          ${data.reassessmentRequired||false}
+        ) RETURNING *`
+    ) as any;
+    return row;
+  }
+
+  async getSkillAssessmentsForAthlete(athleteId: string): Promise<any[]> {
+    const rows = await db.execute(
+      sql`SELECT * FROM maj_skill_assessments WHERE athlete_id = ${athleteId} ORDER BY created_at DESC`
+    ) as any;
+    return Array.isArray(rows) ? rows : [];
+  }
 }
 
 export const storage = new DatabaseStorage();
