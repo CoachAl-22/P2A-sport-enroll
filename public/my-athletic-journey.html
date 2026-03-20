@@ -1244,6 +1244,42 @@
     50% { transform: scale(1.08); }
   }
   .pulse { animation: pulse-once 0.5s ease; }
+
+  /* ── COACH PANEL ──────────────────────────────────────────────────── */
+  .coach-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .coach-topbar-title { font-size: 18px; font-weight: 700; color: var(--text); font-family: var(--font-head); }
+  .coach-topbar-sub { font-size: 12px; color: var(--text3); margin-top: 3px; }
+  .coach-athlete-list { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .coach-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .coach-card-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+  .coach-card-avatar {
+    width: 42px; height: 42px; border-radius: 50%; background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; color: #fff; flex-shrink: 0;
+  }
+  .coach-card-info { flex: 1; min-width: 0; }
+  .coach-card-name { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .coach-card-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .coach-card-xp { font-size: 13px; font-weight: 700; color: var(--orange); flex-shrink: 0; }
+  .coach-card-badges { border-top: 1px solid var(--border); padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .coach-badge-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .coach-badge-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .coach-badge-icon { font-size: 24px; flex-shrink: 0; }
+  .coach-badge-label { font-size: 13px; color: var(--text); font-weight: 500; }
+  .coach-badge-xp { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .coach-award-btn {
+    background: var(--orange); color: #fff; border: none;
+    border-radius: var(--radius-sm); padding: 8px 18px;
+    font-size: 13px; font-weight: 600; font-family: var(--font-body);
+    cursor: pointer; flex-shrink: 0; transition: opacity 0.2s;
+  }
+  .coach-award-btn:disabled { opacity: 0.45; cursor: default; }
+  .coach-no-badges { font-size: 13px; color: var(--text3); padding: 2px 0; text-align: center; }
+  .coach-empty, .coach-loading { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 14px; }
 </style>
 </head>
 <body>
@@ -1567,6 +1603,20 @@
 
     <div style="padding:16px 20px 20px;">
       <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <!-- ══ COACH PANEL ══════════════════════════════════════════════════ -->
+  <div id="page-coach" class="page">
+    <div class="coach-topbar">
+      <div>
+        <div class="coach-topbar-title">🏋️ Coach Panel</div>
+        <div class="coach-topbar-sub" id="coach-sub">Loading athletes…</div>
+      </div>
+      <button onclick="doLogout()" style="background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 14px;font-size:13px;color:#f87171;cursor:pointer;font-family:var(--font-body);">Sign out</button>
+    </div>
+    <div class="coach-athlete-list" id="coach-athlete-list">
+      <div class="coach-loading">Loading athletes…</div>
     </div>
   </div>
 
@@ -2930,7 +2980,96 @@ const MAJ_CONTENT = {
     toast(`Week ${a.currentWeek} of Module ${a.currentModule} unlocked! 🚀`);
   }
 
-  // ── LOGIN ────────────────────────────────────────────────────────────
+  // ── COACH PANEL ──────────────────────────────────────────────────────
+  function getCoachBadgesForAthlete(athlete) {
+    const eligible = [];
+    const earned = athlete.earnedBadgeKeys || [];
+    MAJ_CONTENT.modules.forEach(mod => {
+      mod.weeks.forEach(week => {
+        if (!week.do.badge || !week.do.badge.coachRequired) return;
+        const badge = week.do.badge;
+        const atModule = athlete.currentModule;
+        const atWeek = athlete.currentWeek;
+        const passed = (atModule > mod.num) || (atModule === mod.num && atWeek >= week.num);
+        if (passed && !earned.includes(badge.key)) {
+          eligible.push({ ...badge, moduleNum: mod.num, weekNum: week.num });
+        }
+      });
+    });
+    return eligible;
+  }
+
+  async function renderCoachPanel(coachName) {
+    const list = document.getElementById('coach-athlete-list');
+    const sub = document.getElementById('coach-sub');
+    list.innerHTML = '<div class="coach-loading">Loading athletes…</div>';
+    try {
+      const athletes = await apiGet('/api/maj/athletes');
+      sub.textContent = `${athletes.length} athlete${athletes.length !== 1 ? 's' : ''} · Tap Award to confirm badge in person`;
+      if (athletes.length === 0) {
+        list.innerHTML = '<div class="coach-empty">No athletes registered yet.</div>';
+        return;
+      }
+      list.innerHTML = '';
+      athletes.forEach(a => {
+        const initials = a.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+        const modData = MAJ_CONTENT.modules[(a.currentModule || 1) - 1] || MAJ_CONTENT.modules[0];
+        const eligible = getCoachBadgesForAthlete(a);
+        const card = document.createElement('div');
+        card.className = 'coach-card';
+        const badgesHtml = eligible.length === 0
+          ? `<div class="coach-no-badges">No badges pending — all up to date ✓</div>`
+          : eligible.map(b => `
+            <div class="coach-badge-row" id="badge-row-${a.id}-${b.key}">
+              <div class="coach-badge-info">
+                <div class="coach-badge-icon">${b.icon}</div>
+                <div>
+                  <div class="coach-badge-label">${b.name}</div>
+                  <div class="coach-badge-xp">+${b.xp} XP · Module ${b.moduleNum}, Week ${b.weekNum}</div>
+                </div>
+              </div>
+              <button class="coach-award-btn"
+                onclick="awardCoachBadge('${a.id}','${b.key}',${b.xp},'${b.icon}','${b.name}','${a.fullName}')">
+                Award
+              </button>
+            </div>`).join('');
+        card.innerHTML = `
+          <div class="coach-card-header">
+            <div class="coach-card-avatar">${initials}</div>
+            <div class="coach-card-info">
+              <div class="coach-card-name">${a.fullName}</div>
+              <div class="coach-card-meta">Module ${a.currentModule} · Week ${a.currentWeek} · ${modData.title}</div>
+            </div>
+            <div class="coach-card-xp">⭐ ${a.totalXp} XP</div>
+          </div>
+          <div class="coach-card-badges">${badgesHtml}</div>`;
+        list.appendChild(card);
+      });
+    } catch (e) {
+      list.innerHTML = `<div class="coach-empty">Error loading athletes: ${e.message}</div>`;
+    }
+  }
+
+  async function awardCoachBadge(athleteId, badgeKey, xp, icon, name, athleteName) {
+    const rowId = `badge-row-${athleteId}-${badgeKey}`;
+    const row = document.getElementById(rowId);
+    const btn = row ? row.querySelector('.coach-award-btn') : null;
+    if (btn) { btn.disabled = true; btn.textContent = 'Awarding…'; }
+    try {
+      await apiPost('/api/maj/badge', {
+        athleteId, badgeKey, xp, awardedBy: state.athlete.fullName || 'Coach'
+      });
+      await apiPost(`/api/maj/athlete/${athleteId}/progress`, { xpDelta: xp });
+      if (row) {
+        row.innerHTML = `<div style="color:#4ade80;font-size:13px;padding:4px 0;font-weight:500;">✓ ${name} awarded to ${athleteName} (+${xp} XP)</div>`;
+      }
+      toast(`${icon} ${name} awarded to ${athleteName}!`);
+    } catch (e) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Award'; }
+      toast('Error: ' + e.message);
+    }
+  }
+
   async function doLogin() {
     const u = document.getElementById('login-user').value.trim().toLowerCase();
     const p = document.getElementById('login-pass').value;
@@ -2953,14 +3092,12 @@ const MAJ_CONTENT = {
         initApp();
         navTo('home');
       } else if (data.role === 'coach') {
-        document.getElementById('bottom-nav').style.display = 'flex';
-        // Coach sees athlete list — basic view for now
         state.athlete.name = data.fullName.split(' ')[0];
         state.athlete.fullName = data.fullName;
         state.athlete.initials = data.fullName.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-        initApp();
-        navTo('home');
-        toast(`Welcome, ${data.fullName}! Coach view active.`);
+        document.getElementById('bottom-nav').style.display = 'none';
+        navTo('coach');
+        renderCoachPanel(data.fullName);
       }
     } catch (e) {
       err.textContent = e.message === 'Invalid credentials' ? 'Incorrect username or password.' : 'Connection error — please try again.';

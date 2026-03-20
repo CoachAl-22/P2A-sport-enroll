@@ -227,6 +227,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/maj/athletes", async (req, res) => {
+    try {
+      const athletes = await storage.getAllMajAthletes();
+      const safe = athletes.map(({ password, ...a }) => a);
+      res.json(safe);
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
   app.get("/api/maj/athlete/:id", async (req, res) => {
     try {
       const athlete = await storage.getMajAthleteById(req.params.id);
