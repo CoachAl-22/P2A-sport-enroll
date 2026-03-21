@@ -1606,7 +1606,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createRunAssessment(data: Record<string, any>): Promise<any> {
-    const [row] = await db.execute(
+    const result = await db.execute(
       sql`INSERT INTO maj_run_assessments (
         athlete_id, coach_name, assessment_date,
         a1_c1, a1_c2, a1_c3, a1_c4, a1_c5, a1_c6,
@@ -1623,18 +1623,20 @@ export class DatabaseStorage implements IStorage {
         ${data.reassessmentRequired||false}
       ) RETURNING *`
     ) as any;
-    return row;
+    const rows = result.rows ?? result;
+    return Array.isArray(rows) ? rows[0] : rows;
   }
 
   async getRunAssessmentsForAthlete(athleteId: string): Promise<any[]> {
-    const rows = await db.execute(
+    const result = await db.execute(
       sql`SELECT * FROM maj_run_assessments WHERE athlete_id = ${athleteId} ORDER BY created_at DESC`
     ) as any;
+    const rows = result.rows ?? result;
     return Array.isArray(rows) ? rows : [];
   }
 
   async createSkillAssessment(data: Record<string, any>): Promise<any> {
-    const [row] = await db.execute(
+    const result = await db.execute(
       sql`INSERT INTO maj_skill_assessments
         (athlete_id, coach_name, assessment_type, assessment_date, criteria_results,
          strengths, areas_for_improvement, next_steps, overall_rating, reassessment_required)
@@ -1647,13 +1649,15 @@ export class DatabaseStorage implements IStorage {
           ${data.reassessmentRequired||false}
         ) RETURNING *`
     ) as any;
-    return row;
+    const rows = result.rows ?? result;
+    return Array.isArray(rows) ? rows[0] : rows;
   }
 
   async getSkillAssessmentsForAthlete(athleteId: string): Promise<any[]> {
-    const rows = await db.execute(
+    const result = await db.execute(
       sql`SELECT * FROM maj_skill_assessments WHERE athlete_id = ${athleteId} ORDER BY created_at DESC`
     ) as any;
+    const rows = result.rows ?? result;
     return Array.isArray(rows) ? rows : [];
   }
 }
