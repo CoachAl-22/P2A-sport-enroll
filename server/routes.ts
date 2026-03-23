@@ -412,6 +412,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/senior-squad-application.html", async (req, res) => {
+    const { readFileSync } = await import("fs");
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const filePath = resolve(__dirname, "../public/senior-squad-application.html");
+    try {
+      const content = readFileSync(filePath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(content);
+    } catch {
+      res.status(404).send("Page not found");
+    }
+  });
+
   app.get("/operations-manual", async (req, res) => {
     const userId = (req.session as any)?.userId;
     if (!userId) {
