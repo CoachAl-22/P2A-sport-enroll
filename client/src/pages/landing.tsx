@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
-import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
 import OneClickChat from "@/components/one-click-chat";
 import { Calendar, MapPin, Users, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X, Menu, Info } from "lucide-react";
@@ -12,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 export default function Landing() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
-  const [isSeniorSquadModalOpen, setIsSeniorSquadModalOpen] = useState(false);
   const [isHighPerformanceSquadModalOpen, setIsHighPerformanceSquadModalOpen] = useState(false);
   const [isSchoolPartnershipsModalOpen, setIsSchoolPartnershipsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -919,7 +917,7 @@ export default function Landing() {
                     <div className="text-xs text-gray-500">(includes Final Surge app access)</div>
                   </div>
                   <Button 
-                    onClick={() => setIsSeniorSquadModalOpen(true)}
+                    onClick={() => window.open('/senior-squad-application.html', '_blank')}
                     className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Apply Now
@@ -1106,10 +1104,6 @@ export default function Landing() {
         onClose={() => setIsContactFormOpen(false)} 
       />
       
-      <SeniorSquadApplication
-        isOpen={isSeniorSquadModalOpen}
-        onClose={() => setIsSeniorSquadModalOpen(false)}
-      />
       
       <HighPerformanceSquadApplication 
         isOpen={isHighPerformanceSquadModalOpen} 

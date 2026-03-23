@@ -2,14 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
-import { SeniorSquadApplication } from "@/components/applications/senior-squad-application";
 import { Users, Building2, Smartphone, ArrowLeft, Star, CheckCircle, Trophy, Target, Clock, Heart, Home } from "lucide-react";
 import { Link } from "wouter";
 
 export default function SeniorSquad() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
-  const [isSeniorSquadModalOpen, setIsSeniorSquadModalOpen] = useState(false);
+
 
   return (
     <div className="font-sans bg-gray-50">
@@ -303,7 +302,7 @@ export default function SeniorSquad() {
               </a>
             </Button>
             <Button 
-              onClick={() => setIsSeniorSquadModalOpen(true)}
+              onClick={() => window.open('/senior-squad-application.html', '_blank')}
               size="lg"
               variant="outline"
               className="bg-white/10 border-white text-white hover:bg-white/20 font-bold px-8 py-3 text-lg"
@@ -336,10 +335,6 @@ export default function SeniorSquad() {
         onClose={() => setIsContactFormOpen(false)} 
       />
 
-      <SeniorSquadApplication 
-        isOpen={isSeniorSquadModalOpen} 
-        onClose={() => setIsSeniorSquadModalOpen(false)} 
-      />
     </div>
   );
 }
