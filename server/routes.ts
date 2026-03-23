@@ -10,7 +10,7 @@ import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes } from "@shared/schema";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders } from "./googleSheets";
 import { db } from "./db";
@@ -3390,6 +3390,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (e) {
       console.error("[seed] Failed to seed MAJ coach:", e);
+    }
+  })();
+
+  // ── Seed MAJ demo athlete on startup ─────────────────────────────
+  (async () => {
+    try {
+      const existing = await db.select().from(majAthletes).where(eq(majAthletes.username, "jordan"));
+      if (existing.length === 0) {
+        const hash = await bcrypt.hash("athlete1", 10);
+        await db.insert(majAthletes).values({
+          username: "jordan",
+          fullName: "Jordan",
+          password: hash,
+          grade: "Year 9",
+          program: "Senior Squad",
+          coach: "Coach Al",
+        });
+        console.log("[seed] MAJ demo athlete 'jordan' created");
+      }
+    } catch (e) {
+      console.error("[seed] Failed to seed MAJ demo athlete:", e);
     }
   })();
 
