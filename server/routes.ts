@@ -427,6 +427,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/speed-running-application.html", async (req, res) => {
+    const { readFileSync } = await import("fs");
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const filePath = resolve(__dirname, "../public/speed-running-application.html");
+    try {
+      const content = readFileSync(filePath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(content);
+    } catch {
+      res.status(404).send("Page not found");
+    }
+  });
+
   app.get("/operations-manual", async (req, res) => {
     const userId = (req.session as any)?.userId;
     if (!userId) {
