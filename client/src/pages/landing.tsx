@@ -928,13 +928,11 @@ export default function Landing() {
 
             {/* Speed & Running Technique */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
-              <div className="w-full h-56 bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center">
-                <div className="text-center text-white px-6">
-                  <div className="text-5xl mb-2">⚡</div>
-                  <div className="font-heading font-bold text-xl uppercase tracking-wide">Speed & Running</div>
-                  <div className="text-sm text-orange-100 mt-1">Team sport athletes & recreational runners</div>
-                </div>
-              </div>
+              <img
+                src="/speed-running-hero.jpg"
+                alt="Athlete preparing for speed assessment with timing gates"
+                className="w-full h-56 object-cover object-top"
+              />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-heading font-bold text-gray-900">Speed & Running Technique</h3>
