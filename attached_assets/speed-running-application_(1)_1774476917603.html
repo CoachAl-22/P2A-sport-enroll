@@ -202,15 +202,15 @@
           <label>What sport(s) do you play or train for? <span class="req">*</span></label>
           <div class="field-hint" style="margin-bottom:8px">Select all that apply.</div>
           <div class="pill-grid" id="sports">
-            <label class="pill-select" onclick="togglePill(this,'sports',event)"><input type="checkbox" value="AFL">AFL</label>
-            <label class="pill-select" onclick="togglePill(this,'sports',event)"><input type="checkbox" value="Rugby">Rugby</label>
-            <label class="pill-select" onclick="togglePill(this,'sports',event)"><input type="checkbox" value="Soccer / Football">Soccer / Football</label>
-            <label class="pill-select" onclick="togglePill(this,'sports',event)"><input type="checkbox" value="Basketball">Basketball</label>
-            <label class="pill-select" onclick="togglePill(this,'sports',event)"><input type="checkbox" value="Netball">Netball</label>
-            <label class="pill-select" onclick="togglePill(this,'sports',event)"><input type="checkbox" value="Hockey">Hockey</label>
-            <label class="pill-select" onclick="togglePill(this,'sports',event)"><input type="checkbox" value="Cricket">Cricket</label>
-            <label class="pill-select" onclick="togglePill(this,'sports',event)"><input type="checkbox" value="Individual / recreational runner">Recreational Runner</label>
-            <label class="pill-select" onclick="togglePill(this,'sports',event)"><input type="checkbox" value="Other">Other</label>
+            <label class="pill-select"><input type="checkbox" value="AFL">AFL</label>
+            <label class="pill-select"><input type="checkbox" value="Rugby">Rugby</label>
+            <label class="pill-select"><input type="checkbox" value="Soccer / Football">Soccer / Football</label>
+            <label class="pill-select"><input type="checkbox" value="Basketball">Basketball</label>
+            <label class="pill-select"><input type="checkbox" value="Netball">Netball</label>
+            <label class="pill-select"><input type="checkbox" value="Hockey">Hockey</label>
+            <label class="pill-select"><input type="checkbox" value="Cricket">Cricket</label>
+            <label class="pill-select"><input type="checkbox" value="Individual / recreational runner">Recreational Runner</label>
+            <label class="pill-select"><input type="checkbox" value="Other">Other</label>
           </div>
           <div class="field-error" id="sports-error" style="display:none">Please select at least one sport</div>
         </div>
@@ -261,10 +261,10 @@
           <label>What areas do you most want to improve? <span class="req">*</span></label>
           <div class="field-hint" style="margin-bottom:8px">Select all that apply.</div>
           <div class="pill-grid" id="focusAreas">
-            <label class="pill-select" onclick="togglePill(this,'focusAreas',event)"><input type="checkbox" value="Speed & acceleration">⚡ Speed & acceleration</label>
-            <label class="pill-select" onclick="togglePill(this,'focusAreas',event)"><input type="checkbox" value="Running technique">🏃 Running technique</label>
-            <label class="pill-select" onclick="togglePill(this,'focusAreas',event)"><input type="checkbox" value="Power & explosiveness">💥 Power & explosiveness</label>
-            <label class="pill-select" onclick="togglePill(this,'focusAreas',event)"><input type="checkbox" value="Endurance / game fitness">❤️ Endurance / game fitness</label>
+            <label class="pill-select"><input type="checkbox" value="Speed & acceleration">⚡ Speed & acceleration</label>
+            <label class="pill-select"><input type="checkbox" value="Running technique">🏃 Running technique</label>
+            <label class="pill-select"><input type="checkbox" value="Power & explosiveness">💥 Power & explosiveness</label>
+            <label class="pill-select"><input type="checkbox" value="Endurance / game fitness">❤️ Endurance / game fitness</label>
           </div>
           <div class="field-error" id="focusAreas-error" style="display:none">Please select at least one focus area</div>
         </div>
@@ -520,20 +520,27 @@
   function nextStep(from) { if (validateStep(from)) showStep(from + 1); }
   function prevStep(from) { showStep(from - 1); }
 
-  // Pill toggle (sports + focus areas)
-  function togglePill(el, groupId, event) {
-    if (event) event.preventDefault();
-    el.classList.toggle('selected');
-    el.querySelector('input').checked = el.classList.contains('selected');
+  // Pill toggle via event delegation
+  function togglePill(el, groupId) {} // kept for compat
+
+  document.addEventListener('click', function(e) {
+    const pill = e.target.closest('.pill-select');
+    if (!pill) return;
+    const group = pill.closest('.pill-grid');
+    if (!group) return;
+    const groupId = group.id;
+    pill.classList.toggle('selected');
+    pill.querySelector('input[type="checkbox"]').checked = pill.classList.contains('selected');
+    // Hide error if at least one selected
     const err = document.getElementById(groupId + '-error');
-    if (err && document.querySelectorAll('#' + groupId + ' input:checked').length > 0)
+    if (err && group.querySelectorAll('input:checked').length > 0)
       err.style.display = 'none';
     // Show/hide other sport field
     if (groupId === 'sports') {
       const otherSelected = document.querySelector('#sports input[value="Other"]:checked');
       document.getElementById('otherSportField').style.display = otherSelected ? 'block' : 'none';
     }
-  }
+  });
 
   // Service card selection
   function selectService(el, groupId) {
