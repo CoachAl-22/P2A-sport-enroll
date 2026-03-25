@@ -926,46 +926,6 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Speed & Running Technique */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
-              <img
-                src="/speed-running-hero.jpg"
-                alt="Athlete preparing for speed assessment with timing gates"
-                className="w-full h-56 object-cover object-top"
-              />
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-heading font-bold text-gray-900">Speed & Running Technique</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                    By Application
-                  </span>
-                </div>
-                <p className="text-gray-600 text-sm mb-4">Run faster, more efficiently, and more powerfully — whether you play team sport or simply want to move better. Personalised coaching with a programme delivered through Final Surge.</p>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-gray-600">
-                    <Users className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Individual & small group • All ages welcome</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Clock className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Flexible scheduling around your sport</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm text-gray-600 mb-1">One-off assessment or ongoing coaching</div>
-                    <div className="text-xs text-gray-500">Alistair will be in touch within 48 hours</div>
-                  </div>
-                  <Button
-                    onClick={() => window.open('/speed-running-application.html', '_blank')}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
-                  >
-                    Apply Now
-                  </Button>
-                </div>
-              </div>
-            </div>
-
             {/* High Performance Squad */}
             <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
               <img 
@@ -1002,6 +962,46 @@ export default function Landing() {
                   <Button 
                     onClick={() => setIsHighPerformanceSquadModalOpen(true)}
                     className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    Apply Now
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Speed & Running Technique */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img
+                src="/speed-running-hero.jpg"
+                alt="Athlete preparing for speed assessment with timing gates"
+                className="w-full h-56 object-cover object-top"
+              />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Speed & Running Technique</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                    By Application
+                  </span>
+                </div>
+                <p className="text-gray-600 text-sm mb-4">Run faster, more efficiently, and more powerfully — whether you play team sport or simply want to move better. Personalised coaching with a programme delivered through Final Surge.</p>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600">
+                    <Users className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Individual & small group • All ages welcome</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Clock className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Flexible scheduling around your sport</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">One-off assessment or ongoing coaching</div>
+                    <div className="text-xs text-gray-500">Alistair will be in touch within 48 hours</div>
+                  </div>
+                  <Button
+                    onClick={() => window.open('/speed-running-application.html', '_blank')}
+                    className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Apply Now
                   </Button>
