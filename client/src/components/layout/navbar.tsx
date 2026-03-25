@@ -71,6 +71,14 @@ export default function Navbar() {
                     Junior Academy
                   </Button>
                 </Link>
+                <a href="/speed-running-application.html" target="_blank" rel="noopener noreferrer">
+                  <Button
+                    variant="ghost"
+                    className="text-gray-700 hover:text-primary-500 font-medium"
+                  >
+                    Speed & Running
+                  </Button>
+                </a>
                 <Link href="/education">
                   <Button
                     variant={location === "/education" ? "default" : "ghost"}
@@ -311,6 +319,15 @@ export default function Navbar() {
                       Senior Squad
                     </Button>
                   </Link>
+                  <a href="/speed-running-application.html" target="_blank" rel="noopener noreferrer" className="block w-full">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-gray-700"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Speed & Running
+                    </Button>
+                  </a>
                   <Link href="/education">
                     <Button
                       variant={location === "/education" ? "default" : "ghost"}
