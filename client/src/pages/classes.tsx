@@ -12,7 +12,7 @@ export default function Classes() {
   const [filters, setFilters] = useState({
     sportType: "all",
     venueId: "all",
-    term: "term_1",
+    term: "term_2",
     year: 2026,
     dayOfWeek: "all",
     search: "",
@@ -149,7 +149,7 @@ export default function Classes() {
                 onClick={() => setFilters({
                   sportType: "all",
                   venueId: "all",
-                  term: "term_1",
+                  term: "term_2",
                   year: 2026,
                   dayOfWeek: "all",
                   search: "",
