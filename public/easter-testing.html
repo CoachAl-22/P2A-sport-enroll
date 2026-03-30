@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Easter Performance Testing -- Power2ADAPT</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+    }
+
+    header {
+      background: #000;
+      padding: 20px 24px;
+      text-align: center;
+    }
+
+    header img {
+      max-width: 200px;
+      width: 100%;
+    }
+
+    .hero {
+      background: #000;
+      color: #fff;
+      padding: 32px 24px;
+      text-align: center;
+      border-top: 1px solid #222;
+    }
+
+    .hero blockquote {
+      font-size: 20px;
+      font-style: italic;
+      line-height: 1.5;
+      color: #F7941D;
+      margin-bottom: 12px;
+    }
+
+    .hero cite {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .hero p {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #ddd;
+      line-height: 1.6;
+    }
+
+    .section {
+      background: #fff;
+      margin: 16px 16px 0;
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #F7941D;
+      margin-bottom: 6px;
+    }
+
+    .section h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .section .price {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .section .price span {
+      font-size: 14px;
+      font-weight: 400;
+      color: #666;
+    }
+
+    .section .subtitle {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 16px;
+    }
+
+    .includes {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .includes li {
+      font-size: 14px;
+      color: #333;
+      padding: 6px 0;
+      padding-left: 22px;
+      position: relative;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .includes li:last-child {
+      border-bottom: none;
+    }
+
+    .includes li::before {
+      content: "✓";
+      color: #F7941D;
+      font-weight: 700;
+      position: absolute;
+      left: 0;
+    }
+
+    .free-badge {
+      display: inline-block;
+      background: #F7941D;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .normal-price {
+      font-size: 12px;
+      color: #999;
+      text-decoration: line-through;
+    }
+
+    .session-block {
+      border: 1px solid #e8e8e8;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+
+    .session-block .date {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .session-block .time {
+      font-size: 14px;
+      color: #F7941D;
+      font-weight: 600;
+      margin: 2px 0;
+    }
+
+    .session-block .location {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      background: #F7941D;
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .btn:hover {
+      background: #e08310;
+    }
+
+    .outcomes {
+      background: #000;
+      color: #fff;
+      margin: 16px 16px 0;
+      border-radius: 10px;
+      padding: 24px;
+    }
+
+    .outcomes h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #F7941D;
+      margin-bottom: 14px;
+    }
+
+    .outcomes ul {
+      list-style: none;
+    }
+
+    .outcomes ul li {
+      font-size: 14px;
+      color: #ddd;
+      padding: 6px 0;
+      padding-left: 22px;
+      position: relative;
+      border-bottom: 1px solid #222;
+    }
+
+    .outcomes ul li:last-child {
+      border-bottom: none;
+    }
+
+    .outcomes ul li::before {
+      content: "→";
+      color: #F7941D;
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 16px;
+    }
+
+    footer a {
+      color: #F7941D;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://power2adapt.com/wp-content/uploads/2022/11/cropped-Power-2-Adapt-LOGO-Transparency.png" alt="Power2ADAPT" />
+  </header>
+
+  <div class="hero">
+    <blockquote>"I wish I'd spoken to you sooner... I'm feeling nervous for my upcoming practice match and I didn't do enough to prepare over the Christmas break."</blockquote>
+    <cite>Power2ADAPT athlete, March 2026</cite>
+    <p>If your athlete is heading into their season feeling underprepared, there is still time.</p>
+  </div>
+
+  <!-- Testing Section -->
+  <div class="section">
+    <div class="section-label">Included in your bundle</div>
+    <h2>Performance Testing Session</h2>
+    <div class="price">$55 <span>inc GST per athlete</span></div>
+    <div class="subtitle">3 sprint and power tests with expert coaching feedback</div>
+
+    <ul class="includes">
+      <li>Sprint and power testing on the track</li>
+      <li>Expert coaching feedback on the day</li>
+      <li>Clear performance baseline to build from</li>
+      <li>Know exactly what to work on heading into Term 2</li>
+    </ul>
+
+    <div class="session-block">
+      <div class="date">Thursday 9 April</div>
+      <div class="time">10:00am - 12:00pm</div>
+      <div class="location">Ballam Park or Mornington Athletic Track</div>
+      <a href="https://power2adapt.setmore.com/class-session/607c01b0-21ab-4607-8076-9f5ec052d39d" class="btn">Book Thu 9 Apr</a>
+    </div>
+
+    <div class="session-block">
+      <div class="date">Tuesday 14 April</div>
+      <div class="time">3:00pm - 4:30pm</div>
+      <div class="location">Ballam Park Athletic Track</div>
+      <a href="https://booking.setmore.com/scheduleappointment/25c37fb9-f05a-4f3d-80a5-8b302288f337/session/d6feb3aa-fa46-4c85-9890-206b78dff4ea" class="btn">Book Tue 14 Apr</a>
+    </div>
+
+    <div class="session-block">
+      <div class="date">Wednesday 15 April</div>
+      <div class="time">3:00pm - 4:30pm</div>
+      <div class="location">Mornington Athletic Track</div>
+      <a href="https://booking.setmore.com/scheduleappointment/25c37fb9-f05a-4f3d-80a5-8b302288f337/session/46e9db67-3ea5-48cf-b016-cc8bc62b91ce" class="btn">Book Wed 15 Apr</a>
+    </div>
+  </div>
+
+  <!-- Platform Section -->
+  <div class="section">
+    <span class="free-badge">Free with your booking</span>
+    <div class="section-label">Also included</div>
+    <h2>Speed Assessment Tool</h2>
+    <div class="normal-price">Normally $15/month</div>
+    <div class="subtitle">4 weeks full access -- track your athlete's progress beyond the session</div>
+
+    <ul class="includes">
+      <li>Full access to speed-assessment.online</li>
+      <li>Track speed and power progress over time</li>
+      <li>Know exactly what to work on each week</li>
+      <li>Personalised performance benchmarks</li>
+    </ul>
+  </div>
+
+  <!-- Outcomes -->
+  <div class="outcomes">
+    <h2>Your athlete leaves the session knowing:</h2>
+    <ul>
+      <li>Where they stand right now</li>
+      <li>What their biggest performance opportunity is</li>
+      <li>Exactly what to focus on for the rest of the season</li>
+    </ul>
+  </div>
+
+  <footer>
+    Questions? <a href="mailto:info@power2adapt.com">info@power2adapt.com</a><br /><br />
+    Power2ADAPT Pty Ltd | Melbourne, Australia
+  </footer>
+
+</body>
+</html>
