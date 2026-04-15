@@ -1250,6 +1250,122 @@
     50% { transform: scale(1.08); }
   }
   .pulse { animation: pulse-once 0.5s ease; }
+
+  /* ── COACH ASSESSMENT MODAL ─────────────────────────── */
+  .assess-overlay {
+    position: fixed; inset: 0;
+    background: var(--black);
+    z-index: 200; display: none;
+    overflow-y: auto;
+  }
+  .assess-overlay.open { display: block; }
+  .assess-sheet {
+    max-width: 430px; min-height: 100%;
+    margin: 0 auto; padding-bottom: 50px;
+  }
+  .assess-header {
+    padding: 14px 20px;
+    background: var(--black);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+    position: sticky; top: 0; z-index: 5;
+  }
+  .assess-back {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 50%; width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text2); font-size: 20px; flex-shrink: 0;
+  }
+  .assess-title { font-family: var(--font-display); font-size: 18px; font-weight: 800; }
+  .assess-athlete-bar {
+    padding: 12px 20px; background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .assess-athlete-name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .assess-athlete-meta { font-size: 12px; color: var(--text3); }
+  .assess-type-row {
+    padding: 16px 20px 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .assess-type-btn {
+    background: var(--surface2); border: 1.5px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 12px 8px;
+    font-size: 13px; font-weight: 600; color: var(--text2);
+    cursor: pointer; text-align: center; transition: all 0.15s;
+  }
+  .assess-type-btn .atype-icon { font-size: 18px; margin-bottom: 3px; }
+  .assess-type-btn.active { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+  .assess-form { padding: 0 20px; }
+  .assess-section { margin-top: 22px; }
+  .assess-section-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    color: var(--orange); text-transform: uppercase;
+    margin-bottom: 12px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .assess-criterion { margin-bottom: 16px; }
+  .assess-crit-text { font-size: 13px; color: var(--text); margin-bottom: 8px; line-height: 1.45; }
+  .assess-rating-row { display: flex; gap: 6px; }
+  .assess-rating-btn {
+    flex: 1; padding: 8px 4px; border-radius: 7px;
+    border: 1.5px solid var(--border2); background: var(--surface2);
+    font-size: 11px; font-weight: 700; color: var(--text3);
+    cursor: pointer; text-align: center; transition: all 0.15s;
+  }
+  .assess-rating-btn.sel-P, .assess-rating-btn.sel-Y { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,0.12); }
+  .assess-rating-btn.sel-I, .assess-rating-btn.sel-NI { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+  .assess-rating-btn.sel-R, .assess-rating-btn.sel-NO { border-color: #888; color: #888; background: rgba(136,136,136,0.1); }
+  .assess-notes-block { margin-top: 22px; }
+  .assess-label { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.5px; margin-bottom: 6px; }
+  .assess-textarea {
+    width: 100%; background: var(--surface2);
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    padding: 10px 12px; font-size: 13px;
+    font-family: var(--font-body); color: var(--text);
+    outline: none; resize: none; height: 72px;
+    transition: border-color 0.15s;
+  }
+  .assess-textarea:focus { border-color: var(--orange); }
+  .assess-overall { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+  .assess-overall-btn {
+    padding: 9px 6px; border-radius: 8px;
+    border: 1.5px solid var(--border2); background: var(--surface2);
+    font-size: 12px; font-weight: 600; color: var(--text3);
+    cursor: pointer; text-align: center; transition: all 0.15s;
+  }
+  .assess-overall-btn.sel { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+  .assess-reassess-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 16px; padding: 12px; background: var(--surface2);
+    border-radius: var(--radius-sm); border: 1px solid var(--border2);
+    cursor: pointer;
+  }
+  .assess-reassess-check {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 1.5px solid var(--border2); background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0; transition: all 0.15s;
+  }
+  .assess-reassess-check.checked { background: var(--orange); border-color: var(--orange); color: #fff; }
+  .assess-reassess-label { font-size: 13px; color: var(--text2); }
+  .assess-submit-row { padding: 20px 20px 0; }
+  .assess-submit-btn {
+    display: block; width: 100%; background: var(--orange);
+    color: #fff; border: none; border-radius: var(--radius-sm);
+    padding: 15px; font-size: 16px; font-family: var(--font-display);
+    font-weight: 700; letter-spacing: 1px; cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .assess-submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .assess-history { padding: 20px; }
+  .assess-hist-item {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px;
+  }
+  .assess-hist-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .assess-hist-type { font-size: 13px; font-weight: 700; color: var(--orange); }
+  .assess-hist-date { font-size: 11px; color: var(--text3); }
+  .assess-hist-rating { font-size: 12px; color: var(--text2); }
 </style>
 </head>
 <body>
@@ -1637,6 +1753,35 @@
   </div>
 
   <div class="toast" id="toast-el"></div>
+
+  <!-- ══ COACH ASSESSMENT OVERLAY ════════════════════════════════════ -->
+  <div class="assess-overlay" id="assess-overlay">
+    <div class="assess-sheet">
+      <div class="assess-header">
+        <div class="assess-back" onclick="closeAssessment()">‹</div>
+        <div class="assess-title">Skill Assessment</div>
+      </div>
+      <div class="assess-athlete-bar">
+        <div class="assess-athlete-name" id="assess-athlete-name">—</div>
+        <div class="assess-athlete-meta" id="assess-athlete-meta">Select a skill type below</div>
+      </div>
+      <div class="assess-type-row">
+        <div class="assess-type-btn" onclick="selectAssessType('run',this)">
+          <div class="atype-icon">🏃</div>Running
+        </div>
+        <div class="assess-type-btn" onclick="selectAssessType('jump',this)">
+          <div class="atype-icon">⬆️</div>Vertical Jump
+        </div>
+        <div class="assess-type-btn" onclick="selectAssessType('throw',this)">
+          <div class="atype-icon">🎯</div>Throw
+        </div>
+        <div class="assess-type-btn" onclick="selectAssessType('leap',this)">
+          <div class="atype-icon">🦘</div>Leap
+        </div>
+      </div>
+      <div class="assess-form" id="assess-form-body"></div>
+    </div>
+  </div>
 
 </div>
 
@@ -3029,29 +3174,285 @@ const MAJ_CONTENT = {
     }
   }
 
+  // ── ASSESSMENT CRITERIA DATA ──────────────────────────────────────────
+  const ASSESS_TYPES = {
+    run: {
+      label: 'Running Technique', emoji: '🏃',
+      ratings: ['P','I','R'], ratingLabels: ['Pass','Intervention','Reassess'],
+      sections: [
+        { heading: 'Body Position & Posture', criteria: [
+          'Upright posture with slight lean forward during running',
+          'Stable head position, eyes looking ahead and focused forward'
+        ]},
+        { heading: 'Rhythm & Coordination', criteria: [
+          'Smooth and rhythmic arm swing (forward/backward, not across body)',
+          'Arms bent at approximately 90 degrees, moving in opposition to legs'
+        ]},
+        { heading: 'Leg Action', criteria: [
+          'High knees with active foot lift; knees bend at right angles during recovery',
+          'Efficient foot placement — ball of the foot contact, toes dorsiflexed',
+          'Minimal overstriding; heels lift adequately towards buttocks'
+        ]},
+        { heading: 'Balance & Stability', criteria: [
+          'Maintains balance during changes in speed and direction',
+          'Runs in a straight line with minimal lateral movement'
+        ]},
+        { heading: 'Effort & Endurance', criteria: [
+          'Sustains effort across observed duration; face and shoulders relaxed',
+          'Shows willingness to engage and improve'
+        ]}
+      ]
+    },
+    jump: {
+      label: 'Vertical Jump', emoji: '⬆️',
+      ratings: ['P','I','R'], ratingLabels: ['Pass','Intervention','Reassess'],
+      sections: [
+        { heading: 'Preparation', criteria: [
+          'Crouch with knees bent and arms behind body ("Jet Wings") before take-off',
+          'Balanced and aligned body position; eyes focused forward'
+        ]},
+        { heading: 'Take-Off', criteria: [
+          'Arms swing forward and up, legs push off forcefully and straighten ("reach for the sky")',
+          'Maintains good posture and upward drive during lift'
+        ]},
+        { heading: 'Flight Phase', criteria: [
+          'Knees and arms coordinated mid-air',
+          'Maintains stable position in flight'
+        ]},
+        { heading: 'Landing', criteria: [
+          'Lands on balls of feet — softens knees and drops hips to absorb force',
+          'Balanced landing with no more than 1 step in any direction'
+        ]}
+      ]
+    },
+    throw: {
+      label: 'Throw Technique', emoji: '🎯',
+      ratings: ['Y','NI','NO'], ratingLabels: ['Yes','Needs Impr.','Not Observed'],
+      sections: [
+        { heading: 'Preparation Phase', criteria: [
+          'Proper grip and alignment of object',
+          'Stable stance and body alignment'
+        ]},
+        { heading: 'Throw Execution', criteria: [
+          'Proper arm extension and release point',
+          'Coordination between upper body and legs'
+        ]},
+        { heading: 'Follow-Through Phase', criteria: [
+          'Smooth and controlled follow-through',
+          'Maintains balance after the throw'
+        ]},
+        { heading: 'Effort & Engagement', criteria: [
+          'Displays confidence and commitment to throw',
+          'Executes with full effort and focus'
+        ]}
+      ]
+    },
+    leap: {
+      label: 'Leap Technique', emoji: '🦘',
+      ratings: ['Y','NI','NO'], ratingLabels: ['Yes','Needs Impr.','Not Observed'],
+      sections: [
+        { heading: 'Take-Off & Preparation', criteria: [
+          'Forward lean during take-off',
+          'Arms drive forward for momentum'
+        ]},
+        { heading: 'Flight Phase', criteria: [
+          'Maintains balance and control mid-flight',
+          'Lead leg extended and prepared for landing'
+        ]},
+        { heading: 'Landing', criteria: [
+          'Lands with bent knees for shock absorption',
+          'Controlled and stable landing without falling'
+        ]},
+        { heading: 'Effort & Coordination', criteria: [
+          'Displays confidence and commitment during leap',
+          'Synchronization between upper and lower body'
+        ]}
+      ]
+    }
+  };
+
+  const OVERALL_RATINGS = ['Excellent','Good','Satisfactory','Needs Improvement'];
+
+  // Assessment state
+  let assessState = {
+    athlete: null,
+    type: null,
+    ratings: {},   // key: "s0_c1" → 'P'|'I'|'R'|'Y'|'NI'|'NO'
+    strengths: '',
+    areasForImprovement: '',
+    nextSteps: '',
+    overallRating: null,
+    reassessmentRequired: false
+  };
+
   function renderCoachView(athletes) {
-    // Inject a simple coach athlete list into the home dashboard
     const coachHtml = `
-      <div style="padding:20px;">
-        <div style="font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:4px;">Coach Dashboard</div>
+      <div style="padding:20px 20px 8px;">
+        <div style="font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:2px;">Coach Dashboard</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Power2ADAPT · My Athletic Journey</div>
-        <div class="section-label">Your Athletes</div>
+        <div class="section-label">Tap an athlete to assess</div>
         ${athletes.map(a => {
           const tier = MAJ_CONTENT.getTier(a.xp || 0);
-          return `<div class="module-item" onclick="toast('${a.fullName || a.full_name} — Module ${a.currentModule || 1}, Week ${a.currentWeek || 1}')">
-            <div class="module-thumb mod-active" style="font-family:var(--font-display);font-size:14px;font-weight:800;">
-              ${((a.fullName || a.full_name || '?').split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2))}
-            </div>
+          const name = a.fullName || a.full_name || 'Unknown';
+          const initials = name.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+          const safeA = JSON.stringify(a).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+          return `<div class="module-item" onclick="openAssessment(${safeA})" style="cursor:pointer;">
+            <div class="module-thumb mod-active" style="font-family:var(--font-display);font-size:14px;font-weight:800;">${initials}</div>
             <div class="module-body">
-              <div class="module-name">${a.fullName || a.full_name}</div>
+              <div class="module-name">${name}</div>
               <div class="mini-track"><div class="mini-fill fill-orange" style="width:${Math.round(((a.currentWeek||1)-1)/8*100)}%"></div></div>
               <div class="module-caption">Module ${a.currentModule||1} · Week ${a.currentWeek||1} · ${a.xp||0} XP · ${tier.name}</div>
             </div>
-            <div class="module-arrow">›</div>
+            <div style="color:var(--orange);font-size:22px;padding-right:4px;">›</div>
           </div>`;
         }).join('')}
       </div>`;
     document.getElementById('page-home').innerHTML = coachHtml;
+  }
+
+  function openAssessment(athlete) {
+    assessState = { athlete, type: null, ratings: {}, strengths: '', areasForImprovement: '', nextSteps: '', overallRating: null, reassessmentRequired: false };
+    const name = athlete.fullName || athlete.full_name || 'Athlete';
+    document.getElementById('assess-athlete-name').textContent = name;
+    document.getElementById('assess-athlete-meta').textContent =
+      `Module ${athlete.currentModule||1} · Week ${athlete.currentWeek||1} · ${athlete.program || athlete.grade || ''}`;
+    document.getElementById('assess-form-body').innerHTML = '';
+    document.querySelectorAll('.assess-type-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('assess-overlay').classList.add('open');
+    document.getElementById('assess-overlay').scrollTop = 0;
+  }
+
+  function closeAssessment() {
+    document.getElementById('assess-overlay').classList.remove('open');
+  }
+
+  function selectAssessType(type, el) {
+    assessState.type = type;
+    assessState.ratings = {};
+    assessState.overallRating = null;
+    assessState.reassessmentRequired = false;
+    document.querySelectorAll('.assess-type-btn').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    renderAssessmentForm(type);
+    document.getElementById('assess-overlay').scrollTop = 0;
+  }
+
+  function renderAssessmentForm(type) {
+    const cfg = ASSESS_TYPES[type];
+    let html = '';
+
+    // Criteria sections
+    cfg.sections.forEach((sec, si) => {
+      html += `<div class="assess-section">
+        <div class="assess-section-title">${sec.heading}</div>`;
+      sec.criteria.forEach((crit, ci) => {
+        const key = `s${si}_c${ci}`;
+        html += `<div class="assess-criterion">
+          <div class="assess-crit-text">${crit}</div>
+          <div class="assess-rating-row">
+            ${cfg.ratings.map((r, ri) => `
+              <div class="assess-rating-btn" id="rb_${key}_${r}" onclick="rateItem('${key}','${r}','${type}')">
+                ${cfg.ratingLabels[ri]}
+              </div>`).join('')}
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+
+    // Notes
+    html += `<div class="assess-notes-block">
+      <div class="assess-label">STRENGTHS OBSERVED</div>
+      <textarea class="assess-textarea" id="assess-strengths" placeholder="What did the athlete do well?" oninput="assessState.strengths=this.value"></textarea>
+    </div>
+    <div class="assess-notes-block">
+      <div class="assess-label">AREAS FOR IMPROVEMENT</div>
+      <textarea class="assess-textarea" id="assess-areas" placeholder="Where does the athlete need work?" oninput="assessState.areasForImprovement=this.value"></textarea>
+    </div>
+    <div class="assess-notes-block">
+      <div class="assess-label">RECOMMENDED NEXT STEPS</div>
+      <textarea class="assess-textarea" id="assess-next" placeholder="What should the athlete focus on?" oninput="assessState.nextSteps=this.value"></textarea>
+    </div>`;
+
+    // Overall rating
+    html += `<div class="assess-notes-block">
+      <div class="assess-label">OVERALL RATING</div>
+      <div class="assess-overall">
+        ${OVERALL_RATINGS.map(r => `
+          <div class="assess-overall-btn" id="or_${r.replace(' ','_')}" onclick="selectOverall('${r}')">${r}</div>
+        `).join('')}
+      </div>
+    </div>`;
+
+    // Reassessment checkbox
+    html += `<div class="assess-reassess-row" onclick="toggleReassess()" id="reassess-row">
+      <div class="assess-reassess-check" id="reassess-check"></div>
+      <div class="assess-reassess-label">Reassessment required</div>
+    </div>`;
+
+    html += `</div>
+    <div class="assess-submit-row">
+      <button class="assess-submit-btn" onclick="submitAssessment()">Save Assessment</button>
+    </div>`;
+
+    document.getElementById('assess-form-body').innerHTML = html;
+  }
+
+  function rateItem(key, val, type) {
+    assessState.ratings[key] = val;
+    const cfg = ASSESS_TYPES[type || assessState.type];
+    cfg.ratings.forEach(r => {
+      const el = document.getElementById(`rb_${key}_${r}`);
+      if (el) { el.className = 'assess-rating-btn' + (r === val ? ` sel-${r}` : ''); }
+    });
+  }
+
+  function selectOverall(val) {
+    assessState.overallRating = val;
+    OVERALL_RATINGS.forEach(r => {
+      const el = document.getElementById(`or_${r.replace(' ','_')}`);
+      if (el) el.className = 'assess-overall-btn' + (r === val ? ' sel' : '');
+    });
+  }
+
+  function toggleReassess() {
+    assessState.reassessmentRequired = !assessState.reassessmentRequired;
+    const ch = document.getElementById('reassess-check');
+    if (ch) { ch.className = 'assess-reassess-check' + (assessState.reassessmentRequired ? ' checked' : ''); ch.textContent = assessState.reassessmentRequired ? '✓' : ''; }
+  }
+
+  async function submitAssessment() {
+    if (!assessState.type) { toast('Please select a skill type first'); return; }
+    if (!assessState.overallRating) { toast('Please select an overall rating'); return; }
+    const btn = document.querySelector('.assess-submit-btn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      const cfg = ASSESS_TYPES[assessState.type];
+      const criteriaResults = {};
+      cfg.sections.forEach((sec, si) => {
+        sec.criteria.forEach((crit, ci) => {
+          const key = `s${si}_c${ci}`;
+          criteriaResults[key] = { criterion: crit, section: sec.heading, rating: assessState.ratings[key] || null };
+        });
+      });
+      await apiPost('/skill-assessments', {
+        athleteId: assessState.athlete.id,
+        coachName: state.athlete ? (state.athlete.fullName || state.athlete.username) : 'Coach',
+        assessmentType: assessState.type,
+        assessmentDate: new Date().toISOString().slice(0,10),
+        criteriaResults,
+        strengths: assessState.strengths,
+        areasForImprovement: assessState.areasForImprovement,
+        nextSteps: assessState.nextSteps,
+        overallRating: assessState.overallRating,
+        reassessmentRequired: assessState.reassessmentRequired
+      });
+      toast('Assessment saved ✓');
+      setTimeout(() => closeAssessment(), 800);
+    } catch(e) {
+      toast('Error saving — check connection');
+      btn.disabled = false; btn.textContent = 'Save Assessment';
+    }
   }
 
   // ── INIT APP ─────────────────────────────────────────────────────────
