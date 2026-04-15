@@ -4183,6 +4183,20 @@ const MAJ_CONTENT = {
     // Wellness check-in on first "This Week" visit of the day (athletes only)
     if (pageId === 'thisweek' && state.athlete && !state.athlete.isCoach) {
       checkAndShowWellness();
+
+      // Auto-select the right tab based on progress
+      const wp = getWeekProgress(state.athlete.currentModule, state.athlete.currentWeek);
+      let autoTab = 'learn';
+      if (wp.challenge) autoTab = 'reflect';
+      else if (wp.learn) autoTab = 'do';
+      const autoBtn = document.querySelector(`.tab-btn[onclick*="${autoTab}"]`);
+      if (autoBtn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        autoBtn.classList.add('active');
+        document.getElementById('tab-' + autoTab).classList.add('active');
+        state.activeTab = autoTab;
+      }
     }
 
     // Load FMS tracker when profile is opened
@@ -4193,12 +4207,6 @@ const MAJ_CONTENT = {
 
   // ── TABS (THIS WEEK) ─────────────────────────────────────────────────
   function switchTab(btn, tabId) {
-    // If athlete taps the Do tab button (in the tab bar) but challenge is already done, send to Reflect
-    if (tabId === 'do' && btn.classList.contains('tab-btn') && document.getElementById('do-complete-btn')?.classList.contains('done')) {
-      const reflectTabBtn = document.querySelector(".tab-btn[onclick*='reflect']");
-      tabId = 'reflect';
-      btn = reflectTabBtn || btn;
-    }
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
