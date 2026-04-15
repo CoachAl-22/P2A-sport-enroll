@@ -4269,8 +4269,13 @@ const MAJ_CONTENT = {
       : `Challenge logged! Head to REFLECT to complete the week.`;
 
     // Switch to Reflect tab silently while overlay shows
-    const reflectBtn = document.querySelectorAll('.tab-btn')[2];
-    if (reflectBtn) switchTab(reflectBtn, 'reflect');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    const reflectTabBtn = document.querySelector(".tab-btn[onclick*='reflect']");
+    if (reflectTabBtn) reflectTabBtn.classList.add('active');
+    const reflectPane = document.getElementById('tab-reflect');
+    if (reflectPane) reflectPane.classList.add('active');
+    state.activeTab = 'reflect';
 
     showOverlay(icon, `+${xpEarned} XP!`, sub, "What's next → Reflect");
     document.querySelectorAll('.stat-val')[0].textContent = a.sessionsCompleted;
