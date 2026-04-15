@@ -4193,8 +4193,8 @@ const MAJ_CONTENT = {
 
   // ── TABS (THIS WEEK) ─────────────────────────────────────────────────
   function switchTab(btn, tabId) {
-    // If athlete navigates to Do but challenge is already done, send to Reflect instead
-    if (tabId === 'do' && document.getElementById('do-complete-btn')?.classList.contains('done')) {
+    // If athlete taps the Do tab button (in the tab bar) but challenge is already done, send to Reflect
+    if (tabId === 'do' && btn.classList.contains('tab-btn') && document.getElementById('do-complete-btn')?.classList.contains('done')) {
       const reflectTabBtn = document.querySelector(".tab-btn[onclick*='reflect']");
       tabId = 'reflect';
       btn = reflectTabBtn || btn;
