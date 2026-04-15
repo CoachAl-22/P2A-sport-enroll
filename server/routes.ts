@@ -95,6 +95,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const __staticDir = _dirname(_ftu(import.meta.url));
   app.use("/icons", express.static(_resolve(__staticDir, "../public/icons")));
   app.use("/maj-icon.svg", express.static(_resolve(__staticDir, "../public/maj-icon.svg")));
+  app.get("/sw.js", (_req, res) => {
+    res.setHeader("Content-Type", "application/javascript");
+    res.setHeader("Service-Worker-Allowed", "/");
+    res.sendFile(_resolve(__staticDir, "../public/sw.js"));
+  });
 
   // Initialize invoice service
   const invoiceService = new InvoiceService();

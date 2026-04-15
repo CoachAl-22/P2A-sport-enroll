@@ -3570,6 +3570,15 @@ const MAJ_CONTENT = {
     toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
   }
 
+  // ── SERVICE WORKER REGISTRATION ───────────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(reg => console.log('MAJ SW registered, scope:', reg.scope))
+        .catch(err => console.warn('MAJ SW registration failed:', err));
+    });
+  }
+
 </script>
 </body>
 </html>
