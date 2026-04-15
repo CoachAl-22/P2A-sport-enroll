@@ -368,6 +368,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/maj/wellness", async (req, res) => {
+    try {
+      const record = await storage.createWellnessCheckIn(req.body);
+      res.status(201).json(record);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/maj/athlete/:id/wellness", async (req, res) => {
+    try {
+      const records = await storage.getWellnessForAthlete(req.params.id);
+      res.json(records);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/maj/athlete/:id/reflections", async (req, res) => {
     try {
       const reflections = await storage.getMajReflectionsForAthlete(req.params.id);

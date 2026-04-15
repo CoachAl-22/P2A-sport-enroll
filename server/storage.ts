@@ -1662,6 +1662,26 @@ export class DatabaseStorage implements IStorage {
     const rows = result.rows ?? result;
     return Array.isArray(rows) ? rows : [];
   }
+
+  async createWellnessCheckIn(data: Record<string, any>): Promise<any> {
+    const result = await db.execute(
+      sql`INSERT INTO maj_wellness (athlete_id, check_date, energy, sleep, mood)
+        VALUES (${data.athleteId}, ${data.date || new Date().toISOString().slice(0,10)},
+          ${data.energy}, ${data.sleep}, ${data.mood})
+        RETURNING *`
+    ) as any;
+    const rows = result.rows ?? result;
+    return Array.isArray(rows) ? rows[0] : rows;
+  }
+
+  async getWellnessForAthlete(athleteId: string, limit: number = 14): Promise<any[]> {
+    const result = await db.execute(
+      sql`SELECT * FROM maj_wellness WHERE athlete_id = ${athleteId}
+        ORDER BY check_date DESC, created_at DESC LIMIT ${limit}`
+    ) as any;
+    const rows = result.rows ?? result;
+    return Array.isArray(rows) ? rows : [];
+  }
 }
 
 export const storage = new DatabaseStorage();
