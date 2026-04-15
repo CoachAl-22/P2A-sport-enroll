@@ -1329,14 +1329,14 @@
   .assess-overall { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
   .assess-overall-btn {
     padding: 9px 6px; border-radius: 8px;
-    border: 1.5px solid var(--border2); background: var(--surface2);
-    font-size: 12px; font-weight: 600; color: var(--text3);
+    border: 1.5px solid #3d3d3d; background: var(--surface3);
+    font-size: 12px; font-weight: 600; color: var(--text2);
     cursor: pointer; text-align: center; transition: all 0.15s;
   }
   .assess-overall-btn.sel { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
   .assess-stage-btn {
     display: flex; align-items: center; padding: 10px 12px;
-    background: var(--surface2); border: 1.5px solid var(--border2);
+    background: var(--surface3); border: 1.5px solid #3d3d3d;
     border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s;
   }
   .assess-stage-btn.sel { border-color: var(--cyan); background: rgba(0,188,212,0.08); }
@@ -3660,7 +3660,7 @@ const MAJ_CONTENT = {
     // Skill acquisition stage
     html += `<div class="assess-notes-block">
       <div class="assess-label">SKILL ACQUISITION STAGE</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.4;">Where is this athlete in their learning of this skill?</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.4;">Where is this athlete in their learning of this skill?</div>
       <div style="display:flex;flex-direction:column;gap:8px;">
         ${[
           { val:'cognitive', label:'Cognitive', desc:'Thinking through every step — conscious effort required', icon:'🧠' },
@@ -3670,8 +3670,8 @@ const MAJ_CONTENT = {
           <div class="assess-stage-btn" id="stage_${s.val}" onclick="selectStage('${s.val}')">
             <span style="font-size:18px;margin-right:10px;">${s.icon}</span>
             <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text1);">${s.label}</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:2px;">${s.desc}</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);">${s.label}</div>
+              <div style="font-size:11px;color:var(--text2);margin-top:2px;">${s.desc}</div>
             </div>
           </div>`).join('')}
       </div>
