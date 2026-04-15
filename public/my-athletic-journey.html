@@ -4272,7 +4272,7 @@ const MAJ_CONTENT = {
     const reflectBtn = document.querySelectorAll('.tab-btn')[2];
     if (reflectBtn) switchTab(reflectBtn, 'reflect');
 
-    showOverlay(icon, `+${xpEarned} XP!`, sub);
+    showOverlay(icon, `+${xpEarned} XP!`, sub, "What's next → Reflect");
     document.querySelectorAll('.stat-val')[0].textContent = a.sessionsCompleted;
 
     await saveState();
@@ -4409,10 +4409,11 @@ const MAJ_CONTENT = {
   }
 
   // ── OVERLAY ──────────────────────────────────────────────────────────
-  function showOverlay(icon, title, sub) {
+  function showOverlay(icon, title, sub, btnLabel) {
     document.getElementById('overlay-icon').textContent = icon;
     document.getElementById('overlay-title').textContent = title;
     document.getElementById('overlay-sub').textContent = sub;
+    document.querySelector('.xp-pop-close').textContent = btnLabel || 'Keep going 🔥';
     document.getElementById('xp-overlay').classList.add('show');
   }
 
