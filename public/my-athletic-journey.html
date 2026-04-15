@@ -1552,7 +1552,7 @@
             <svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             +35 XP available
           </div>
-          <button class="mission-go-btn">Start now</button>
+          <button class="mission-go-btn" onclick="event.stopPropagation(); navTo('thisweek', false, 'do')">Start now</button>
         </div>
       </div>
 
@@ -4170,7 +4170,7 @@ const MAJ_CONTENT = {
   }
 
   // ── NAVIGATION ───────────────────────────────────────────────────────
-  function navTo(pageId, isLogin = false) {
+  function navTo(pageId, isLogin = false, forceTab = null) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + pageId).classList.add('active');
     if (!isLogin) {
@@ -4184,18 +4184,21 @@ const MAJ_CONTENT = {
     if (pageId === 'thisweek' && state.athlete && !state.athlete.isCoach) {
       checkAndShowWellness();
 
-      // Auto-select the right tab based on progress
+      // Determine which tab to show — forceTab overrides auto-select
       const wp = getWeekProgress(state.athlete.currentModule, state.athlete.currentWeek);
-      let autoTab = 'learn';
-      if (wp.challenge) autoTab = 'reflect';
-      else if (wp.learn) autoTab = 'do';
-      const autoBtn = document.querySelector(`.tab-btn[onclick*="${autoTab}"]`);
-      if (autoBtn) {
+      let targetTab = forceTab;
+      if (!targetTab) {
+        if (wp.challenge) targetTab = 'reflect';
+        else if (wp.learn) targetTab = 'do';
+        else targetTab = 'learn';
+      }
+      const targetBtn = document.querySelector(`.tab-btn[onclick*="${targetTab}"]`);
+      if (targetBtn) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        autoBtn.classList.add('active');
-        document.getElementById('tab-' + autoTab).classList.add('active');
-        state.activeTab = autoTab;
+        targetBtn.classList.add('active');
+        document.getElementById('tab-' + targetTab).classList.add('active');
+        state.activeTab = targetTab;
       }
     }
 
