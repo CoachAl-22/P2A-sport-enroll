@@ -80,3 +80,8 @@ Preferred communication style: Simple, everyday language.
 
 ### Data Sync
 - **Google Sheets**: Replit integration for automatically syncing survey responses to a Google Spreadsheet.
+
+### MAJ (My Athletic Journey) PWA
+- **Coach Skill Assessments**: 4 skill types (Running, Jump & Land, Throw, Bound/Leap) with enriched criteria, lesson-plan coaching cues panel, and P/I/R or Y/NI/NO rating buttons. Saves to `maj_skill_assessments` DB table via `/api/maj/skill-assessments`.
+- **Skill Acquisition Stage**: Coaches classify each athlete on the Cognitive → Associative → Autonomous learning continuum per skill. Stored in `skill_acquisition_stage` column in `maj_skill_assessments`.
+- **Module 1 lesson-aligned content**: Weeks 2–7 weekly challenges updated to reference actual P2A session activities (agility circuit, out-and-back, fast starts, partner chase, bounding hoops, hop-step-jump, hurdle relay, baton changes, endurance challenge, fitness circuit, circular relay, throw for accuracy) — aligned to Term 1 Emerging Athlete lesson plans.

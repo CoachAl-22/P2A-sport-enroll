@@ -1334,6 +1334,12 @@
     cursor: pointer; text-align: center; transition: all 0.15s;
   }
   .assess-overall-btn.sel { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+  .assess-stage-btn {
+    display: flex; align-items: center; padding: 10px 12px;
+    background: var(--surface2); border: 1.5px solid var(--border2);
+    border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s;
+  }
+  .assess-stage-btn.sel { border-color: var(--cyan); background: rgba(0,188,212,0.08); }
   .assess-reassess-row {
     display: flex; align-items: center; gap: 10px;
     margin-top: 16px; padding: 12px; background: var(--surface2);
@@ -1847,194 +1853,198 @@ const MAJ_CONTENT = {
           num: 2,
           theme: "Move Well",
           learn: {
-            concept: "Why Movement Quality Comes Before Everything Else",
+            concept: "Why Movement Quality Comes Before Speed",
             intro: "Before you can go fast, you need to move well. Movement quality means your body moves the right way — with control, balance, and good technique. Athletes who skip this step often get injured or hit a ceiling they cannot break through.",
             points: [
               "Good movement is the foundation that every other athletic quality is built on.",
               "If your technique is wrong, going faster just makes the problem worse — not better.",
               "Skipping, jumping, and running all require your body to work in a coordinated pattern.",
-              "This week you are going to focus on one movement pattern and do it as well as you possibly can — not as fast as you can."
+              "Today's agility circuit has five stations — each one trains a different movement pattern. Pay attention to each one.",
+              "The cross country run teaches you something speed work cannot: how to judge your own pace and keep going when it gets hard."
             ],
-            closing: "Coach tip: Slow is smooth. Smooth is fast. Quality first, speed second."
+            closing: "Slow is smooth. Smooth is fast. Quality first, speed second. — P2A coaching principle"
           },
           do: {
-            title: "Movement Pattern Focus Challenge",
-            setup: "Your coach will assign you one movement to focus on this session. It could be your skipping technique, your landing from a jump, or your running arm drive. Your job is to do it as well as you can — all session.",
+            title: "Agility Circuit + Out-and-Back Run",
+            setup: "Two parts today. First, the agility circuit — 5 stations (ladder, weaving cones, hurdles, dodge and weave, skater hops). Then a steady out-and-back run — your goal is to reach the turnaround in a set time and run back in the same time.",
             steps: [
-              "Before the session starts, ask your coach what movement you will be focused on.",
-              "During warm-up, pay close attention to that movement every time you do it.",
-              "Halfway through the session, check in with your coach: Am I doing it better?",
-              "At the end of the session, do 5 repetitions of that movement at your absolute best quality."
+              "At each circuit station, focus on the movement, not speed. Ask: Am I doing this correctly?",
+              "Pick ONE cue to apply across every station today — for example, 'fast arms' or 'knees up'.",
+              "For the run: set off at a pace where you can breathe and talk. Judge it — do not sprint and fade.",
+              "On the way back, check your form: head still, arms driving, shoulders relaxed.",
+              "After the session, ask your coach: What was one thing I did well, and one thing to work on?"
             ],
-            changeIt: "Challenge yourself to coach a teammate on the same movement — teaching something is the best way to understand it.",
+            changeIt: "At each circuit station, try to coach yourself between turns: What did I do well? What can I improve? Then apply it next turn.",
             badge: null
           },
           reflect: {
             prompt: "Which movement felt hardest today — and why do you think that is?",
-            hint: "Was it a coordination thing? Did you get tired and your technique broke down? What does that tell you?"
+            hint: "Was it a coordination thing? Did you get tired and your technique broke down? Did a specific station catch you off guard? Be honest."
           }
         },
         {
           num: 3,
           theme: "Speed",
           learn: {
-            concept: "What Creates Speed — Mechanics, Arm Drive, and Effort",
-            intro: "Speed is one of the most exciting athletic qualities — and it is also one of the most trainable. Most young athletes think speed is just about trying harder. It is actually about moving smarter.",
+            concept: "What Creates Speed — Fast Starts, Arms, and Reaction",
+            intro: "Speed is one of the most exciting athletic qualities — and one of the most trainable. Most young athletes think speed is just about trying harder. It is actually about moving smarter — and reacting faster.",
             points: [
-              "Speed comes from three things: powerful push-off from the ground, fast arm drive, and a forward lean from the ankles.",
+              "Speed comes from three things: a powerful push-off from the ground, fast arm drive, and a forward lean from the ankles.",
               "Your arms control your legs. When your arms pump faster and harder, your legs follow.",
-              "Looking down or tensing your shoulders slows you down. Stay tall, stay relaxed, and drive those arms.",
-              "You can get faster at any age with the right training — speed is a skill, not a gift."
+              "The first 10 metres of any sprint is where races are won and lost. Explosive starts are a skill you can practise.",
+              "Reaction time matters — the faster your brain sends the go signal, the sooner your body moves.",
+              "Looking down or tensing your shoulders slows you down. Stay tall, stay relaxed, drive those arms."
             ],
-            closing: "This week think about one cue: Tall, relaxed, and drive. Say it to yourself when you run."
+            closing: "This week's cue: Head still, short fast arms, fast feet. Say it to yourself before every sprint."
           },
           do: {
-            title: "Sprint Relay Challenge",
-            setup: "Your team will run a relay this session. Your job is not just to win — it is to run with the best technique you can while also competing hard.",
+            title: "Fast Starts + Partner Chase",
+            setup: "Two challenges today. First: practise fast starts from different positions (standing, crouching, 3-point). Then: the Partner Chase — one person starts 1m ahead, the other must tag them before the 10m mark.",
             steps: [
-              "Before the relay, spend 2 minutes practising your arm drive — big, fast, straight.",
-              "During the relay, focus on staying tall and driving your arms, especially in the first 5 metres.",
-              "After your first run, your coach will give you one technique tip. Apply it in your next run.",
-              "At the end, compare your team's times from the first relay to the last. Did you improve?"
+              "Before each start, set your body: balanced, weight slightly forward, eyes up.",
+              "At the 'go' signal, drive your arms hard from the very first step — they lead your legs.",
+              "In the Partner Chase, if you are in front: drive your arms and accelerate hard. If you are behind: react fast and close the gap.",
+              "After each rep, your coach gives you one cue. Apply it on the next attempt.",
+              "Count how many chases you win. Notice if you improve as the session goes on — that is speed learning."
             ],
-            changeIt: "Time how quick your team can complete the relay. Try to beat that time on the next attempt by improving technique, not just trying harder.",
+            changeIt: "Try the chase starting from different positions — lying face down, sitting, facing away. Which start leads to your fastest reaction?",
             badge: null
           },
           reflect: {
-            prompt: "When did you feel fastest this week — and what were you doing differently in that moment?",
-            hint: "Was it your arm drive? Were you more relaxed? Did a specific cue from your coach help? Be specific."
+            prompt: "When did you feel fastest today — and what were you doing differently in that moment?",
+            hint: "Was it your arm drive? Were you more relaxed? Did the start position make a difference? Was there one rep where everything clicked?"
           }
         },
         {
           num: 4,
           theme: "Power",
           learn: {
-            concept: "The Difference Between Strength and Explosive Power",
-            intro: "Strength and power are related — but they are not the same thing. Understanding the difference will change how you train.",
+            concept: "Jump, Bound, and Throw — How to Generate Explosive Power",
+            intro: "Power is strength applied quickly. It shows up in jumping, bounding, throwing, and explosive starts. Today you will train two types of power: lower body power through jumping and bounding, and upper body power through throwing.",
             points: [
-              "Strength is how much force your muscles can produce. Power is how fast you can produce that force.",
-              "An athlete who can jump high and explode off the mark has power — even if they do not look strong in the traditional sense.",
-              "Power training for young athletes focuses on explosive movements: jumping, bounding, and quick changes of direction.",
-              "Every time you jump and land well, you are training your body to produce and absorb power safely.",
-              "Soft, controlled landings protect your joints. Always land with bent knees and quiet feet."
+              "Every time you jump and land well, you are training your muscles to produce and absorb force safely.",
+              "Bounding is a power exercise — each bound should feel like you are driving forward and upward.",
+              "In the bounding hoops, drive your knee to the sky and push strong to the middle of each hoop.",
+              "In the hop-step-jump sequence: hop over the hurdle, bound to the dot, stick the landing in the hoop.",
+              "Soft landings are not weak — they are skilled. Landing control is what protects your body."
             ],
-            closing: "Power is the combination of strength and speed. Build both, and your athletic ability jumps to a new level."
+            closing: "Power cues this week: Jet wings on take-off. Reach for the sky. Motorbike landing."
           },
           do: {
-            title: "Power Up — Squat Jump Challenge",
-            setup: "This challenge is about quality explosive movement. You will complete 10 squat jumps. The goal is not height — it is landing well and jumping again immediately.",
+            title: "Bounding Hoops + Hop-Step-Jump",
+            setup: "Two jumping challenges today. First: bounding hoops — bound through a line of hoops, trying to cover more distance each time. Then: hop-step-jump — hop over the hurdle, bound to the dot, land in the hoop.",
             steps: [
-              "Stand with feet shoulder-width apart. Lower into a squat position.",
-              "Explode up as high as you can, swinging your arms to help.",
-              "Land softly with bent knees — feet should be quiet on impact.",
-              "Immediately drop into your squat again and repeat for 10 reps.",
-              "Your coach will watch your landing technique. Once you nail it, try to add height."
+              "For bounding: start with arms at your side. Drive them hard as you push off for each bound.",
+              "Try to land in the middle of each hoop — accuracy AND power.",
+              "For hop-step-jump: set up your hurdle, dot, and hoop about 1 metre apart each.",
+              "Hop over the hurdle, drive off the dot with a big bound, then stick your landing in the hoop.",
+              "Ask your coach to make the gaps wider when you are ready for more challenge."
             ],
-            changeIt: "Can you do 10 clean squat jumps with your hands on your hips (no arm swing)? Much harder — and great for leg power.",
+            changeIt: "How far apart can you set the hoops and still land in them? Can you increase the hop-step-jump spacing each round?",
             badge: { key: "power_up", name: "Power Up", icon: "⚡", xp: 25 }
           },
           reflect: {
-            prompt: "Where in your body did you feel most powerful today — and what surprised you about that?",
-            hint: "Think about your legs, your core, even your arms. Power comes from the whole body working together."
+            prompt: "Where in your body did you feel the most power today — and what helped you generate it?",
+            hint: "Think about your arms, your legs, your core. Did the arm drive make a difference to your jump? Did your knee lift change your bounding distance?"
           }
         },
         {
           num: 5,
-          theme: "Accuracy & Coordination",
+          theme: "Hurdles & Relay",
           learn: {
-            concept: "Why Eye-Hand Coordination is a Core Athletic Skill",
-            intro: "Coordination is the ability to make different parts of your body work together smoothly and accurately. Eye-hand coordination is one of the most important athletic skills — and it shows up in almost every sport.",
+            concept: "Hurdle Rhythm, Baton Changes, and Running as a Team",
+            intro: "Today you learn two skills that take individual running ability and apply it in a team context: hurdle running and relay baton changes. Both require technical precision — but also trust, timing, and communication.",
             points: [
-              "Eye-hand coordination means your eyes and hands are communicating fast and accurately.",
-              "It is a trainable skill — the more you practise throwing, catching, and tracking objects, the better your brain-body connection becomes.",
-              "Accuracy under pressure is different from accuracy when relaxed. Great athletes can be accurate when it counts.",
-              "Throwing technique affects accuracy: grip, stance, follow-through, and target focus all matter.",
-              "This week you will practise the overarm throw for accuracy."
+              "Hurdle running is not about jumping over the hurdle — it is about attacking it at speed with a quick, controlled step-over.",
+              "Your lead leg clears the hurdle; your trail leg whips through fast. Both matter equally.",
+              "A relay is won or lost in the changeover zone. A fast baton exchange can make up a full second.",
+              "The key to a relay exchange: the incoming runner calls 'hand', the outgoing runner reaches back with a straight arm — no looking back.",
+              "Great teams practise the changeover as much as the running. Technique under pressure is the goal."
             ],
-            closing: "Every time you throw and miss, your brain is learning. Do not get frustrated — get focused."
+            closing: "Hurdle cue: toes up, knees up, use your arms the whole way. Relay cue: arm straight back, call to run, go!"
           },
           do: {
-            title: "Tennis Ball Target — 10 Point Challenge",
-            setup: "Set up the target zones as your coach instructs. You have 3 tennis balls per attempt. Your goal is to score 10 points total across multiple attempts.",
+            title: "Hurdle Relay — Team Best Time",
+            setup: "Your team will race over two lines of hurdles and then compete in a full relay with baton changes. The goal: improve your team's time from the first relay to the last by running better, not just trying harder.",
             steps: [
-              "Start at the throwing line. Get your stance right — non-throwing foot forward, side-on to the target.",
-              "Focus on your target before you throw. Pick the zone you are aiming for.",
-              "Follow through toward the target with your throwing hand after you release.",
-              "Track your score. Adjust your aim between throws — do not just repeat the same throw.",
-              "Keep going until you reach 10 points. Count how many throws it takes you."
+              "Before the hurdle relay: practise one run-through of each hurdle line. Focus on rhythm — do not slow down approaching the hurdle.",
+              "In the relay: call your exchange zone clearly. Incoming runner says 'hand' at the right moment.",
+              "Outgoing runner: reach back with a straight arm, look forward, and accelerate as soon as the baton touches your hand.",
+              "After each relay, discuss as a team: what went well, what can we sharpen?",
+              "Final relay: everyone brings their best technique. Notice if your team's time improves."
             ],
-            changeIt: "Move one step further back each time you hit your target zone. How accurate can you be from distance?",
-            badge: { key: "sharp_shooter", name: "Sharp Shooter", icon: "🎯", xp: 25 }
+            changeIt: "Try the relay with 3–4 changeover zones instead of one. More changeovers = more chances to practise the exchange under pressure.",
+            badge: null
           },
           reflect: {
-            prompt: "What did you do differently to improve your throw — and did it actually work?",
-            hint: "Think about your footwork, your aim, your follow-through, or your focus. What adjustment made the biggest difference?"
+            prompt: "What was harder — the hurdles or the relay exchange — and what did you do to get better at it?",
+            hint: "Think about one specific moment you improved during the session. What changed? Was it a cue, a focus shift, or something a teammate said?"
           }
         },
         {
           num: 6,
           theme: "Endurance",
           learn: {
-            concept: "Building Your Aerobic Base — Effort and Energy Management",
-            intro: "Endurance is your ability to keep going. It is what separates athletes who are brilliant for one minute from athletes who perform consistently across an entire session, game, or race.",
+            concept: "The Endurance Challenge — Running at Your Own Pace",
+            intro: "Endurance is your ability to keep going. Today you will face one of the hardest things in sport: running for a sustained time without stopping. Not a sprint — a personal test of effort, pace judgement, and mental toughness.",
             points: [
-              "Your aerobic base is built by training at a sustained, moderate effort level — not by going flat out all the time.",
-              "Energy management is a skill. Athletes who learn to pace themselves can perform better for longer.",
-              "You have different energy systems for short bursts (sprinting) and longer efforts (sustained activity). Both are trainable.",
-              "Breathing is a key signal — if you cannot speak in short sentences, you are working too hard to build aerobic base.",
-              "Consistency builds endurance. One hard session does not do it — it is what you do every week that counts."
+              "Your aerobic base is built by running at a sustained, moderate effort — not flat out. If you cannot hold a short conversation, you are going too fast.",
+              "The endurance challenge today: run continuously for half your age in minutes without stopping. Every minute you complete without walking earns 10 points.",
+              "Pace judgement is a skill. Setting off too fast is the most common mistake — and it costs you in the final minutes.",
+              "Curve running is a separate skill: hugging the inside of the curve, leaning slightly in, keeping your running line tight.",
+              "Mental toughness: when it gets hard, focus on the next 30 seconds — not the whole remaining time."
             ],
-            closing: "This week your focus is on staying in the game — managing your energy so you perform well from start to finish."
+            closing: "Endurance cue: relaxed shoulders, steady breathing, head still. Run smooth — not fast, not slow. Run YOUR pace."
           },
           do: {
-            title: "Full Session Effort Tracker",
-            setup: "For every activity in today's session, you will rate your effort level out of 10 (1 = barely trying, 10 = maximum effort). Your goal is to finish at the same effort level you started.",
+            title: "Age Endurance Challenge + Curve Running",
+            setup: "Part 1: Run continuously for half your age in minutes without stopping (e.g., if you are 12, run for 6 minutes). Every complete minute without walking = 10 points. Part 2: Curve running — practise hugging the inside of the curve over 50m.",
             steps: [
-              "Before the session, decide your target effort level for today — for example, 7 out of 10.",
-              "After each activity, check in with yourself: What was my effort level just then?",
-              "Try to stay consistent — do not go 10 out of 10 in warm-up and have nothing left for the main activity.",
-              "At the end of the session, write down your effort level for each activity from memory.",
-              "Show your effort tracker to your coach at the end."
+              "Before the endurance run, set your pace. The first lap should feel easy — almost too easy.",
+              "Count your laps. After each lap, check: Can I keep this up? Am I fading or steady?",
+              "When you want to walk, pick a landmark 20m ahead and run to it. Then pick another one.",
+              "For curve running: lean slightly into the bend, keep your feet close to the inside line without stepping on it.",
+              "After both activities, note your score and how you felt — you will try to beat it next time."
             ],
-            changeIt: "Can you deliberately lower your effort in one activity to save energy for the next — and notice whether it works?",
+            changeIt: "Can you increase your endurance time by 1 minute from where you started today? What would you do differently to make that happen?",
             badge: null
           },
           reflect: {
-            prompt: "How did you manage your energy across the session today — and what would you do differently next time?",
-            hint: "Were you more tired at the end than usual? Did pacing yourself help? Was it hard to hold back when things got exciting?"
+            prompt: "What was hardest about the endurance challenge — and what strategy did you use to keep going?",
+            hint: "Was it boredom, pain, or the urge to walk? What did you tell yourself? Did pacing yourself in the early laps actually help at the end?"
           }
         },
         {
           num: 7,
           theme: "Putting it Together",
           learn: {
-            concept: "How Speed, Power, Coordination, and Endurance All Connect",
-            intro: "You have spent six weeks building the individual parts of your athletic engine. This week, it all comes together. Great athletes do not just have one quality — they have all of them working as a system.",
+            concept: "Speed + Strength + Coordination + Endurance — All in One Session",
+            intro: "You have spent six weeks building the individual parts of your athletic engine. This week, it all combines. The fitness circuit today includes every quality you have trained — and asks you to perform them all in sequence.",
             points: [
-              "Speed without endurance means you can only perform for a few seconds.",
-              "Power without coordination means your explosive efforts go in the wrong direction.",
-              "Coordination without endurance means your technique breaks down when you get tired.",
-              "When all four qualities work together, you become a complete athlete capable of performing at a high level for the whole session.",
-              "This week's challenge will ask you to use everything you have trained this term."
+              "Skipping is coordination AND power — high knee skip, side skip, and running skip all train different movement patterns.",
+              "Plyometrics (pogos, squat jumps) build your explosive power and reactive strength.",
+              "Strength exercises (push-ups, lunges, squats, planks) build the foundation that everything else sits on.",
+              "The circular relay at the end asks you to run fast when you are already tired — that is where endurance meets speed.",
+              "Throw accuracy is a brain-body skill — even when fatigued, can you focus enough to hit the target?"
             ],
-            closing: "Notice this week how much more capable you are than you were in Week 1. That is your engine talking."
+            closing: "This week, notice how much more capable you are than in Week 1. Your engine has grown — now use it."
           },
           do: {
-            title: "Full Athletic Circuit — Best Effort",
-            setup: "Your coach will set up a full circuit that includes speed, power, coordination, and endurance elements. Your job is simple: bring your best effort to every station.",
+            title: "Fitness Circuit + Circular Relay + Throw for Accuracy",
+            setup: "Four areas today: skipping and plyometrics, strength exercises, the circular relay, and overarm throw for accuracy. Your goal: bring full effort to every station and apply the technique cues you have learned.",
             steps: [
-              "Before you start, set one personal goal for the circuit — something specific you want to do well.",
-              "At each station, apply the technique cues you have learned over the past six weeks.",
-              "When you feel tired, use your breathing and effort management to keep your technique sharp.",
-              "After the circuit, your coach will give you feedback on what they observed.",
-              "Write down your personal goal from the start — did you achieve it?"
+              "Fitness circuit: At each station, do the exercise with good form — pogos with springy toes, squats with arms forward, lunges with a long strong stride.",
+              "Set one personal target before you start: e.g., 'I will hold my plank for 30 seconds' or 'I will not stop during the relay'.",
+              "Circular relay: High-5 your teammate cleanly at each changeover. First team all sitting down wins.",
+              "Throw for accuracy: stand side-on to the target, arm back past your ear, weight shifts forward, follow through toward your target.",
+              "After the session, tell your coach your personal target — did you hit it?"
             ],
-            changeIt: "Challenge a teammate to match your effort level across the full circuit. Lift each other up.",
+            changeIt: "For the relay, challenge your team to beat their first attempt. What do you need to do differently to make that happen?",
             badge: null
           },
           reflect: {
             prompt: "What has improved most since Week 1 — and how do you know?",
-            hint: "Think about a specific moment this session where you noticed you were better than when you started. What was different?"
+            hint: "Think about a specific moment today where you noticed you were better than when you started this module. What was different — in your body, your technique, or your mindset?"
           }
         },
         {
@@ -3179,93 +3189,154 @@ const MAJ_CONTENT = {
     run: {
       label: 'Running Technique', emoji: '🏃',
       ratings: ['P','I','R'], ratingLabels: ['Pass','Intervention','Reassess'],
+      coachCues: [
+        'Head still — look forward, not down',
+        'Short, fast arms — elbows drive back past hips',
+        'Knees up toward the belly button each stride',
+        'Toes up, push off the ball of the foot',
+        'Stay tall and relaxed — shoulders loose',
+        'Fast feet on the ground, quick turnover',
+        'Ladder cue: fast feet, fast arms, low knees',
+        'Hurdle cue: toes up, knees up, use your arms'
+      ],
       sections: [
         { heading: 'Body Position & Posture', criteria: [
-          'Upright posture with slight lean forward during running',
-          'Stable head position, eyes looking ahead and focused forward'
+          'Upright posture with slight forward lean from the ankles (not the waist)',
+          'Head still — eyes looking forward, not down at the ground',
+          'Shoulders relaxed; no hunching or tensing during effort'
         ]},
-        { heading: 'Rhythm & Coordination', criteria: [
-          'Smooth and rhythmic arm swing (forward/backward, not across body)',
-          'Arms bent at approximately 90 degrees, moving in opposition to legs'
+        { heading: 'Arm Drive', criteria: [
+          'Arms drive forward and back (not across the body) — elbows at ~90°',
+          'Elbows drive back past the hips with each stride',
+          'Arms move in opposition to legs; no crossing the midline'
         ]},
         { heading: 'Leg Action', criteria: [
-          'High knees with active foot lift; knees bend at right angles during recovery',
-          'Efficient foot placement — ball of the foot contact, toes dorsiflexed',
-          'Minimal overstriding; heels lift adequately towards buttocks'
+          'Knees drive up toward belly button with active foot lift',
+          'Toes dorsiflexed (toes up) on ground contact — ball of foot strike',
+          'Heels kick up toward buttocks during recovery phase',
+          'Minimal overstriding — foot lands under or close to the hips'
         ]},
-        { heading: 'Balance & Stability', criteria: [
-          'Maintains balance during changes in speed and direction',
-          'Runs in a straight line with minimal lateral movement'
+        { heading: 'Rhythm & Coordination', criteria: [
+          'Smooth, rhythmic stride pattern — no jerky or uneven movement',
+          'Runs in a straight line with minimal lateral sway',
+          'Maintains form across a full hurdle run / agility circuit'
         ]},
         { heading: 'Effort & Endurance', criteria: [
-          'Sustains effort across observed duration; face and shoulders relaxed',
-          'Shows willingness to engage and improve'
+          'Sustains technique across observed duration (not just first 10m)',
+          'Face and upper body remain relaxed under fatigue',
+          'Shows coachability — responds to cues and applies them'
         ]}
       ]
     },
     jump: {
-      label: 'Vertical Jump', emoji: '⬆️',
+      label: 'Jump & Land', emoji: '⬆️',
       ratings: ['P','I','R'], ratingLabels: ['Pass','Intervention','Reassess'],
+      coachCues: [
+        '"Jet wings" — swing arms back before take-off',
+        '"Reach for the sky" — arms drive up through take-off',
+        '"Motorbike landing" — arms out front, drop the hips',
+        'Drive your knee to the sky — strong knee lift',
+        'Bounce — nice and springy with bouncy toes (pogos)',
+        'Hips down to stick the landing',
+        'Land QUIET — soft knees on every landing',
+        'Two-foot take-off, two-foot landing first; progress to single-leg'
+      ],
       sections: [
-        { heading: 'Preparation', criteria: [
+        { heading: 'Preparation & Take-Off', criteria: [
           'Crouch with knees bent and arms behind body ("Jet Wings") before take-off',
-          'Balanced and aligned body position; eyes focused forward'
-        ]},
-        { heading: 'Take-Off', criteria: [
-          'Arms swing forward and up, legs push off forcefully and straighten ("reach for the sky")',
-          'Maintains good posture and upward drive during lift'
+          'Arms swing forward and up explosively through take-off',
+          'Strong push from both legs — full leg extension at take-off',
+          'Knee drives up toward the sky to maximise height or distance'
         ]},
         { heading: 'Flight Phase', criteria: [
-          'Knees and arms coordinated mid-air',
-          'Maintains stable position in flight'
+          'Maintains a controlled body position in the air — no wild rotation',
+          'Arms and legs coordinate mid-air (not flailing)',
+          'For bounding: lead leg extends forward and arm drives in opposition'
         ]},
         { heading: 'Landing', criteria: [
-          'Lands on balls of feet — softens knees and drops hips to absorb force',
-          'Balanced landing with no more than 1 step in any direction'
+          'Lands on balls of both feet — contact is soft and controlled ("quiet feet")',
+          'Knees bend to absorb force — hips drop ("motorbike" position)',
+          'Balanced landing — holds position for at least 1 second with no extra steps',
+          'For single-leg landing: stable hip and knee alignment, no knee cave'
+        ]},
+        { heading: 'Effort & Consistency', criteria: [
+          'Applies take-off cues consistently across multiple repetitions',
+          'Maintains landing quality even when fatigue builds',
+          'Shows confidence and willingness to try harder challenges'
         ]}
       ]
     },
     throw: {
       label: 'Throw Technique', emoji: '🎯',
       ratings: ['Y','NI','NO'], ratingLabels: ['Yes','Needs Impr.','Not Observed'],
+      coachCues: [
+        'Point your arm out in front — strong push past your nose',
+        'Ball/bag into neck — high elbow position',
+        'Non-throwing foot forward, turn sideways to the target',
+        'Shift your weight to your back foot before throwing',
+        'Use your legs and rotation to generate power',
+        'Follow through — arm straight out toward the target',
+        'Focus on the target before and during release',
+        'Sling throw: knuckles up, make a T, swing and release'
+      ],
       sections: [
-        { heading: 'Preparation Phase', criteria: [
-          'Proper grip and alignment of object',
-          'Stable stance and body alignment'
+        { heading: 'Stance & Preparation', criteria: [
+          'Non-throwing foot forward; stands side-on to the target',
+          'Weight shifted to back foot at start of throw',
+          'Ball/object positioned correctly — e.g., at neck level for overarm, or knuckles up for sling'
         ]},
-        { heading: 'Throw Execution', criteria: [
-          'Proper arm extension and release point',
-          'Coordination between upper body and legs'
+        { heading: 'Throwing Action', criteria: [
+          'High elbow position maintained during the throwing action',
+          'Uses leg drive and trunk rotation to generate power — not just arm',
+          'Weight transfers from back foot to front foot through the throw',
+          'Arm drives through with strong push — arm extends toward target'
         ]},
-        { heading: 'Follow-Through Phase', criteria: [
-          'Smooth and controlled follow-through',
-          'Maintains balance after the throw'
+        { heading: 'Release & Follow-Through', criteria: [
+          'Clean release point — ball leaves hand at intended angle',
+          'Follow-through is smooth — arm finishes pointing toward target',
+          'Maintains balance and does not step over the throwing line'
         ]},
-        { heading: 'Effort & Engagement', criteria: [
-          'Displays confidence and commitment to throw',
-          'Executes with full effort and focus'
+        { heading: 'Accuracy & Engagement', criteria: [
+          'Adjusts aim between attempts — shows problem-solving',
+          'Focuses on target before each throw (not rushing)',
+          'Executes with full effort and commitment'
         ]}
       ]
     },
     leap: {
-      label: 'Leap Technique', emoji: '🦘',
+      label: 'Bound / Leap', emoji: '🦘',
       ratings: ['Y','NI','NO'], ratingLabels: ['Yes','Needs Impr.','Not Observed'],
+      coachCues: [
+        'Drive your arms — longer and stronger each bound',
+        'Toe and knee come up together on take-off',
+        'Push strong to the middle of the hoop/target',
+        'Drive the knee to the sky — big knee lift',
+        'Arms drive in opposition to the legs',
+        'Land in control — absorb through the ankle, knee, hip',
+        'Each bound should feel bigger than the last',
+        'Hop-step-jump: hop over hurdle, bound to dot, land in hoop'
+      ],
       sections: [
-        { heading: 'Take-Off & Preparation', criteria: [
-          'Forward lean during take-off',
-          'Arms drive forward for momentum'
+        { heading: 'Take-Off Mechanics', criteria: [
+          'Strong push-off from the drive leg — full extension through ankle, knee, hip',
+          'Knee of lead leg drives up to the sky during take-off',
+          'Toe and knee rise together — toes dorsiflexed at take-off',
+          'Arms drive in opposition to generate momentum'
         ]},
         { heading: 'Flight Phase', criteria: [
-          'Maintains balance and control mid-flight',
-          'Lead leg extended and prepared for landing'
+          'Maintains forward lean and controlled position in flight',
+          'Lead leg extends forward in preparation for landing',
+          'Arms continue to drive — no passive hanging in flight'
         ]},
-        { heading: 'Landing', criteria: [
-          'Lands with bent knees for shock absorption',
-          'Controlled and stable landing without falling'
+        { heading: 'Landing & Transition', criteria: [
+          'Lands with bent knee to absorb force — soft and controlled',
+          'Can immediately re-bound without a balance loss (if bounding)',
+          'Lands on target zone (hoop/dot) with accuracy'
         ]},
-        { heading: 'Effort & Coordination', criteria: [
-          'Displays confidence and commitment during leap',
-          'Synchronization between upper and lower body'
+        { heading: 'Effort & Distance', criteria: [
+          'Each bound shows intent — athlete is trying to cover distance or height',
+          'Applies coaching cues consistently across a full set of bounds',
+          'Responds to feedback and demonstrates improvement within session'
         ]}
       ]
     }
@@ -3282,6 +3353,7 @@ const MAJ_CONTENT = {
     areasForImprovement: '',
     nextSteps: '',
     overallRating: null,
+    skillAcquisitionStage: null,
     reassessmentRequired: false
   };
 
@@ -3311,7 +3383,7 @@ const MAJ_CONTENT = {
   }
 
   function openAssessment(athlete) {
-    assessState = { athlete, type: null, ratings: {}, strengths: '', areasForImprovement: '', nextSteps: '', overallRating: null, reassessmentRequired: false };
+    assessState = { athlete, type: null, ratings: {}, strengths: '', areasForImprovement: '', nextSteps: '', overallRating: null, skillAcquisitionStage: null, reassessmentRequired: false };
     const name = athlete.fullName || athlete.full_name || 'Athlete';
     document.getElementById('assess-athlete-name').textContent = name;
     document.getElementById('assess-athlete-meta').textContent =
@@ -3340,6 +3412,16 @@ const MAJ_CONTENT = {
   function renderAssessmentForm(type) {
     const cfg = ASSESS_TYPES[type];
     let html = '';
+
+    // Coaching cues panel
+    if (cfg.coachCues && cfg.coachCues.length) {
+      html += `<div style="background:rgba(242,101,34,0.08);border:1px solid rgba(242,101,34,0.25);border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--orange);margin-bottom:10px;">COACHING CUES — ${cfg.label.toUpperCase()}</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          ${cfg.coachCues.map(c => `<div style="font-size:12px;color:var(--text2);line-height:1.4;display:flex;gap:8px;"><span style="color:var(--orange);flex-shrink:0;">›</span><span>${c}</span></div>`).join('')}
+        </div>
+      </div>`;
+    }
 
     // Criteria sections
     cfg.sections.forEach((sec, si) => {
@@ -3372,6 +3454,26 @@ const MAJ_CONTENT = {
     <div class="assess-notes-block">
       <div class="assess-label">RECOMMENDED NEXT STEPS</div>
       <textarea class="assess-textarea" id="assess-next" placeholder="What should the athlete focus on?" oninput="assessState.nextSteps=this.value"></textarea>
+    </div>`;
+
+    // Skill acquisition stage
+    html += `<div class="assess-notes-block">
+      <div class="assess-label">SKILL ACQUISITION STAGE</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.4;">Where is this athlete in their learning of this skill?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${[
+          { val:'cognitive', label:'Cognitive', desc:'Thinking through every step — conscious effort required', icon:'🧠' },
+          { val:'associative', label:'Associative', desc:'Refining the movement — less thinking, more feeling', icon:'⚙️' },
+          { val:'autonomous', label:'Autonomous', desc:'Feels natural and automatic — can focus on performance', icon:'⚡' }
+        ].map(s => `
+          <div class="assess-stage-btn" id="stage_${s.val}" onclick="selectStage('${s.val}')">
+            <span style="font-size:18px;margin-right:10px;">${s.icon}</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--text1);">${s.label}</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px;">${s.desc}</div>
+            </div>
+          </div>`).join('')}
+      </div>
     </div>`;
 
     // Overall rating
@@ -3415,6 +3517,14 @@ const MAJ_CONTENT = {
     });
   }
 
+  function selectStage(val) {
+    assessState.skillAcquisitionStage = val;
+    ['cognitive','associative','autonomous'].forEach(s => {
+      const el = document.getElementById(`stage_${s}`);
+      if (el) el.className = 'assess-stage-btn' + (s === val ? ' sel' : '');
+    });
+  }
+
   function toggleReassess() {
     assessState.reassessmentRequired = !assessState.reassessmentRequired;
     const ch = document.getElementById('reassess-check');
@@ -3445,6 +3555,7 @@ const MAJ_CONTENT = {
         areasForImprovement: assessState.areasForImprovement,
         nextSteps: assessState.nextSteps,
         overallRating: assessState.overallRating,
+        skillAcquisitionStage: assessState.skillAcquisitionStage,
         reassessmentRequired: assessState.reassessmentRequired
       });
       toast('Assessment saved ✓');

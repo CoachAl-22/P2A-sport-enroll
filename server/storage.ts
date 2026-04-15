@@ -1639,13 +1639,15 @@ export class DatabaseStorage implements IStorage {
     const result = await db.execute(
       sql`INSERT INTO maj_skill_assessments
         (athlete_id, coach_name, assessment_type, assessment_date, criteria_results,
-         strengths, areas_for_improvement, next_steps, overall_rating, reassessment_required)
+         strengths, areas_for_improvement, next_steps, overall_rating,
+         skill_acquisition_stage, reassessment_required)
         VALUES (
           ${data.athleteId}, ${data.coachName}, ${data.assessmentType},
           ${data.assessmentDate || new Date().toISOString().slice(0,10)},
           ${JSON.stringify(data.criteriaResults || {})}::jsonb,
           ${data.strengths||''}, ${data.areasForImprovement||''},
           ${data.nextSteps||''}, ${data.overallRating||null},
+          ${data.skillAcquisitionStage||null},
           ${data.reassessmentRequired||false}
         ) RETURNING *`
     ) as any;
