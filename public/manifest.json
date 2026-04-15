@@ -1,0 +1,19 @@
+{
+  "name": "My Athletic Journey",
+  "short_name": "MAJ",
+  "description": "Track your athletic progress with Power2ADAPT",
+  "start_url": "/my-athletic-journey",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#F26522",
+  "background_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/maj-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "health", "fitness"]
+}

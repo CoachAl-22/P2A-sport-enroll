@@ -457,6 +457,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/manifest.json", async (req, res) => {
+    const { readFileSync } = await import("fs");
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const filePath = resolve(__dirname, "../public/manifest.json");
+    try {
+      const content = readFileSync(filePath, "utf-8");
+      res.setHeader("Content-Type", "application/manifest+json");
+      res.send(content);
+    } catch {
+      res.status(404).send("Not found");
+    }
+  });
+
+  app.get("/maj-icon.svg", async (req, res) => {
+    const { readFileSync } = await import("fs");
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const filePath = resolve(__dirname, "../public/maj-icon.svg");
+    try {
+      const content = readFileSync(filePath, "utf-8");
+      res.setHeader("Content-Type", "image/svg+xml");
+      res.send(content);
+    } catch {
+      res.status(404).send("Not found");
+    }
+  });
+
   app.get("/operations-manual", async (req, res) => {
     const userId = (req.session as any)?.userId;
     if (!userId) {
