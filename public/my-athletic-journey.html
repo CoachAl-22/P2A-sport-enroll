@@ -4241,7 +4241,11 @@ const MAJ_CONTENT = {
   async function markChallengeComplete() {
     const a = state.athlete;
     const wp = getWeekProgress(a.currentModule, a.currentWeek);
-    if (wp.challenge) return;
+    if (wp.challenge) {
+      const reflectBtn = document.querySelector(".tab-btn[onclick*='reflect']");
+      if (reflectBtn) switchTab(reflectBtn, 'reflect');
+      return;
+    }
 
     markWeekProgress(a.currentModule, a.currentWeek, 'challenge');
     state.challengeDone = true;
