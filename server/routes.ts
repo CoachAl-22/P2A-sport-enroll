@@ -96,9 +96,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/icons", express.static(_resolve(__staticDir, "../public/icons")));
   app.use("/maj-icon.svg", express.static(_resolve(__staticDir, "../public/maj-icon.svg")));
   app.get("/sw.js", (_req, res) => {
-    res.setHeader("Content-Type", "application/javascript");
-    res.setHeader("Service-Worker-Allowed", "/");
-    res.sendFile(_resolve(__staticDir, "../public/sw.js"));
+    try {
+      const swContent = readFileSync(_resolve(__staticDir, "../public/sw.js"), "utf-8");
+      res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+      res.setHeader("Service-Worker-Allowed", "/");
+      res.setHeader("Cache-Control", "no-cache");
+      res.send(swContent);
+    } catch (e) {
+      res.status(404).send("Not found");
+    }
   });
 
   // Initialize invoice service
