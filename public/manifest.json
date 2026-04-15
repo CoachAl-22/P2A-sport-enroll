@@ -1,19 +1,88 @@
 {
   "name": "My Athletic Journey",
   "short_name": "MAJ",
-  "description": "Track your athletic progress with Power2ADAPT",
+  "description": "Your personal athletic performance hub by Power2ADAPT",
   "start_url": "/my-athletic-journey",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#F26522",
   "background_color": "#0a0a0a",
+  "theme_color": "#F26522",
+  "lang": "en-AU",
+  "categories": ["sports", "education", "health & fitness"],
   "icons": [
     {
-      "src": "/maj-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "categories": ["sports", "health", "fitness"]
+  "screenshots": [
+    {
+      "src": "/icons/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "My Athletic Journey dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "This Week",
+      "short_name": "This Week",
+      "description": "Jump straight to your weekly challenge",
+      "url": "/my-athletic-journey#thisweek",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "My Badges",
+      "short_name": "Badges",
+      "description": "View your achievement badges",
+      "url": "/my-athletic-journey#badges",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ]
 }

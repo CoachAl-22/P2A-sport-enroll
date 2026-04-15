@@ -88,6 +88,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Mobile auth middleware
   app.use(authMiddleware);
 
+  // Serve PWA icons and assets from public folder
+  const { default: express } = await import("express");
+  const { resolve: _resolve, dirname: _dirname } = await import("path");
+  const { fileURLToPath: _ftu } = await import("url");
+  const __staticDir = _dirname(_ftu(import.meta.url));
+  app.use("/icons", express.static(_resolve(__staticDir, "../public/icons")));
+  app.use("/maj-icon.svg", express.static(_resolve(__staticDir, "../public/maj-icon.svg")));
+
   // Initialize invoice service
   const invoiceService = new InvoiceService();
 
