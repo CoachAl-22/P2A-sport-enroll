@@ -3705,6 +3705,9 @@ const MAJ_CONTENT = {
     const original = btn.textContent;
     btn.textContent = 'Exporting…';
     btn.disabled = true;
+    // Open the tab immediately (before await) so popup blockers don't intervene
+    const win = window.open('', '_blank');
+    if (win) win.document.write('<p style="font-family:sans-serif;padding:32px;color:#333">Creating your Google Sheet… please wait ⏳</p>');
     try {
       const athleteName = assessState.athlete.fullName || assessState.athlete.full_name || 'Athlete';
       const data = await apiPost('/export/athlete-assessments', {
@@ -3712,10 +3715,12 @@ const MAJ_CONTENT = {
         athleteName,
       });
       if (data.url) {
-        window.open(data.url, '_blank');
+        if (win) win.location.href = data.url;
+        else window.open(data.url, '_blank');
         toast('Opened in Google Sheets ✓');
       }
     } catch(e) {
+      if (win) win.close();
       toast('Could not export — check connection');
     } finally {
       btn.textContent = original;

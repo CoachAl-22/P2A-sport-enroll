@@ -117,6 +117,8 @@ export async function exportAssessmentsToSheet(athleteName: string, assessments:
   });
 
   const spreadsheetId = created.data.spreadsheetId!;
+  // Use the actual sheet ID (not assumed 0) from the creation response
+  const sheetId = created.data.sheets?.[0]?.properties?.sheetId ?? 0;
 
   const headers = [
     'Date', 'Athlete', 'Skill Type', 'Overall Rating', 'Skill Stage',
@@ -153,7 +155,7 @@ export async function exportAssessmentsToSheet(athleteName: string, assessments:
     requestBody: {
       requests: [{
         repeatCell: {
-          range: { sheetId: 0, startRowIndex: 0, endRowIndex: 1 },
+          range: { sheetId, startRowIndex: 0, endRowIndex: 1 },
           cell: { userEnteredFormat: { textFormat: { bold: true }, backgroundColor: { red: 0.949, green: 0.396, blue: 0.133 } } },
           fields: 'userEnteredFormat(textFormat,backgroundColor)',
         },
