@@ -3476,13 +3476,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   (async () => {
     const coaches = [
       { username: "coach_al",  fullName: "Coach Al",           password: "Level4_HP"  },
-      { username: "alistair",  fullName: "Alistair Tait",       password: "Coach2025!" },
-      { username: "declyn",    fullName: "Declyn Tanner",       password: "Coach2025!" },
-      { username: "geena",     fullName: "Geena Davy",          password: "Coach2025!" },
-      { username: "georgia",   fullName: "Georgia Middleton",   password: "Coach2025!" },
-      { username: "miah",      fullName: "Miah Noble",          password: "Coach2025!" },
-      { username: "sami",      fullName: "Sami Merhi",          password: "Coach2025!" },
-      { username: "sarai",     fullName: "Sarai Hughes",        password: "Coach2025!" },
+      { username: "alistair",  fullName: "Alistair Tait",       password: "P2ACoach2026" },
+      { username: "declyn",    fullName: "Declyn Tanner",       password: "P2ACoach2026" },
+      { username: "geena",     fullName: "Geena Davy",          password: "P2ACoach2026" },
+      { username: "georgia",   fullName: "Georgia Middleton",   password: "P2ACoach2026" },
+      { username: "miah",      fullName: "Miah Noble",          password: "P2ACoach2026" },
+      { username: "sami",      fullName: "Sami Merhi",          password: "P2ACoach2026" },
+      { username: "sarai",     fullName: "Sarai Hughes",        password: "P2ACoach2026" },
     ];
     for (const coach of coaches) {
       try {
