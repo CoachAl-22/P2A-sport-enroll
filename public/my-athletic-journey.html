@@ -3559,9 +3559,14 @@ const MAJ_CONTENT = {
   };
 
   function renderCoachView(athletes) {
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const coachFullName = (state.coach && (state.coach.fullName || state.coach.full_name)) || 'Coach';
+    const firstName = coachFullName.split(' ')[0];
     const coachHtml = `
       <div style="padding:20px 20px 8px;">
-        <div style="font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:2px;">Coach Dashboard</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:4px;letter-spacing:0.5px;">${greeting},</div>
+        <div style="font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:2px;">${firstName} 👋</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Power2ADAPT · My Athletic Journey</div>
         <div class="section-label">Tap an athlete to assess</div>
         ${athletes.map(a => {
