@@ -3844,9 +3844,12 @@ const MAJ_CONTENT = {
           criteriaResults[key] = { criterion: crit, section: sec.heading, rating: assessState.ratings[key] || null };
         });
       });
+      const coachName = state.coach
+        ? (state.coach.fullName || state.coach.full_name || state.coach.username)
+        : (state.athlete ? (state.athlete.fullName || state.athlete.username) : 'Coach');
       await apiPost('/skill-assessments', {
         athleteId: assessState.athlete.id,
-        coachName: state.athlete ? (state.athlete.fullName || state.athlete.username) : 'Coach',
+        coachName,
         assessmentType: assessState.type,
         assessmentDate: new Date().toISOString().slice(0,10),
         criteriaResults,
@@ -3858,7 +3861,14 @@ const MAJ_CONTENT = {
         reassessmentRequired: assessState.reassessmentRequired
       });
       toast('Assessment saved ✓');
-      setTimeout(() => closeAssessment(), 800);
+      // Reset form and reload history
+      document.getElementById('assess-form-body').innerHTML = '';
+      document.querySelectorAll('.assess-type-btn').forEach(b => b.classList.remove('active'));
+      assessState.type = null;
+      assessState.ratings = {};
+      assessState.overallRating = null;
+      await loadAssessmentHistory(assessState.athlete);
+      document.getElementById('assess-overlay').scrollTop = 0;
     } catch(e) {
       toast('Error saving — check connection');
       btn.disabled = false; btn.textContent = 'Save Assessment';
