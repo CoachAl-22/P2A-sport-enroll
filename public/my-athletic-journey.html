@@ -1967,7 +1967,10 @@
       <div class="assess-header">
         <div class="assess-back" onclick="closeAssessment()">‹</div>
         <div class="assess-title">Skill Assessment</div>
-        <button id="assess-csv-btn" onclick="exportAssessmentCSV()" style="margin-left:auto;background:none;border:1px solid var(--orange);color:var(--orange);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;display:none;">⬇ CSV</button>
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+          <button id="assess-csv-btn" onclick="exportAssessmentCSV()" style="background:none;border:1px solid var(--orange);color:var(--orange);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;display:none;">⬇ CSV</button>
+          <button id="assess-sheets-btn" onclick="pushToGoogleSheets()" style="background:none;border:1px solid #34a853;color:#34a853;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;display:none;">📊 Sheets</button>
+        </div>
       </div>
       <div class="assess-athlete-bar">
         <div class="assess-athlete-name" id="assess-athlete-name">—</div>
@@ -3613,7 +3616,9 @@ const MAJ_CONTENT = {
       const history = await apiGet(`/athlete/${athlete.id}/skill-assessments`);
       assessState.history = history || [];
       renderAssessmentHistory(history || []);
-      csvBtn.style.display = history && history.length > 0 ? 'block' : 'none';
+      const hasData = history && history.length > 0;
+      csvBtn.style.display = hasData ? 'block' : 'none';
+      document.getElementById('assess-sheets-btn').style.display = hasData ? 'block' : 'none';
     } catch(e) {
       panel.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:8px 0;">Could not load history.</div>';
     }
@@ -3691,6 +3696,31 @@ const MAJ_CONTENT = {
     a.click();
     URL.revokeObjectURL(url);
     toast('CSV downloaded ✓');
+  }
+
+  async function pushToGoogleSheets() {
+    const history = assessState.history || [];
+    if (!history.length) { toast('No assessments to export'); return; }
+    const btn = document.getElementById('assess-sheets-btn');
+    const original = btn.textContent;
+    btn.textContent = 'Exporting…';
+    btn.disabled = true;
+    try {
+      const athleteName = assessState.athlete.fullName || assessState.athlete.full_name || 'Athlete';
+      const data = await apiPost('/export/athlete-assessments', {
+        athleteId: assessState.athlete.id,
+        athleteName,
+      });
+      if (data.url) {
+        window.open(data.url, '_blank');
+        toast('Opened in Google Sheets ✓');
+      }
+    } catch(e) {
+      toast('Could not export — check connection');
+    } finally {
+      btn.textContent = original;
+      btn.disabled = false;
+    }
   }
 
   function closeAssessment() {

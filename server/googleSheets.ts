@@ -105,6 +105,65 @@ export async function appendSurveyToSheet(data: {
   });
 }
 
+export async function exportAssessmentsToSheet(athleteName: string, assessments: any[]): Promise<string> {
+  const sheets = await getUncachableGoogleSheetClient();
+
+  // Create a new spreadsheet
+  const created = await sheets.spreadsheets.create({
+    requestBody: {
+      properties: { title: `${athleteName} — MAJ Assessments` },
+      sheets: [{ properties: { title: 'Assessments', index: 0 } }],
+    },
+  });
+
+  const spreadsheetId = created.data.spreadsheetId!;
+
+  const headers = [
+    'Date', 'Athlete', 'Skill Type', 'Overall Rating', 'Skill Stage',
+    'Coach', 'Strengths', 'Areas for Improvement', 'Next Steps', 'Reassessment Required',
+  ];
+
+  const typeLabels: Record<string, string> = {
+    run: 'Running', jump: 'Vertical Jump', throw: 'Throw', leap: 'Leap',
+  };
+
+  const rows = assessments.map(a => [
+    a.assessment_date || '',
+    athleteName,
+    typeLabels[a.assessment_type] || a.assessment_type || '',
+    a.overall_rating || '',
+    a.skill_acquisition_stage || '',
+    a.coach_name || '',
+    a.strengths || '',
+    a.areas_for_improvement || '',
+    a.next_steps || '',
+    a.reassessment_required ? 'Yes' : 'No',
+  ]);
+
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: `Assessments!A1`,
+    valueInputOption: 'USER_ENTERED',
+    requestBody: { values: [headers, ...rows] },
+  });
+
+  // Bold the header row
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      requests: [{
+        repeatCell: {
+          range: { sheetId: 0, startRowIndex: 0, endRowIndex: 1 },
+          cell: { userEnteredFormat: { textFormat: { bold: true }, backgroundColor: { red: 0.949, green: 0.396, blue: 0.133 } } },
+          fields: 'userEnteredFormat(textFormat,backgroundColor)',
+        },
+      }],
+    },
+  });
+
+  return `https://docs.google.com/spreadsheets/d/${spreadsheetId}`;
+}
+
 export async function ensureSheetHeaders() {
   try {
     const sheets = await getUncachableGoogleSheetClient();

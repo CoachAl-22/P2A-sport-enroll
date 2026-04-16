@@ -12,7 +12,7 @@ import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes } from "@shared/schema";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
-import { appendSurveyToSheet, ensureSheetHeaders } from "./googleSheets";
+import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } from "./googleSheets";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -365,6 +365,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(assessment);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/maj/export/athlete-assessments", async (req, res) => {
+    try {
+      const { athleteId, athleteName } = req.body;
+      if (!athleteId || !athleteName) return res.status(400).json({ message: "athleteId and athleteName required" });
+      const assessments = await storage.getSkillAssessmentsForAthlete(athleteId);
+      if (!assessments.length) return res.status(400).json({ message: "No assessments to export" });
+      const url = await exportAssessmentsToSheet(athleteName, assessments);
+      res.json({ url });
+    } catch (error: any) {
+      console.error("[sheets export]", error.message);
+      res.status(500).json({ message: "Failed to export to Google Sheets: " + error.message });
     }
   });
 
