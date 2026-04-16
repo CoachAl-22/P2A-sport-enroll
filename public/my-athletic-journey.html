@@ -1967,11 +1967,13 @@
       <div class="assess-header">
         <div class="assess-back" onclick="closeAssessment()">‹</div>
         <div class="assess-title">Skill Assessment</div>
+        <button id="assess-csv-btn" onclick="exportAssessmentCSV()" style="margin-left:auto;background:none;border:1px solid var(--orange);color:var(--orange);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;display:none;">⬇ CSV</button>
       </div>
       <div class="assess-athlete-bar">
         <div class="assess-athlete-name" id="assess-athlete-name">—</div>
         <div class="assess-athlete-meta" id="assess-athlete-meta">Select a skill type below</div>
       </div>
+      <div id="assess-history-panel" style="padding:0 16px 8px;display:none;"></div>
       <div class="assess-type-row">
         <div class="assess-type-btn" onclick="selectAssessType('run',this)">
           <div class="atype-icon">🏃</div>Running
@@ -3588,8 +3590,8 @@ const MAJ_CONTENT = {
     document.getElementById('page-home').innerHTML = coachHtml;
   }
 
-  function openAssessment(athlete) {
-    assessState = { athlete, type: null, ratings: {}, strengths: '', areasForImprovement: '', nextSteps: '', overallRating: null, skillAcquisitionStage: null, reassessmentRequired: false };
+  async function openAssessment(athlete) {
+    assessState = { athlete, type: null, ratings: {}, strengths: '', areasForImprovement: '', nextSteps: '', overallRating: null, skillAcquisitionStage: null, reassessmentRequired: false, history: [] };
     const name = athlete.fullName || athlete.full_name || 'Athlete';
     document.getElementById('assess-athlete-name').textContent = name;
     document.getElementById('assess-athlete-meta').textContent =
@@ -3598,6 +3600,97 @@ const MAJ_CONTENT = {
     document.querySelectorAll('.assess-type-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('assess-overlay').classList.add('open');
     document.getElementById('assess-overlay').scrollTop = 0;
+    // Load assessment history
+    await loadAssessmentHistory(athlete);
+  }
+
+  async function loadAssessmentHistory(athlete) {
+    const panel = document.getElementById('assess-history-panel');
+    const csvBtn = document.getElementById('assess-csv-btn');
+    panel.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:8px 0;">Loading history…</div>';
+    panel.style.display = 'block';
+    try {
+      const history = await apiGet(`/athlete/${athlete.id}/skill-assessments`);
+      assessState.history = history || [];
+      renderAssessmentHistory(history || []);
+      csvBtn.style.display = history && history.length > 0 ? 'block' : 'none';
+    } catch(e) {
+      panel.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:8px 0;">Could not load history.</div>';
+    }
+  }
+
+  function renderAssessmentHistory(history) {
+    const panel = document.getElementById('assess-history-panel');
+    if (!history.length) {
+      panel.innerHTML = '<div style="color:var(--text2);font-size:12px;padding:6px 0 10px;">No assessments yet — select a skill type below to start.</div>';
+      return;
+    }
+    const typeLabels = { run: '🏃 Running', jump: '⬆️ Vertical Jump', throw: '🎯 Throw', leap: '🦘 Leap' };
+    const ratingColour = { P: '#4caf50', I: '#F26522', R: '#ef5350', Y: '#4caf50', NI: '#F26522', NO: '#ef5350' };
+    const html = `
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text2);margin-bottom:8px;">ASSESSMENT HISTORY (${history.length})</div>
+      ${history.slice().reverse().map(a => {
+        const date = a.assessment_date || a.assessmentDate || '';
+        const type = a.assessment_type || a.assessmentType || '';
+        const rating = a.overall_rating || a.overallRating || '—';
+        const stage = a.skill_acquisition_stage || a.skillAcquisitionStage || '';
+        const strengths = a.strengths || '';
+        const areas = a.areas_for_improvement || a.areasForImprovement || '';
+        const next = a.next_steps || a.nextSteps || '';
+        const coach = a.coach_name || a.coachName || '';
+        const stageColour = stage === 'Autonomous' ? '#4caf50' : stage === 'Associative' ? '#F26522' : stage === 'Cognitive' ? '#2196f3' : '#666';
+        const uid = `hist-${a.id}`;
+        return `<div style="background:var(--surface2);border-radius:10px;padding:12px 14px;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);flex:1;">${typeLabels[type] || type}</div>
+            <div style="font-size:10px;color:var(--text2);">${date}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:${(strengths||areas||next) ? '8px' : '0'};">
+            <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,0.08);color:${ratingColour[rating]||'var(--text2)'};">Overall: ${rating}</span>
+            ${stage ? `<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,0.08);color:${stageColour};">${stage}</span>` : ''}
+            ${coach ? `<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,0.05);color:var(--text2);">by ${coach}</span>` : ''}
+          </div>
+          ${(strengths||areas||next) ? `
+            <div id="${uid}-notes" style="display:none;margin-top:6px;font-size:12px;color:var(--text2);line-height:1.5;">
+              ${strengths ? `<div><span style="color:var(--orange);font-weight:600;">Strengths:</span> ${strengths}</div>` : ''}
+              ${areas ? `<div style="margin-top:4px;"><span style="color:var(--orange);font-weight:600;">Areas to improve:</span> ${areas}</div>` : ''}
+              ${next ? `<div style="margin-top:4px;"><span style="color:var(--orange);font-weight:600;">Next steps:</span> ${next}</div>` : ''}
+            </div>
+            <div onclick="const n=document.getElementById('${uid}-notes');const open=n.style.display!=='none';n.style.display=open?'none':'block';this.textContent=open?'Show notes ▾':'Hide notes ▴';"
+              style="font-size:11px;color:var(--orange);cursor:pointer;margin-top:4px;">Show notes ▾</div>
+          ` : ''}
+        </div>`;
+      }).join('')}
+      <div style="font-size:11px;color:var(--text2);text-align:center;padding:4px 0 8px;">↓ Select a skill type below to add a new assessment</div>`;
+    panel.innerHTML = html;
+  }
+
+  function exportAssessmentCSV() {
+    const history = assessState.history || [];
+    if (!history.length) { toast('No assessments to export'); return; }
+    const athleteName = assessState.athlete.fullName || assessState.athlete.full_name || 'Athlete';
+    const headers = ['Date','Athlete','Skill Type','Overall Rating','Skill Stage','Coach','Strengths','Areas for Improvement','Next Steps','Reassessment Required'];
+    const rows = history.map(a => [
+      a.assessment_date || a.assessmentDate || '',
+      athleteName,
+      a.assessment_type || a.assessmentType || '',
+      a.overall_rating || a.overallRating || '',
+      a.skill_acquisition_stage || a.skillAcquisitionStage || '',
+      a.coach_name || a.coachName || '',
+      (a.strengths || '').replace(/,/g, ';').replace(/\n/g, ' '),
+      (a.areas_for_improvement || a.areasForImprovement || '').replace(/,/g, ';').replace(/\n/g, ' '),
+      (a.next_steps || a.nextSteps || '').replace(/,/g, ';').replace(/\n/g, ' '),
+      a.reassessment_required || a.reassessmentRequired ? 'Yes' : 'No',
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${athleteName.replace(/ /g,'_')}_assessments.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('CSV downloaded ✓');
   }
 
   function closeAssessment() {
