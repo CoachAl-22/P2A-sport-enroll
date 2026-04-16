@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "MYrXqKQP3Wu92roHwgNk3"
+uri = "file://public/icons/icon-192.png"
+type = "image"
+title = "MAJ Homescreen Icon (192×192)"
