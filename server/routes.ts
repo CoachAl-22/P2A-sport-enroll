@@ -3472,21 +3472,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ── Seed MAJ coach account on startup ────────────────────────────
+  // ── Seed MAJ coach accounts on startup ───────────────────────────
   (async () => {
-    try {
-      const existing = await db.select().from(majCoaches).where(eq(majCoaches.username, "coach_al"));
-      if (existing.length === 0) {
-        const hash = await bcrypt.hash("Level4_HP", 10);
-        await db.insert(majCoaches).values({
-          username: "coach_al",
-          fullName: "Coach Al",
-          password: hash,
-        });
-        console.log("[seed] MAJ coach_al account created");
+    const coaches = [
+      { username: "coach_al",  fullName: "Coach Al",           password: "Level4_HP"  },
+      { username: "alistair",  fullName: "Alistair Tait",       password: "Coach2025!" },
+      { username: "declyn",    fullName: "Declyn Tanner",       password: "Coach2025!" },
+      { username: "geena",     fullName: "Geena Davy",          password: "Coach2025!" },
+      { username: "georgia",   fullName: "Georgia Middleton",   password: "Coach2025!" },
+      { username: "miah",      fullName: "Miah Noble",          password: "Coach2025!" },
+      { username: "sami",      fullName: "Sami Merhi",          password: "Coach2025!" },
+      { username: "sarai",     fullName: "Sarai Hughes",        password: "Coach2025!" },
+    ];
+    for (const coach of coaches) {
+      try {
+        const existing = await db.select().from(majCoaches).where(eq(majCoaches.username, coach.username));
+        if (existing.length === 0) {
+          const hash = await bcrypt.hash(coach.password, 10);
+          await db.insert(majCoaches).values({
+            username: coach.username,
+            fullName: coach.fullName,
+            password: hash,
+          });
+          console.log(`[seed] MAJ coach '${coach.username}' created`);
+        }
+      } catch (e) {
+        console.error(`[seed] Failed to seed MAJ coach '${coach.username}':`, e);
       }
-    } catch (e) {
-      console.error("[seed] Failed to seed MAJ coach:", e);
     }
   })();
 
