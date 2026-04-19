@@ -6,3 +6,9 @@ id = "MYrXqKQP3Wu92roHwgNk3"
 uri = "file://public/icons/icon-192.png"
 type = "image"
 title = "MAJ Homescreen Icon (192×192)"
+
+[[outputs]]
+id = "3LBi63B34PsNJ-OjIS2Xl"
+uri = "file://attached_assets/my-athletic-journey.txt"
+type = "text"
+title = "My Athletic Journey — Full Source Code"
