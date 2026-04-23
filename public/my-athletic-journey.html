@@ -1845,6 +1845,14 @@
     </div>
   </div>
 
+  <!-- ══ SKILL DETAIL OVERLAY ══════════════════════════════════════════ -->
+  <div id="skill-detail-overlay" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.7);overflow-y:auto;" onclick="if(event.target===this)closeSkillDetail()">
+    <div style="background:var(--surface1);border-radius:20px 20px 0 0;margin-top:60px;padding:24px 20px 40px;min-height:calc(100vh - 60px);position:relative;">
+      <button onclick="closeSkillDetail()" style="position:absolute;top:16px;right:16px;background:var(--surface2);border:none;color:var(--text2);font-size:18px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <div id="skill-detail-content"></div>
+    </div>
+  </div>
+
   <!-- ══ BOTTOM NAV ════════════════════════════════════════════════════ -->
   <nav class="bottom-nav" id="bottom-nav" style="display:none;">
     <button class="nav-btn active" data-page="home" onclick="navTo('home')">
@@ -4004,31 +4012,90 @@ const MAJ_CONTENT = {
     null:        { label: 'Not yet assessed', cls: 'not-assessed', icon: '—' }
   };
 
+  let fmsLatestByType = {};
+
+  function showSkillDetail(key) {
+    const skill = FMS_SKILLS.find(s => s.key === key);
+    const rec = fmsLatestByType[key];
+    const overlay = document.getElementById('skill-detail-overlay');
+    const content = document.getElementById('skill-detail-content');
+    if (!skill) return;
+    const stage = rec ? (rec.skill_acquisition_stage || null) : null;
+    const meta = STAGE_META[stage] || STAGE_META[null];
+    const dateStr = rec ? new Date(rec.assessment_date || rec.created_at).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) : null;
+    const rating = rec ? (rec.overall_rating || '') : '';
+    const ratingColour = { excellent:'#4ade80', good:'#86efac', developing:'#fbbf24', 'needs work':'#f87171' }[rating?.toLowerCase()] || 'var(--text2)';
+    content.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <div style="font-size:36px;">${skill.emoji}</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:26px;font-weight:800;">${skill.label}</div>
+          <div style="font-size:13px;color:var(--text2);">${skill.desc}</div>
+        </div>
+      </div>
+      ${!rec ? `<div style="background:var(--surface2);border-radius:12px;padding:20px;text-align:center;color:var(--text2);font-size:14px;">No assessment recorded yet for this skill.</div>` : `
+        <div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:8px;">SKILL STAGE</div>
+          <div class="fms-stage-pill ${meta.cls}" style="font-size:14px;padding:6px 14px;">${meta.icon} ${meta.label}</div>
+          ${dateStr ? `<div style="font-size:12px;color:var(--text2);margin-top:10px;">Assessed ${dateStr}</div>` : ''}
+          ${rec.coach_name ? `<div style="font-size:12px;color:var(--text2);margin-top:4px;">Coach: ${rec.coach_name}</div>` : ''}
+        </div>
+        ${rating ? `<div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:6px;">OVERALL RATING</div>
+          <div style="font-size:18px;font-weight:800;color:${ratingColour};text-transform:capitalize;">${rating}</div>
+        </div>` : ''}
+        ${rec.strengths ? `<div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:6px;">💪 STRENGTHS</div>
+          <div style="font-size:14px;line-height:1.6;color:var(--text);">${rec.strengths}</div>
+        </div>` : ''}
+        ${rec.areas_for_improvement ? `<div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:6px;">🎯 AREAS TO WORK ON</div>
+          <div style="font-size:14px;line-height:1.6;color:var(--text);">${rec.areas_for_improvement}</div>
+        </div>` : ''}
+        ${rec.next_steps ? `<div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:6px;">🚀 NEXT STEPS</div>
+          <div style="font-size:14px;line-height:1.6;color:var(--text);">${rec.next_steps}</div>
+        </div>` : ''}
+        ${rec.reassessment_required ? `<div style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#fbbf24;">⏰ Reassessment scheduled</div>` : ''}
+      `}
+    `;
+    overlay.style.display = 'block';
+    overlay.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSkillDetail() {
+    document.getElementById('skill-detail-overlay').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
   async function fetchAndRenderFMS() {
     const container = document.getElementById('fms-grid-container');
     if (!container) return;
     try {
       const assessments = await apiGet(`/athlete/${state.athlete.id}/skill-assessments`);
       // Build latest stage per type
-      const latestByType = {};
+      fmsLatestByType = {};
       assessments.forEach(a => {
-        if (!latestByType[a.assessment_type]) latestByType[a.assessment_type] = a;
+        if (!fmsLatestByType[a.assessment_type]) fmsLatestByType[a.assessment_type] = a;
       });
 
       let html = '<div class="fms-grid">';
       FMS_SKILLS.forEach((skill, idx) => {
-        const rec = latestByType[skill.key];
+        const rec = fmsLatestByType[skill.key];
         const stage = rec ? (rec.skill_acquisition_stage || null) : null;
         const meta = STAGE_META[stage] || STAGE_META[null];
         const dateStr = rec ? new Date(rec.assessment_date || rec.created_at).toLocaleDateString('en-AU', { day:'numeric', month:'short' }) : null;
-        const isWide = idx === 4; // Balance spans full width
-        html += `<div class="fms-card${isWide ? ' fms-wide' : ''}">
+        const isWide = idx === 4;
+        const hasData = !!rec;
+        html += `<div class="fms-card${isWide ? ' fms-wide' : ''}" onclick="showSkillDetail('${skill.key}')" style="cursor:pointer;${hasData ? 'border-color:rgba(242,101,34,0.25);' : ''}">
           <div class="fms-card-top">
             <div class="fms-emoji">${skill.emoji}</div>
             <div>
               <div class="fms-name">${skill.label}</div>
               <div class="fms-date">${skill.desc}</div>
             </div>
+            <div style="color:var(--orange);font-size:16px;margin-left:auto;padding-left:8px;">›</div>
           </div>
           <div class="fms-stage-pill ${meta.cls}">${meta.icon} ${meta.label}</div>
           ${dateStr ? `<div class="fms-date" style="margin-top:6px;">Last assessed ${dateStr}</div>` : (isWide ? '<div class="fms-date" style="margin-top:6px;">Observed in all agility & coordination activities</div>' : '')}
