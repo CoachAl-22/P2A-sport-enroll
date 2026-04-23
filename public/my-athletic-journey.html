@@ -1846,10 +1846,28 @@
   </div>
 
   <!-- ══ SKILL DETAIL OVERLAY ══════════════════════════════════════════ -->
-  <div id="skill-detail-overlay" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.7);overflow-y:auto;" onclick="if(event.target===this)closeSkillDetail()">
-    <div style="background:var(--surface1);border-radius:20px 20px 0 0;margin-top:60px;padding:24px 20px 40px;min-height:calc(100vh - 60px);position:relative;">
-      <button onclick="closeSkillDetail()" style="position:absolute;top:16px;right:16px;background:var(--surface2);border:none;color:var(--text2);font-size:18px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
-      <div id="skill-detail-content"></div>
+  <div id="skill-detail-overlay" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.75);overflow-y:auto;">
+    <div style="background:var(--surface1);border-radius:20px 20px 0 0;margin-top:48px;min-height:calc(100vh - 48px);display:flex;flex-direction:column;">
+
+      <!-- Header bar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--surface2);flex-shrink:0;">
+        <button onclick="closeSkillDetail()" style="display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--accent);font-size:15px;font-weight:700;cursor:pointer;padding:4px 0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <div id="skill-detail-counter" style="font-size:12px;color:var(--text2);font-weight:600;letter-spacing:0.5px;"></div>
+        <button onclick="closeSkillDetail()" style="background:var(--surface2);border:none;color:var(--text2);font-size:16px;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      </div>
+
+      <!-- Scrollable content -->
+      <div id="skill-detail-content" style="flex:1;overflow-y:auto;padding:20px 16px 16px;"></div>
+
+      <!-- Prev / Next footer -->
+      <div style="display:flex;gap:10px;padding:12px 16px 24px;flex-shrink:0;border-top:1px solid var(--surface2);">
+        <button id="skill-prev-btn" onclick="skillDetailNav(-1)" style="flex:1;background:var(--surface2);border:none;color:var(--text);font-size:14px;font-weight:700;padding:12px 0;border-radius:12px;cursor:pointer;">← Previous skill</button>
+        <button id="skill-next-btn" onclick="skillDetailNav(1)" style="flex:1;background:var(--accent);border:none;color:#fff;font-size:14px;font-weight:700;padding:12px 0;border-radius:12px;cursor:pointer;">Next skill →</button>
+      </div>
+
     </div>
   </div>
 
@@ -4013,18 +4031,52 @@ const MAJ_CONTENT = {
   };
 
   let fmsLatestByType = {};
+  let _currentSkillIndex = 0;
 
   function showSkillDetail(key) {
-    const skill = FMS_SKILLS.find(s => s.key === key);
-    const rec = fmsLatestByType[key];
+    const idx = FMS_SKILLS.findIndex(s => s.key === key);
+    if (idx === -1) return;
+    _currentSkillIndex = idx;
+    _renderSkillDetail();
     const overlay = document.getElementById('skill-detail-overlay');
+    if (overlay.style.display !== 'block') {
+      overlay.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+      history.pushState({ overlay: 'skill-detail' }, '', '');
+    }
+  }
+
+  function _renderSkillDetail() {
+    const skill = FMS_SKILLS[_currentSkillIndex];
+    const rec = fmsLatestByType[skill.key];
     const content = document.getElementById('skill-detail-content');
-    if (!skill) return;
+    const counter = document.getElementById('skill-detail-counter');
+    const prevBtn = document.getElementById('skill-prev-btn');
+    const nextBtn = document.getElementById('skill-next-btn');
+
+    // Counter
+    counter.textContent = `SKILL ${_currentSkillIndex + 1} OF ${FMS_SKILLS.length}`;
+
+    // Prev / Next button states
+    prevBtn.style.display = _currentSkillIndex === 0 ? 'none' : 'block';
+    if (_currentSkillIndex === FMS_SKILLS.length - 1) {
+      nextBtn.textContent = 'Done ✓';
+      nextBtn.style.background = '#4ade80';
+      nextBtn.style.color = '#000';
+      nextBtn.onclick = closeSkillDetail;
+    } else {
+      nextBtn.textContent = 'Next skill →';
+      nextBtn.style.background = 'var(--accent)';
+      nextBtn.style.color = '#fff';
+      nextBtn.onclick = () => skillDetailNav(1);
+    }
+
     const stage = rec ? (rec.skill_acquisition_stage || null) : null;
     const meta = STAGE_META[stage] || STAGE_META[null];
     const dateStr = rec ? new Date(rec.assessment_date || rec.created_at).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) : null;
     const rating = rec ? (rec.overall_rating || '') : '';
     const ratingColour = { excellent:'#4ade80', good:'#86efac', developing:'#fbbf24', 'needs work':'#f87171' }[rating?.toLowerCase()] || 'var(--text2)';
+
     content.innerHTML = `
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
         <div style="font-size:36px;">${skill.emoji}</div>
@@ -4059,10 +4111,14 @@ const MAJ_CONTENT = {
         ${rec.reassessment_required ? `<div style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#fbbf24;">⏰ Reassessment scheduled</div>` : ''}
       `}
     `;
-    overlay.style.display = 'block';
-    overlay.scrollTop = 0;
-    document.body.style.overflow = 'hidden';
-    history.pushState({ overlay: 'skill-detail' }, '', '');
+    document.getElementById('skill-detail-content').scrollTop = 0;
+  }
+
+  function skillDetailNav(dir) {
+    const next = _currentSkillIndex + dir;
+    if (next < 0 || next >= FMS_SKILLS.length) return;
+    _currentSkillIndex = next;
+    _renderSkillDetail();
   }
 
   function closeSkillDetail() {
