@@ -4062,6 +4062,7 @@ const MAJ_CONTENT = {
     overlay.style.display = 'block';
     overlay.scrollTop = 0;
     document.body.style.overflow = 'hidden';
+    history.pushState({ overlay: 'skill-detail' }, '', '');
   }
 
   function closeSkillDetail() {
@@ -4412,6 +4413,8 @@ const MAJ_CONTENT = {
   }
 
   // ── NAVIGATION ───────────────────────────────────────────────────────
+  const _navStack = [];
+
   function navTo(pageId, isLogin = false, forceTab = null) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + pageId).classList.add('active');
@@ -4419,6 +4422,11 @@ const MAJ_CONTENT = {
       document.querySelectorAll('.nav-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.page === pageId);
       });
+      // Push to browser history so back button works
+      if (pageId !== state.currentPage) {
+        _navStack.push(pageId);
+        history.pushState({ page: pageId }, '', '');
+      }
     }
     state.currentPage = pageId;
 
@@ -4449,6 +4457,38 @@ const MAJ_CONTENT = {
       fetchAndRenderFMS();
     }
   }
+
+  // Handle browser/phone back button
+  window.addEventListener('popstate', () => {
+    // Close any open overlay first
+    const skillOverlay = document.getElementById('skill-detail-overlay');
+    const assessOverlay = document.getElementById('assess-overlay');
+    const wellnessOverlay = document.getElementById('wellness-overlay');
+    if (skillOverlay && skillOverlay.style.display === 'block') {
+      closeSkillDetail(); return;
+    }
+    if (assessOverlay && assessOverlay.classList.contains('open')) {
+      assessOverlay.classList.remove('open'); return;
+    }
+    if (wellnessOverlay && !wellnessOverlay.classList.contains('hidden')) {
+      wellnessOverlay.classList.add('hidden'); return;
+    }
+    // Navigate back within the app
+    _navStack.pop();
+    const prev = _navStack.length > 0 ? _navStack[_navStack.length - 1] : 'home';
+    // Switch page without pushing to history again
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + prev);
+    if (target) {
+      target.classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.page === prev);
+      });
+      state.currentPage = prev;
+      if (prev === 'profile' && state.athlete && !state.athlete.isCoach) fetchAndRenderFMS();
+    }
+    history.pushState({ page: prev }, '', '');
+  });
 
   // ── TABS (THIS WEEK) ─────────────────────────────────────────────────
   function switchTab(btn, tabId) {
