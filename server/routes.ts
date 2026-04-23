@@ -3552,6 +3552,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Seed Toorak College athletes ──────────────────────────────────
+  (async () => {
+    const tcAthletes = [
+      { username: "adelyn",   fullName: "Adelyn Rayner",    password: "TC2026", grade: "Prep",   program: "Foundation" },
+      { username: "edith",    fullName: "Edith Phillips",   password: "TC2026", grade: "Year 1", program: "Foundation" },
+      { username: "gracemol", fullName: "Grace Moldrich",   password: "TC2026", grade: "Year 1", program: "Foundation" },
+      { username: "maita",    fullName: "Maita Machakata",  password: "TC2026", grade: "Year 1", program: "Foundation" },
+      { username: "ada",      fullName: "Ada Jeffery",      password: "TC2026", grade: "Year 6", program: "Emerging" },
+      { username: "addison",  fullName: "Addison Hellier",  password: "TC2026", grade: "Year 5", program: "Emerging" },
+      { username: "alice",    fullName: "Alice Mauldridge", password: "TC2026", grade: "Year 5", program: "Emerging" },
+      { username: "bobby",    fullName: "Bobby Jedynak",    password: "TC2026", grade: "Year 5", program: "Emerging" },
+      { username: "celina",   fullName: "Celina Shenouda",  password: "TC2026", grade: "Year 3", program: "Emerging" },
+      { username: "elleni",   fullName: "Elleni Tresidder", password: "TC2026", grade: "Year 4", program: "Emerging" },
+      { username: "gracemau", fullName: "Grace Mauldridge", password: "TC2026", grade: "Year 3", program: "Emerging" },
+      { username: "harper",   fullName: "Harper Coad",      password: "TC2026", grade: "Year 5", program: "Emerging" },
+      { username: "havana",   fullName: "Havana Laing",     password: "TC2026", grade: "Year 6", program: "Emerging" },
+      { username: "heidi",    fullName: "Heidi Jeffery",    password: "TC2026", grade: "Year 4", program: "Emerging" },
+      { username: "jemima",   fullName: "Jemima Woff",      password: "TC2026", grade: "Year 2", program: "Emerging" },
+      { username: "jessica",  fullName: "Jessica Yuan",     password: "TC2026", grade: "Year 4", program: "Emerging" },
+      { username: "lara",     fullName: "Lara Gomez",       password: "TC2026", grade: "Year 6", program: "Emerging" },
+      { username: "lucy",     fullName: "Lucy Odlum",       password: "TC2026", grade: "Year 2", program: "Emerging" },
+      { username: "maya",     fullName: "Maya Jackson",     password: "TC2026", grade: "Year 5", program: "Emerging" },
+      { username: "mia",      fullName: "Mia Bardis",       password: "TC2026", grade: "Year 4", program: "Emerging" },
+      { username: "ollie",    fullName: "Ollie Bardis",     password: "TC2026", grade: "Year 6", program: "Emerging" },
+      { username: "primrose", fullName: "Primrose Spargo",  password: "TC2026", grade: "Year 4", program: "Emerging" },
+    ];
+    for (const athlete of tcAthletes) {
+      try {
+        const existing = await db.select().from(majAthletes).where(eq(majAthletes.username, athlete.username));
+        if (existing.length === 0) {
+          const hash = await bcrypt.hash(athlete.password, 10);
+          await db.insert(majAthletes).values({
+            username: athlete.username,
+            fullName: athlete.fullName,
+            password: hash,
+            grade: athlete.grade,
+            program: athlete.program,
+          });
+          console.log(`[seed] TC athlete '${athlete.username}' created`);
+        }
+      } catch (e) {
+        console.error(`[seed] Failed to seed TC athlete '${athlete.username}':`, e);
+      }
+    }
+  })();
+
+  // ── Seed Peninsula Grammar athletes ──────────────────────────────
+  (async () => {
+    const pgAthletes = [
+      { username: "annabel",  fullName: "Annabel McKillop",          password: "PG2026", grade: "Prep",   program: "Foundation" },
+      { username: "aspen",    fullName: "Aspen Van Zwol",            password: "PG2026", grade: "Prep",   program: "Foundation" },
+      { username: "avery",    fullName: "Avery Chia",                password: "PG2026", grade: "Year 1", program: "Foundation" },
+      { username: "eddy",     fullName: "Edmund (Eddy) Kuan",        password: "PG2026", grade: "Prep",   program: "Foundation" },
+      { username: "freddie",  fullName: "Freddie Burke",             password: "PG2026", grade: "Year 1", program: "Foundation" },
+      { username: "hudson",   fullName: "Hudson McKinnon",           password: "PG2026", grade: "Prep",   program: "Foundation" },
+      { username: "marlowe",  fullName: "Marlowe Cook",              password: "PG2026", grade: "Prep",   program: "Foundation" },
+      { username: "noah",     fullName: "Noah Di Bella",             password: "PG2026", grade: "Prep",   program: "Foundation" },
+      { username: "pippa",    fullName: "Pippa Middleton",           password: "PG2026", grade: "Year 1", program: "Foundation" },
+      { username: "sophia",   fullName: "Sophia Sahely",             password: "PG2026", grade: "Prep",   program: "Foundation" },
+      { username: "william",  fullName: "William Sahely",            password: "PG2026", grade: "Year 2", program: "Foundation" },
+      { username: "charlieR", fullName: "Charlie Rees",              password: "PG2026", grade: "Year 4", program: "Emerging" },
+      { username: "charlieS", fullName: "Charlie Sahely",            password: "PG2026", grade: "Year 5", program: "Emerging" },
+      { username: "elle",     fullName: "Elle Luu",                  password: "PG2026", grade: "Year 4", program: "Emerging" },
+      { username: "jackB",    fullName: "Jack Burke",                password: "PG2026", grade: "Year 6", program: "Emerging" },
+      { username: "jackL",    fullName: "Jack Luu",                  password: "PG2026", grade: "Year 3", program: "Emerging" },
+      { username: "jenson",   fullName: "Jenson Steer",              password: "PG2026", grade: "Year 6", program: "Emerging" },
+      { username: "leo",      fullName: "Leo Wilson",                password: "PG2026", grade: "Year 3", program: "Emerging" },
+      { username: "marcus",   fullName: "Marcus Janse Van Rensburg", password: "PG2026", grade: "Year 4", program: "Emerging" },
+      { username: "summer",   fullName: "Summer Burke",              password: "PG2026", grade: "Year 4", program: "Emerging" },
+    ];
+    for (const athlete of pgAthletes) {
+      try {
+        const existing = await db.select().from(majAthletes).where(eq(majAthletes.username, athlete.username));
+        if (existing.length === 0) {
+          const hash = await bcrypt.hash(athlete.password, 10);
+          await db.insert(majAthletes).values({
+            username: athlete.username,
+            fullName: athlete.fullName,
+            password: hash,
+            grade: athlete.grade,
+            program: athlete.program,
+          });
+          console.log(`[seed] PG athlete '${athlete.username}' created`);
+        }
+      } catch (e) {
+        console.error(`[seed] Failed to seed PG athlete '${athlete.username}':`, e);
+      }
+    }
+  })();
+
   const httpServer = createServer(app);
   return httpServer;
 }
