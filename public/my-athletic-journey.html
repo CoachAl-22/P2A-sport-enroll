@@ -3598,7 +3598,10 @@ const MAJ_CONTENT = {
     reassessmentRequired: false
   };
 
+  let _allAthletes = [];
+
   function renderCoachView(athletes) {
+    _allAthletes = athletes;
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
     const coachFullName = (state.coach && (state.coach.fullName || state.coach.full_name)) || 'Coach';
@@ -3607,25 +3610,68 @@ const MAJ_CONTENT = {
       <div style="padding:20px 20px 8px;">
         <div style="font-size:13px;color:var(--text2);margin-bottom:4px;letter-spacing:0.5px;">${greeting},</div>
         <div style="font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:2px;">${firstName} 👋</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Power2ADAPT · My Athletic Journey</div>
-        <div class="section-label">Tap an athlete to assess</div>
-        ${athletes.map(a => {
-          const tier = MAJ_CONTENT.getTier(a.xp || 0);
-          const name = a.fullName || a.full_name || 'Unknown';
-          const initials = name.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
-          const safeA = JSON.stringify(a).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-          return `<div class="module-item" onclick="openAssessment(${safeA})" style="cursor:pointer;">
-            <div class="module-thumb mod-active" style="font-family:var(--font-display);font-size:14px;font-weight:800;">${initials}</div>
-            <div class="module-body">
-              <div class="module-name">${name}</div>
-              <div class="mini-track"><div class="mini-fill fill-orange" style="width:${Math.round(((a.currentWeek||1)-1)/8*100)}%"></div></div>
-              <div class="module-caption">Module ${a.currentModule||1} · Week ${a.currentWeek||1} · ${a.xp||0} XP · ${tier.name}</div>
-            </div>
-            <div style="color:var(--orange);font-size:22px;padding-right:4px;">›</div>
-          </div>`;
-        }).join('')}
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Power2ADAPT · My Athletic Journey</div>
+
+        <!-- Search box -->
+        <div style="position:relative;margin-bottom:14px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;pointer-events:none;">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input id="athlete-search" type="search" placeholder="Search athletes…"
+            oninput="filterAthletes(this.value)"
+            style="width:100%;box-sizing:border-box;background:var(--surface2);border:1.5px solid transparent;border-radius:12px;
+                   padding:10px 12px 10px 36px;color:var(--text);font-size:14px;outline:none;
+                   transition:border-color 0.2s;"
+            onfocus="this.style.borderColor='var(--accent)'"
+            onblur="this.style.borderColor='transparent'">
+        </div>
+
+        <div id="athlete-count" class="section-label" style="margin-bottom:6px;">
+          Tap an athlete to assess · ${athletes.length} athletes
+        </div>
+        <div id="athlete-list-body"></div>
       </div>`;
     document.getElementById('page-home').innerHTML = coachHtml;
+    filterAthletes('');
+  }
+
+  function _athleteRow(a) {
+    const tier = MAJ_CONTENT.getTier(a.xp || 0);
+    const name = a.fullName || a.full_name || 'Unknown';
+    const initials = name.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+    const safeA = JSON.stringify(a).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    return `<div class="module-item" onclick="openAssessment(${safeA})" style="cursor:pointer;">
+      <div class="module-thumb mod-active" style="font-family:var(--font-display);font-size:14px;font-weight:800;">${initials}</div>
+      <div class="module-body">
+        <div class="module-name">${name}</div>
+        <div class="mini-track"><div class="mini-fill fill-orange" style="width:${Math.round(((a.currentWeek||1)-1)/8*100)}%"></div></div>
+        <div class="module-caption">Module ${a.currentModule||1} · Week ${a.currentWeek||1} · ${a.xp||0} XP · ${tier.name}</div>
+      </div>
+      <div style="color:var(--orange);font-size:22px;padding-right:4px;">›</div>
+    </div>`;
+  }
+
+  function filterAthletes(query) {
+    const body = document.getElementById('athlete-list-body');
+    const countEl = document.getElementById('athlete-count');
+    if (!body) return;
+    const q = query.trim().toLowerCase();
+    const filtered = q
+      ? _allAthletes.filter(a => {
+          const name = (a.fullName || a.full_name || '').toLowerCase();
+          const prog = (a.program || '').toLowerCase();
+          const grade = (a.grade || '').toLowerCase();
+          return name.includes(q) || prog.includes(q) || grade.includes(q);
+        })
+      : _allAthletes;
+    body.innerHTML = filtered.length
+      ? filtered.map(_athleteRow).join('')
+      : `<div style="text-align:center;padding:30px 16px;color:var(--text2);font-size:14px;">No athletes match "<strong>${query}</strong>"</div>`;
+    if (countEl) countEl.textContent =
+      filtered.length === _allAthletes.length
+        ? `Tap an athlete to assess · ${_allAthletes.length} athletes`
+        : `${filtered.length} of ${_allAthletes.length} athletes`;
   }
 
   async function openAssessment(athlete) {
