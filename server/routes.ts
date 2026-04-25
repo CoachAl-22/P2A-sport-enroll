@@ -3601,6 +3601,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ── Seed Peninsula Grammar athletes ──────────────────────────────
   (async () => {
     const pgAthletes = [
+      { username: "alex",     fullName: "Alex Seeckts",              password: "PG2026", grade: "Year 1", program: "Foundation" },
       { username: "annabel",  fullName: "Annabel McKillop",          password: "PG2026", grade: "Prep",   program: "Foundation" },
       { username: "aspen",    fullName: "Aspen Van Zwol",            password: "PG2026", grade: "Prep",   program: "Foundation" },
       { username: "avery",    fullName: "Avery Chia",                password: "PG2026", grade: "Year 1", program: "Foundation" },
