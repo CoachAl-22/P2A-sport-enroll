@@ -359,6 +359,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Latest assessment within the last 14 days — used for the home page coach banner
+  app.get("/api/maj/athlete/:id/latest-assessment", async (req, res) => {
+    try {
+      const assessments = await storage.getSkillAssessmentsForAthlete(req.params.id);
+      if (!assessments.length) return res.json(null);
+      const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
+      const recent = assessments.find(a => new Date(a.created_at).getTime() > cutoff);
+      res.json(recent || null);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/maj/skill-assessments", async (req, res) => {
     try {
       const assessment = await storage.createSkillAssessment(req.body);

@@ -1639,6 +1639,8 @@
         <div class="module-arrow">🔒</div>
       </div>
 
+      <!-- Dynamic coach feedback banner — shown when a real assessment exists -->
+      <div id="coach-banner-container" style="display:none;margin-top:8px;"></div>
 
     </div>
   </div>
@@ -3384,6 +3386,7 @@ const MAJ_CONTENT = {
         document.getElementById('bottom-nav').style.display = 'flex';
         initApp();
         navTo('home');
+        fetchCoachBanner();
       }
     } catch(e) {
       err.style.display = 'block';
@@ -4116,6 +4119,35 @@ const MAJ_CONTENT = {
   function closeSkillDetail() {
     document.getElementById('skill-detail-overlay').style.display = 'none';
     document.body.style.overflow = '';
+  }
+
+  const SKILL_LABELS = {
+    run: '🏃 Running', jump: '⬆️ Jump & Land', throw: '🎯 Throw',
+    leap: '🦘 Bound/Leap', balance: '⚖️ Balance & Agility'
+  };
+
+  async function fetchCoachBanner() {
+    const container = document.getElementById('coach-banner-container');
+    if (!container || !state.athlete) return;
+    try {
+      const rec = await apiGet(`/athlete/${state.athlete.id}/latest-assessment`);
+      if (!rec) { container.style.display = 'none'; return; }
+      const skillLabel = SKILL_LABELS[rec.assessment_type] || rec.assessment_type;
+      const coachName = rec.coach_name || 'Your coach';
+      const sub = (rec.next_steps || rec.strengths || '').replace(/<[^>]*>/g, '').trim().slice(0, 90);
+      container.innerHTML = `
+        <div class="coach-banner" onclick="navTo('profile')">
+          <div class="coach-banner-icon">👟</div>
+          <div class="coach-banner-text">
+            <div class="coach-banner-title">${coachName} assessed your ${skillLabel}</div>
+            ${sub ? `<div class="coach-banner-sub">${sub}${sub.length === 90 ? '…' : ''}</div>` : ''}
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00B4D8" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </div>`;
+      container.style.display = 'block';
+    } catch(e) {
+      container.style.display = 'none';
+    }
   }
 
   async function fetchAndRenderFMS() {
