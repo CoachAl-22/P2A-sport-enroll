@@ -1355,6 +1355,37 @@
   .assess-stage-btn.sel { border-color: var(--cyan); background: rgba(0,188,212,0.08); }
 
   /* ── WELLNESS CHECK-IN ──────────────────────────────────── */
+  /* ── NOTIFICATION PANEL ─────────────────────────────── */
+  .notif-backdrop {
+    position: fixed; inset: 0; z-index: 290;
+    background: rgba(0,0,0,0.55);
+    display: none;
+  }
+  .notif-backdrop.open { display: block; }
+  .notif-panel {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 291;
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    border-top: 1px solid var(--border2);
+    max-height: 72vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+  }
+  .notif-panel.open { transform: translateY(0); }
+  .notif-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border1);
+  }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--orange-dim);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+
   .wellness-overlay {
     position: fixed; inset: 0; z-index: 300;
     background: var(--black);
@@ -1521,6 +1552,21 @@
     </div>
   </div>
 
+  <!-- ══ NOTIFICATIONS PANEL ═══════════════════════════════════════════ -->
+  <div class="notif-backdrop" id="notif-backdrop" onclick="closeNotifications()"></div>
+  <div class="notif-panel" id="notif-panel">
+    <div style="padding:20px 20px 0;">
+      <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <span style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text1);">Notifications</span>
+        <div class="icon-btn" style="width:30px;height:30px;" onclick="closeNotifications()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+      </div>
+      <div id="notif-list" style="padding-bottom:16px;"></div>
+    </div>
+  </div>
+
   <!-- ══ DASHBOARD PAGE ══════════════════════════════════════════════════ -->
   <div id="page-home" class="page">
     <div class="top-bar">
@@ -1530,9 +1576,9 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="#F26522"><path d="M12 2C8.5 9 6 12 6 16a6 6 0 0012 0c0-4-2.5-7-6-14z"/></svg>
           <span id="home-streak-text">5 week streak</span>
         </div>
-        <div class="icon-btn" onclick="toast('No new notifications')">
+        <div class="icon-btn" onclick="openNotifications()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <div class="notif-dot"></div>
+          <div class="notif-dot" id="notif-dot" style="display:none;"></div>
         </div>
       </div>
     </div>
@@ -3366,6 +3412,7 @@ const MAJ_CONTENT = {
         initApp();
         navTo('home');
         fetchCoachBanner();
+        fetchNotifications();
       }
     } catch(e) {
       err.style.display = 'block';
@@ -4173,6 +4220,69 @@ const MAJ_CONTENT = {
     } catch(e) {
       container.style.display = 'none';
     }
+  }
+
+  // ── NOTIFICATIONS ────────────────────────────────────────────────────
+  let _notifications = [];
+
+  async function fetchNotifications() {
+    const a = state.athlete;
+    if (!a || !a.id) return;
+    try {
+      const res = await fetch(`/api/maj/athlete/${a.id}/notifications`);
+      _notifications = res.ok ? await res.json() : [];
+    } catch(e) {
+      _notifications = [];
+    }
+    updateNotifDot();
+  }
+
+  function updateNotifDot() {
+    const dot = document.getElementById('notif-dot');
+    if (!dot) return;
+    const key = `maj_notif_seen_${state.athlete.id}`;
+    const lastSeen = parseInt(localStorage.getItem(key) || '0');
+    const hasUnread = _notifications.some(n => new Date(n.createdAt).getTime() > lastSeen);
+    dot.style.display = hasUnread ? '' : 'none';
+  }
+
+  function openNotifications() {
+    renderNotifList();
+    document.getElementById('notif-panel').classList.add('open');
+    document.getElementById('notif-backdrop').classList.add('open');
+    // Mark all as seen
+    if (state.athlete) {
+      localStorage.setItem(`maj_notif_seen_${state.athlete.id}`, Date.now().toString());
+      setTimeout(updateNotifDot, 150);
+    }
+  }
+
+  function closeNotifications() {
+    document.getElementById('notif-panel').classList.remove('open');
+    document.getElementById('notif-backdrop').classList.remove('open');
+  }
+
+  function renderNotifList() {
+    const list = document.getElementById('notif-list');
+    if (!list) return;
+    if (!_notifications.length) {
+      list.innerHTML = `<div style="text-align:center;padding:28px 0;color:var(--text2);font-size:14px;">No notifications yet</div>`;
+      return;
+    }
+    const typeIcons = { assessment: '📋', run: '🏃', jump: '⬆️', throw: '🎯', leap: '🦘', balance: '⚖️' };
+    list.innerHTML = _notifications.map(n => {
+      const d = new Date(n.date || n.createdAt);
+      const dateStr = d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+      const icon = typeIcons[n.type] || '📋';
+      return `<div class="notif-item">
+        <div class="notif-icon">${icon}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:700;color:var(--text1);margin-bottom:3px;">${n.title}</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.45;margin-bottom:5px;">${n.body}</div>
+          <div style="font-size:11px;color:var(--text3);">${n.coach} &middot; ${dateStr}</div>
+        </div>
+      </div>`;
+    }).join('');
   }
 
   async function fetchAndRenderFMS() {

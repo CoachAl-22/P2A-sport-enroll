@@ -372,6 +372,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/maj/athlete/:id/notifications", async (req, res) => {
+    try {
+      const assessments = await storage.getSkillAssessmentsForAthlete(req.params.id);
+      const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      const recent = assessments.filter((a: any) => new Date(a.created_at).getTime() > cutoff);
+      const typeLabels: Record<string, string> = {
+        run: "Run", jump: "Jump & Land", throw: "Throw", leap: "Bound & Leap", balance: "Balance & Agility"
+      };
+      const notifications = recent.map((a: any) => ({
+        id: a.id,
+        type: "assessment",
+        title: `Coach assessment — ${typeLabels[a.assessment_type] || a.assessment_type}`,
+        body: a.next_steps
+          ? `Next steps: ${a.next_steps}`
+          : a.overall_rating
+          ? `Rated: ${a.overall_rating}`
+          : "Assessment completed",
+        coach: a.coach_name,
+        date: a.assessment_date || a.created_at,
+        createdAt: a.created_at,
+      }));
+      res.json(notifications);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/maj/skill-assessments", async (req, res) => {
     try {
       const assessment = await storage.createSkillAssessment(req.body);
