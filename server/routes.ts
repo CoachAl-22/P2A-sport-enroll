@@ -3557,8 +3557,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
           grade: "Year 9",
           program: "Senior Squad",
           coach: "Coach Al",
+          xp: 580,
+          streak: 5,
+          sessionsCompleted: 14,
+          reflectionsSubmitted: 11,
+          currentModule: 1,
+          currentWeek: 4,
+          earnedBadgeKeys: ["1_sessions", "1_reflections"],
         });
         console.log("[seed] MAJ demo athlete 'jordan' created");
+      } else {
+        // Always ensure jordan has demo badge/streak data for showcase
+        const j = existing[0];
+        if (j.streak < 5 || j.earnedBadgeKeys.length < 2) {
+          await db.update(majAthletes)
+            .set({
+              xp: Math.max(j.xp, 580),
+              streak: Math.max(j.streak, 5),
+              sessionsCompleted: Math.max(j.sessionsCompleted, 14),
+              reflectionsSubmitted: Math.max(j.reflectionsSubmitted, 11),
+              earnedBadgeKeys: Array.from(new Set([...j.earnedBadgeKeys, "1_sessions", "1_reflections"])),
+            })
+            .where(eq(majAthletes.username, "jordan"));
+          console.log("[seed] MAJ demo athlete 'jordan' demo data updated");
+        }
       }
     } catch (e) {
       console.error("[seed] Failed to seed MAJ demo athlete:", e);
