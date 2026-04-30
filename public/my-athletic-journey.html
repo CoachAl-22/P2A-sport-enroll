@@ -1827,8 +1827,8 @@
         <span class="profile-row-value">Al Tait <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
       </div>
       <div class="profile-row" onclick="toast('Contact your coach to update your details')">
-        <span class="profile-row-label">Year</span>
-        <span class="profile-row-value">Year 1 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+        <span class="profile-row-label">Level</span>
+        <span class="profile-row-value">Level 1 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
       </div>
     </div>
 
@@ -3141,33 +3141,33 @@ const MAJ_CONTENT = {
           num: 8,
           theme: "The Athlete I Am Becoming — Capstone",
           learn: {
-            concept: "Year 1 Is Complete — Reflecting on the Full Journey",
-            intro: "This is Week 8 of Module 4 — and the final week of your Year 1 Athletic Journey. You have completed 32 weeks of training, reflection, and growth across Athletic Ability, Skill, Focus, and Leadership.",
+            concept: "Level 1 Is Complete — Reflecting on the Full Journey",
+            intro: "This is Week 8 of Module 4 — and the final week of your Level 1 Athletic Journey. You have completed 32 weeks of training, reflection, and growth across Athletic Ability, Skill, Focus, and Leadership.",
             points: [
-              "You are not the same athlete you were at the start of Year 1. Every module, every session, every reflection has changed you.",
+              "You are not the same athlete you were at the start of Level 1. Every module, every session, every reflection has changed you.",
               "The four pillars — Athletic Ability, Skill, Focus, and Leadership — are not separate. They work together as one complete athlete.",
-              "The habits you have built this year are your foundation for Year 2, Year 3, and everything beyond.",
-              "Excellence Through Consistency is not a tagline. It is what you have lived this year.",
-              "Year 2 will build on everything you have done here — with greater complexity, challenge, and reward."
+              "The habits you have built this level are your foundation for Level 2, Level 3, and everything beyond.",
+              "Excellence Through Consistency is not a tagline. It is what you have lived this level.",
+              "Level 2 will build on everything you have done here — with greater complexity, challenge, and reward."
             ],
             closing: "You showed up. You reflected. You grew. That is what an athlete does."
           },
           do: {
-            title: "Year 1 Athletic Journey Reflection — Share With Your Coach",
-            setup: "Today you will complete your Year 1 reflection and share it with your coach in a 5-minute conversation. This is the most important session of the year.",
+            title: "Level 1 Athletic Journey Reflection — Share With Your Coach",
+            setup: "Today you will complete your Level 1 reflection and share it with your coach in a 5-minute conversation. This is the most important session of the level.",
             steps: [
-              "Complete your Year 1 reflection in the Reflect tab — this is a longer reflection than normal. Give it your full effort.",
+              "Complete your Level 1 reflection in the Reflect tab — this is a longer reflection than normal. Give it your full effort.",
               "After completing your reflection, sit with your coach for 5 minutes.",
-              "Share one thing you are most proud of from Year 1.",
-              "Share one thing you still want to develop in Year 2.",
-              "Your coach will present your Year 1 completion and your Journey Tier achievement."
+              "Share one thing you are most proud of from Level 1.",
+              "Share one thing you still want to develop in Level 2.",
+              "Your coach will present your Level 1 completion and your Journey Tier achievement."
             ],
             changeIt: null,
-            badge: { key: "mod4_master", name: "Year 1 Complete — Legacy Athlete", icon: "👑", xp: 100, coachRequired: true }
+            badge: { key: "mod4_master", name: "Level 1 Complete — Legacy Athlete", icon: "👑", xp: 100, coachRequired: true }
           },
           reflect: {
-            prompt: "What has changed about me as an athlete and a person across this year — and what am I most proud of?",
-            hint: "Take your time with this one. Think across all four modules. What can you do now that you could not do before — physically, mentally, as a teammate, as a leader? What moment this year meant the most to you? What are you taking into Year 2?"
+            prompt: "What has changed about me as an athlete and a person across this level — and what am I most proud of?",
+            hint: "Take your time with this one. Think across all four modules. What can you do now that you could not do before — physically, mentally, as a teammate, as a leader? What moment this level meant the most to you? What are you taking into Level 2?"
           }
         }
       ]
@@ -3180,7 +3180,7 @@ const MAJ_CONTENT = {
     { name: "Contender",  icon: "⭐", minXP: 290,  req: "Complete Modules 1 + 2",      reward: "P2A water bottle + social media spotlight" },
     { name: "Athlete",    icon: "💪", minXP: 580,  req: "Complete Modules 1, 2 + 3",   reward: "P2A training cap + certificate" },
     { name: "Elite",      icon: "🔥", minXP: 870,  req: "Complete all 4 modules",      reward: "P2A training top + early camp access" },
-    { name: "Legacy",     icon: "👑", minXP: 1800, req: "Complete Year 2 or Year 3",   reward: "Named P2A legacy honours + full gear pack" }
+    { name: "Legacy",     icon: "👑", minXP: 1800, req: "Complete Level 2 or Level 3",   reward: "Named P2A legacy honours + full gear pack" }
   ],
 
   // ── HELPER: Get current week data ──────────────────────────────────────────
@@ -4578,7 +4578,7 @@ const MAJ_CONTENT = {
     const isLastWeek = a.currentWeek === 8;
     const isLastModule = a.currentModule === 4;
     if (isLastWeek && isLastModule) {
-      btn.textContent = '🏆 Year 1 Complete!';
+      btn.textContent = '🏆 Level 1 Complete!';
     } else if (isLastWeek) {
       btn.textContent = `Start Module ${a.currentModule + 1} →`;
     } else {
@@ -4908,8 +4908,8 @@ const MAJ_CONTENT = {
     const isLastModule = a.currentModule === 4;
 
     if (isLastWeek && isLastModule) {
-      showOverlay('👑', 'Year 1 Complete!',
-        'You have completed all 4 modules. Talk to Coach Al about your Year 2 journey!');
+      showOverlay('👑', 'Level 1 Complete!',
+        'You have completed all 4 modules. Talk to Coach Al about your Level 2 journey!');
       return;
     }
 
