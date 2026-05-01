@@ -993,6 +993,7 @@ export const majAthletes = pgTable("maj_athletes", {
   grade: varchar("grade", { length: 50 }),
   program: varchar("program", { length: 100 }),
   coach: varchar("coach", { length: 100 }),
+  school: varchar("school", { length: 150 }),
   currentModule: integer("current_module").notNull().default(1),
   currentWeek: integer("current_week").notNull().default(1),
   xp: integer("xp").notNull().default(0),

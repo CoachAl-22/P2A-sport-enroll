@@ -3625,18 +3625,46 @@ const MAJ_CONTENT = {
   };
 
   let _allAthletes = [];
+  let _activeSchool = 'All';
 
   function renderCoachView(athletes) {
     _allAthletes = athletes;
+    _activeSchool = 'All';
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
     const coachFullName = (state.coach && (state.coach.fullName || state.coach.full_name)) || 'Coach';
     const firstName = coachFullName.split(' ')[0];
+
+    // Build unique school list from athletes (preserving order: All first, then by count)
+    const schoolCounts = {};
+    athletes.forEach(a => {
+      const s = a.school || 'Other';
+      schoolCounts[s] = (schoolCounts[s] || 0) + 1;
+    });
+    const schools = Object.keys(schoolCounts).sort((a, b) => schoolCounts[b] - schoolCounts[a]);
+
+    const tabsHtml = schools.length > 1 ? `
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
+        <button id="tab-All" onclick="setSchoolFilter('All')"
+          style="flex-shrink:0;padding:7px 16px;border-radius:20px;border:1.5px solid var(--orange);
+                 background:var(--orange);color:#fff;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
+          All (${athletes.length})
+        </button>
+        ${schools.map(s => `
+        <button id="tab-${s.replace(/\s/g,'_')}" onclick="setSchoolFilter('${s}')"
+          style="flex-shrink:0;padding:7px 16px;border-radius:20px;border:1.5px solid var(--border2);
+                 background:transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
+          ${s} (${schoolCounts[s]})
+        </button>`).join('')}
+      </div>` : '';
+
     const coachHtml = `
       <div style="padding:20px 20px 8px;">
         <div style="font-size:13px;color:var(--text2);margin-bottom:4px;letter-spacing:0.5px;">${greeting},</div>
         <div style="font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:2px;">${firstName} 👋</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Power2ADAPT · My Athletic Journey</div>
+
+        ${tabsHtml}
 
         <!-- Search box -->
         <div style="position:relative;margin-bottom:14px;">
@@ -3662,6 +3690,24 @@ const MAJ_CONTENT = {
     filterAthletes('');
   }
 
+  function setSchoolFilter(school) {
+    _activeSchool = school;
+    // Update tab styles
+    const allSchools = ['All', ...new Set(_allAthletes.map(a => a.school || 'Other'))];
+    allSchools.forEach(s => {
+      const btn = document.getElementById('tab-' + (s === 'All' ? 'All' : s.replace(/\s/g,'_')));
+      if (!btn) return;
+      const isActive = s === school;
+      btn.style.background = isActive ? 'var(--orange)' : 'transparent';
+      btn.style.color = isActive ? '#fff' : 'var(--text2)';
+      btn.style.borderColor = isActive ? 'var(--orange)' : 'var(--border2)';
+    });
+    // Reset search and re-filter
+    const searchEl = document.getElementById('athlete-search');
+    if (searchEl) searchEl.value = '';
+    filterAthletes('');
+  }
+
   function _athleteRow(a) {
     const tier = MAJ_CONTENT.getTier(a.xp || 0);
     const name = a.fullName || a.full_name || 'Unknown';
@@ -3683,21 +3729,33 @@ const MAJ_CONTENT = {
     const countEl = document.getElementById('athlete-count');
     if (!body) return;
     const q = query.trim().toLowerCase();
+
+    // First apply school filter
+    const schoolFiltered = _activeSchool === 'All'
+      ? _allAthletes
+      : _allAthletes.filter(a => (a.school || 'Other') === _activeSchool);
+
+    // Then apply text search
     const filtered = q
-      ? _allAthletes.filter(a => {
+      ? schoolFiltered.filter(a => {
           const name = (a.fullName || a.full_name || '').toLowerCase();
           const prog = (a.program || '').toLowerCase();
           const grade = (a.grade || '').toLowerCase();
           return name.includes(q) || prog.includes(q) || grade.includes(q);
         })
-      : _allAthletes;
+      : schoolFiltered;
+
     body.innerHTML = filtered.length
       ? filtered.map(_athleteRow).join('')
-      : `<div style="text-align:center;padding:30px 16px;color:var(--text2);font-size:14px;">No athletes match "<strong>${query}</strong>"</div>`;
-    if (countEl) countEl.textContent =
-      filtered.length === _allAthletes.length
-        ? `Tap an athlete to assess · ${_allAthletes.length} athletes`
-        : `${filtered.length} of ${_allAthletes.length} athletes`;
+      : `<div style="text-align:center;padding:30px 16px;color:var(--text2);font-size:14px;">No athletes match "${q || _activeSchool}"</div>`;
+    if (countEl) {
+      const schoolLabel = _activeSchool === 'All' ? 'all schools' : _activeSchool;
+      countEl.textContent = q
+        ? `${filtered.length} of ${schoolFiltered.length} athletes at ${schoolLabel}`
+        : _activeSchool === 'All'
+        ? `Tap an athlete to assess · ${filtered.length} athletes`
+        : `${filtered.length} athletes · ${schoolLabel}`;
+    }
   }
 
   async function openAssessment(athlete) {

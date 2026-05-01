@@ -3614,6 +3614,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Migrate: add school column + tag existing athletes ────────────
+  (async () => {
+    try {
+      await db.execute(sql`ALTER TABLE maj_athletes ADD COLUMN IF NOT EXISTS school varchar(150)`);
+      const tcList = `'adelyn','edith','gracemol','maita','ada','addison','alice','bobby','celina','elleni','gracemau','harper','havana','heidi','jemima','jessica','lara','lucy','maya','mia','ollie','primrose'`;
+      const pgList = `'alex','annabel','aspen','avery','eddy','freddie','hudson','marlowe','noah','pippa','sophia','william','charlieR','charlieS','elle','jackB','jackL','jenson','leo','marcus','summer'`;
+      await db.execute(sql.raw(`UPDATE maj_athletes SET school = 'Toorak College' WHERE username IN (${tcList}) AND (school IS NULL OR school = '')`));
+      await db.execute(sql.raw(`UPDATE maj_athletes SET school = 'Peninsula Grammar' WHERE username IN (${pgList}) AND (school IS NULL OR school = '')`));
+      console.log("[migration] school column and tags applied");
+    } catch(e: any) {
+      console.error("[migration] school column:", e.message);
+    }
+  })();
+
   // ── Seed Toorak College athletes ──────────────────────────────────
   (async () => {
     const tcAthletes = [
@@ -3651,6 +3665,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             password: hash,
             grade: athlete.grade,
             program: athlete.program,
+            school: "Toorak College",
           });
           console.log(`[seed] TC athlete '${athlete.username}' created`);
         }
@@ -3696,6 +3711,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             password: hash,
             grade: athlete.grade,
             program: athlete.program,
+            school: "Peninsula Grammar",
           });
           console.log(`[seed] PG athlete '${athlete.username}' created`);
         }
