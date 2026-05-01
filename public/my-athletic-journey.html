@@ -142,13 +142,51 @@
   }
 
   .icon-btn:active { background: var(--surface2); }
+
+  @keyframes notif-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(242,101,34,0.7); }
+    70%  { box-shadow: 0 0 0 7px rgba(242,101,34,0); }
+    100% { box-shadow: 0 0 0 0 rgba(242,101,34,0); }
+  }
   .notif-dot {
-    width: 7px; height: 7px;
+    min-width: 16px; height: 16px;
     background: var(--orange);
-    border-radius: 50%;
+    border-radius: 8px;
     position: absolute;
-    top: 6px; right: 6px;
+    top: 2px; right: 2px;
     border: 2px solid var(--black);
+    font-size: 10px; font-weight: 800; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 3px;
+    animation: notif-pulse 1.6s infinite;
+  }
+
+  /* ── NOTIFICATION ALERT CARD (home dashboard) ──────────── */
+  .notif-alert-card {
+    display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, #1a1200 0%, #2a1800 100%);
+    border: 1.5px solid var(--orange);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .notif-alert-card:active { opacity: 0.8; }
+  .notif-alert-icon {
+    font-size: 26px; flex-shrink: 0;
+    animation: notif-pulse 1.8s infinite;
+    border-radius: 50%;
+  }
+  .notif-alert-text { flex: 1; }
+  .notif-alert-title {
+    font-size: 14px; font-weight: 700; color: var(--orange); margin-bottom: 3px;
+  }
+  .notif-alert-sub {
+    font-size: 12px; color: var(--text2); line-height: 1.4;
+  }
+  .notif-alert-chevron {
+    font-size: 20px; color: var(--orange); font-weight: 800; flex-shrink: 0;
   }
 
   /* ── STREAK PILL ───────────────────────────────────── */
@@ -1602,6 +1640,9 @@
     </div>
 
     <div class="pad" style="padding-top:20px;">
+
+      <!-- Notification alert card — shown when unread coach assessment exists -->
+      <div id="notif-alert-container"></div>
 
       <div class="section-label">This week's mission</div>
       <div class="mission-card" onclick="navTo('thisweek')">
@@ -4300,8 +4341,37 @@ const MAJ_CONTENT = {
     if (!dot) return;
     const key = `maj_notif_seen_${state.athlete.id}`;
     const lastSeen = parseInt(localStorage.getItem(key) || '0');
-    const hasUnread = _notifications.some(n => new Date(n.createdAt).getTime() > lastSeen);
-    dot.style.display = hasUnread ? '' : 'none';
+    const unread = _notifications.filter(n => new Date(n.createdAt).getTime() > lastSeen);
+    const count = unread.length;
+
+    // Bell badge
+    if (count > 0) {
+      dot.style.display = '';
+      dot.textContent = count > 9 ? '9+' : count > 1 ? String(count) : '';
+    } else {
+      dot.style.display = 'none';
+    }
+
+    // Home page alert card
+    const alertContainer = document.getElementById('notif-alert-container');
+    if (alertContainer) {
+      if (count > 0) {
+        const latest = unread[0];
+        const coachName = latest.coachName || latest.coach_name || 'Your coach';
+        const plural = count > 1 ? `${count} new assessments` : 'a new assessment';
+        alertContainer.innerHTML = `
+          <div class="notif-alert-card" onclick="openNotifications()">
+            <div class="notif-alert-icon">🔔</div>
+            <div class="notif-alert-text">
+              <div class="notif-alert-title">Coach Feedback Waiting!</div>
+              <div class="notif-alert-sub">${coachName} left you ${plural} — tap to read it now</div>
+            </div>
+            <div class="notif-alert-chevron">›</div>
+          </div>`;
+      } else {
+        alertContainer.innerHTML = '';
+      }
+    }
   }
 
   function openNotifications() {
