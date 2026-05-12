@@ -265,6 +265,50 @@ export default function SeniorSquad() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-heading font-bold text-gray-900 mb-4">What Does It Cost?</h2>
+            <p className="text-gray-600">All prices in Australian dollars, excluding GST.</p>
+          </div>
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-primary-500 relative">
+            <div className="absolute top-4 right-4 bg-secondary-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Everything Included</div>
+            <div className="bg-primary-700 px-8 py-6 text-white text-center">
+              <div className="text-sm font-bold uppercase tracking-widest mb-1">Senior Squad</div>
+              <div className="text-5xl font-heading font-bold">$200</div>
+              <div className="text-primary-100 text-sm mt-1">+ GST per month</div>
+              <div className="text-primary-100 font-medium mt-2">Unlimited Sessions</div>
+            </div>
+            <div className="px-8 py-6 space-y-3">
+              {[
+                "Unlimited in-person training sessions",
+                "Personalised strength & conditioning program",
+                "Personalised Final Surge training programme",
+                "Speed assessment session",
+                "Athlete goal setting session",
+                "Session notes & coach feedback",
+                "Coach messaging access",
+                "Optional muscle tissue profiling testing",
+              ].map((f, i) => (
+                <div key={i} className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-500 mr-3 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">{f}</span>
+                </div>
+              ))}
+            </div>
+            <div className="px-8 pb-8">
+              <Button
+                onClick={() => window.open('/senior-squad-application.html', '_blank')}
+                className="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold"
+              >
+                Apply to Join Senior Squad
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Getting Started */}
       <section className="py-16 bg-primary-600 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
