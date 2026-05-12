@@ -273,25 +273,26 @@ export default function SeniorSquad() {
             Take the first step towards elite athletic performance with our comprehensive training program
           </p>
           
-          <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl mb-8">
-            <h3 className="text-xl font-bold mb-4">How to Get Started</h3>
-            <div className="space-y-4 text-left max-w-2xl mx-auto">
-              <div className="flex items-start">
-                <div className="bg-white text-primary-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-sm mr-4 mt-1">1</div>
-                <span>Book your free 15min, no obligation Discovery call</span>
-              </div>
-              <div className="flex items-start">
-                <div className="bg-white text-primary-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-sm mr-4 mt-1">2</div>
-                <span><strong>Your first class is FREE</strong> — come and experience the squad to make sure it's the right fit for you</span>
-              </div>
-              <div className="flex items-start">
-                <div className="bg-white text-primary-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-sm mr-4 mt-1">3</div>
-                <span>Book in for a <strong>speed assessment</strong> and optional <strong>muscle tissue profiling</strong> testing session</span>
-              </div>
-              <div className="flex items-start">
-                <div className="bg-white text-primary-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-sm mr-4 mt-1">4</div>
-                <span>Your <strong>first month</strong> is an introduction to how the training squad runs — meet the group, understand the program, and set your goals</span>
-              </div>
+          <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl mb-8 text-left max-w-2xl mx-auto">
+            <h3 className="text-xl font-bold mb-6 text-center">How to Get Started</h3>
+            <div className="space-y-5">
+              {[
+                { n: "1", title: "Book your free Discovery call", desc: "A free 15-minute, no-obligation call to talk through the program and see if Senior Squad is the right fit." },
+                { n: "2", title: "Your first class is FREE", desc: "Come and train with the squad so you can experience the environment before committing." },
+                { n: "3", title: "Speed assessment + optional muscle tissue profiling", desc: "Book in for a speed assessment session. Muscle tissue profiling testing is also available as an optional add-on." },
+                { n: "4", title: "Athlete goal setting session", desc: "Included with your sign up — sit down with the coach to map out your goals and set the direction for your season." },
+                { n: "5", title: "Onboarding form", desc: "You'll be sent an onboarding form to complete your athlete profile. Takes around 10 minutes." },
+                { n: "6", title: "Final Surge app access", desc: "Your personalised training programme is delivered through the Final Surge app. Check your inbox for your login details." },
+                { n: "7", title: "First month introduction", desc: "Your first month is all about settling in — meet the group, understand how the squad runs, and build your training foundation." },
+              ].map((step) => (
+                <div key={step.n} className="flex items-start">
+                  <div className="bg-white text-primary-600 rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm mr-4 mt-0.5 flex-shrink-0">{step.n}</div>
+                  <div>
+                    <div className="font-semibold">{step.title}</div>
+                    <div className="text-primary-200 text-sm mt-0.5">{step.desc}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
