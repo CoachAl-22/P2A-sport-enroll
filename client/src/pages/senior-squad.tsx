@@ -282,11 +282,15 @@ export default function SeniorSquad() {
               </div>
               <div className="flex items-start">
                 <div className="bg-white text-primary-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-sm mr-4 mt-1">2</div>
-                <span>Introductory 2 class offer for $50 (Normally $150)</span>
+                <span><strong>Your first class is FREE</strong> — come and experience the squad to make sure it's the right fit for you</span>
               </div>
               <div className="flex items-start">
                 <div className="bg-white text-primary-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-sm mr-4 mt-1">3</div>
-                <span>45min movement and running technique assessment + 1 standard speed improvement class</span>
+                <span>Book in for a <strong>speed assessment</strong> and optional <strong>muscle tissue profiling</strong> testing session</span>
+              </div>
+              <div className="flex items-start">
+                <div className="bg-white text-primary-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-sm mr-4 mt-1">4</div>
+                <span>Your <strong>first month</strong> is an introduction to how the training squad runs — meet the group, understand the program, and set your goals</span>
               </div>
             </div>
           </div>
