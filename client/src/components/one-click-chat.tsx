@@ -1,419 +1,406 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MessageCircle, Send, Sparkles, X, Bot } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { MessageCircle, X, Sparkles, Send, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
 
-interface ChatMessage {
+type Step = "welcome" | "goal" | "age" | "sports" | "recommendation";
+
+interface Message {
   id: string;
   text: string;
   isBot: boolean;
-  timestamp: Date;
-  recommendations?: ClassRecommendation[];
 }
 
-interface ClassRecommendation {
-  id: string;
+interface Program {
   name: string;
-  program: string;
-  venue: string;
-  day: string;
-  time: string;
+  tagline: string;
   ageRange: string;
-  price: number;
-  spots: number;
+  price: string;
+  highlights: string[];
+  link: string;
+  highlight?: boolean;
 }
 
-interface OneClickChatProps {
-  onEnrollClick?: (classId: string) => void;
-  isActive?: boolean;
+const GOALS = [
+  { key: "speed", label: "⚡ Improve speed & fitness" },
+  { key: "competition", label: "🏆 Prepare for competition" },
+  { key: "school", label: "🏫 Boost school sport performance" },
+  { key: "general", label: "💪 General athleticism" },
+  { key: "unsure", label: "🤔 Not sure yet" },
+];
+
+const AGE_RANGES = [
+  { key: "5-8", label: "5 – 8 years" },
+  { key: "9-12", label: "9 – 12 years" },
+  { key: "13-15", label: "13 – 15 years" },
+  { key: "16+", label: "16 + years" },
+];
+
+function getRecommendations(goal: string, ageKey: string): Program[] {
+  const isCompOrElite = goal === "competition" || goal === "speed";
+  const programs: Record<string, Program[]> = {
+    "5-8": [
+      {
+        name: "Foundation Program",
+        tagline: "The perfect starting point for young athletes",
+        ageRange: "5 – 8 years",
+        price: "Group classes available",
+        highlights: ["Run, jump & throw fundamentals", "Fun & confidence-building", "Small group sessions"],
+        link: "/classes",
+        highlight: true,
+      },
+    ],
+    "9-12": [
+      {
+        name: "Emerging Athlete Program",
+        tagline: "Developing athletic skills with purpose",
+        ageRange: "9 – 12 years",
+        price: "Group classes available",
+        highlights: ["Speed & movement training", "Multi-sport athleticism", "Skill progression tracking"],
+        link: "/classes",
+        highlight: true,
+      },
+      {
+        name: "Junior Academy",
+        tagline: "Personalised 1-on-1 coaching",
+        ageRange: "9 – 15 years",
+        price: "From $100/month",
+        highlights: ["Personalised programme via Final Surge app", "1 or 2 sessions per week", "Direct coach access & feedback"],
+        link: "/junior-academy",
+      },
+    ],
+    "13-15": [
+      {
+        name: "Academy Program",
+        tagline: "Intermediate training for serious athletes",
+        ageRange: "12 – 15 years",
+        price: "Group classes available",
+        highlights: ["Structured speed & strength work", "Competition simulation", "Technique refinement"],
+        link: "/classes",
+        highlight: !isCompOrElite,
+      },
+      {
+        name: "Junior Academy",
+        tagline: "Personalised 1-on-1 coaching",
+        ageRange: "9 – 15 years",
+        price: "From $100/month",
+        highlights: ["Personalised programme via Final Surge app", "1 or 2 sessions per week", "Direct coach access & feedback"],
+        link: "/junior-academy",
+        highlight: isCompOrElite,
+      },
+    ],
+    "16+": [
+      {
+        name: "Senior Squad",
+        tagline: "Unlimited training for competition-ready athletes",
+        ageRange: "16+ years",
+        price: "$200/month + GST",
+        highlights: ["Unlimited sessions", "Strength & conditioning programme", "Speed assessment + goal setting session", "Final Surge app access"],
+        link: "/senior-squad",
+        highlight: true,
+      },
+      {
+        name: "High Performance Squad",
+        tagline: "Elite-level training — by application only",
+        ageRange: "16+ years",
+        price: "Application required",
+        highlights: ["Elite competition preparation", "Individual programme design", "State & national level focus"],
+        link: "/high-performance",
+      },
+    ],
+  };
+  return programs[ageKey] || [];
 }
 
-export default function OneClickChat({ onEnrollClick, isActive = false }: OneClickChatProps) {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [currentStep, setCurrentStep] = useState<'welcome' | 'name' | 'age' | 'interests' | 'availability' | 'recommendations'>('welcome');
-  const [childAge, setChildAge] = useState<string>("");
-  const [childName, setChildName] = useState<string>("");
-  const [interests, setInterests] = useState<string>("");
-  const [availability, setAvailability] = useState<string>("");
+export default function OneClickChat() {
+  const [bubbleVisible, setBubbleVisible] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [step, setStep] = useState<Step>("welcome");
+  const [goal, setGoal] = useState("");
+  const [ageKey, setAgeKey] = useState("");
+  const [sports, setSports] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { data: classes = [] } = useQuery({
-    queryKey: ["/api/classes"],
-  });
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!dismissed) setBubbleVisible(true);
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [dismissed]);
 
-  const startChat = () => {
-    setIsChatOpen(true);
-    setMessages([{
-      id: "welcome",
-      text: "Hi there! I'm your Program Finder assistant. I'll help you discover the perfect athletic program for your child. Let's start - what's your child's name?",
-      isBot: true,
-      timestamp: new Date()
-    }]);
-    setCurrentStep('name');
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const addMessage = (text: string, isBot: boolean) => {
+    setMessages(prev => [...prev, { id: Date.now().toString(), text, isBot }]);
   };
 
-  const sendMessage = (text: string, isBot: boolean = false, recommendations?: ClassRecommendation[]) => {
-    const message: ChatMessage = {
-      id: Date.now().toString(),
-      text,
-      isBot,
-      timestamp: new Date(),
-      recommendations
-    };
-    setMessages(prev => [...prev, message]);
+  const openChat = () => {
+    setBubbleVisible(false);
+    setChatOpen(true);
+    if (messages.length === 0) {
+      setTimeout(() => {
+        addMessage("Hi there! 👋 I'm here to help you find the right Power2ADAPT program. What are you hoping to achieve?", true);
+        setStep("goal");
+      }, 300);
+    }
   };
 
-  const handleNameSubmit = () => {
-    if (!childName.trim()) return;
-    
-    sendMessage(`My child's name is ${childName}`);
+  const handleGoal = (g: { key: string; label: string }) => {
+    setGoal(g.key);
+    addMessage(g.label, false);
     setTimeout(() => {
-      sendMessage(`Great! How old is ${childName}?`, true);
-      setCurrentStep('age');
-    }, 800);
+      addMessage("Great! How old is the athlete?", true);
+      setStep("age");
+    }, 600);
   };
 
-  const handleAgeSubmit = () => {
-    if (!childAge) return;
-    
-    sendMessage(`${childName} is ${childAge} years old`);
+  const handleAge = (a: { key: string; label: string }) => {
+    setAgeKey(a.key);
+    addMessage(a.label, false);
     setTimeout(() => {
-      sendMessage(`Perfect! What sports or activities is ${childName} most interested in?`, true);
-      setCurrentStep('interests');
-    }, 800);
+      addMessage("What sports or activities do they play? (e.g. football, running, netball — any is fine!)", true);
+      setStep("sports");
+    }, 600);
   };
 
-  const handleInterestsSubmit = () => {
-    if (!interests.trim()) return;
-    
-    sendMessage(`${childName} is interested in ${interests}`);
+  const handleSportsSubmit = () => {
+    if (!sports.trim()) return;
+    addMessage(sports, false);
     setTimeout(() => {
-      sendMessage("When would work best for classes?", true);
-      setCurrentStep('availability');
-    }, 800);
+      const recs = getRecommendations(goal, ageKey);
+      addMessage(
+        `Perfect! Based on what you've told me, here ${recs.length === 1 ? "is my top recommendation" : "are the best programs"} for your athlete:`,
+        true
+      );
+      setStep("recommendation");
+    }, 700);
   };
 
-  const handleAvailabilitySubmit = () => {
-    if (!availability) return;
-    
-    sendMessage(`We prefer ${availability} classes`);
-    
-    // Generate recommendations based on inputs
-    setTimeout(() => {
-      const recommendations = generateRecommendations();
-      const numRecs = recommendations.length;
-      const message = numRecs > 0 
-        ? `Perfect! Based on ${childName}'s age (${childAge}), interests (${interests}), and availability (${availability}), here ${numRecs === 1 ? 'is' : 'are'} ${numRecs} great ${numRecs === 1 ? 'option' : 'options'}:`
-        : `I couldn't find classes matching ${childName}'s age range right now, but here are some similar options:`;
-      
-      sendMessage(message, true, recommendations);
-      setCurrentStep('recommendations');
-    }, 1200);
-  };
-
-  const generateRecommendations = (): ClassRecommendation[] => {
-    const age = parseInt(childAge);
-    const filteredClasses = (classes as any[]).filter((cls: any) => {
-      return age >= cls.minAge && age <= cls.maxAge;
-    });
-
-    return filteredClasses.map((cls: any) => ({
-      id: cls.id,
-      name: cls.name,
-      program: cls.program,
-      venue: cls.venue?.name || "TBA",
-      day: cls.dayOfWeek,
-      time: cls.startTime,
-      ageRange: `${cls.minAge}-${cls.maxAge} years`,
-      price: cls.termPrice,
-      spots: cls.maxCapacity - (cls.enrollments?.length || 0)
-    }));
-  };
-
-  const resetChat = () => {
+  const reset = () => {
     setMessages([]);
-    setCurrentStep('welcome');
-    setChildAge("");
-    setChildName("");
-    setInterests("");
-    setAvailability("");
-    setTimeout(() => startChat(), 300);
+    setStep("welcome");
+    setGoal("");
+    setAgeKey("");
+    setSports("");
+    setTimeout(() => {
+      addMessage("Hi there! 👋 I'm here to help you find the right Power2ADAPT program. What are you hoping to achieve?", true);
+      setStep("goal");
+    }, 300);
   };
+
+  const recommendations = step === "recommendation" ? getRecommendations(goal, ageKey) : [];
 
   return (
     <>
-      {/* Prominent Chat Helper */}
-      {isActive && isVisible && (
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          className="fixed bottom-6 right-6 z-50"
-        >
-          {/* Chat Message Bubble */}
+      {/* Auto-popup bubble */}
+      <AnimatePresence>
+        {bubbleVisible && !chatOpen && (
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 2, duration: 0.5 }}
-            className="absolute bottom-20 right-0 bg-gray-900 rounded-lg shadow-xl p-4 mb-2 max-w-xs border-2 border-gray-700"
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-24 right-6 z-50 max-w-xs"
           >
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-secondary-500" />
-                <span className="font-semibold text-white">Program Finder</span>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsVisible(false)}
-                className="text-gray-400 hover:text-white hover:bg-gray-800 h-6 w-6"
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 relative">
+              <button
+                onClick={() => { setBubbleVisible(false); setDismissed(true); }}
+                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
               >
                 <X className="w-4 h-4" />
-              </Button>
-            </div>
-            <p className="text-sm text-gray-200 mb-3">
-              How can I help? I'll find the perfect athletic program for your child!
-            </p>
-            <div className="flex justify-end">
+              </button>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">Program Finder</p>
+                  <p className="text-xs text-green-500 font-medium">● Online now</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-700 mb-3">
+                👋 Hi! Not sure which program is right for your child? I can help you find the perfect fit in under a minute.
+              </p>
               <Button
-                onClick={startChat}
+                onClick={openChat}
                 size="sm"
-                className="bg-secondary-500 hover:bg-secondary-600 text-white text-xs px-3 py-1"
+                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 text-white font-semibold"
               >
-                Get Started
+                Find the right program →
               </Button>
+              {/* Arrow */}
+              <div className="absolute -bottom-2 right-8 w-4 h-4 bg-white border-r border-b border-gray-200 rotate-45" />
             </div>
-            {/* Speech bubble arrow */}
-            <div className="absolute bottom-0 right-6 transform translate-y-1/2 rotate-45 w-3 h-3 bg-gray-900 border-r-2 border-b-2 border-gray-700"></div>
           </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Enhanced Chat Button */}
-          <Button
-            onClick={startChat}
-            className="w-20 h-20 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden"
-            size="icon"
-          >
-            <div className="flex flex-col items-center justify-center">
-              <Bot className="w-8 h-8 text-white mb-1" />
-              <div className="text-xs text-white font-bold">HELP</div>
-            </div>
-            
-            {/* Animated ring */}
-            <div className="absolute inset-0 rounded-full border-4 border-white/30 animate-ping"></div>
-          </Button>
-          
-          {/* Enhanced pulsing indicator */}
-          <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full animate-pulse flex items-center justify-center">
-            <div className="w-3 h-3 bg-white rounded-full"></div>
-          </div>
-        </motion.div>
-      )}
+      {/* FAB button */}
+      <motion.div
+        className="fixed bottom-6 right-6 z-50"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 1, type: "spring" }}
+      >
+        <button
+          onClick={openChat}
+          className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col items-center justify-center relative group"
+        >
+          <MessageCircle className="w-7 h-7 text-white" />
+          <span className="text-[10px] text-white font-bold mt-0.5">HELP</span>
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse" />
+        </button>
+      </motion.div>
 
-      {/* Chat Dialog */}
-      <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
-        <DialogContent className="max-w-md w-full h-[600px] flex flex-col p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white">
+      {/* Chat dialog */}
+      <Dialog open={chatOpen} onOpenChange={setChatOpen}>
+        <DialogContent className="max-w-sm w-full p-0 gap-0 overflow-hidden flex flex-col" style={{ height: "580px" }}>
+          {/* Header */}
+          <DialogHeader className="p-4 bg-gradient-to-r from-primary-600 to-secondary-500 text-white flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                <DialogTitle>Class Finder Assistant</DialogTitle>
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <DialogTitle className="text-white text-sm font-bold">Program Finder</DialogTitle>
+                  <p className="text-white/80 text-xs">Power2ADAPT · Usually replies instantly</p>
+                </div>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsChatOpen(false)}
-                className="text-white hover:bg-white/20"
-              >
-                <X className="w-4 h-4" />
-              </Button>
+              <button onClick={() => setChatOpen(false)} className="text-white/70 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
             </div>
           </DialogHeader>
 
-          {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            <AnimatePresence>
-              {messages.map((message) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
-                >
-                  <div className={`max-w-[80%] p-3 rounded-lg ${
-                    message.isBot 
-                      ? 'bg-gray-100 text-gray-900' 
-                      : 'bg-primary-500 text-white'
-                  }`}>
-                    <p className="text-sm">{message.text}</p>
-                    
-                    {/* Recommendations */}
-                    {message.recommendations && (
-                      <div className="mt-3 space-y-2">
-                        {message.recommendations.map((rec) => (
-                          <Card key={rec.id} className="border-0 shadow-sm">
-                            <CardContent className="p-3">
-                              <div className="flex justify-between items-start mb-2">
-                                <div>
-                                  <h4 className="font-semibold text-sm">{rec.name}</h4>
-                                  <Badge variant="secondary" className="text-xs">
-                                    {rec.program}
-                                  </Badge>
-                                </div>
-                                <span className="text-sm font-bold text-primary-600">
-                                  ${rec.price}
-                                </span>
-                              </div>
-                              <div className="text-xs text-gray-600 space-y-1">
-                                <p>📍 {rec.venue}</p>
-                                <p>🗓️ {rec.day}s at {rec.time}</p>
-                                <p>👶 Ages {rec.ageRange} • {rec.spots} spots left</p>
-                              </div>
-                              <Button
-                                size="sm"
-                                className="w-full mt-2 text-xs"
-                                onClick={() => onEnrollClick?.(rec.id)}
-                              >
-                                Enroll Now
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        ))}
-                        
-                        <div className="flex gap-2 mt-3">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={resetChat}
-                            className="flex-1 text-xs"
-                          >
-                            Start Over
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => setIsChatOpen(false)}
-                            className="flex-1 text-xs"
-                          >
-                            Close
-                          </Button>
-                        </div>
-                      </div>
-                    )}
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+            {messages.map(m => (
+              <div key={m.id} className={`flex ${m.isBot ? "justify-start" : "justify-end"}`}>
+                {m.isBot && (
+                  <div className="w-7 h-7 rounded-full bg-primary-500 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
+                    <Sparkles className="w-3.5 h-3.5 text-white" />
                   </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                )}
+                <div className={`max-w-[78%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
+                  m.isBot
+                    ? "bg-white text-gray-800 rounded-tl-sm shadow-sm"
+                    : "bg-primary-500 text-white rounded-tr-sm"
+                }`}>
+                  {m.text}
+                </div>
+              </div>
+            ))}
+
+            {/* Recommendation cards */}
+            {step === "recommendation" && recommendations.length > 0 && (
+              <div className="space-y-3 mt-2">
+                {recommendations.map((rec, i) => (
+                  <div key={i} className={`bg-white rounded-xl shadow-sm border-2 p-4 ${rec.highlight ? "border-primary-500" : "border-gray-100"}`}>
+                    {rec.highlight && (
+                      <span className="text-xs font-bold text-white bg-primary-500 px-2 py-0.5 rounded-full mb-2 inline-block">
+                        ⭐ Best match
+                      </span>
+                    )}
+                    <h4 className="font-bold text-gray-900 text-sm">{rec.name}</h4>
+                    <p className="text-xs text-gray-500 mb-2">{rec.tagline}</p>
+                    <p className="text-xs font-semibold text-primary-600 mb-2">{rec.price} · {rec.ageRange}</p>
+                    <ul className="space-y-1 mb-3">
+                      {rec.highlights.map((h, j) => (
+                        <li key={j} className="text-xs text-gray-600 flex items-start gap-1.5">
+                          <span className="text-green-500 mt-0.5">✓</span> {h}
+                        </li>
+                      ))}
+                    </ul>
+                    <a
+                      href={rec.link}
+                      className="block text-center text-xs font-semibold text-primary-600 border border-primary-400 rounded-lg py-1.5 hover:bg-primary-50 transition-colors"
+                    >
+                      Learn more →
+                    </a>
+                  </div>
+                ))}
+
+                {/* Discovery call CTA */}
+                <div className="bg-gradient-to-r from-primary-600 to-secondary-500 rounded-xl p-4 text-white text-center">
+                  <p className="font-bold text-sm mb-1">Ready to take the next step?</p>
+                  <p className="text-xs text-white/80 mb-3">Book a free 15-minute Discovery Call with Alistair — no obligation, just a friendly chat about your athlete's goals.</p>
+                  <a
+                    href="https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 bg-white text-primary-600 font-bold text-sm rounded-lg py-2.5 px-4 hover:bg-gray-50 transition-colors"
+                  >
+                    <Phone className="w-4 h-4" />
+                    Book Free Discovery Call
+                  </a>
+                </div>
+
+                <button onClick={reset} className="w-full text-xs text-gray-400 hover:text-gray-600 py-1">
+                  ← Start over
+                </button>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
-          {currentStep === 'name' && (
-            <div className="p-4 border-t bg-gray-50">
-              <div className="space-y-2">
+          {/* Input area */}
+          <div className="flex-shrink-0 bg-white border-t border-gray-100">
+            {step === "goal" && (
+              <div className="p-3 grid grid-cols-1 gap-2">
+                {GOALS.map(g => (
+                  <button
+                    key={g.key}
+                    onClick={() => handleGoal(g)}
+                    className="text-left text-sm px-4 py-2.5 rounded-xl border border-gray-200 hover:border-primary-400 hover:bg-primary-50 transition-colors font-medium text-gray-700"
+                  >
+                    {g.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {step === "age" && (
+              <div className="p-3 grid grid-cols-2 gap-2">
+                {AGE_RANGES.map(a => (
+                  <button
+                    key={a.key}
+                    onClick={() => handleAge(a)}
+                    className="text-sm px-3 py-2.5 rounded-xl border border-gray-200 hover:border-primary-400 hover:bg-primary-50 transition-colors font-medium text-gray-700"
+                  >
+                    {a.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {step === "sports" && (
+              <div className="p-3 flex gap-2">
                 <Input
-                  placeholder="Enter your child's name"
-                  value={childName}
-                  onChange={(e) => setChildName(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleNameSubmit()}
+                  placeholder="e.g. football, netball, running…"
+                  value={sports}
+                  onChange={e => setSports(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && handleSportsSubmit()}
                   autoFocus
+                  className="flex-1 text-sm"
                 />
-                <Button 
-                  onClick={handleNameSubmit}
-                  disabled={!childName.trim()}
-                  className="w-full"
-                  size="sm"
+                <Button
+                  onClick={handleSportsSubmit}
+                  disabled={!sports.trim()}
+                  size="icon"
+                  className="bg-primary-500 hover:bg-primary-600"
                 >
-                  <Send className="w-4 h-4 mr-2" />
-                  Continue
+                  <Send className="w-4 h-4" />
                 </Button>
               </div>
-            </div>
-          )}
-
-          {currentStep === 'age' && (
-            <div className="p-4 border-t bg-gray-50">
-              <div className="space-y-2">
-                <Select value={childAge} onValueChange={setChildAge}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select age" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 14 }, (_, i) => i + 5).map(age => (
-                      <SelectItem key={age} value={age.toString()}>
-                        {age} years old
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button 
-                  onClick={handleAgeSubmit}
-                  disabled={!childAge}
-                  className="w-full"
-                  size="sm"
-                >
-                  <Send className="w-4 h-4 mr-2" />
-                  Continue
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 'interests' && (
-            <div className="p-4 border-t bg-gray-50">
-              <div className="space-y-2">
-                <Input
-                  placeholder="e.g., soccer, basketball, running, general fitness"
-                  value={interests}
-                  onChange={(e) => setInterests(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleInterestsSubmit()}
-                  autoFocus
-                />
-                <Button 
-                  onClick={handleInterestsSubmit}
-                  disabled={!interests.trim()}
-                  className="w-full"
-                  size="sm"
-                >
-                  <Send className="w-4 h-4 mr-2" />
-                  Continue
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 'availability' && (
-            <div className="p-4 border-t bg-gray-50">
-              <div className="space-y-2">
-                <Select value={availability} onValueChange={setAvailability}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="When works best?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="weekday-morning">Weekday mornings</SelectItem>
-                    <SelectItem value="weekday-afternoon">Weekday afternoons</SelectItem>
-                    <SelectItem value="weekend-morning">Weekend mornings</SelectItem>
-                    <SelectItem value="weekend-afternoon">Weekend afternoons</SelectItem>
-                    <SelectItem value="any-time">Any time works</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button 
-                  onClick={handleAvailabilitySubmit}
-                  disabled={!availability}
-                  className="w-full"
-                  size="sm"
-                >
-                  <Send className="w-4 h-4 mr-2" />
-                  Get Recommendations
-                </Button>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </>

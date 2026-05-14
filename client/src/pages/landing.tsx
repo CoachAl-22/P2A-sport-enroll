@@ -1212,6 +1212,9 @@ export default function Landing() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Floating Program Finder chat widget */}
+      <OneClickChat />
     </div>
   );
 }
