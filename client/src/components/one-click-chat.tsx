@@ -247,14 +247,21 @@ export default function OneClickChat() {
         animate={{ scale: 1 }}
         transition={{ delay: 1, type: "spring" }}
       >
-        <button
+        {/* Pulsing rings */}
+        <span className="absolute inset-0 rounded-full bg-secondary-400 opacity-30 animate-ping" />
+        <span className="absolute inset-[-6px] rounded-full border-2 border-secondary-400 opacity-40 animate-ping" style={{ animationDelay: "0.4s" }} />
+
+        <motion.button
           onClick={openChat}
-          className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col items-center justify-center relative group"
+          animate={{ y: [0, -5, 0] }}
+          transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut", delay: 2 }}
+          className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 shadow-2xl hover:shadow-secondary-400/50 hover:scale-105 transition-all duration-300 flex flex-col items-center justify-center relative"
         >
-          <MessageCircle className="w-7 h-7 text-white" />
-          <span className="text-[10px] text-white font-bold mt-0.5">HELP</span>
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse" />
-        </button>
+          <MessageCircle className="w-8 h-8 text-white drop-shadow" />
+          <span className="text-[10px] text-white font-bold mt-0.5 tracking-wide">HELP</span>
+          {/* Green online dot */}
+          <span className="absolute top-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white shadow" />
+        </motion.button>
       </motion.div>
 
       {/* Chat dialog */}
