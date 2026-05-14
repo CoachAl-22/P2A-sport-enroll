@@ -1,0 +1,31 @@
+/Users/alistairtait/Library/Python/3.9/lib/python/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/alistairtait/Library/Python/3.9/lib/python/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/alistairtait/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026-05-15 09:19:05,379 INFO Running in dry-run mode -- no email or Sheets writes
+2026-05-15 09:19:05,379 INFO Collecting metrics for week 2026-05-04 to 2026-05-10
+Traceback (most recent call last):
+  File "/Users/alistairtait/analytics-agent/analytics_agent.py", line 197, in execute_query
+    cur.execute(sql)
+  File "/Users/alistairtait/Library/Python/3.9/lib/python/site-packages/psycopg2/extras.py", line 236, in execute
+    return super().execute(query, vars)
+psycopg2.errors.UndefinedTable: relation "maj_athletes" does not exist
+LINE 1: SELECT COUNT(*) as n FROM maj_athletes
+                                  ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/alistairtait/analytics-agent/analytics_agent.py", line 727, in <module>
+    main()
+  File "/Users/alistairtait/analytics-agent/analytics_agent.py", line 704, in main
+    metrics = collect_metrics(week_start, week_end)
+  File "/Users/alistairtait/analytics-agent/analytics_agent.py", line 233, in collect_metrics
+    total = execute_query("SELECT COUNT(*) as n FROM maj_athletes")[0]["n"]
+  File "/Users/alistairtait/analytics-agent/analytics_agent.py", line 201, in execute_query
+    raise RuntimeError(f"DB query failed: {e}") from e
+RuntimeError: DB query failed: relation "maj_athletes" does not exist
+LINE 1: SELECT COUNT(*) as n FROM maj_athletes
