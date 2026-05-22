@@ -130,7 +130,7 @@ export default function Enrollment() {
     <div className="min-h-screen bg-white">
       <Navbar />
       <div className="max-w-md mx-auto px-4 py-8">
-        <StepIndicator />
+        {step !== 'waitlist-confirmed' && <StepIndicator />}
 
         {/* Step 1: Child selection */}
         {(step === 'child') && (
