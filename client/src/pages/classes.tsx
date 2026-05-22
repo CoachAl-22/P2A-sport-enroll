@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -55,12 +56,30 @@ export default function Classes() {
     { value: "7", label: "Sunday" },
   ];
 
-  const filteredClasses = classes?.filter((classItem: any) => {
-    if (!filters.search) return true;
-    const searchTerm = filters.search.toLowerCase();
-    return classItem.name.toLowerCase().includes(searchTerm) ||
-           classItem.description?.toLowerCase().includes(searchTerm);
-  }) || [];
+  const [location] = useLocation();
+  const urlParams = new URLSearchParams(location.split('?')[1] || '');
+  const quizAge = urlParams.get('age') ? parseInt(urlParams.get('age')!, 10) : null;
+  const quizSportTypes = urlParams.get('sportTypes')?.split(',').filter(Boolean) ?? [];
+
+  const filteredClasses = (classes ?? []).filter((classItem: any) => {
+    // Text search filter
+    if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
+      if (!classItem.name.toLowerCase().includes(searchTerm) &&
+          !classItem.description?.toLowerCase().includes(searchTerm)) {
+        return false;
+      }
+    }
+    // Quiz age filter
+    if (quizAge !== null && (classItem.minAge > quizAge || classItem.maxAge < quizAge)) {
+      return false;
+    }
+    // Quiz sport type filter
+    if (quizSportTypes.length > 0 && !quizSportTypes.includes(classItem.sportType)) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">

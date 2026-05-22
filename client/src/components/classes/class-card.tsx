@@ -27,23 +27,29 @@ export default function ClassCard({ classData }: ClassCardProps) {
 
   const getProgramLabel = (sportType: string) => {
     const programMap: Record<string, string> = {
-      foundation_prep_year2: "Movement & Skill Foundation (via a Games approach)",
-      emerging_year3_6: "Athletic Development - Year 3 - 6", 
-      junior_development: "Junior Development",
-      team_sport_athletes: "Team Sport Athletes",
-      team_sport_speed: "Team Sport Speed",
-      senior_squad: "Senior Squad",
-      competition_ready: "Competition Ready",
-      empowered_athlete_program: "The Empowered Athlete Program",
-      basketball: "Basketball",
-      soccer: "Soccer",
-      tennis: "Tennis",
-      swimming: "Swimming",
-      athletics: "Athletics",
-      netball: "Netball",
-      cricket: "Cricket",
-      volleyball: "Volleyball",
-      multi_sport: "Multi-Sport",
+      sprints: 'Sprints & Speed',
+      athletics: 'Athletics',
+      jumps: 'Jumps',
+      throws: 'Throws',
+      multi_event: 'Multi-Event',
+      cross_country: 'Cross Country',
+      general_fitness: 'General Fitness',
+      team_sport_speed: 'Team Sport Speed',
+      foundation_prep_year2: 'Foundation - Prep - Year 2',
+      emerging_year3_6: 'Athletic Development - Year 3–6',
+      junior_development: 'Junior Development',
+      team_sport_athletes: 'Team Sport Athletes',
+      senior_squad: 'Senior Squad',
+      competition_ready: 'Competition Ready',
+      empowered_athlete_program: 'The Empowered Athlete Program',
+      basketball: 'Basketball',
+      soccer: 'Soccer',
+      tennis: 'Tennis',
+      swimming: 'Swimming',
+      netball: 'Netball',
+      cricket: 'Cricket',
+      volleyball: 'Volleyball',
+      multi_sport: 'Multi-Sport',
     };
     return programMap[sportType] || sportType?.toUpperCase();
   };
@@ -119,6 +125,20 @@ export default function ClassCard({ classData }: ClassCardProps) {
             </span>
           </div>
 
+          {classData.isEnrollmentOpen !== false && (
+            <div className="flex gap-0.5 mt-1">
+              {Array.from({ length: 10 }, (_, i) => {
+                const filled = Math.round(((classData.currentEnrollment ?? 0) / (classData.maxCapacity ?? 1)) * 10);
+                return (
+                  <div
+                    key={i}
+                    className={`h-1.5 flex-1 rounded-full ${i < filled ? 'bg-blue-500' : 'bg-gray-200'}`}
+                  />
+                );
+              })}
+            </div>
+          )}
+
           <div className="flex items-center text-gray-600">
             <Clock className="w-4 h-4 mr-2" />
             <span className="text-sm">
@@ -141,16 +161,20 @@ export default function ClassCard({ classData }: ClassCardProps) {
             <span className="text-gray-500 text-sm">/per class</span>
           </div>
           
-          {spotsLeft > 0 ? (
+          {classData.isEnrollmentOpen === false ? (
+            <Button disabled className="bg-gray-100 text-gray-400 cursor-not-allowed">
+              Enrolments opening soon
+            </Button>
+          ) : spotsLeft > 0 ? (
             <Link href={`/enrollment/${classData.id}`}>
               <Button className="bg-primary-500 hover:bg-primary-600 text-white transition-colors">
-                Enroll Now
+                Enrol now
               </Button>
             </Link>
           ) : (
             <div className="flex flex-col gap-1">
               {children.slice(0, 2).map((child: any) => {
-                const waitlistEntry = waitlistEntries.find((entry: any) => 
+                const waitlistEntry = waitlistEntries.find((entry: any) =>
                   entry.classId === classData.id && entry.childId === child.id
                 );
                 return (
