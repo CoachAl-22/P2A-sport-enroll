@@ -193,6 +193,9 @@ export const classes = pgTable("classes", {
   pricePerTerm: decimal("price_per_term", { precision: 8, scale: 2 }).notNull(),
   status: classStatusEnum("status").default("active"),
   imageUrl: varchar("image_url", { length: 500 }),
+  isEnrollmentOpen: boolean("is_enrollment_open").default(false).notNull(),
+  isHolidayProgram: boolean("is_holiday_program").default(false).notNull(),
+  isMakeupEligible: boolean("is_makeup_eligible").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -208,6 +211,9 @@ export const enrollments = pgTable("enrollments", {
   autoRenew: boolean("auto_renew").default(true),
   waitlistPosition: integer("waitlist_position"),
   notes: text("notes"),
+  waitlistHolidayReservation: boolean("waitlist_holiday_reservation").default(false).notNull(),
+  priorityReenrolmentExpiry: timestamp("priority_reenrolment_expiry"),
+  makeupCredits: integer("makeup_credits").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -226,6 +232,7 @@ export const payments = pgTable("payments", {
   invoiceGenerated: boolean("invoice_generated").default(false),
   invoicePdfPath: varchar("invoice_pdf_path", { length: 500 }),
   notes: text("notes"),
+  siblingDiscountApplied: boolean("sibling_discount_applied").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
