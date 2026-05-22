@@ -35,6 +35,7 @@ export default function ClassCard({ classData }: ClassCardProps) {
       cross_country: 'Cross Country',
       general_fitness: 'General Fitness',
       team_sport_speed: 'Team Sport Speed',
+      academy_year7_above: 'Academy - Year 7 & Above',
       foundation_prep_year2: 'Foundation - Prep - Year 2',
       emerging_year3_6: 'Athletic Development - Year 3–6',
       junior_development: 'Junior Development',
