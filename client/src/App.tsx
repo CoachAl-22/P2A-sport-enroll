@@ -14,6 +14,7 @@ import Enrollment from "@/pages/enrollment";
 import Admin from "@/pages/admin";
 import Import from "@/pages/import";
 import Checkout from "@/pages/checkout";
+import Confirmation from "@/pages/confirmation";
 import Analytics from "@/pages/analytics";
 import AdminSMS from "@/pages/admin-sms";
 import Blog from "@/pages/blog";
@@ -83,6 +84,7 @@ function Router() {
           <Route path="/questionnaire.html" component={Questionnaire} />
           <Route path="/enrollment/:classId" component={Enrollment} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
+          <Route path="/confirmation" component={Confirmation} />
           <Route path="/waitlist" component={Waitlist} />
           <Route path="/blog" component={Blog} />
           <Route path="/education" component={Blog} />
