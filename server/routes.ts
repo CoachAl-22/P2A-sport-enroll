@@ -724,8 +724,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         dayOfWeek: req.query.dayOfWeek === "all" ? undefined : req.query.dayOfWeek ? parseInt(req.query.dayOfWeek as string) : undefined,
       };
       
-      const classes = await storage.getClassesByFilters(filters);
-      res.json(classes);
+      const classesWithSpots = await storage.getClassesWithSpots(filters);
+      res.json(classesWithSpots);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/classes/sibling-discount", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.json({ eligible: false, count: 0 });
+
+    const { term, year } = req.query as { term?: string; year?: string };
+    if (!term || !year) return res.json({ eligible: false, count: 0 });
+
+    try {
+      const count = await storage.getActiveEnrolmentCountForParent(
+        userId,
+        term,
+        parseInt(year, 10)
+      );
+      res.json({ eligible: count >= 2, count });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

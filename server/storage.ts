@@ -119,6 +119,8 @@ export interface IStorage {
     year?: number;
     dayOfWeek?: number;
   }): Promise<Class[]>;
+  getClassesWithSpots(filters: { sportType?: string; venueId?: string; term?: string; year?: number; dayOfWeek?: number; }): Promise<any[]>;
+  getActiveEnrolmentCountForParent(parentId: string, term: string, year: number): Promise<number>;
   createClass(classData: InsertClass): Promise<Class>;
   updateClass(id: string, updates: Partial<Class>): Promise<Class>;
   deleteClass(id: string): Promise<void>;
@@ -442,6 +444,37 @@ export class DatabaseStorage implements IStorage {
       .from(classes)
       .where(and(...conditions))
       .orderBy(asc(classes.dayOfWeek), asc(classes.startTime));
+  }
+
+  async getClassesWithSpots(filters: {
+    sportType?: string;
+    venueId?: string;
+    term?: string;
+    year?: number;
+    dayOfWeek?: number;
+  }): Promise<any[]> {
+    const classRows = await this.getClassesByFilters(filters);
+    return classRows.map((cls) => ({
+      ...cls,
+      spotsRemaining: (cls.maxCapacity ?? 0) - (cls.currentEnrollment ?? 0),
+      spotsTaken: cls.currentEnrollment ?? 0,
+    }));
+  }
+
+  async getActiveEnrolmentCountForParent(parentId: string, term: string, year: number): Promise<number> {
+    const rows = await db
+      .select()
+      .from(enrollments)
+      .innerJoin(classes, eq(enrollments.classId, classes.id))
+      .where(
+        and(
+          eq(enrollments.parentId, parentId),
+          eq(enrollments.status, 'active'),
+          eq(classes.term, term as any),
+          eq(classes.year, year)
+        )
+      );
+    return rows.length;
   }
 
   async createClass(classData: InsertClass): Promise<Class> {
