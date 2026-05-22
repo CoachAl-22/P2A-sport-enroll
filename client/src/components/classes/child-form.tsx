@@ -5,7 +5,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 
 interface ChildFormProps {
-  onCreated: (childId: string) => void;
+  onCreated: (childId: string, firstName: string, lastName: string) => void;
 }
 
 export default function ChildForm({ onCreated }: ChildFormProps) {
@@ -36,7 +36,7 @@ export default function ChildForm({ onCreated }: ChildFormProps) {
       return res.json();
     },
     onSuccess: (child) => {
-      onCreated(child.id);
+      onCreated(child.id, form.firstName, form.lastName);
     },
     onError: (error: any) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });

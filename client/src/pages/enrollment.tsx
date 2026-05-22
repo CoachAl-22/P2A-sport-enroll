@@ -20,6 +20,7 @@ export default function Enrollment() {
   const [step, setStep] = useState<Step>('child');
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [newChildId, setNewChildId] = useState<string | null>(null);
+  const [newChildName, setNewChildName] = useState<string | null>(null);
 
   const activeChildId = selectedChildId ?? newChildId;
 
@@ -50,12 +51,15 @@ export default function Enrollment() {
   const spotsLeft = cls ? Math.max(0, cls.maxCapacity - (cls.currentEnrollment ?? 0)) : 0;
   const isWaitlist = spotsLeft === 0;
   const pricePerTerm = parseFloat(cls?.pricePerTerm ?? '0');
-  const discountedPrice = siblingDiscount?.eligible ? Math.round(pricePerTerm * 0.8) : null;
+  const discountedPrice = siblingDiscount?.eligible
+    ? Math.round(pricePerTerm * 0.8 * 100) / 100
+    : null;
 
   const selectedChild = children.find((c: any) => c.id === activeChildId);
+  // newChildName is set immediately on child creation so the summary renders before cache refreshes
   const childName = selectedChild
     ? `${selectedChild.firstName} ${selectedChild.lastName}`
-    : null;
+    : newChildName;
 
   const getDayName = (dow: number) => {
     return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dow];
@@ -142,7 +146,13 @@ export default function Enrollment() {
                 <div>
                   <div className="font-semibold text-gray-900">{child.firstName} {child.lastName}</div>
                   <div className="text-sm text-gray-500">
-                    Age {new Date().getFullYear() - new Date(child.dateOfBirth).getFullYear()}
+                    Age {(() => {
+                      const dob = new Date(child.dateOfBirth);
+                      const today = new Date();
+                      let age = today.getFullYear() - dob.getFullYear();
+                      if (today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) age--;
+                      return age;
+                    })()}
                   </div>
                 </div>
               </button>
@@ -175,8 +185,9 @@ export default function Enrollment() {
             </button>
             <h2 className="text-xl font-bold text-gray-900 mb-6">Add a new child</h2>
             <ChildForm
-              onCreated={(childId) => {
+              onCreated={(childId, firstName, lastName) => {
                 setNewChildId(childId);
+                setNewChildName(`${firstName} ${lastName}`);
                 queryClient.invalidateQueries({ queryKey: ["/api/children"] });
                 setStep('summary');
               }}
@@ -231,13 +242,13 @@ export default function Enrollment() {
               disabled={enrollMutation.isPending}
               className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-blue-700 active:scale-95 transition-all mb-3 h-auto"
             >
-              {enrollMutation.isPending ? 'Processing...' : isWaitlist ? 'Join waitlist' : 'Confirm and pay'}
+              {enrollMutation.isPending ? 'Processing...' : isWaitlist ? 'Join waitlist' : 'Confirm and pay →'}
             </Button>
             <button
               onClick={() => setStep('child')}
               className="w-full text-gray-500 py-3 text-sm hover:text-gray-700"
             >
-              Change child
+              ← Change child
             </button>
           </div>
         )}
