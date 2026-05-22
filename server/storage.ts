@@ -120,6 +120,7 @@ export interface IStorage {
     dayOfWeek?: number;
   }): Promise<Class[]>;
   getClassesWithSpots(filters: { sportType?: string; venueId?: string; term?: string; year?: number; dayOfWeek?: number; }): Promise<any[]>;
+  findHolidayClassForAge(childAge: number): Promise<any | null>;
   getActiveEnrolmentCountForParent(parentId: string, term: string, year: number): Promise<number>;
   createClass(classData: InsertClass): Promise<Class>;
   updateClass(id: string, updates: Partial<Class>): Promise<Class>;
@@ -412,6 +413,22 @@ export class DatabaseStorage implements IStorage {
       .from(classes)
       .where(eq(classes.status, "active"))
       .orderBy(asc(classes.dayOfWeek), asc(classes.startTime));
+  }
+
+  async findHolidayClassForAge(childAge: number): Promise<any | null> {
+    const results = await db
+      .select()
+      .from(classes)
+      .where(
+        and(
+          eq(classes.isHolidayProgram, true),
+          eq(classes.isEnrollmentOpen, true),
+          lte(classes.minAge, childAge),
+          gte(classes.maxAge, childAge)
+        )
+      )
+      .limit(1);
+    return results[0] ?? null;
   }
 
   async getClassesByFilters(filters: {

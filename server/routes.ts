@@ -1260,8 +1260,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('SMS notification failed:', smsError);
         // Don't fail the enrollment if SMS fails
       }
-      
-      res.json(enrollment);
+
+      // Holiday program auto-reservation for waitlisted students
+      let holidayReservation = null;
+      if (enrollmentStatus === "waitlist") {
+        try {
+          const childData = await storage.getChild(childId);
+          if (childData?.dateOfBirth) {
+            const dob = new Date(childData.dateOfBirth);
+            const today = new Date();
+            let childAge = today.getFullYear() - dob.getFullYear();
+            if (today.getMonth() < dob.getMonth() ||
+               (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
+              childAge--;
+            }
+            const holidayClass = await storage.findHolidayClassForAge(childAge);
+            if (holidayClass) {
+              holidayReservation = await storage.createEnrollment({
+                childId,
+                classId: holidayClass.id,
+                parentId: userId,
+                status: 'pending_payment' as any,
+                waitlistHolidayReservation: true,
+                autoRenew: false,
+              });
+            }
+          }
+        } catch (holidayError) {
+          console.error('Holiday reservation error:', holidayError);
+          // Don't block the waitlist response if holiday reservation fails
+        }
+      }
+
+      res.json({ enrollment, waitlistPosition, holidayReservation });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }

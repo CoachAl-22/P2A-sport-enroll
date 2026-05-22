@@ -8,7 +8,7 @@ import Navbar from "@/components/layout/navbar";
 import ChildForm from "@/components/classes/child-form";
 import { Button } from "@/components/ui/button";
 
-type Step = 'child' | 'new-child' | 'summary';
+type Step = 'child' | 'new-child' | 'summary' | 'waitlist-confirmed';
 
 export default function Enrollment() {
   const { classId } = useParams<{ classId: string }>();
@@ -21,6 +21,7 @@ export default function Enrollment() {
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [newChildId, setNewChildId] = useState<string | null>(null);
   const [newChildName, setNewChildName] = useState<string | null>(null);
+  const [waitlistResult, setWaitlistResult] = useState<{ waitlistPosition?: number; holidayReservation: any | null } | null>(null);
 
   const activeChildId = selectedChildId ?? newChildId;
 
@@ -75,13 +76,18 @@ export default function Enrollment() {
       });
       return res.json();
     },
-    onSuccess: (enrollment) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/enrollments"] });
+      const enrollment = data.enrollment ?? data; // handle both old and new response shape
       if (enrollment.status === 'pending_payment') {
         setLocation(`/checkout/${enrollment.id}`);
       } else {
-        toast({ title: "Added to waitlist", description: `${childName} is on the waitlist for ${cls?.name}.` });
-        setLocation('/classes');
+        // Waitlist — show confirmation screen
+        setWaitlistResult({
+          waitlistPosition: data.waitlistPosition,
+          holidayReservation: data.holidayReservation ?? null,
+        });
+        setStep('waitlist-confirmed');
       }
     },
     onError: (error: any) => {
@@ -250,6 +256,42 @@ export default function Enrollment() {
             >
               ← Change child
             </button>
+          </div>
+        )}
+        {/* Waitlist confirmation */}
+        {step === 'waitlist-confirmed' && (
+          <div className="text-center py-4">
+            <div className="text-5xl mb-4">📋</div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">You're on the waitlist!</h2>
+            <p className="text-gray-500 mb-6">
+              {childName} is{waitlistResult?.waitlistPosition ? ` #${waitlistResult.waitlistPosition}` : ''} on the waitlist for {cls?.name}.
+            </p>
+
+            {waitlistResult?.holidayReservation && (
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
+                <div className="flex gap-3">
+                  <span className="text-2xl">🎁</span>
+                  <div>
+                    <div className="font-semibold text-amber-800 mb-1">Waitlist bonus</div>
+                    <p className="text-sm text-amber-700">
+                      {childName} has been automatically reserved a spot in our next holiday program.
+                      We'll be in touch with details.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <p className="text-sm text-gray-400 mb-8">
+              We'll SMS you if a class spot opens — you'll have 24 hours to confirm and pay.
+            </p>
+
+            <a
+              href="/classes"
+              className="block w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 text-center"
+            >
+              Browse other classes
+            </a>
           </div>
         )}
       </div>
