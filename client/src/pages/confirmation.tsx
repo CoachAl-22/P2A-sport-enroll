@@ -6,11 +6,27 @@ const getDayName = (dayOfWeek: number) => {
   return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dayOfWeek];
 };
 
-const formatTerm = (term: string, year: number) => {
+interface ClassInfo {
+  name: string;
+  startDate: string;
+  startTime: string;
+  endTime: string;
+  dayOfWeek: number;
+  pricePerTerm: string;
+  term: string;
+  year: number;
+}
+
+interface VenueInfo {
+  name?: string;
+  address?: string;
+}
+
+const formatTerm = (term: string | undefined, year: number) => {
   return `${term?.replace('_', ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}, ${year} (10 weeks)`;
 };
 
-const generateIcs = (cls: any, venue: any) => {
+const generateIcs = (cls: ClassInfo, venue: VenueInfo | null | undefined) => {
   const startDate = new Date(cls.startDate);
   const [startHour, startMin] = cls.startTime.split(':').map(Number);
   const [endHour, endMin] = cls.endTime.split(':').map(Number);
@@ -51,7 +67,7 @@ const generateIcs = (cls: any, venue: any) => {
   ].join('\r\n');
 };
 
-const downloadIcs = (cls: any, venue: any) => {
+const downloadIcs = (cls: ClassInfo, venue: VenueInfo | null | undefined) => {
   const ics = generateIcs(cls, venue);
   const blob = new Blob([ics], { type: 'text/calendar' });
   const url = URL.createObjectURL(blob);
@@ -99,7 +115,7 @@ export default function Confirmation() {
     );
   }
 
-  const { enrollment, class: cls, venue, child, coach } = data;
+  const { enrollment, class: cls, venue, child } = data;
   const siblingDiscountApplied = enrollment?.siblingDiscountApplied ?? false;
 
   return (
@@ -140,9 +156,14 @@ export default function Confirmation() {
           <div className="flex justify-between items-start">
             <span className="text-gray-500">Amount paid</span>
             <div className="text-right">
-              <span className="font-medium text-gray-900">${cls?.pricePerTerm} AUD</span>
-              {siblingDiscountApplied && (
-                <div className="text-xs text-green-600 mt-0.5">20% sibling discount applied</div>
+              {siblingDiscountApplied ? (
+                <>
+                  <span className="line-through text-gray-400 mr-2">${parseFloat(cls?.pricePerTerm ?? '0').toLocaleString('en-AU')}</span>
+                  <span className="font-medium text-gray-900">${(Math.round(parseFloat(cls?.pricePerTerm ?? '0') * 0.8 * 100) / 100).toLocaleString('en-AU')} AUD</span>
+                  <div className="text-xs text-green-600 mt-0.5">20% sibling discount applied</div>
+                </>
+              ) : (
+                <span className="font-medium text-gray-900">${parseFloat(cls?.pricePerTerm ?? '0').toLocaleString('en-AU')} AUD</span>
               )}
             </div>
           </div>
