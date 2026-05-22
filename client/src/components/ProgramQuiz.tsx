@@ -36,7 +36,7 @@ export function ProgramQuiz({ onClose }: Props) {
   const [, setLocation] = useLocation();
 
   function handleGoalSelect(sportTypes: readonly string[]) {
-    if (!selectedAge) return;
+    if (selectedAge === null) return;
     const params = new URLSearchParams({
       age: String(selectedAge),
       sportTypes: sportTypes.join(','),
@@ -51,7 +51,7 @@ export function ProgramQuiz({ onClose }: Props) {
         {/* Progress indicator */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-1">
-            <div className={`h-1.5 w-8 rounded-full ${step === 'age' ? 'bg-blue-600' : 'bg-blue-200'}`} />
+            <div className="h-1.5 w-8 rounded-full bg-blue-600" />
             <div className={`h-1.5 w-8 rounded-full ${step === 'goal' ? 'bg-blue-600' : 'bg-gray-200'}`} />
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">
@@ -103,13 +103,12 @@ export function ProgramQuiz({ onClose }: Props) {
           </>
         )}
 
-        <a
-          href="/classes"
-          className="block text-center text-sm text-gray-400 underline underline-offset-2 mt-6 hover:text-gray-600"
-          onClick={onClose}
+        <button
+          className="block w-full text-center text-sm text-gray-400 underline underline-offset-2 mt-6 hover:text-gray-600"
+          onClick={() => { setLocation('/classes'); onClose(); }}
         >
           Browse all classes instead
-        </a>
+        </button>
       </div>
     </div>
   );
