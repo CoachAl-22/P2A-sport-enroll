@@ -241,7 +241,7 @@ Watch the full video: ${window.location.origin}/video-highlights/${video.shareab
       });
     }).catch(() => {
       // Fallback: open in new window with the message
-      const skoolUrl = `https://www.skool.com/power2adapt/classroom`; // Update with your actual Skool URL
+      const skoolUrl = `https://www.skool.com/power2adapt-speed-school-8929`;
       window.open(skoolUrl, '_blank');
       toast({
         title: "Skool Community Opened",

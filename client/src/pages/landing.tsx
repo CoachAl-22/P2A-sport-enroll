@@ -1112,7 +1112,7 @@ export default function Landing() {
                   <Facebook className="w-6 h-6" />
                 </a>
                 <a 
-                  href="https://skool.com/power2adapt" 
+                  href="https://www.skool.com/power2adapt-speed-school-8929"
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-yellow-500 transition-colors flex items-center justify-center w-6 h-6 text-sm font-bold border border-gray-300 rounded"
