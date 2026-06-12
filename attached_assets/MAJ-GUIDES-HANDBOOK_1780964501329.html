@@ -1,0 +1,1870 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Guide's Handbook — My Athletic Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #0a0a0a;
+    --surface: #111111;
+    --card:    #161616;
+    --card2:   #1c1c1c;
+    --border:  #242424;
+    --border2: #2e2e2e;
+    --orange:  #F26522;
+    --orange-d: rgba(242,101,34,0.1);
+    --orange-b: rgba(242,101,34,0.25);
+    --cyan:    #00B4D8;
+    --cyan-d:  rgba(0,180,216,0.1);
+    --cyan-b:  rgba(0,180,216,0.25);
+    --gold:    #F5C842;
+    --gold-d:  rgba(245,200,66,0.08);
+    --green:   #22c55e;
+    --green-d: rgba(34,197,94,0.1);
+    --text:    #ffffff;
+    --text2:   #999999;
+    --text3:   #555555;
+    --font-h:  'Barlow Condensed', sans-serif;
+    --font-b:  'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: var(--font-b);
+    line-height: 1.6;
+  }
+
+  /* ── UTILITIES ──────────────────────────────────── */
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 28px; }
+  .label {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+  .label.cyan { color: var(--cyan); }
+  .label.gold  { color: var(--gold); }
+  .divider { height: 1px; background: var(--border); max-width: 860px; margin: 0 auto; }
+  .divider.accent { background: linear-gradient(90deg, transparent, var(--border), var(--orange), var(--border), transparent); }
+
+  /* ── NAV ────────────────────────────────────────── */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 28px;
+  }
+  .nav-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .nav-brand {
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-right: 12px;
+    white-space: nowrap;
+  }
+  .nav-link {
+    font-family: var(--font-h);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .nav-link:hover { color: var(--text); border-color: var(--border2); }
+  .nav-link.active { color: var(--orange); border-color: var(--orange-b); background: var(--orange-d); }
+
+  /* ── HERO ───────────────────────────────────────── */
+  .hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 28px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '📖';
+    position: absolute;
+    font-size: 300px;
+    opacity: 0.025;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -54%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 640px; margin: 0 auto; position: relative; }
+  .hero-eyebrow {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+  .hero-tag {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 8px;
+  }
+  .hero-title {
+    font-family: var(--font-h);
+    font-size: 68px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .hero-title span { color: var(--cyan); }
+  .hero-sub {
+    font-family: var(--font-h);
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 20px;
+  }
+  .hero-intro {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.7;
+    font-style: italic;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* ── SECTION BLOCKS ─────────────────────────────── */
+  .section-block { padding: 44px 0 36px; }
+  .section-block + .divider { }
+  .section-title {
+    font-family: var(--font-h);
+    font-size: 34px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 6px 0 20px;
+    line-height: 1;
+  }
+
+  /* ── PHILOSOPHY CARDS ───────────────────────────── */
+  .phil-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .phil-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .phil-icon { font-size: 24px; margin-bottom: 8px; line-height: 1; }
+  .phil-title {
+    font-family: var(--font-h);
+    font-size: 17px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--cyan);
+    margin-bottom: 6px;
+  }
+  .phil-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* ── THREE ROLES ────────────────────────────────── */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .role-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 18px;
+    text-align: center;
+  }
+  .role-card.guide { border-color: var(--cyan-b); background: rgba(0,180,216,0.05); }
+  .role-icon { font-size: 32px; margin-bottom: 8px; line-height: 1; }
+  .role-label {
+    font-family: var(--font-h);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 3px;
+  }
+  .role-name {
+    font-family: var(--font-h);
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .role-card.hero-role .role-name { color: var(--orange); }
+  .role-card.guide .role-name { color: var(--cyan); }
+  .role-card.ally .role-name { color: var(--gold); }
+  .role-desc { font-size: 12px; color: var(--text2); line-height: 1.55; }
+
+  /* ── GUIDE VS INSTRUCTOR ────────────────────────── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .compare-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .compare-card.good { border-color: var(--cyan-b); }
+  .compare-card.avoid { border-color: rgba(255,80,80,0.2); }
+  .compare-header {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-card.good .compare-header { color: var(--cyan); }
+  .compare-card.avoid .compare-header { color: rgba(255,100,100,0.8); }
+  .compare-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    font-size: 12.5px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  .compare-dot { flex-shrink: 0; margin-top: 5px; width: 5px; height: 5px; border-radius: 50%; }
+  .compare-card.good .compare-dot { background: var(--cyan); }
+  .compare-card.avoid .compare-dot { background: rgba(255,100,100,0.6); }
+
+  /* ── COACHING BEHAVIOURS ────────────────────────── */
+  .behaviour-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .behaviour-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .behaviour-num {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text3);
+    flex-shrink: 0;
+    line-height: 1;
+    width: 24px;
+    text-align: right;
+  }
+  .behaviour-body {}
+  .behaviour-title {
+    font-family: var(--font-h);
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--cyan);
+    margin-bottom: 3px;
+  }
+  .behaviour-desc { font-size: 12.5px; color: var(--text2); line-height: 1.55; }
+
+  /* ── GUIDE'S CODE ───────────────────────────────── */
+  .code-block {
+    background: var(--card);
+    border: 1px solid var(--cyan-b);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .code-title {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--cyan);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .code-line {
+    font-family: var(--font-h);
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 8px;
+    padding-left: 16px;
+    border-left: 2px solid var(--cyan);
+  }
+  .code-line:last-child { margin-bottom: 0; }
+
+  /* ── PROTOCOL CARDS ─────────────────────────────── */
+  .protocol-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .protocol-header {
+    background: var(--card2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .protocol-icon { font-size: 22px; flex-shrink: 0; }
+  .protocol-title {
+    font-family: var(--font-h);
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .protocol-body { padding: 18px 20px; }
+  .protocol-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .protocol-step:last-child { margin-bottom: 0; }
+  .ps-num {
+    font-family: var(--font-h);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: var(--orange-d);
+    border: 1px solid var(--orange-b);
+    color: var(--orange);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .ps-text { font-size: 13px; color: var(--text2); line-height: 1.55; }
+  .ps-text strong { color: var(--text); }
+
+  /* ── SESSION STRUCTURE TABLE ────────────────────── */
+  .session-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+  }
+  .session-table th {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border2);
+    text-align: left;
+  }
+  .session-table td {
+    font-size: 12.5px;
+    color: var(--text2);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .session-table tr:last-child td { border-bottom: none; }
+  .session-table .phase {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .learn-col { color: var(--text3); }
+  .do-col { color: var(--orange); }
+  .reflect-col { color: var(--cyan); }
+
+  /* ── BADGE STANDARDS ────────────────────────────── */
+  .badge-standard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 10px;
+  }
+  .badge-standard.q2 { border-color: var(--orange-b); }
+  .bs-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .bs-icon { font-size: 22px; flex-shrink: 0; }
+  .bs-title {
+    font-family: var(--font-h);
+    font-size: 17px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--orange);
+  }
+  .bs-week { font-size: 11px; color: var(--text3); letter-spacing: 1px; font-family: var(--font-h); text-transform: uppercase; margin-left: auto; }
+  .bs-criteria {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .bs-col-label {
+    font-family: var(--font-h);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .earned-label { color: var(--green); }
+  .notyet-label { color: rgba(255,100,100,0.7); }
+  .bs-item {
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+  .bs-dot { flex-shrink: 0; margin-top: 5px; width: 5px; height: 5px; border-radius: 50%; }
+  .earned-dot { background: var(--green); }
+  .notyet-dot { background: rgba(255,100,100,0.6); }
+
+  /* ── STICKER RITUAL ─────────────────────────────── */
+  .ritual-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .ritual-step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .rs-icon { font-size: 18px; flex-shrink: 0; width: 24px; text-align: center; }
+  .rs-body {}
+  .rs-title {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--gold);
+    margin-bottom: 2px;
+  }
+  .rs-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+
+  /* ── PARENT COMMS ───────────────────────────────── */
+  .comms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .comms-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .comms-situation {
+    font-family: var(--font-h);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+  .comms-text { font-size: 12px; color: var(--text2); line-height: 1.6; font-style: italic; }
+
+  /* ── QUEST DIVIDER ──────────────────────────────── */
+  .quest-divider {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 0;
+  }
+  .qd-num {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .qd-icon { font-size: 40px; margin-bottom: 6px; line-height: 1; }
+  .qd-title {
+    font-family: var(--font-h);
+    font-size: 40px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .qd-realm {
+    font-family: var(--font-h);
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+  }
+
+  .q1-accent { color: var(--cyan); }
+  .q2-accent { color: var(--orange); }
+
+  /* ── WEEK CARD ──────────────────────────────────── */
+  .week-cards { padding: 24px 0; }
+  .week-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .week-card.badge-week { border-color: var(--orange-b); }
+  .week-card.showcase-week { border-color: rgba(245,200,66,0.35); }
+
+  .week-header {
+    background: var(--card2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .wh-left {}
+  .wh-tag-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .week-tag {
+    font-family: var(--font-h);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+  .q1-tag { background: rgba(0,180,216,0.12); color: var(--cyan); border: 1px solid rgba(0,180,216,0.25); }
+  .q2-tag { background: rgba(242,101,34,0.12); color: var(--orange); border: 1px solid rgba(242,101,34,0.25); }
+  .badge-pill {
+    font-family: var(--font-h);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: var(--orange-d);
+    border: 1px solid var(--orange-b);
+    color: var(--orange);
+  }
+  .badge-pill.gold { background: var(--gold-d); border-color: rgba(245,200,66,0.4); color: var(--gold); }
+  .week-theme {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+  .week-narrative {
+    font-size: 11.5px;
+    color: var(--text3);
+    font-style: italic;
+    margin-top: 3px;
+  }
+  .wh-xp {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text3);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* ── WEEK BODY GRID ─────────────────────────────── */
+  .week-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .week-col {
+    padding: 14px 16px;
+    border-right: 1px solid var(--border);
+  }
+  .week-col:last-child { border-right: none; }
+  .wc-label {
+    font-family: var(--font-h);
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .notice-label  { color: var(--cyan); }
+  .before-label  { color: var(--text3); }
+  .during-label  { color: var(--orange); }
+  .after-label   { color: var(--text3); }
+
+  .wc-title {
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 5px;
+    line-height: 1.2;
+  }
+  .notice-col .wc-title { color: var(--cyan); }
+
+  .wc-text { font-size: 11.5px; color: var(--text2); line-height: 1.55; }
+  .wc-text ul { padding-left: 12px; }
+  .wc-text li { margin-bottom: 3px; }
+  .wc-text strong { color: var(--text); }
+  .wc-text em { color: var(--text3); }
+
+  /* badge week assessment panel */
+  .assess-panel {
+    border-top: 1px solid var(--orange-b);
+    background: rgba(242,101,34,0.04);
+    padding: 14px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .assess-panel.gold-panel {
+    border-top-color: rgba(245,200,66,0.35);
+    background: var(--gold-d);
+  }
+  .ap-label {
+    font-family: var(--font-h);
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .ap-earned { color: var(--green); }
+  .ap-notyet { color: rgba(255,100,100,0.7); }
+  .ap-item {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    font-size: 11.5px;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+  .ap-dot { flex-shrink: 0; width: 5px; height: 5px; border-radius: 50%; margin-top: 5px; }
+  .ap-earned-dot { background: var(--green); }
+  .ap-notyet-dot { background: rgba(255,100,100,0.5); }
+
+  /* ── FOOTER ─────────────────────────────────────── */
+  .page-footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 48px;
+  }
+  .footer-brand {
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+  .footer-text { font-size: 11px; color: var(--text3); font-style: italic; text-align: center; }
+  .footer-url { font-family: var(--font-h); font-size: 11px; letter-spacing: 1px; color: var(--text3); text-align: right; }
+
+  /* ── CALLOUT ────────────────────────────────────── */
+  .callout {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .callout.cyan { background: var(--cyan-d); border: 1px solid var(--cyan-b); }
+  .callout.orange { background: var(--orange-d); border: 1px solid var(--orange-b); }
+  .callout.gold { background: var(--gold-d); border: 1px solid rgba(245,200,66,0.3); }
+  .callout-icon { font-size: 18px; flex-shrink: 0; }
+  .callout-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .callout-text strong { color: var(--text); }
+
+  @media print {
+    @page { size: A4; margin: 14mm 16mm; }
+    body { background: #0a0a0a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sticky-nav { display: none; }
+    .hero::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <span class="nav-brand">Guide's Handbook</span>
+    <a class="nav-link" href="#mindset">The Guide's Mindset</a>
+    <a class="nav-link" href="#protocols">Coach Protocols</a>
+    <a class="nav-link" href="#quest1">Quest I Cards</a>
+    <a class="nav-link" href="#quest2">Quest II Cards</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">My Athletic Journey &nbsp;·&nbsp; Power2ADAPT</div>
+    <div class="hero-tag">📖 &nbsp;The Guide's Handbook</div>
+    <h1 class="hero-title">For the<br><span>Guide</span></h1>
+    <div class="hero-sub">Coach Edition &nbsp;·&nbsp; Quest I &amp; Quest II</div>
+    <p class="hero-intro">
+      The athlete is the hero. You are the guide.<br>
+      Your job is not to direct — it is to ask, notice, and believe<br>
+      in potential before the athlete can see it themselves.
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 1: THE GUIDE'S MINDSET                    -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="mindset"></div>
+<div class="divider accent"></div>
+
+<div class="section-block">
+  <div class="wrap">
+    <div class="label cyan">Section 1</div>
+    <div class="section-title">The Guide's<br>Mindset</div>
+
+    <!-- WELCOME -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin-bottom:24px;">
+      <div class="label" style="margin-bottom:8px;">A Word From Coach Al</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:12px;">
+        My Athletic Journey was built on one belief: <strong style="color:var(--text);">every athlete has potential</strong>. Not just the fastest, the strongest, or the most naturally gifted. Every single one of them.
+      </p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:12px;">
+        Your job as a guide is to hold that belief on behalf of the athlete — especially on the days they can't hold it themselves. You are not here to evaluate their talent. You are here to develop their capability, build their confidence, and help them discover who they are capable of becoming.
+      </p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:12px;">
+        This handbook is your reference. Read the mindset section and understand it thoroughly. Use the session cards every week. The more you live this philosophy, the better the athletes in your care will become.
+      </p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;">
+        Thank you for being part of this journey. It matters more than you know.
+      </p>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-family:var(--font-h);font-size:13px;letter-spacing:1px;color:var(--orange);">Coach Al &nbsp;·&nbsp; Power2ADAPT</div>
+    </div>
+
+    <!-- THE THREE ROLES -->
+    <div class="label" style="margin-bottom:6px;">The Hero's Journey</div>
+    <div style="font-family:var(--font-h);font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">The Three Roles</div>
+    <div class="roles-grid">
+      <div class="role-card hero-role">
+        <div class="role-icon">⚔️</div>
+        <div class="role-label">The Athlete</div>
+        <div class="role-name">The Hero</div>
+        <div class="role-desc">The athlete walks the path. Faces the challenges. Earns the growth. Every decision, every rep, every reflection belongs to them. The hero does the work.</div>
+      </div>
+      <div class="role-card guide">
+        <div class="role-icon">🧭</div>
+        <div class="role-label">The Coach</div>
+        <div class="role-name">The Guide</div>
+        <div class="role-desc">The guide provides wisdom, asks questions, and helps the athlete discover their own potential. The guide does not carry the hero — the guide points the way. <strong style="color:var(--cyan);">This is your role.</strong></div>
+      </div>
+      <div class="role-card ally">
+        <div class="role-icon">🤝</div>
+        <div class="role-label">The Parent</div>
+        <div class="role-name">The Ally</div>
+        <div class="role-desc">The ally provides encouragement, support, and belief. They walk beside the hero. Your relationship with parents should reinforce this role — never replace the hero's agency.</div>
+      </div>
+    </div>
+
+    <div class="callout cyan" style="margin-bottom:24px;">
+      <span class="callout-icon">💡</span>
+      <div class="callout-text"><strong>The most common mistake:</strong> coaches who become the hero of someone else's story. When a coach takes over, directs every move, and gives every answer — the athlete stops owning their development. The guide's power comes from restraint. Ask more. Tell less.</div>
+    </div>
+
+    <!-- GUIDE VS INSTRUCTOR -->
+    <div class="label" style="margin-bottom:6px;">The Mindset Shift</div>
+    <div style="font-family:var(--font-h);font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">Guide vs. Instructor</div>
+    <div class="compare-grid">
+      <div class="compare-card good">
+        <div class="compare-header">✓ &nbsp;The Guide Does This</div>
+        <div class="compare-item"><div class="compare-dot"></div>Asks "What did you notice about that rep?" instead of immediately correcting</div>
+        <div class="compare-item"><div class="compare-dot"></div>Lets the athlete struggle productively before stepping in</div>
+        <div class="compare-item"><div class="compare-dot"></div>Names the effort and process: "That took real focus"</div>
+        <div class="compare-item"><div class="compare-dot"></div>Connects today's session to the bigger journey</div>
+        <div class="compare-item"><div class="compare-dot"></div>Asks the reflection prompt and genuinely listens to the answer</div>
+        <div class="compare-item"><div class="compare-dot"></div>Withholds a badge and explains clearly what is needed to earn it</div>
+        <div class="compare-item"><div class="compare-dot"></div>Notices when an athlete is struggling beyond the physical</div>
+      </div>
+      <div class="compare-card avoid">
+        <div class="compare-header">✗ &nbsp;The Instructor Does This</div>
+        <div class="compare-item"><div class="compare-dot"></div>Immediately corrects every error without asking first</div>
+        <div class="compare-item"><div class="compare-dot"></div>Rescues the athlete from productive struggle too early</div>
+        <div class="compare-item"><div class="compare-dot"></div>Praises outcomes only: "That was fast" — not the effort behind it</div>
+        <div class="compare-item"><div class="compare-dot"></div>Treats every session as isolated — no reference to the arc</div>
+        <div class="compare-item"><div class="compare-dot"></div>Rushes through or skips the reflection step</div>
+        <div class="compare-item"><div class="compare-dot"></div>Awards badges to avoid difficult conversations</div>
+        <div class="compare-item"><div class="compare-dot"></div>Only coaches the physical — misses the whole athlete</div>
+      </div>
+    </div>
+
+    <!-- GREAT COACHING BEHAVIOURS -->
+    <div class="label" style="margin-bottom:6px;">What Great Looks Like</div>
+    <div style="font-family:var(--font-h);font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">8 Behaviours of a Great Guide</div>
+    <div class="behaviour-list">
+      <div class="behaviour-item">
+        <div class="behaviour-num">1</div>
+        <div class="behaviour-body">
+          <div class="behaviour-title">You know each athlete's name and their skill focus</div>
+          <div class="behaviour-desc">Before the session starts, you know what each athlete chose in Week 1 and where they are in their development. Personalised attention is the multiplier.</div>
+        </div>
+      </div>
+      <div class="behaviour-item">
+        <div class="behaviour-num">2</div>
+        <div class="behaviour-body">
+          <div class="behaviour-title">You read the week's concept before coaching it</div>
+          <div class="behaviour-desc">The athlete reads it too. If you haven't read it, you can't connect their session experience back to the concept — and that connection is what makes learning stick.</div>
+        </div>
+      </div>
+      <div class="behaviour-item">
+        <div class="behaviour-num">3</div>
+        <div class="behaviour-body">
+          <div class="behaviour-title">You use the reflection prompt — and you listen</div>
+          <div class="behaviour-desc">The reflection is not a formality. It is the most important two minutes of the session. An athlete who can articulate what they learned has locked it in. Ask the prompt. Wait. Listen fully before responding.</div>
+        </div>
+      </div>
+      <div class="behaviour-item">
+        <div class="behaviour-num">4</div>
+        <div class="behaviour-body">
+          <div class="behaviour-title">You notice and name effort and growth specifically</div>
+          <div class="behaviour-desc">Not "good job." Instead: "I noticed you slowed down and checked your technique on rep 15 — that's exactly the discipline that builds skill." Specific recognition is infinitely more powerful than generic praise.</div>
+        </div>
+      </div>
+      <div class="behaviour-item">
+        <div class="behaviour-num">5</div>
+        <div class="behaviour-body">
+          <div class="behaviour-title">You connect today to the bigger journey</div>
+          <div class="behaviour-desc">"Remember what you said in Week 1 about your goal? Look at where you are now." Athletes who understand they are on a journey stay longer, try harder, and grow more.</div>
+        </div>
+      </div>
+      <div class="behaviour-item">
+        <div class="behaviour-num">6</div>
+        <div class="behaviour-body">
+          <div class="behaviour-title">You hold the standard on badges</div>
+          <div class="behaviour-desc">A badge awarded without being earned is worse than no badge at all. It tells the athlete their effort doesn't matter. If they are not ready at Week 8, tell them clearly what they need and give them a path to earn it.</div>
+        </div>
+      </div>
+      <div class="behaviour-item">
+        <div class="behaviour-num">7</div>
+        <div class="behaviour-body">
+          <div class="behaviour-title">You make the sticker moment meaningful</div>
+          <div class="behaviour-desc">The gold star sticker is not just a sticker. It is a ritual that marks a real achievement. Stop the session. Make it visible. Name what the athlete did to earn it. Let it land.</div>
+        </div>
+      </div>
+      <div class="behaviour-item">
+        <div class="behaviour-num">8</div>
+        <div class="behaviour-body">
+          <div class="behaviour-title">You coach the person, not just the movement</div>
+          <div class="behaviour-desc">Athletic development is the vehicle. Confidence, character, and resilience are the destination. When an athlete is struggling emotionally — with a setback, a bad day, a loss of confidence — notice it. Address it. That is the most important coaching you will ever do.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THE GUIDE'S CODE -->
+    <div class="label" style="margin-bottom:6px;">Your Commitment</div>
+    <div style="font-family:var(--font-h);font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">The Guide's Code</div>
+    <div class="code-block">
+      <div class="code-title">I am a Guide, not a Director.</div>
+      <div class="code-line">I believe in every athlete's potential before they do.</div>
+      <div class="code-line">I ask before I tell.</div>
+      <div class="code-line">I let athletes struggle productively.</div>
+      <div class="code-line">I notice effort and name it specifically.</div>
+      <div class="code-line">I connect every session to the bigger journey.</div>
+      <div class="code-line">I hold the standard on every badge.</div>
+      <div class="code-line">I make the sticker moment mean something.</div>
+      <div class="code-line">I coach the person first and the athlete second.</div>
+      <div class="code-line">I know that my belief changes what athletes believe about themselves.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 2: COACH PROTOCOLS                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="divider accent"></div>
+<div id="protocols"></div>
+
+<div class="section-block">
+  <div class="wrap">
+    <div class="label">Section 2</div>
+    <div class="section-title">Coach<br>Protocols</div>
+
+    <!-- SESSION STRUCTURE -->
+    <div class="label" style="margin-bottom:6px;">Every Session</div>
+    <div style="font-family:var(--font-h);font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">The Session Structure — Coach's View</div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;">
+      <table class="session-table">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>What the Athlete Does</th>
+            <th>What the Guide Does</th>
+            <th>XP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="phase learn-col">📖 Learn</span></td>
+            <td>Reads the concept article in the MAJ app (2–3 min) and taps "Mark as read"</td>
+            <td>Read the concept yourself before the session. When the athlete marks it done, ask: <em>"What was the one thing that stood out to you from the reading?"</em></td>
+            <td style="font-family:var(--font-h);font-weight:700;color:var(--text3);">10 XP</td>
+          </tr>
+          <tr>
+            <td><span class="phase do-col">⚡ Do</span></td>
+            <td>Completes the session challenge — the physical work</td>
+            <td>Run the challenge as designed on the session card. Use the coaching cues in the "During" column. <strong>Observe</strong> — don't just manage traffic. Look for the specific things listed in "What to Notice."</td>
+            <td style="font-family:var(--font-h);font-weight:700;color:var(--orange);">10 XP + badge XP</td>
+          </tr>
+          <tr>
+            <td><span class="phase reflect-col">✏️ Reflect</span></td>
+            <td>Writes their reflection in the Hero's Journal and the MAJ app (min 5 words)</td>
+            <td>Ask the reflection prompt out loud before they write. Give them a moment to think. When they have written, confirm in the app that the session is complete. <strong>Do not skip this step.</strong></td>
+            <td style="font-family:var(--font-h);font-weight:700;color:var(--cyan);">15 XP</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- BADGE ASSESSMENT PROTOCOL -->
+    <div class="label" style="margin-bottom:6px;">Badge Weeks</div>
+    <div style="font-family:var(--font-h);font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">Badge Assessment Protocol</div>
+
+    <div class="protocol-card">
+      <div class="protocol-header">
+        <span class="protocol-icon">🏅</span>
+        <div class="protocol-title">How to Assess and Award a Badge</div>
+      </div>
+      <div class="protocol-body">
+        <div class="protocol-step">
+          <div class="ps-num">1</div>
+          <div class="ps-text"><strong>Know the standard before the session.</strong> Each badge week card has specific, observable criteria for "Earned" and "Not Yet." Read them before the session so you know exactly what you're looking for.</div>
+        </div>
+        <div class="protocol-step">
+          <div class="ps-num">2</div>
+          <div class="ps-text"><strong>Observe during the Do phase.</strong> You are not just running the session — you are assessing. Watch specifically for the criteria listed. Make a mental note before the session ends.</div>
+        </div>
+        <div class="protocol-step">
+          <div class="ps-num">3</div>
+          <div class="ps-text"><strong>If earned:</strong> Tell the athlete specifically what you observed. <em>"I'm awarding your Rep Champion badge because I saw you slow down and self-correct on rep 12 — that's exactly the discipline this badge represents."</em> Then go to the sticker ritual.</div>
+        </div>
+        <div class="protocol-step">
+          <div class="ps-num">4</div>
+          <div class="ps-text"><strong>If not yet earned:</strong> Be honest and specific. <em>"You're not there yet — here's exactly what I need to see: [one specific thing]. Let's get you to that standard."</em> Do not award a badge to avoid a hard conversation. Set a clear path to earn it.</div>
+        </div>
+        <div class="protocol-step">
+          <div class="ps-num">5</div>
+          <div class="ps-text"><strong>Confirm in the app.</strong> Go to the coach login, find the athlete, and confirm the badge award. This triggers the digital badge on their profile. Do this before the end of the session or immediately after.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STICKER RITUAL -->
+    <div class="label" style="margin-bottom:6px;">The Moment That Matters</div>
+    <div style="font-family:var(--font-h);font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">The Sticker Ritual</div>
+
+    <div class="callout gold" style="margin-bottom:14px;">
+      <span class="callout-icon">⭐</span>
+      <div class="callout-text"><strong>The sticker is a ritual, not an admin task.</strong> When done well, this is one of the most memorable moments in an athlete's session. The gold star sticker represents something genuinely earned — make it feel that way. Compatible with standard 19mm gold star or gold dot stickers from Officeworks.</div>
+    </div>
+
+    <div class="ritual-steps">
+      <div class="ritual-step">
+        <span class="rs-icon">⏸️</span>
+        <div class="rs-body">
+          <div class="rs-title">Stop the session</div>
+          <div class="rs-desc">Do not hand the sticker over while something else is happening. Stop. Make it the only thing happening in that moment.</div>
+        </div>
+      </div>
+      <div class="ritual-step">
+        <span class="rs-icon">🗣️</span>
+        <div class="rs-body">
+          <div class="rs-title">Name what was earned</div>
+          <div class="rs-desc">Tell the athlete — and ideally the group — exactly what they did to earn the badge. Specific. Real. Not "great effort." <em>"You held your technique through 20 reps including when you were tired. That is what the Rep Champion badge is for."</em></div>
+        </div>
+      </div>
+      <div class="ritual-step">
+        <span class="rs-icon">⭐</span>
+        <div class="rs-body">
+          <div class="rs-title">Peel and hand the sticker to the athlete</div>
+          <div class="rs-desc">You peel it, you hand it to them. Do not just leave it on the table. The handover is part of the ritual. Let them place it on their Quest Map.</div>
+        </div>
+      </div>
+      <div class="ritual-step">
+        <span class="rs-icon">👏</span>
+        <div class="rs-body">
+          <div class="rs-title">Let the group acknowledge it</div>
+          <div class="rs-desc">A brief moment of group recognition builds culture. Other athletes watching a badge be earned understand what it takes — and want it too.</div>
+        </div>
+      </div>
+      <div class="ritual-step">
+        <span class="rs-icon">📱</span>
+        <div class="rs-body">
+          <div class="rs-title">Confirm in the app</div>
+          <div class="rs-desc">The physical sticker and the digital badge should land together. Confirm in the coach login so the athlete sees their badge in the app at the same session.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARENT COMMUNICATION -->
+    <div class="label" style="margin-bottom:6px;">Keeping Families Aligned</div>
+    <div style="font-family:var(--font-h);font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">Parent Communication</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:14px;">Parents are the Ally. Keep them informed, frame progress in terms of the journey, and never speak about an athlete's development in ways that compare them to others. Short, specific, genuine communication builds trust.</p>
+    <div class="comms-grid">
+      <div class="comms-card">
+        <div class="comms-situation">Badge Earned</div>
+        <div class="comms-text">"[Name] earned their Rep Champion badge today. They showed real discipline — they slowed down and self-corrected under fatigue. Worth celebrating at home tonight."</div>
+      </div>
+      <div class="comms-card">
+        <div class="comms-situation">Badge Not Yet Earned</div>
+        <div class="comms-text">"[Name] is close to their badge — they need one more thing: [specific]. We've given them a clear path. They know what to work on. Watch for it next session."</div>
+      </div>
+      <div class="comms-card">
+        <div class="comms-situation">Athlete Struggling</div>
+        <div class="comms-text">"[Name] had a tough session today — which is actually a good sign. Struggle is where growth happens. We talked about it. They're on the right track. Give them a quiet word tonight."</div>
+      </div>
+      <div class="comms-card">
+        <div class="comms-situation">Quest Complete</div>
+        <div class="comms-text">"[Name] completed Quest [I/II] today. This is a real milestone — they've worked through 8 weeks and demonstrated genuine improvement. Ask them to show you their Quest Map tonight."</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 3: QUEST I SESSION CARDS                  -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="divider accent"></div>
+<div id="quest1"></div>
+
+<div class="quest-divider">
+  <div class="qd-num q1-accent">Quest I</div>
+  <div class="qd-icon">🧭</div>
+  <div class="qd-title q1-accent">Build the Foundations</div>
+  <div class="qd-realm q1-accent">Realm of Discovery &nbsp;·&nbsp; The Explorer</div>
+</div>
+
+<div class="week-cards">
+  <div class="wrap">
+
+    <!-- Q1 W1 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q1-tag">Q1 · Week 1</span></div>
+          <div class="week-theme">Ignite Your Engine</div>
+          <div class="week-narrative">The Explorer takes their first step. Today is where the story begins and the baseline is set.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Confidence and comfort level</div>
+          <div class="wc-text">Who engages immediately and who holds back? First sessions reveal a lot about an athlete's relationship with challenge. Note who needs extra encouragement to commit to a baseline rating.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Ensure all athletes have MAJ app access</li>
+            <li>Have Hero's Journals available</li>
+            <li>Prepare a brief overview of the 8-week journey</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Walk athletes through what Quest I is about before starting. Frame everything as exploration — there are no wrong answers today. Help each athlete choose a genuine baseline rating out of 10. <strong>This number matters for Week 8.</strong></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app sessions complete</li>
+            <li>Note each athlete's baseline rating</li>
+            <li>Reflection prompt: <em>"Why did I join — what do I want to achieve?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 W2 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q1-tag">Q1 · Week 2</span></div>
+          <div class="week-theme">Speed &amp; Power</div>
+          <div class="week-narrative">The Explorer discovers what their body can do when strength and speed combine.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Who surprised themselves</div>
+          <div class="wc-text">Athletes who discover unexpected capacity in this session often become the most committed. Name it when you see it: <em>"That surprised you, didn't it? That's what's possible."</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Set up speed/power stations</li>
+            <li>Plan to record any measurable outputs for future comparison</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Connect concept to session: <em>"Power is strength plus speed. Today you're going to find out what your combination looks like."</em> Push for genuine effort. Celebrate hard attempts as much as good results.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app sessions complete</li>
+            <li>Reflection: <em>"What surprised you about how fast or powerful you can move?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 W3 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q1-tag">Q1 · Week 3</span></div>
+          <div class="week-theme">Coordination</div>
+          <div class="week-narrative">The Explorer learns that the mind-body connection is trainable — not fixed.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Frustration with struggle</div>
+          <div class="wc-text">Coordination challenges expose athletes who believe ability is fixed ("I'm just not coordinated"). Watch for frustration. Interrupt it: <em>"This is supposed to be hard. Your brain is literally building new pathways right now."</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Prepare coordination drills suited to age/ability</li>
+            <li>Have progressions ready — easier and harder versions</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Explicitly link this to the Week 2 concept: skill is built through repetition. Today's struggle is today's growth. Ask athletes to rate their coordination at the start and end of the drill — they often improve within a single session.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Reflection: <em>"What coordination challenge did I struggle with — and what will help me improve it?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 W4 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q1-tag">Q1 · Week 4</span></div>
+          <div class="week-theme">Endurance</div>
+          <div class="week-narrative">The Explorer discovers that effort is a choice — and that choosing to keep going changes you.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Who chooses to stop early</div>
+          <div class="wc-text">Endurance sessions are character sessions. Who finds an extra gear and who opts out? Neither response is permanent — but both are worth a private conversation. This is coaching, not just fitness.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Set clear, achievable targets for all ability levels</li>
+            <li>Warm-up that builds progressively</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Give athletes something to aim at — not just "keep going." Use specific targets: "30 more seconds," "10 more metres." Acknowledge athletes who push past their comfort zone publicly and specifically.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Reflection: <em>"When did I want to stop — and what made me keep going?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 W5 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q1-tag">Q1 · Week 5</span></div>
+          <div class="week-theme">Balance &amp; Body Control</div>
+          <div class="week-narrative">The Explorer learns that control is the foundation of all athletic expression.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Control vs. speed trade-off</div>
+          <div class="wc-text">Athletes who rush through balance drills to look capable. The lesson here is the opposite of hustle — slowing down reveals more. Name it: <em>"The goal is control, not speed. If you're wobbling, slow down."</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Set up balance stations</li>
+            <li>Have progressions for athletes who master the base quickly</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Slow everything down. Ask athletes to close their eyes at certain points — this removes visual compensation and forces true proprioceptive balance. Connect to sport: <em>"Every time you change direction, this is what you're relying on."</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Reflection: <em>"What does it feel like when your body is in balance — and when does it fall apart?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 W6 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q1-tag">Q1 · Week 6</span></div>
+          <div class="week-theme">Reaction Time</div>
+          <div class="week-narrative">The Explorer trains their brain — because in sport, the fastest decision is often the one that matters.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Anticipation vs. reaction</div>
+          <div class="wc-text">Some athletes are fast because they read the situation early. Others are fast because they are physically explosive. Both are valuable — help each athlete understand which is their strength and how to develop the other.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Prepare reactive drills — audio and visual cues</li>
+            <li>Vary the signal type to test true reaction (not anticipation)</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Vary timing so athletes can't predict the signal. Let them experience the difference between reacting and guessing. Connect to their sport: <em>"When does reaction speed matter most in [their sport]?"</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Reflection: <em>"What helped you react faster today — and what slowed you down?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 W7 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q1-tag">Q1 · Week 7</span></div>
+          <div class="week-theme">Teamwork &amp; Communication</div>
+          <div class="week-narrative">The Explorer discovers that the best athletes make everyone around them better.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Who communicates — and how</div>
+          <div class="wc-text">Leadership often appears here first. Who organises, encourages, and communicates clearly under pressure? Note it. These athletes are your Quest IV candidates. Tell them what you saw.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Design groups deliberately — mix ability and personality</li>
+            <li>Brief athletes: today is about making the person next to you better</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Pause the game to spotlight specific moments of communication and support. Make the invisible visible: <em>"Did you see what just happened? [Name] called the pass before anyone else knew it was coming. That's communication."</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Preview Week 8 — tell athletes what the showcase looks like</li>
+            <li>Reflection: <em>"How did working with others change your performance?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 W8 SHOWCASE -->
+    <div class="week-card showcase-week">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row">
+            <span class="week-tag q1-tag">Q1 · Week 8</span>
+            <span class="badge-pill gold">🏅 Foundation Builder Badge</span>
+          </div>
+          <div class="week-theme">Quest I Showcase</div>
+          <div class="week-narrative">The Explorer proves what they have built. The Guide assesses, acknowledges, and awards.</div>
+        </div>
+        <div class="wh-xp">85 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Growth from Week 1</div>
+          <div class="wc-text">Compare each athlete to their Week 1 baseline — not to other athletes. Name the distance they have travelled. Even athletes who improved modestly deserve to hear their progress described specifically.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Review each athlete's Week 1 baseline rating</li>
+            <li>Prepare gold star stickers</li>
+            <li>Have app coach login ready to confirm badges</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Run the showcase as a structured demonstration. Each athlete performs, you assess against criteria, then you deliver your coaching feedback. <strong>Be specific about the improvement.</strong> This is the most important coaching conversation of the Quest.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm Foundation Builder badge in app for each athlete</li>
+            <li>Complete the sticker ritual for every badge awarded</li>
+            <li>Tell each athlete one thing to carry into Quest II</li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="assess-panel gold-panel">
+        <div>
+          <div class="ap-label ap-earned">✓ Foundation Builder — Earned</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Demonstrates improved movement quality from Week 1 baseline</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Can articulate one thing they have learned about their body</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Has completed Learn, Do, and Reflect across the Quest</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Shows up and engages fully at the Showcase</div>
+        </div>
+        <div>
+          <div class="ap-label ap-notyet">✗ Not Yet — What Is Needed</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>No measurable improvement from Week 1 (explore why before deciding)</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Athlete cannot reflect on what they have learned</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Missed more than 2 sessions without making them up</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 3: QUEST II SESSION CARDS                 -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="divider accent"></div>
+<div id="quest2"></div>
+
+<div class="quest-divider">
+  <div class="qd-num q2-accent">Quest II</div>
+  <div class="qd-icon">⚔️</div>
+  <div class="qd-title q2-accent">Sharpen the Tools</div>
+  <div class="qd-realm q2-accent">Realm of Practice &nbsp;·&nbsp; The Apprentice</div>
+</div>
+
+<div class="week-cards">
+  <div class="wrap">
+
+    <!-- Q2 W1 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q2-tag">Q2 · Week 1</span></div>
+          <div class="week-theme">What Is Skill?</div>
+          <div class="week-narrative">The Apprentice chooses their weapon. This decision defines the next eight weeks for both athlete and guide.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Are they choosing for the right reason?</div>
+          <div class="wc-text">Athletes sometimes choose skills they are already good at (safe) rather than the skill that would most improve them. Gently challenge this: <em>"Is this the skill that will make the biggest difference to you in your sport?"</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Prepare skill options list</li>
+            <li>Have Hero's Journals ready for baseline ratings</li>
+            <li>Know each athlete well enough to guide their choice</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Take time with skill selection — do not rush it. Once chosen, agree on what success looks like at Week 8 with each athlete. Be specific: not "I want to be better" but "I want to complete 15 clean reps under fatigue." Record the Week 1 skill rating carefully — <strong>this is the comparison point for Week 8.</strong></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Record each athlete's chosen skill and Week 1 rating</li>
+            <li>Confirm app sessions complete</li>
+            <li>Reflection: <em>"What skill do I most want to improve — and why does it matter to me?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 W2 -->
+    <div class="week-card badge-week">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row">
+            <span class="week-tag q2-tag">Q2 · Week 2</span>
+            <span class="badge-pill">🔁 Rep Champion Badge</span>
+          </div>
+          <div class="week-theme">Repetition</div>
+          <div class="week-narrative">The forge begins. The guide watches not for speed or perfection — but for discipline and self-correction.</div>
+        </div>
+        <div class="wh-xp">60 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Self-correction without prompting</div>
+          <div class="wc-text">The Rep Champion badge is not for the best technique — it is for the most disciplined process. Watch for athletes who notice their own errors and slow down to fix them without being told. That is the behaviour to reward.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Remind yourself of each athlete's chosen skill</li>
+            <li>Set up space for individual skill practice</li>
+            <li>Prepare the assessment criteria (see below)</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Each athlete completes 20 reps of their chosen skill. Your job during the Do phase is to <strong>observe and note</strong> — not to correct continuously. Let them work through the reps. Step in between sets, not during. Ask: <em>"Rate the quality of that set out of 10 — what would make it a 10?"</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Award Rep Champion where criteria are met — sticker ritual</li>
+            <li>Confirm badge in app</li>
+            <li>Reflection: <em>"What did you notice about your movement after 20 focused reps?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="assess-panel">
+        <div>
+          <div class="ap-label ap-earned">✓ Rep Champion — Earned</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Completes 20 reps without rushing between reps</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Self-corrects or pauses when technique breaks (at least once)</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Rates quality honestly — shows self-awareness, not just optimism</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Stays focused for the full 20 reps without disengaging</div>
+        </div>
+        <div>
+          <div class="ap-label ap-notyet">✗ Not Yet — What Is Needed</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Rushes through reps without checking technique</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>No self-correction — repeats errors without noticing</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Disengages or loses focus during the set</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Path to earn: one more focused set with one observed self-correction</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 W3 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q2-tag">Q2 · Week 3</span></div>
+          <div class="week-theme">Footwork</div>
+          <div class="week-narrative">The Apprentice learns the foundation of all athletic movement. Time recorded today is a data point — revisited at Week 7.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Heavy vs. light foot contact</div>
+          <div class="wc-text">Heavy footwork is almost always correctable through cue words. "Light," "quick," "silent" are more effective than technical instructions. Watch for athletes who immediately improve with a single cue — file that away for future sessions.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Set up footwork ladder or cone pattern</li>
+            <li>Have a stopwatch ready</li>
+            <li>Plan the pattern — walk-through first</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Run the time trial protocol as designed. <strong>Record each athlete's fastest clean time.</strong> Focus first on pattern accuracy, then on speed — athletes who rush the pattern learn nothing useful. Connect to their chosen skill: <em>"Where does footwork show up when you're practising [their skill]?"</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Record Week 3 times — compare at Week 7</li>
+            <li>Confirm app complete</li>
+            <li>Reflection: <em>"How does footwork affect everything else you do as an athlete?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 W4 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q2-tag">Q2 · Week 4</span></div>
+          <div class="week-theme">Throw &amp; Catch</div>
+          <div class="week-narrative">The Apprentice learns to work with others — because skill developed in isolation must eventually perform in partnership.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Response to partner mistakes</div>
+          <div class="wc-text">How does each athlete respond when their partner drops a catch or throws a bad pass? Frustration, encouragement, silence — each is a coaching moment. Character shows up most clearly when things go wrong.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Pair athletes intentionally — consider ability and personality</li>
+            <li>Choose throw/catch object suited to ability</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Run the 20-catch challenge. Set a reset tone: when a drop happens, no frustration — just reset and go again. Debrief mid-session: <em>"What is your partner doing to make it easier for you to catch?"</em> This shifts focus from self to team.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Note longest streak per pair</li>
+            <li>Confirm app complete</li>
+            <li>Reflection: <em>"What did your partner do that helped you — and what did you do to help them?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 W5 -->
+    <div class="week-card badge-week">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row">
+            <span class="week-tag q2-tag">Q2 · Week 5</span>
+            <span class="badge-pill">💨 Agility Ace Badge</span>
+          </div>
+          <div class="week-theme">Agility</div>
+          <div class="week-narrative">The Apprentice proves they can move with control at speed. Time recorded today — revisited at Week 7.</div>
+        </div>
+        <div class="wh-xp">60 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Deceleration quality</div>
+          <div class="wc-text">Most athletes lose time at direction changes because they cannot decelerate efficiently. Watch their body position on turns — low and controlled is fast. High and stiff is slow. A single cue here often produces immediate improvement.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Set up agility course (consistent with Week 7 retest)</li>
+            <li>Stopwatch ready — record every attempt</li>
+            <li>Know the course pattern yourself — walk it first</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Walk-through, 70% speed, then timed. <strong>Record the best clean time for each athlete.</strong> "Clean" means the pattern was followed correctly — disqualify shortcuts. Encourage athletes to focus on direction changes, not just flat speed. Give one cue per athlete: <em>"Lower hips on the turn."</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Record Week 5 times — compare at Week 7</li>
+            <li>Award Agility Ace where criteria met — sticker ritual</li>
+            <li>Confirm badge in app</li>
+            <li>Reflection: <em>"What slowed you down — and what is your plan to fix it?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="assess-panel">
+        <div>
+          <div class="ap-label ap-earned">✓ Agility Ace — Earned</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Completes the full course pattern without shortcuts</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Attempts at least 4 timed runs with genuine effort</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Shows controlled deceleration on at least one direction change</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Records a best time that reflects maximum effort</div>
+        </div>
+        <div>
+          <div class="ap-label ap-notyet">✗ Not Yet — What Is Needed</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Cutting corners or not following the full pattern</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Not giving full effort on timed attempts</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Path to earn: one more full-effort timed attempt following the complete pattern</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 W6 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q2-tag">Q2 · Week 6</span></div>
+          <div class="week-theme">Skill Under Pressure</div>
+          <div class="week-narrative">The Apprentice faces the true test — can the forged tool hold its edge when tired?</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">What breaks first under fatigue</div>
+          <div class="wc-text">Every athlete has a technical breakdown point that is specific to them. Note what falls apart — focus, setup position, follow-through, communication. This is diagnostic data for Week 8 coaching.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Plan warm-up circuit that creates genuine (not excessive) fatigue</li>
+            <li>Have each athlete's Week 2 quality rating to hand</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Run the fatigue circuit, then immediately move to 20 skill reps. Do not let athletes rest long enough to fully recover — the point is <em>performing tired</em>. Ask mid-set: <em>"What is the first thing that breaks when you're tired? What are you doing to hold it together?"</em></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Record quality rating — compare to Week 2</li>
+            <li>Confirm app complete</li>
+            <li>Reflection: <em>"Was your skill better or worse when tired — and what did you do to keep going?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 W7 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q2-tag">Q2 · Week 7</span></div>
+          <div class="week-theme">Game Situation</div>
+          <div class="week-narrative">The Apprentice enters the arena. Skills forged in practice meet the unpredictability of real sport.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Skill use under game pressure</div>
+          <div class="wc-text">Watch specifically for athletes who consciously apply their chosen skill in game moments — not just athleticism generally. Who is thinking? Who is playing on instinct? Both are valuable data for the Week 8 coaching conversation.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Re-run footwork drill (Week 3 retest) — record times</li>
+            <li>Re-run agility course (Week 5 retest) — record times</li>
+            <li>Prepare game activity suited to group size</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Pause the game at least twice to ask: <em>"[Name] — did you use your skill just then? What happened?"</em> Make the conscious application visible to the group. Compare Week 3 and Week 5 times to this week's retests — share the numbers with athletes. Progress is motivating.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Share footwork and agility improvement data with athletes</li>
+            <li>Preview Week 8 Showcase — tell them what to expect</li>
+            <li>Reflection: <em>"When in the game did you use your skill well — and what made that moment possible?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 W8 SHOWCASE -->
+    <div class="week-card showcase-week">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row">
+            <span class="week-tag q2-tag">Q2 · Week 8</span>
+            <span class="badge-pill gold">🏆 Module 2 Master Badge</span>
+          </div>
+          <div class="week-theme">Skill Showcase — Capstone</div>
+          <div class="week-narrative">The Final Trial. Eight weeks of forging, tested in one session. The Guide's coaching is revealed in the athlete's performance.</div>
+        </div>
+        <div class="wh-xp">85 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Process, not just outcome</div>
+          <div class="wc-text">An athlete who improved significantly but performs nervously at the showcase still deserves the badge if the growth is real. An athlete who performs well today but showed no process discipline across 8 weeks does not. Assess the journey, not just today.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Review each athlete's Week 1 skill rating</li>
+            <li>Recall 2-3 specific observations from across their 8 weeks</li>
+            <li>Prepare gold star stickers — one per badge</li>
+            <li>Coach login ready on device</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Each athlete: warm-up for their skill, then 20 quality reps with your full attention. Ask: <em>"What is the biggest technical improvement you have seen in yourself over 8 weeks?"</em> Your coaching response to their answer is the most important feedback of the Quest. Be specific. Be honest. Be encouraging.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Award Module 2 Master to qualifying athletes</li>
+            <li>Complete the full sticker ritual for each badge</li>
+            <li>Confirm all badges in app</li>
+            <li>Tell each athlete one skill goal for Quest III</li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="assess-panel gold-panel">
+        <div>
+          <div class="ap-label ap-earned">✓ Module 2 Master — Earned</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Measurable skill improvement from Week 1 baseline (higher self-rating supported by your observation)</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Demonstrates awareness of what has improved and why</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Showed process discipline across the Quest (reps, reflection, engagement)</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Can name one skill goal to carry forward</div>
+        </div>
+        <div>
+          <div class="ap-label ap-notyet">✗ Not Yet — What Is Needed</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>No observable improvement from baseline (explore why — attendance? Effort? Approach?)</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Cannot articulate what has changed or what they worked on</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Path to earn: one additional focused session demonstrating the specific improvement</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <div class="footer-brand">Power2ADAPT</div>
+  <div class="footer-text">The athlete is the hero. You are the guide.<br><span style="font-size:10px;">Every Athlete. Every Journey. Every Story Matters.</span></div>
+  <div class="footer-url">Guide's Handbook<br><span style="color:var(--text3);font-size:10px;">power2adapt.online · My Athletic Journey</span></div>
+</div>
+
+<script>
+  // Highlight active nav section on scroll
+  const sections = ['mindset','protocols','quest1','quest2'];
+  const links = document.querySelectorAll('.nav-link');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 80) current = id;
+    });
+    links.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Hero's Journal — Quest IV — My Athletic Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --accent: #8B5CF6;
+    --accent-bg: rgba(139, 92, 246, 0.08);
+    --accent-border: rgba(139, 92, 246, 0.25);
+    --orange: #F26522;
+    --navy: #0a0a0a;
+    --rule: rgba(139, 92, 246, 0.2);
+    --white: #ffffff;
+    --dark: #0a0a0a;
+    --light: #1a1a1a;
+    --text-light: #e8e8e8;
+    --text-muted: #888;
+    --text-dim: #555;
+    --text-subtle: #333;
+    --border-light: #ccc;
+    --border-lighter: #ddd;
+    --white-50: rgba(255, 255, 255, 0.5);
+    --white-40: rgba(255, 255, 255, 0.4);
+    --white-35: rgba(255, 255, 255, 0.35);
+    --white-30: rgba(255, 255, 255, 0.3);
+    --white-20: rgba(255, 255, 255, 0.2);
+  }
+
+  body { background: var(--border-light); font-family: 'DM Sans', sans-serif; }
+
+  @page { size: 148mm 210mm; margin: 0; }
+
+  .page {
+    width: 148mm;
+    height: 210mm;
+    overflow: hidden;
+    page-break-after: always;
+    position: relative;
+    margin: 6mm auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page.dark {
+    background: var(--dark);
+    color: var(--text-light);
+    padding: 10mm 12mm;
+  }
+
+  .page.light {
+    background: var(--white);
+    color: var(--light);
+    padding: 10mm 12mm;
+  }
+
+  /* Write areas */
+  .write-area.fill {
+    flex: 1;
+    min-height: 66px;
+  }
+
+  .write-area {
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 21px,
+      var(--rule) 21px,
+      var(--rule) 22px
+    );
+    width: 100%;
+  }
+
+  /* Badge pills */
+  .badge-pill {
+    display: inline-block;
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* Weekly page components */
+  .week-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    color: var(--accent);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .week-tag.capstone { letter-spacing: 0.15em; font-weight: 900; }
+  .week-theme {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--light);
+    margin-bottom: 6px;
+  }
+  .concept-box {
+    background: var(--accent-bg);
+    border-left: 3px solid var(--accent);
+    padding: 7px 10px;
+    font-size: 0.75rem;
+    border-radius: 0 5px 5px 0;
+    margin: 6px 0 8px;
+    line-height: 1.5;
+  }
+  .identity-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-top: 6px;
+    margin-bottom: 3px;
+  }
+  .identity-options {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    font-size: 0.75rem;
+    margin: 4px 0 6px;
+  }
+  .action-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 3px;
+  }
+  .field-line {
+    border-bottom: 1px solid var(--border-lighter);
+    height: 20px;
+    margin: 3px 0 8px;
+  }
+  .reflect-header {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    color: var(--accent);
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+  .reflect-prompt {
+    font-style: italic;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .rating-line {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 8px;
+  }
+  .badge-earned-box {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    border-radius: 8px;
+    padding: 8px;
+    margin-top: 10px;
+  }
+  .badge-earned-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+  .badge-earned-because {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin: 3px 0 4px;
+  }
+  .legacy-badge-box {
+    background: var(--accent-bg);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .legacy-crown {
+    font-size: 1.8rem;
+    display: block;
+  }
+  .legacy-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .legacy-subtitle {
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .legacy-badge-box .badge-earned-because {
+    text-align: left;
+  }
+
+  /* Page 21 */
+  .complete-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    color: var(--accent);
+    font-size: 2rem;
+    text-align: center;
+    margin-top: 20px;
+    text-transform: uppercase;
+  }
+  .complete-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-align: center;
+    color: var(--light);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .complete-crown {
+    font-size: 2.5rem;
+    display: block;
+    text-align: center;
+    margin: 8px auto;
+  }
+  .crown-circle {
+    width: 52px;
+    height: 52px;
+    background: var(--accent-bg);
+    border: 2px solid var(--accent-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin: 8px auto;
+  }
+  .field-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 2px;
+    margin-top: 8px;
+  }
+  .forward-header {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 10px;
+    margin-bottom: 4px;
+  }
+  .complete-fields .field-line {
+    margin-bottom: 4px;
+  }
+
+  /* Back cover */
+  .back-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 80%;
+  }
+  .back-wordmark {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    color: var(--orange);
+    font-size: 2rem;
+    text-align: center;
+  }
+  .back-tagline {
+    font-style: italic;
+    color: var(--white-50);
+    text-align: center;
+    font-size: 0.85rem;
+    margin: 8px 0;
+  }
+  .back-url {
+    color: var(--white-40);
+    text-align: center;
+    font-size: 0.75rem;
+  }
+
+  /* Cover styles */
+  .cover-sticker {
+    width: 48px;
+    height: 48px;
+    border: 2px dashed var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+  .cover-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white-35);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .cover-icon-wrap {
+    width: 72px;
+    height: 72px;
+    background: var(--accent-bg);
+    border: 2px solid var(--accent-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .cover-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+    display: block;
+  }
+  .cover-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    color: var(--accent);
+    font-size: 2.2rem;
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .cover-quest {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-align: center;
+    margin-bottom: 2px;
+  }
+  .cover-realm {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--white-35);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .cover-bottom {
+    position: absolute;
+    bottom: 14px;
+    left: 12mm;
+    right: 12mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cover-wordmark {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    font-size: 0.85rem;
+  }
+  .cover-url {
+    font-size: 0.65rem;
+    color: var(--white-30);
+  }
+  .cover-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 10mm 12mm 20mm;
+  }
+
+  /* Level 1 Journey pages */
+  .journey-header {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    color: var(--accent);
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .quest-badges-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .quest-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 16px 4px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .quest-badge.active {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+  }
+  .quest-badge-icon { font-size: 2rem; margin-bottom: 6px; }
+  .quest-badge-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--light);
+  }
+  .quest-badge.active .quest-badge-label { color: var(--accent); }
+  .quest-badge-sub { font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; }
+  .journey-statement {
+    font-style: italic;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-top: 20px;
+    padding-top: 0;
+    line-height: 1.5;
+  }
+  .milestone-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-top: 10px;
+    margin-bottom: 3px;
+  }
+
+  /* Quest IV Intro */
+  .intro-header {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .intro-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .intro-para {
+    font-size: 0.78rem;
+    line-height: 1.55;
+    color: var(--text-subtle);
+    margin-bottom: 8px;
+  }
+  .intro-outcome {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+  .intro-field {
+    margin-bottom: 6px;
+  }
+  .intro-field-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+  .intro-field-line {
+    border-bottom: 1px solid var(--border-light);
+    height: 24px;
+  }
+  .badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .qr-code {
+    width: 56px;
+    height: 56px;
+    display: block;
+    margin: 8px auto;
+    border-radius: 4px;
+  }
+
+  .qr-placeholder {
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--white-20);
+    border-radius: 4px;
+    margin: 8px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    color: var(--white-30);
+  }
+
+  @media print {
+    body { margin: 0; }
+    .page { page-break-after: always; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page dark">
+  <div class="cover-sticker"></div>
+  <div class="cover-center">
+    <div class="cover-eyebrow">MY ATHLETIC JOURNEY</div>
+    <div class="cover-icon-wrap"><span class="cover-icon">👑</span></div>
+    <div class="cover-title">THE HERO'S JOURNAL</div>
+    <div class="cover-quest">QUEST IV: RISE ABOVE</div>
+    <div class="cover-realm">REALM OF LEADERSHIP</div>
+  </div>
+  <div class="cover-bottom">
+    <div class="cover-wordmark">Power2ADAPT</div>
+    <div class="cover-url">power2adapt.online</div>
+    <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://power2adapt.online/my-athletic-journey&bgcolor=0a0a0a&color=e8e8e8&margin=2" alt="QR code">
+  </div>
+</div>
+
+<!-- PAGE 2: YOUR LEVEL 1 JOURNEY (LEFT) -->
+<div class="page light">
+  <div class="journey-header">Your Level 1 Journey</div>
+  <div class="quest-badges-row">
+    <div class="quest-badge">
+      <div class="quest-badge-icon">🧭</div>
+      <div class="quest-badge-label">Explorer</div>
+      <div class="quest-badge-sub">Quest I</div>
+    </div>
+    <div class="quest-badge">
+      <div class="quest-badge-icon">⚔️</div>
+      <div class="quest-badge-label">Apprentice</div>
+      <div class="quest-badge-sub">Quest II</div>
+    </div>
+    <div class="quest-badge">
+      <div class="quest-badge-icon">🗡️</div>
+      <div class="quest-badge-label">Challenger</div>
+      <div class="quest-badge-sub">Quest III</div>
+    </div>
+    <div class="quest-badge active">
+      <div class="quest-badge-icon">👑</div>
+      <div class="quest-badge-label">Hero</div>
+      <div class="quest-badge-sub">Quest IV</div>
+    </div>
+  </div>
+  <div class="journey-statement">You have trained your body, your skills, your mind. Now you lead.</div>
+</div>
+
+<!-- PAGE 3: YOUR LEVEL 1 JOURNEY (RIGHT) -->
+<div class="page light">
+  <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: var(--accent); font-size: 1.2rem; margin-bottom: 10px; text-transform: uppercase;">My Level 1 Milestones</div>
+
+  <div class="milestone-label">My biggest growth in Quest I was:</div>
+  <div class="write-area" style="height: 66px;"></div>
+
+  <div class="milestone-label">My biggest growth in Quest II was:</div>
+  <div class="write-area" style="height: 66px;"></div>
+
+  <div class="milestone-label">My biggest growth in Quest III was:</div>
+  <div class="write-area" style="height: 66px;"></div>
+
+  <div class="milestone-label">In Quest IV I want to:</div>
+  <div class="write-area fill"></div>
+</div>
+
+<!-- PAGE 4: QUEST IV INTRO -->
+<div class="page light">
+  <div class="intro-header">Quest IV: Rise Above</div>
+  <div class="intro-sub">Realm of Leadership</div>
+  <div class="intro-para">Quest IV trains leadership -- the final pillar of Level 1. You will learn to lead yourself, encourage others, communicate under pressure, and handle mistakes like a champion. By the end you will have earned the Legacy Athlete badge and completed Level 1 of My Athletic Journey.</div>
+  <div class="intro-outcome">Your outcome: I Can Lead.</div>
+
+  <div class="intro-field">
+    <div class="intro-field-label">Athlete name:</div>
+    <div class="intro-field-line"></div>
+  </div>
+  <div class="intro-field">
+    <div class="intro-field-label">Start date:</div>
+    <div class="intro-field-line"></div>
+  </div>
+  <div class="intro-field">
+    <div class="intro-field-label">My leadership identity:</div>
+    <div class="intro-field-line"></div>
+  </div>
+
+  <div class="badges-row">
+    <span class="badge-pill">💬 Encourager · W2 · 30 XP</span>
+    <span class="badge-pill" style="background: var(--accent-bg); border-color: var(--accent);">👑 Legacy Athlete · W8 · 100 XP</span>
+  </div>
+</div>
+
+<!-- PAGE 5: WEEK 1 LEFT -->
+<div class="page light">
+  <div class="week-tag">Q4 · WEEK 1</div>
+  <div class="week-theme">What is Leadership?</div>
+  <div class="concept-box">Self-leadership = taking responsibility for your own effort, attitude, and growth without being told. You do not need a title to be a leader -- you lead through your actions. Leadership is not about being loud or the best. It is about being consistent and trustworthy.</div>
+  <div class="identity-label">My leadership identity this week:</div>
+  <div class="identity-options">
+    <label>☐ Vocal Leader</label>
+    <label>☐ Lead by Example</label>
+    <label>☐ Encourager</label>
+  </div>
+  <div class="action-label">My leadership action this week:</div>
+  <div class="field-line"></div>
+  <div class="write-area fill"></div>
+</div>
+
+<!-- PAGE 6: WEEK 1 RIGHT -->
+<div class="page light">
+  <div class="reflect-header">Reflection</div>
+  <div class="reflect-prompt"><em>"What kind of leader am I right now -- and what kind of leader do I want to become?"</em></div>
+  <div class="write-area fill"></div>
+  <div class="rating-line">My leadership rating this week: _____ / 10</div>
+</div>
+
+<!-- PAGE 7: WEEK 2 LEFT -->
+<div class="page light">
+  <div class="week-tag">Q4 · WEEK 2</div>
+  <div class="week-theme">Being a Great Teammate</div>
+  <div class="concept-box">Great teammates encourage others -- especially when things go wrong. Being a great teammate = supportive AND demanding high standards. How you respond to your own mistakes sets the tone for how the whole team responds.</div>
+  <div class="identity-label">My leadership identity this week:</div>
+  <div class="identity-options">
+    <label>☐ Vocal Leader</label>
+    <label>☐ Lead by Example</label>
+    <label>☐ Encourager</label>
+  </div>
+  <div class="action-label">My leadership action this week:</div>
+  <div class="field-line"></div>
+  <div class="write-area fill"></div>
+</div>
+
+<!-- PAGE 8: WEEK 2 RIGHT (Encourager badge) -->
+<div class="page light">
+  <div class="reflect-header">Reflection</div>
+  <div class="reflect-prompt"><em>"How did encouraging others change how you felt and performed in the session?"</em></div>
+  <div class="write-area fill"></div>
+  <div class="rating-line">My leadership rating this week: _____ / 10</div>
+  <div class="badge-earned-box">
+    <div class="badge-earned-name">💬 Encourager Earned</div>
+    <div class="badge-earned-because">I earned this because:</div>
+    <div class="write-area" style="height: 66px;"></div>
+  </div>
+</div>
+
+<!-- PAGE 9: WEEK 3 LEFT -->
+<div class="page light">
+  <div class="week-tag">Q4 · WEEK 3</div>
+  <div class="week-theme">Communication</div>
+  <div class="concept-box">Communication in sport is more than words. Body language, eye contact, energy, and positioning all send messages. Positive body language lifts everyone around you. Listening is as important as speaking.</div>
+  <div class="identity-label">My leadership identity this week:</div>
+  <div class="identity-options">
+    <label>☐ Vocal Leader</label>
+    <label>☐ Lead by Example</label>
+    <label>☐ Encourager</label>
+  </div>
+  <div class="action-label">My leadership action this week:</div>
+  <div class="field-line"></div>
+  <div class="write-area fill"></div>
+</div>
+
+<!-- PAGE 10: WEEK 3 RIGHT -->
+<div class="page light">
+  <div class="reflect-header">Reflection</div>
+  <div class="reflect-prompt"><em>"What did you do to communicate better with your team today -- and what impact did it have?"</em></div>
+  <div class="write-area fill"></div>
+  <div class="rating-line">My leadership rating this week: _____ / 10</div>
+</div>
+
+<!-- PAGE 11: WEEK 4 LEFT -->
+<div class="page light">
+  <div class="week-tag">Q4 · WEEK 4</div>
+  <div class="week-theme">Handling Mistakes</div>
+  <div class="concept-box">Your response to a mistake is more important than the mistake itself. A reset cue is a physical or verbal action that signals to your brain: that is done, I am moving on. Accountability without self-punishment: acknowledge, identify what to do differently, move on.</div>
+  <div class="identity-label">My leadership identity this week:</div>
+  <div class="identity-options">
+    <label>☐ Vocal Leader</label>
+    <label>☐ Lead by Example</label>
+    <label>☐ Encourager</label>
+  </div>
+  <div class="action-label">My leadership action this week:</div>
+  <div class="field-line"></div>
+  <div class="write-area fill"></div>
+</div>
+
+<!-- PAGE 12: WEEK 4 RIGHT -->
+<div class="page light">
+  <div class="reflect-header">Reflection</div>
+  <div class="reflect-prompt"><em>"How did you handle a mistake or frustration today -- and what would you do the same or differently next time?"</em></div>
+  <div class="write-area fill"></div>
+  <div class="rating-line">My leadership rating this week: _____ / 10</div>
+</div>
+
+<!-- PAGE 13: WEEK 5 LEFT -->
+<div class="page light">
+  <div class="week-tag">Q4 · WEEK 5</div>
+  <div class="week-theme">Giving and Receiving Feedback</div>
+  <div class="concept-box">Effective feedback: specific, timely, focused on the action not the person. Feedback sandwich: one positive + one specific improvement + one encouraging close. Asking for feedback is strength, not weakness.</div>
+  <div class="identity-label">My leadership identity this week:</div>
+  <div class="identity-options">
+    <label>☐ Vocal Leader</label>
+    <label>☐ Lead by Example</label>
+    <label>☐ Encourager</label>
+  </div>
+  <div class="action-label">My leadership action this week:</div>
+  <div class="field-line"></div>
+  <div class="write-area fill"></div>
+</div>
+
+<!-- PAGE 14: WEEK 5 RIGHT -->
+<div class="page light">
+  <div class="reflect-header">Reflection</div>
+  <div class="reflect-prompt"><em>"What was hard about giving feedback -- and what was hard about receiving it?"</em></div>
+  <div class="write-area fill"></div>
+  <div class="rating-line">My leadership rating this week: _____ / 10</div>
+</div>
+
+<!-- PAGE 15: WEEK 6 LEFT -->
+<div class="page light">
+  <div class="week-tag">Q4 · WEEK 6</div>
+  <div class="week-theme">Leading in Competition</div>
+  <div class="concept-box">Steady leadership under pressure = same effort, same communication, same reset response regardless of score. Panic is contagious. So is calm. The leader who stays composed gives everyone else permission to do the same.</div>
+  <div class="identity-label">My leadership identity this week:</div>
+  <div class="identity-options">
+    <label>☐ Vocal Leader</label>
+    <label>☐ Lead by Example</label>
+    <label>☐ Encourager</label>
+  </div>
+  <div class="action-label">My leadership action this week:</div>
+  <div class="field-line"></div>
+  <div class="write-area fill"></div>
+</div>
+
+<!-- PAGE 16: WEEK 6 RIGHT -->
+<div class="page light">
+  <div class="reflect-header">Reflection</div>
+  <div class="reflect-prompt"><em>"What did you do to help your team when things were hard -- and how did they respond?"</em></div>
+  <div class="write-area fill"></div>
+  <div class="rating-line">My leadership rating this week: _____ / 10</div>
+</div>
+
+<!-- PAGE 17: WEEK 7 LEFT -->
+<div class="page light">
+  <div class="week-tag">Q4 · WEEK 7</div>
+  <div class="week-theme">My Leadership Style</div>
+  <div class="concept-box">Leadership styles: vocal/energetic · quiet/consistent · leading by example · leading through encouragement · leading through challenge. Your most effective style = the one authentic to who you are. Some of the best sport leaders are quiet and consistent.</div>
+  <div class="identity-label">My leadership identity this week:</div>
+  <div class="identity-options">
+    <label>☐ Vocal Leader</label>
+    <label>☐ Lead by Example</label>
+    <label>☐ Encourager</label>
+  </div>
+  <div class="action-label">My leadership action this week:</div>
+  <div class="field-line"></div>
+  <div class="write-area fill"></div>
+</div>
+
+<!-- PAGE 18: WEEK 7 RIGHT -->
+<div class="page light">
+  <div class="reflect-header">Reflection</div>
+  <div class="reflect-prompt"><em>"What style of leadership felt most natural for me today -- and what does that tell me about the leader I am becoming?"</em></div>
+  <div class="write-area fill"></div>
+  <div class="rating-line">My leadership rating this week: _____ / 10</div>
+</div>
+
+<!-- PAGE 19: WEEK 8 LEFT (capstone) -->
+<div class="page light">
+  <div class="week-tag capstone">Q4 · WEEK 8 · CAPSTONE</div>
+  <div class="week-theme">The Athlete I Am Becoming</div>
+  <div class="concept-box">32 weeks of training, reflection, and growth across Athletic Ability, Skill, Focus, and Leadership. The four pillars work together as one complete athlete. The habits built are the foundation for Level 2, Level 3, and everything beyond.</div>
+  <div class="identity-label">My leadership identity this week:</div>
+  <div class="identity-options">
+    <label>☐ Vocal Leader</label>
+    <label>☐ Lead by Example</label>
+    <label>☐ Encourager</label>
+  </div>
+  <div class="action-label">My leadership action this week:</div>
+  <div class="field-line"></div>
+  <div class="write-area fill"></div>
+</div>
+
+<!-- PAGE 20: WEEK 8 RIGHT (Legacy Athlete badge) -->
+<div class="page light">
+  <div class="reflect-header">Reflection</div>
+  <div class="reflect-prompt"><em>"What has changed about me as an athlete and a person across this level -- and what am I most proud of?"</em></div>
+  <div class="write-area fill"></div>
+  <div class="rating-line">My leadership rating this week: _____ / 10</div>
+  <div class="legacy-badge-box">
+    <span class="legacy-crown">👑</span>
+    <div class="legacy-title">Legacy Athlete</div>
+    <div class="legacy-subtitle">LEVEL 1 COMPLETE</div>
+    <div class="badge-earned-because">I earned this because:</div>
+    <div class="write-area" style="height: 66px;"></div>
+  </div>
+</div>
+
+<!-- PAGE 21: LEVEL 1 COMPLETE -->
+<div class="page light" id="p21-complete">
+  <div class="complete-title">LEVEL 1 COMPLETE.</div>
+  <div class="complete-sub">THE HERO HAS RISEN.</div>
+  <div class="crown-circle">👑</div>
+  <div class="complete-fields">
+    <div class="complete-field">
+      <span class="field-label">LEGACY ATHLETE BADGE EARNED (DATE):</span>
+      <div class="field-line"></div>
+    </div>
+    <div class="complete-field">
+      <span class="field-label">MY LEADERSHIP IDENTITY:</span>
+      <div class="field-line"></div>
+    </div>
+    <div class="complete-field">
+      <span class="field-label">THE ATHLETE I BECAME:</span>
+      <div class="write-area" style="height: 66px;"></div>
+    </div>
+  </div>
+  <div class="gold-rule" style="border-top: 1px solid var(--accent-border); margin: 8px 0;"></div>
+  <div class="forward-header">WHAT I CARRY FORWARD:</div>
+  <div class="field-line"></div>
+  <div class="field-line"></div>
+  <div class="field-line"></div>
+</div>
+
+<!-- PAGE 22: BACK COVER -->
+<div class="page dark" id="p22-back">
+  <div class="back-content">
+    <div class="back-wordmark">Power2ADAPT</div>
+    <div class="back-tagline">Every Athlete. Every Journey. Every Story Matters.</div>
+    <div class="back-url">power2adapt.online</div>
+    <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://power2adapt.online/my-athletic-journey&bgcolor=0a0a0a&color=e8e8e8&margin=2" alt="QR code">
+  </div>
+</div>
+
+</body>
+</html>

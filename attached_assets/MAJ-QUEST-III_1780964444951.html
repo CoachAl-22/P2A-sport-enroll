@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quest III: Train the Mind — My Athletic Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:            #0a0a0a;
+    --surface:       #111111;
+    --card:          #161616;
+    --card-hover:    #1e1e1e;
+    --accent:        #F26522;
+    --accent-light:  #f5844a;
+    --accent-bg:     rgba(242, 101, 34, 0.1);
+    --accent-border: rgba(242, 101, 34, 0.3);
+    --cyan:          #00B4D8;
+    --text:          #e8e8e8;
+    --text-muted:    #888;
+    --gold:          #f5c842;
+    --gold-bg:       rgba(245, 200, 66, 0.12);
+    --green:         #06D6A0;
+    --border:        #242424;
+    --border2:       #2e2e2e;
+    --radius-sm:     10px;
+    --radius-md:     16px;
+    --radius-lg:     20px;
+    --shadow:        0 6px 20px rgba(0,0,0,0.5);
+    --font-h:        'Barlow Condensed', sans-serif;
+    --font-b:        'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-b);
+    line-height: 1.55;
+    padding-bottom: 60px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── NAV ───────────────────────────────────────── */
+  .app-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-brand {
+    font-family: var(--font-h);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .nav-badge {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    color: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* ── HERO ──────────────────────────────────────── */
+  .hero-banner {
+    background: linear-gradient(135deg, #1f0a00 0%, #0a0a0a 100%);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-lg);
+    padding: 36px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 0 40px rgba(242,101,34,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-banner::after {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background: var(--accent);
+    filter: blur(90px);
+    top: -60px;
+    right: -60px;
+    opacity: 0.25;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-h);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .quest-tag {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 8px;
+  }
+  .hero-banner h1 {
+    font-family: var(--font-h);
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .hero-banner h1 .accent { color: var(--accent); }
+  .hero-sub {
+    font-family: var(--font-h);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero-intro {
+    font-size: 13px;
+    color: #c8a898;
+    line-height: 1.65;
+    font-style: italic;
+    background: rgba(0,0,0,0.25);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    position: relative;
+  }
+
+  /* ── PANEL CARD ─────────────────────────────────── */
+  .panel-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .panel-card h2 {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .panel-card h2 .accent { color: var(--accent); }
+
+  /* ── PRIMARY TOOL SELECTOR ──────────────────────── */
+  .tool-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .tool-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .tool-card {
+    background: var(--card);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .tool-icon {
+    font-size: 28px;
+    line-height: 1;
+    background: rgba(255,255,255,0.04);
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+  .tool-name {
+    font-family: var(--font-h);
+    font-size: 17px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--accent-light);
+    margin-bottom: 3px;
+  }
+  .tool-cue {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .tool-when { font-size: 11px; color: var(--text-muted); opacity: 0.7; line-height: 1.35; }
+  .tool-choice {
+    font-size: 13px;
+    color: var(--text-muted);
+    border: 1px dashed var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    text-align: center;
+  }
+
+  /* ── ARC MAP ─────────────────────────────────────── */
+  .scroll-wrapper {
+    overflow-x: auto;
+    padding: 4px 0 12px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scroll-wrapper::-webkit-scrollbar { display: none; }
+  .arc-map {
+    display: flex;
+    gap: 8px;
+    width: max-content;
+    padding: 0 2px;
+  }
+  .map-node {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 8px;
+    width: 90px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .map-node.badge-week { border-color: var(--accent-border); }
+  .map-node.capstone   { border-color: var(--gold); }
+  .node-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-h);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .badge-week .node-dot {
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
+    color: var(--accent-light);
+  }
+  .capstone .node-dot {
+    background: var(--gold-bg);
+    border-color: var(--gold);
+    color: var(--gold);
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  .node-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.2;
+    height: 28px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .badge-week .node-label { color: var(--accent-light); }
+  .capstone .node-label { color: var(--gold); }
+
+  /* ── WEEK CARDS ─────────────────────────────────── */
+  .weeks-title {
+    font-family: var(--font-h);
+    font-size: 26px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    padding-left: 2px;
+  }
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .week-card.badge-week { border-color: var(--accent-border); }
+  .week-card.capstone   { border-color: var(--gold); box-shadow: 0 0 20px rgba(245,200,66,0.08); }
+
+  .week-header {
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .week-number {
+    font-family: var(--font-h);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-bg);
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+  .badge-week .week-number { color: var(--accent-light); }
+  .capstone   .week-number { color: var(--gold); background: var(--gold-bg); }
+  .week-theme {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+  }
+  .week-narrative {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.45;
+    margin-top: 3px;
+  }
+  .week-xp {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-bg);
+    border: 1px solid rgba(245,200,66,0.2);
+    padding: 5px 12px;
+    border-radius: 100px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .badge-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: var(--accent-bg);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-h);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+  }
+  .badge-pill.gold-pill { color: var(--gold); background: rgba(245,200,66,0.06); }
+
+  .week-body {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .col-block {
+    background: var(--card);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .col-header {
+    font-family: var(--font-h);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .col-header.concept { color: #60c8f0; }
+  .col-header.do      { color: var(--green); }
+  .col-header.reflect { color: var(--gold); }
+  .col-title {
+    font-family: var(--font-h);
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 5px;
+    color: var(--text);
+  }
+  .col-text { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
+  .col-text ul { padding-left: 14px; margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+  .col-text li { color: var(--text); }
+  .col-text strong { color: var(--text); }
+
+  /* ── XP TABLE ────────────────────────────────────── */
+  .xp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  .xp-table th {
+    font-family: var(--font-h);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 6px 6px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .xp-table td {
+    padding: 8px 6px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .xp-table .badge-row { background: var(--accent-bg); }
+  .xp-table tr:last-child td {
+    border-bottom: none;
+    font-family: var(--font-h);
+    font-size: 15px;
+    color: var(--text);
+    padding-top: 12px;
+  }
+  .xp-val {
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: right;
+  }
+  .xp-cum {
+    font-family: var(--font-h);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+  .badge-tag { font-family: var(--font-h); font-size: 11px; font-weight: 700; color: var(--accent-light); }
+  .no-badge  { color: var(--text-muted); }
+  .xp-table tr:last-child .xp-val { color: var(--green); font-size: 17px; }
+
+  /* ── QUEST IV TEASER ─────────────────────────────── */
+  .teaser-card {
+    background: linear-gradient(135deg, #1a0a35 0%, #0a0a0a 100%);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(139,92,246,0.08);
+  }
+  .teaser-label {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .teaser-sep { width: 40px; height: 2px; background: rgba(139,92,246,0.5); margin: 0 auto 16px; border-radius: 2px; }
+  .teaser-narrative {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+  .teaser-title {
+    font-family: var(--font-h);
+    font-size: 44px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #a78bfa;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .teaser-sub {
+    font-family: var(--font-h);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ── TABLET TWO-COL ─────────────────────────────── */
+  @media (min-width: 480px) {
+    .week-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .week-body .col-block:nth-child(3) { grid-column: span 2; }
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .tool-card { flex-direction: column; }
+  }
+
+  /* ── PRINT ──────────────────────────────────────── */
+  @media print {
+    @page { size: A4; margin: 14mm 16mm; }
+    body { background: var(--bg); color: var(--text); }
+    .app-nav { display: none; }
+    .hero-banner, .panel-card, .week-card, .teaser-card {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .panel-card, .week-card { page-break-inside: avoid; }
+    .weeks-title { page-break-before: always; }
+    .teaser-card { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="app-nav">
+  <div class="nav-inner">
+    <div class="nav-brand">My Athletic Journey</div>
+    <div class="nav-badge">Quest III</div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero-banner">
+    <div class="hero-eyebrow">My Athletic Journey · Power2ADAPT</div>
+    <div class="quest-tag">⚔️ Quest III: Face the Challenge</div>
+    <h1>TRAIN THE <span class="accent">MIND</span></h1>
+    <div class="hero-sub">Realm of Courage · The Challenger</div>
+    <p class="hero-intro"><em>The weapon was physical. The arena was the training ground. Now the real challenge begins -- inside. The Challenger who masters their mind masters everything.</em></p>
+  </section>
+
+  <!-- PRIMARY TOOL SELECTOR -->
+  <div class="panel-card" id="tools">
+    <h2>Choose Your <span class="accent">Primary Tool</span></h2>
+    <p class="tool-sub">In Quest III you choose one mental performance tool as your primary focus. You will practise it every week, use it under pressure, and demonstrate it deliberately. Choose the one that speaks to where you struggle most.</p>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-icon">🌬️</div>
+        <div>
+          <div class="tool-name">Breathing</div>
+          <div class="tool-cue">"Slow down. I am in control."</div>
+          <div class="tool-when">Before pressure moments and after mistakes</div>
+        </div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">💬</div>
+        <div>
+          <div class="tool-name">Self-Talk</div>
+          <div class="tool-cue">"Choose the words that help."</div>
+          <div class="tool-when">When negative thoughts appear mid-session</div>
+        </div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🎯</div>
+        <div>
+          <div class="tool-name">Task Focus</div>
+          <div class="tool-cue">"What do I need to do right now?"</div>
+          <div class="tool-when">When outcome thinking creeps in during execution</div>
+        </div>
+      </div>
+    </div>
+    <div class="tool-choice">My Primary Tool for Quest III: _______________</div>
+  </div>
+
+  <!-- ARC MAP -->
+  <div class="panel-card" id="timeline">
+    <h2>The 8-Week Arc</h2>
+    <div class="scroll-wrapper">
+      <div class="arc-map">
+        <div class="map-node">
+          <div class="node-dot">W1</div>
+          <div class="node-label">What is Focus?</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W2</div>
+          <div class="node-label">Breathing &amp; Calm</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W3</div>
+          <div class="node-label">Self-Talk</div>
+        </div>
+        <div class="map-node badge-week">
+          <div class="node-dot">W4</div>
+          <div class="node-label">Attention Control 🌬️</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W5</div>
+          <div class="node-label">Pressure &amp; Nerves</div>
+        </div>
+        <div class="map-node badge-week">
+          <div class="node-dot">W6</div>
+          <div class="node-label">Consistency 📊</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W7</div>
+          <div class="node-label">Focus in a Team</div>
+        </div>
+        <div class="map-node capstone">
+          <div class="node-dot">W8</div>
+          <div class="node-label">My Toolkit 🏆</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK CARDS -->
+  <div id="weeks-section">
+    <div class="weeks-title">Week by Week</div>
+
+    <!-- W1 -->
+    <div class="week-card" id="week-1">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q3 · Week 1</div>
+          <div class="week-theme">What is Focus?</div>
+          <div class="week-narrative">The Challenger begins by understanding what focus actually is -- and realising it can be trained.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Focus is a Trainable Skill</div>
+          <div class="col-text">Focus is directing attention to what matters most, right now. Most athletes have never been taught how to focus. Distractions are everywhere -- focus is choosing what to pay attention to despite them. Attention is trainable.</div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Mindful Warm-Up Challenge</div>
+          <div class="col-text">
+            Coach leads a 2-minute quiet focus routine before training begins. During the session, notice:
+            <ul>
+              <li>3 moments when your attention fully locks in</li>
+              <li>3 moments when it drifts away</li>
+              <li>Share observations with coach at end of session</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Your Starting Point</div>
+          <div class="col-text">"What makes it hard for me to focus during training -- and when is my focus at its best?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W2 -->
+    <div class="week-card" id="week-2">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q3 · Week 2</div>
+          <div class="week-theme">Breathing and Calm</div>
+          <div class="week-narrative">The Challenger discovers the one tool they already carry -- and learns to use it deliberately.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Box Breathing</div>
+          <div class="col-text">
+            Breathing is the only automatic function you can also control consciously. Shallow, fast breathing signals danger to the brain. Box breathing uses equal counts to create calm and control: in for 4, hold for 4, out for 4. Simple, effective, and available to you anywhere.
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Box Breathing Before Your Hardest Activity</div>
+          <div class="col-text">
+            <ul>
+              <li>Stand still, relax shoulders</li>
+              <li>Breathe in through nose -- 4 counts</li>
+              <li>Hold -- 4 counts</li>
+              <li>Breathe out through mouth -- 4 counts</li>
+              <li>Repeat twice, then go straight into the activity</li>
+              <li>Use as a reset tool after mistakes</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">In Control</div>
+          <div class="col-text">"Did breathing help you feel more in control -- and how did it change your performance?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W3 -->
+    <div class="week-card" id="week-3">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q3 · Week 3</div>
+          <div class="week-theme">Self-Talk</div>
+          <div class="week-narrative">The Challenger learns that the voice in their head is not random -- it is trainable.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Choose Words That Help</div>
+          <div class="col-text">
+            Negative self-talk creates tension and reduces performance. Positive self-talk is not pretending -- it is choosing words that help. Cue words are short, powerful phrases for key moments: <strong>Drive. Relax. Reset. Trust it.</strong> Elite athletes use self-talk deliberately -- it is trained, not accidental.
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Build Your Self-Talk Toolkit</div>
+          <div class="col-text">
+            <ul>
+              <li>Write 3 encouraging phrases for when training gets hard</li>
+              <li>Choose one cue word for today</li>
+              <li>Use it out loud (quietly) at least 5 times during the session</li>
+              <li>After mistakes -- use self-talk instead of going silent or negative</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Words Under Pressure</div>
+          <div class="col-text">"What did you say to yourself when things got tough today -- and did it help?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W4 BADGE -->
+    <div class="week-card badge-week" id="week-4">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q3 · Week 4</div>
+          <div class="week-theme">Attention Control</div>
+          <div class="week-narrative">The Challenger faces their greatest enemy -- their own mind under pressure.</div>
+        </div>
+        <div class="week-xp">60 XP</div>
+      </div>
+      <div class="badge-pill">🌬️ Calm Under Pressure · +25 XP · Coach Required</div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Process Over Outcome</div>
+          <div class="col-text">
+            Task focus = what you are doing right now. Outcome focus = what might happen as a result. Outcome focus during execution creates anxiety and disrupts automatic movement. The cue: <strong>"What do I need to do RIGHT NOW?"</strong>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Task Focus Drill</div>
+          <div class="col-text">
+            <ul>
+              <li>Choose one activity as your task focus activity</li>
+              <li>Identify the specific task cue: arm drive, soft landing, eyes on target</li>
+              <li>Every time the mind goes to score or outcome, bring it back to the task cue</li>
+              <li>Rate your task focus out of 10 at the end</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Process vs Outcome</div>
+          <div class="col-text">"What happened to your performance when you focused only on the task -- not the outcome?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W5 -->
+    <div class="week-card" id="week-5">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q3 · Week 5</div>
+          <div class="week-theme">Pressure and Nerves</div>
+          <div class="week-narrative">The Challenger discovers that nerves are not the enemy -- they are the signal.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Nerves Are Performance Tools</div>
+          <div class="col-text">
+            Nerves = body getting ready to perform. Increased heart rate, alert senses, and adrenaline are all performance tools. The feeling of nerves is almost identical to excitement -- you can choose the label. Trying to make nerves disappear usually makes them worse. Repeated pressure exposure builds confidence.
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Pre-Performance Routine</div>
+          <div class="col-text">
+            Design a 30-second pre-performance routine: breathing + cue word + one physical reset (roll shoulders, shake hands).
+            <ul>
+              <li>Use it before every turn in the competition</li>
+              <li>Notice how you feel first turn vs. last turn</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Settle and Perform</div>
+          <div class="col-text">"How did you feel before the challenge -- and what helped you settle and perform?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W6 BADGE -->
+    <div class="week-card badge-week" id="week-6">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q3 · Week 6</div>
+          <div class="week-theme">Consistency</div>
+          <div class="week-narrative">The Challenger learns that consistency is not talent -- it is focus, applied again and again.</div>
+        </div>
+        <div class="week-xp">60 XP</div>
+      </div>
+      <div class="badge-pill">📊 Consistent Performer · +25 XP · Coach Required</div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Consistent Focus Compounds</div>
+          <div class="col-text">
+            Consistent performance comes from consistent focus, not talent. It is easy to focus when fresh and excited -- the real skill is focusing when tired or struggling. Building a pre-session routine equals mental consistency. Consistent focus compounds over time.
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Full Session Focus and Effort Log</div>
+          <div class="col-text">
+            <ul>
+              <li>Set a focus and effort target before the session starts</li>
+              <li>After each activity: rate effort/10 and focus/10 quickly</li>
+              <li>At end: identify highest and lowest focus moments</li>
+              <li>Show log to coach and discuss one insight</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Peak Focus Moments</div>
+          <div class="col-text">"When was your focus highest this session -- and what was different at those moments?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W7 -->
+    <div class="week-card" id="week-7">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q3 · Week 7</div>
+          <div class="week-theme">Focus in a Team</div>
+          <div class="week-narrative">The Challenger realises that focus is not just personal -- it is contagious.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Your Energy is Contagious</div>
+          <div class="col-text">
+            Your energy and attention are contagious. A focused athlete raises the standard around them. Team focus is built through shared purpose. The most focused teams communicate more, reset faster, and maintain higher intensity for longer.
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Team Relay Focus Agreement</div>
+          <div class="col-text">
+            <ul>
+              <li>Before the relay: team agrees on one shared focus cue (e.g. "drive hard off the mark")</li>
+              <li>Say it together before each race</li>
+              <li>If focus drops, one teammate calls the cue to re-engage</li>
+              <li>After relay: discuss as a team when focus helped and when it was lost</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Collective Focus</div>
+          <div class="col-text">"How did our team's collective focus change the result -- and what was your role in maintaining it?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W8 CAPSTONE -->
+    <div class="week-card capstone" id="week-8">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q3 · Week 8 · Capstone</div>
+          <div class="week-theme">My Focus Toolkit</div>
+          <div class="week-narrative">The Challenger claims their mental toolkit. The tools are theirs to keep forever.</div>
+        </div>
+        <div class="week-xp">85 XP</div>
+      </div>
+      <div class="badge-pill gold-pill">🏆 Module 3 Master · +50 XP · Coach Required</div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Your Toolkit is Permanent</div>
+          <div class="col-text">
+            Every athlete builds a unique combination of tools that works for them. Breathing, self-talk, and task focus are now yours. The skill is making them automatic -- using them without thinking when it matters most.
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Full Session Using Your Complete Toolkit</div>
+          <div class="col-text">
+            <ul>
+              <li>Before session: write your 3 tools and when you plan to use each</li>
+              <li>Use breathing, cue word, and task focus deliberately -- especially under pressure and after mistakes</li>
+              <li>After each activity: note -- did I use my tools?</li>
+              <li><strong>Tell coach your 3 tools with one real example of each</strong></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Your Level 3 Legacy</div>
+          <div class="col-text">"What are the 3 focus tools I will keep using beyond this module -- and why do they work for me?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XP TABLE -->
+  <div class="panel-card" id="xp-table">
+    <h2>XP &amp; Badges</h2>
+    <table class="xp-table">
+      <thead>
+        <tr>
+          <th>Wk</th>
+          <th>Theme</th>
+          <th style="text-align:right">Base</th>
+          <th style="text-align:right">Badge</th>
+          <th style="text-align:right">Total</th>
+          <th style="text-align:right">Running</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>What is Focus?</td><td class="xp-val">35</td><td class="no-badge">--</td><td class="xp-val">35</td><td class="xp-cum">35</td></tr>
+        <tr><td>2</td><td>Breathing and Calm</td><td class="xp-val">35</td><td class="no-badge">--</td><td class="xp-val">35</td><td class="xp-cum">70</td></tr>
+        <tr><td>3</td><td>Self-Talk</td><td class="xp-val">35</td><td class="no-badge">--</td><td class="xp-val">35</td><td class="xp-cum">105</td></tr>
+        <tr class="badge-row"><td>4</td><td>Attention Control</td><td class="xp-val">35</td><td class="badge-tag">🌬️ +25</td><td class="xp-val">60</td><td class="xp-cum">165</td></tr>
+        <tr><td>5</td><td>Pressure and Nerves</td><td class="xp-val">35</td><td class="no-badge">--</td><td class="xp-val">35</td><td class="xp-cum">200</td></tr>
+        <tr class="badge-row"><td>6</td><td>Consistency</td><td class="xp-val">35</td><td class="badge-tag">📊 +25</td><td class="xp-val">60</td><td class="xp-cum">260</td></tr>
+        <tr><td>7</td><td>Focus in a Team</td><td class="xp-val">35</td><td class="no-badge">--</td><td class="xp-val">35</td><td class="xp-cum">295</td></tr>
+        <tr class="badge-row"><td>8</td><td>My Focus Toolkit</td><td class="xp-val">35</td><td class="badge-tag">🏆 +50</td><td class="xp-val">85</td><td class="xp-cum">380</td></tr>
+        <tr>
+          <td colspan="3"><strong>Quest III Total</strong></td>
+          <td class="badge-tag">3 Badges · 100 XP</td>
+          <td class="xp-val"><strong>380 XP</strong></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- QUEST IV TEASER -->
+  <div class="teaser-card" id="next">
+    <div class="teaser-label">What Comes Next</div>
+    <div class="teaser-sep"></div>
+    <p class="teaser-narrative">The Challenger has faced themselves. They trained their mind under pressure, found calm in chaos, and learned to focus when it mattered most.<br><br>Now the arena changes. The next challenge is not about you -- it is about the people beside you.</p>
+    <div class="teaser-title">Quest IV: Rise Above</div>
+    <div class="teaser-sub">The Hero · Realm of Leadership · Coming next.</div>
+  </div>
+
+</div>
+</body>
+</html>

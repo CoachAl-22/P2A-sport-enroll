@@ -1,0 +1,35 @@
+Round 2 is built and staged. ✅ Everything's in **Desktop → MAJ-upload** — all four files this time:
+
+| File | Goes to (Replit) |
+|---|---|
+| `my-athletic-journey.html` | `public/` |
+| `routes.ts` | `server/` |
+| `storage.ts` | `server/` |
+| `schema.ts` | `shared/` |
+
+## What you're getting
+
+**Streak Freeze ❄️** — every athlete starts with 1 freeze. Miss a week mid-term and the freeze is used automatically with a "Phew!" celebration; no freeze left means a gentle streak reset (no confetti for bad news 😄). Gaps of 3+ weeks count as a term break — streaks survive the holidays. Kids earn a new freeze at every 4-week milestone (max 2 held), see their freeze count in the streak pill and on their Profile.
+
+**Push notifications 🔔** — two kinds: an **instant push the moment you save a skill assessment** ("Coach Al just assessed your Running 🏃"), and a **weekly streak nudge** for anyone who hasn't finished their week. Athletes opt in via a card on Home or the new Reminders section on Profile. iPhone kids get step-by-step guidance (iOS requires the app on the Home Screen first).
+
+## Deployment — 3 steps, in this order
+
+**Step 1: Upload the four files** (delete old + drag new, same as always).
+
+**Step 2: Say this to the Replit agent:**
+
+> "Please do the following, in order:
+> 1. Install the `web-push` npm package.
+> 2. Run `npx web-push generate-vapid-keys` and save the output as two secrets: VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY. Also create a secret VAPID_SUBJECT set to `mailto:info@power2adapt.com.au`, and a secret REMINDER_SECRET set to a long random string.
+> 3. Run the database migration (`npm run db:push`) — the schema adds two columns to maj_athletes and a new maj_push_subscriptions table.
+> 4. In public/sw.js: append a 'push' event listener that shows a notification using event.data.json() with title, body, icon './maj-icon-180.png', and a 'notificationclick' listener that closes the notification and focuses an existing app window or opens '/my-athletic-journey'. Keep the existing GET-only fetch handling unchanged.
+> 5. Bump all sw.js cache versions to v2.3."
+
+**Step 3: The weekly reminder schedule.** Say to Replit:
+
+> "Create a Scheduled Deployment that runs once a week on Wednesday at 4:00 PM Melbourne time, executing: `curl -X POST -H "x-reminder-secret: $REMINDER_SECRET" https://power2adapt.replit.app/api/maj/push/streak-reminders`"
+
+(Wednesday afternoon is my suggestion — change the day/time to whenever most of your sessions run.)
+
+Then republish, do the **open-close-open** cycle on your phone, and test: log in as a student → tap the 🔔 card on Home → allow notifications → then save an assessment as Coach Al on another device and watch the push arrive. Note the iPhone caveat: notifications only work from the **installed home-screen app** (iOS 16.4+), not Safari.

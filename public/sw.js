@@ -4,9 +4,9 @@
 // Version: update this string whenever you deploy a new version
 // ═══════════════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'maj-v1.0';
-const STATIC_CACHE = 'maj-static-v1.0';
-const API_CACHE = 'maj-api-v1.0';
+const CACHE_NAME = 'maj-v2.9';
+const STATIC_CACHE = 'maj-static-v2.9';
+const API_CACHE = 'maj-api-v2.9';
 
 // Files to cache immediately on install
 const STATIC_ASSETS = [
@@ -59,13 +59,16 @@ self.addEventListener('activate', event => {
 
 // ── FETCH ──────────────────────────────────────────────────────────
 self.addEventListener('fetch', event => {
+  // Never intercept non-GET requests (POST/PUT/PATCH/DELETE must go straight to the network)
+  if (event.request.method !== 'GET') return;
+
   const url = new URL(event.request.url);
 
-  // Always bypass for API calls — never serve stale data
-  if (API_ROUTES.some(route => url.pathname.startsWith(route))) {
+  // Network-first for ALL /api/ GET requests — never serve stale API data
+  if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(event.request).catch(() => {
-        // API failed — return a friendly offline JSON response
+        // Network unavailable — return a friendly offline JSON response
         return new Response(
           JSON.stringify({ error: 'offline', message: 'No connection — your progress will sync when you reconnect.' }),
           { status: 503, headers: { 'Content-Type': 'application/json' } }
@@ -174,15 +177,15 @@ async function syncQueuedProgress() {
   console.log('MAJ SW: Syncing queued progress...');
 }
 
-// ── PUSH NOTIFICATIONS (future) ────────────────────────────────────
+// ── PUSH NOTIFICATIONS ─────────────────────────────────────────────
 self.addEventListener('push', event => {
   if (!event.data) return;
   const data = event.data.json();
   event.waitUntil(
     self.registration.showNotification(data.title || 'My Athletic Journey', {
       body: data.body || 'You have a new update!',
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-72.png',
+      icon: './maj-icon-180.png',
+      badge: './maj-icon-180.png',
       data: { url: data.url || '/my-athletic-journey' },
       vibrate: [200, 100, 200]
     })
@@ -191,7 +194,17 @@ self.addEventListener('push', event => {
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
+  const target = event.notification.data?.url || '/my-athletic-journey';
   event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/my-athletic-journey')
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      // Focus an existing open window if one exists
+      for (const client of windowClients) {
+        if (client.url.includes('/my-athletic-journey') && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // Otherwise open a new window
+      if (clients.openWindow) return clients.openWindow(target);
+    })
   );
 });

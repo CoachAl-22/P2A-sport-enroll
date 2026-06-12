@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/layout/navbar";
-import { Users, UserCheck, Baby, Search, Mail, Phone, Calendar, Plus, UserX } from "lucide-react";
+import { Users, UserCheck, Baby, Search, Mail, Phone, Calendar, Plus, UserX, ChevronDown, ChevronRight, BookOpen } from "lucide-react";
 import { Redirect } from "wouter";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -38,6 +38,7 @@ export default function AdminCustomers() {
   const [showInactive, setShowInactive] = useState(false);
   const [selectedParent, setSelectedParent] = useState<any>(null);
   const [isAddChildOpen, setIsAddChildOpen] = useState(false);
+  const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -374,7 +375,7 @@ export default function AdminCustomers() {
               <CardHeader>
                 <CardTitle>All Students</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 {studentsLoading ? (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
@@ -383,10 +384,11 @@ export default function AdminCustomers() {
                   <Table>
                     <TableHeader>
                       <TableRow>
+                        <TableHead className="w-6"></TableHead>
                         <TableHead>Student</TableHead>
                         <TableHead>Age & Grade</TableHead>
                         <TableHead>Parent</TableHead>
-                        <TableHead>Enrollments</TableHead>
+                        <TableHead>Enrolments</TableHead>
                         <TableHead>Medical</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Action</TableHead>
@@ -395,62 +397,155 @@ export default function AdminCustomers() {
                     <TableBody>
                       {displayedStudents.map((student: any) => {
                         const isActive = student.active !== false;
+                        const isExpanded = expandedStudentId === student.id;
+                        const enrollments: any[] = student.enrollments || [];
+                        const activeEnrs = enrollments.filter((e: any) => e.enrollment?.status === 'active' || e.enrollment?.status === 'pending_payment' || e.enrollment?.status === 'waitlist');
+                        const pastEnrs = enrollments.filter((e: any) => !['active','pending_payment','waitlist'].includes(e.enrollment?.status));
+
+                        const statusColor = (s: string) => {
+                          if (s === 'active') return 'bg-green-100 text-green-800';
+                          if (s === 'pending_payment') return 'bg-amber-100 text-amber-800';
+                          if (s === 'waitlist') return 'bg-blue-100 text-blue-800';
+                          return 'bg-gray-100 text-gray-600';
+                        };
+
+                        const termStr = (e: any) => {
+                          const t = e.class?.term?.replace('term_', 'T') || '';
+                          const y = e.class?.year || '';
+                          return t && y ? `${y} ${t.replace('T','Term ')}` : '';
+                        };
+
+                        const dayStr = (e: any) => {
+                          const days = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                          return days[e.class?.dayOfWeek] || '';
+                        };
+
                         return (
-                          <TableRow key={student.id} className={!isActive ? "opacity-60 bg-gray-50" : ""}>
-                            <TableCell>
-                              <div className="font-medium">{student.firstName} {student.lastName}</div>
-                              <div className="text-xs text-gray-400">DOB: {formatDate(student.dateOfBirth)}</div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="font-medium text-sm">{getAge(student.dateOfBirth)} yrs</div>
-                              {student.grade && <div className="text-xs text-gray-500">{student.grade}</div>}
-                            </TableCell>
-                            <TableCell>
-                              <div className="text-sm font-medium">
-                                {student.parent?.firstName} {student.parent?.lastName}
-                              </div>
-                              {student.parent?.email && (
-                                <div className="text-xs text-gray-500">{student.parent.email}</div>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex gap-1 flex-wrap">
-                                <Badge className="bg-green-100 text-green-800 text-xs">{student.activeEnrollments} Active</Badge>
-                                <Badge variant="secondary" className="text-xs">{student.totalEnrollments} Total</Badge>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-sm max-w-xs">
-                              {student.medicalInfo ? (
-                                <span className="truncate block" title={student.medicalInfo}>{student.medicalInfo}</span>
-                              ) : (
-                                <span className="text-gray-400 text-xs">None</span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              {isActive ? (
-                                <Badge className="bg-green-100 text-green-800">Active</Badge>
-                              ) : (
-                                <Badge variant="secondary" className="bg-gray-100 text-gray-600">
-                                  <UserX className="h-3 w-3 mr-1" /> Inactive
-                                </Badge>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                variant={isActive ? "outline" : "default"}
-                                size="sm"
-                                disabled={toggleChildActive.isPending}
-                                onClick={() => toggleChildActive.mutate({ id: student.id, active: !isActive })}
-                              >
-                                {isActive ? "Deactivate" : "Activate"}
-                              </Button>
-                            </TableCell>
-                          </TableRow>
+                          <>
+                            <TableRow
+                              key={student.id}
+                              className={`${!isActive ? "opacity-60 bg-gray-50" : ""} cursor-pointer hover:bg-gray-50`}
+                              onClick={() => setExpandedStudentId(isExpanded ? null : student.id)}
+                            >
+                              <TableCell className="py-3 pl-3 pr-0">
+                                {isExpanded
+                                  ? <ChevronDown className="h-4 w-4 text-gray-400" />
+                                  : <ChevronRight className="h-4 w-4 text-gray-400" />}
+                              </TableCell>
+                              <TableCell>
+                                <div className="font-medium">{student.firstName} {student.lastName}</div>
+                                <div className="text-xs text-gray-400">DOB: {formatDate(student.dateOfBirth)}</div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="font-medium text-sm">{getAge(student.dateOfBirth)} yrs</div>
+                                {student.grade && <div className="text-xs text-gray-500">{student.grade}</div>}
+                              </TableCell>
+                              <TableCell>
+                                <div className="text-sm font-medium">
+                                  {student.parent?.firstName} {student.parent?.lastName}
+                                </div>
+                                {student.parent?.email && (
+                                  <div className="text-xs text-gray-500">{student.parent.email}</div>
+                                )}
+                              </TableCell>
+                              <TableCell onClick={e => e.stopPropagation()}>
+                                <div className="flex gap-1 flex-wrap">
+                                  <Badge className="bg-green-100 text-green-800 text-xs border-0">{student.activeEnrollments} Active</Badge>
+                                  <Badge variant="secondary" className="text-xs">{student.totalEnrollments} Total</Badge>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-sm max-w-xs">
+                                {student.medicalInfo ? (
+                                  <span className="truncate block text-xs" title={student.medicalInfo}>{student.medicalInfo}</span>
+                                ) : (
+                                  <span className="text-gray-400 text-xs">None</span>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {isActive ? (
+                                  <Badge className="bg-green-100 text-green-800 border-0">Active</Badge>
+                                ) : (
+                                  <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                                    <UserX className="h-3 w-3 mr-1" /> Inactive
+                                  </Badge>
+                                )}
+                              </TableCell>
+                              <TableCell onClick={e => e.stopPropagation()}>
+                                <Button
+                                  variant={isActive ? "outline" : "default"}
+                                  size="sm"
+                                  disabled={toggleChildActive.isPending}
+                                  onClick={() => toggleChildActive.mutate({ id: student.id, active: !isActive })}
+                                >
+                                  {isActive ? "Deactivate" : "Activate"}
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+
+                            {/* Expanded enrolment history */}
+                            {isExpanded && (
+                              <TableRow key={`${student.id}-expanded`} className="bg-blue-50/40">
+                                <TableCell colSpan={8} className="p-0">
+                                  <div className="px-8 py-4">
+                                    <div className="flex items-center gap-2 mb-3">
+                                      <BookOpen className="h-4 w-4 text-primary-600" />
+                                      <span className="font-semibold text-sm text-gray-800">
+                                        Enrolment History for {student.firstName} {student.lastName}
+                                      </span>
+                                    </div>
+
+                                    {enrollments.length === 0 ? (
+                                      <p className="text-sm text-gray-400 italic">No enrolments on record.</p>
+                                    ) : (
+                                      <div className="space-y-4">
+                                        {activeEnrs.length > 0 && (
+                                          <div>
+                                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Current / Active</p>
+                                            <div className="space-y-1.5">
+                                              {activeEnrs.map((e: any) => (
+                                                <div key={e.enrollment?.id} className="flex items-center gap-3 bg-white rounded-lg px-3 py-2 border border-gray-200 text-sm">
+                                                  <span className="font-medium flex-1">{e.class?.name || '—'}</span>
+                                                  <span className="text-xs text-gray-400">{termStr(e)}</span>
+                                                  {dayStr(e) && <span className="text-xs text-gray-400">{dayStr(e)} {e.class?.startTime}</span>}
+                                                  {e.venue && <span className="text-xs text-gray-400 hidden md:inline">{e.venue.name}</span>}
+                                                  <span className={`text-xs px-2 py-0.5 rounded font-medium ${statusColor(e.enrollment?.status)}`}>
+                                                    {e.enrollment?.status?.replace('_', ' ')}
+                                                  </span>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+
+                                        {pastEnrs.length > 0 && (
+                                          <div>
+                                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Past</p>
+                                            <div className="space-y-1.5">
+                                              {pastEnrs.map((e: any) => (
+                                                <div key={e.enrollment?.id} className="flex items-center gap-3 bg-white/60 rounded-lg px-3 py-2 border border-gray-100 text-sm opacity-75">
+                                                  <span className="font-medium flex-1 text-gray-600">{e.class?.name || '—'}</span>
+                                                  <span className="text-xs text-gray-400">{termStr(e)}</span>
+                                                  {dayStr(e) && <span className="text-xs text-gray-400">{dayStr(e)}</span>}
+                                                  <span className={`text-xs px-2 py-0.5 rounded font-medium ${statusColor(e.enrollment?.status)}`}>
+                                                    {e.enrollment?.status || '—'}
+                                                  </span>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            )}
+                          </>
                         );
                       })}
                       {displayedStudents.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={7} className="text-center text-gray-500 py-8">
+                          <TableCell colSpan={8} className="text-center text-gray-500 py-8">
                             No students found. {!showInactive && inactiveStudents.length > 0 && "Toggle \"Show inactive\" to see inactive records."}
                           </TableCell>
                         </TableRow>

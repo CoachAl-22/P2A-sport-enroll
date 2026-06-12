@@ -58,8 +58,9 @@ export const termConfigurations = pgTable("term_configurations", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Holiday Types Enum
-export const holidayTypeEnum = pgEnum("holiday_type", ["public_holiday", "student_free_day", "curriculum_day", "staff_planning_day"]);
+// Holiday type values (DB column is varchar — no pg enum needed)
+export const HOLIDAY_TYPES = ["public_holiday", "student_free_day", "curriculum_day", "staff_planning_day", "term_break"] as const;
+export type HolidayType = typeof HOLIDAY_TYPES[number];
 
 // Term Holidays (excluded dates)
 export const termHolidays = pgTable("term_holidays", {
@@ -67,7 +68,7 @@ export const termHolidays = pgTable("term_holidays", {
   termConfigurationId: uuid("term_configuration_id").references(() => termConfigurations.id, { onDelete: "cascade" }).notNull(),
   holidayDate: date("holiday_date", { mode: "string" }).notNull(),
   name: varchar("name", { length: 100 }).notNull(),
-  type: holidayTypeEnum("type").notNull().default("public_holiday"),
+  type: text("type").notNull().default("public_holiday"),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
   uniqueTermDate: unique().on(table.termConfigurationId, table.holidayDate),
@@ -190,6 +191,7 @@ export const classes = pgTable("classes", {
   maxAge: integer("max_age").notNull(),
   maxCapacity: integer("max_capacity").notNull(),
   currentEnrollment: integer("current_enrollment").default(0),
+  pricePerSession: decimal("price_per_session", { precision: 8, scale: 2 }),
   pricePerTerm: decimal("price_per_term", { precision: 8, scale: 2 }).notNull(),
   status: classStatusEnum("status").default("active"),
   imageUrl: varchar("image_url", { length: 500 }),
@@ -223,6 +225,8 @@ export const payments = pgTable("payments", {
   id: uuid("id").primaryKey().defaultRandom(),
   enrollmentId: uuid("enrollment_id").references(() => enrollments.id).notNull(),
   stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
+  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+  paymentType: varchar("payment_type", { length: 20 }).default("term").notNull(), // "term" | "monthly"
   amount: decimal("amount", { precision: 8, scale: 2 }).notNull(),
   currency: varchar("currency", { length: 3 }).default("AUD"),
   status: paymentStatusEnum("status").default("pending"),
@@ -1001,10 +1005,13 @@ export const majAthletes = pgTable("maj_athletes", {
   program: varchar("program", { length: 100 }),
   coach: varchar("coach", { length: 100 }),
   school: varchar("school", { length: 150 }),
+  avatar: varchar("avatar", { length: 16 }),
   currentModule: integer("current_module").notNull().default(1),
   currentWeek: integer("current_week").notNull().default(1),
   xp: integer("xp").notNull().default(0),
   streak: integer("streak").notNull().default(0),
+  streakFreezes: integer("streak_freezes").notNull().default(1),
+  lastWeekCompletedAt: timestamp("last_week_completed_at"),
   sessionsCompleted: integer("sessions_completed").notNull().default(0),
   reflectionsSubmitted: integer("reflections_submitted").notNull().default(0),
   earnedBadgeKeys: text("earned_badge_keys").array().notNull().default(sql`'{}'::text[]`),
@@ -1043,6 +1050,26 @@ export const majCoaches = pgTable("maj_coaches", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Coach kudos — one-tap encouragement sent by a coach to an athlete
+export const majKudos = pgTable("maj_kudos", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  athleteId: uuid("athlete_id").references(() => majAthletes.id, { onDelete: "cascade" }).notNull(),
+  coachName: varchar("coach_name", { length: 100 }),
+  emoji: varchar("emoji", { length: 16 }).notNull(),
+  message: varchar("message", { length: 200 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Web Push subscriptions — one row per device an athlete enabled reminders on
+export const majPushSubscriptions = pgTable("maj_push_subscriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  athleteId: uuid("athlete_id").references(() => majAthletes.id, { onDelete: "cascade" }).notNull(),
+  endpoint: text("endpoint").notNull().unique(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertMajAthleteSchema = createInsertSchema(majAthletes).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertMajReflectionSchema = createInsertSchema(majReflections).omit({ id: true, submittedAt: true });
 export const insertMajBadgeSchema = createInsertSchema(majBadges).omit({ id: true, awardedAt: true });
@@ -1056,3 +1083,5 @@ export type MajBadge = typeof majBadges.$inferSelect;
 export type InsertMajBadge = z.infer<typeof insertMajBadgeSchema>;
 export type MajCoach = typeof majCoaches.$inferSelect;
 export type InsertMajCoach = z.infer<typeof insertMajCoachSchema>;
+export type MajPushSubscription = typeof majPushSubscriptions.$inferSelect;
+export type MajKudosEntry = typeof majKudos.$inferSelect;

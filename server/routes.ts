@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import Stripe from "stripe";
 import bcrypt from "bcrypt";
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import { storage } from "./storage";
 import { ObjectStorageService } from "./objectStorage";
 import { smsService } from "./sms";
@@ -10,7 +11,7 @@ import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children } from "@shared/schema";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } from "./googleSheets";
 import { db } from "./db";
@@ -18,22 +19,28 @@ import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
 
 let stripe: Stripe | null = null;
-if (process.env.STRIPE_SECRET_KEY) {
-  stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+if (process.env.TESTING_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY) {
+  stripe = new Stripe((process.env.TESTING_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY)!, {
     apiVersion: "2025-07-30.basil",
   });
 }
 
 // Session configuration
+const PgSession = connectPgSimple(session);
 const sessionConfig = session({
+  store: new PgSession({
+    conString: process.env.DATABASE_URL,
+    tableName: 'session',
+    createTableIfMissing: true,
+  }),
   secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Allow HTTP for now to fix session issues
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: 'lax' // Allow cross-site requests for better compatibility
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days — keeps MAJ athletes signed in between weekly sessions
+    sameSite: 'lax',
   }
 });
 
@@ -59,7 +66,110 @@ const isAuthenticated = (req: any, res: any, next: any) => {
   return next();
 };
 
+// Admin-only middleware
+const isAdmin = async (req: any, res: any, next: any) => {
+  const userId = req.session?.userId;
+  if (!userId) return res.status(401).json({ message: "Authentication required" });
+  const user = await storage.getUser(userId);
+  if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
+  return next();
+};
+
+// ── MAJ (My Athletic Journey) session middleware ──────────────────────────
+// majRole / majAthleteId / majCoachUser are set on the session at /api/maj/login.
+// A main-app admin session also counts as coach access so the admin dashboard
+// keeps working against these endpoints.
+const hasMajCoachAccess = async (req: any): Promise<boolean> => {
+  const s = (req.session ?? {}) as any;
+  if (s.majRole === "coach") return true;
+  if (s.userId) {
+    const user = await storage.getUser(s.userId);
+    return !!user && user.role === "admin";
+  }
+  return false;
+};
+
+const isMajCoach = async (req: any, res: any, next: any) => {
+  if (await hasMajCoachAccess(req)) return next();
+  return res.status(401).json({ message: "Coach sign-in required" });
+};
+
+// Athletes may only touch their own record; coaches and admins may touch any.
+const canAccessMajAthlete = (getAthleteId: (req: any) => string | undefined) =>
+  async (req: any, res: any, next: any) => {
+    const s = (req.session ?? {}) as any;
+    if (s.majRole === "athlete" && s.majAthleteId && s.majAthleteId === getAthleteId(req)) return next();
+    if (await hasMajCoachAccess(req)) return next();
+    return res.status(401).json({ message: "Sign-in required" });
+  };
+
+// ── MAJ Web Push ───────────────────────────────────────────────────────────
+// Loaded lazily so the server still boots if web-push isn't installed or
+// VAPID keys aren't configured yet — push just stays silently disabled.
+let _webpush: any = null;
+const pushConfigured = () => !!(process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY);
+
+async function getWebPush(): Promise<any> {
+  if (_webpush) return _webpush;
+  if (!pushConfigured()) return null;
+  try {
+    const mod: any = await import("web-push");
+    _webpush = mod.default || mod;
+    _webpush.setVapidDetails(
+      process.env.VAPID_SUBJECT || "mailto:info@power2adapt.com.au",
+      process.env.VAPID_PUBLIC_KEY!,
+      process.env.VAPID_PRIVATE_KEY!,
+    );
+  } catch (e: any) {
+    console.warn("[push] web-push unavailable:", e.message);
+    _webpush = null;
+  }
+  return _webpush;
+}
+
+async function sendPushToAthlete(athleteId: string, payload: { title: string; body: string; url?: string }): Promise<number> {
+  try {
+    const wp = await getWebPush();
+    if (!wp) return 0;
+    const subs = await storage.getPushSubscriptionsForAthlete(athleteId);
+    let sent = 0;
+    await Promise.all(subs.map(async (s) => {
+      try {
+        await wp.sendNotification(
+          { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
+          JSON.stringify(payload),
+        );
+        sent++;
+      } catch (err: any) {
+        // 404/410 = subscription expired or revoked — clean it up
+        if (err.statusCode === 404 || err.statusCode === 410) {
+          await storage.deletePushSubscription(s.endpoint);
+        }
+      }
+    }));
+    return sent;
+  } catch (e: any) {
+    console.warn("[push] send failed:", e.message);
+    return 0;
+  }
+}
+
+// Has this athlete finished all three parts of their current week?
+function majWeekComplete(athlete: any): boolean {
+  const key = `${athlete.currentModule || 1}-${athlete.currentWeek || 1}`;
+  const cw = athlete.completedWeeks;
+  if (Array.isArray(cw)) {
+    return ["learn", "challenge", "reflect"].every(p => cw.includes(`${key}-${p}`));
+  }
+  if (cw && typeof cw === "object") {
+    const wk = cw[key];
+    return !!(wk && wk.learn && wk.challenge && wk.reflect);
+  }
+  return false;
+}
+
 const enrollmentFormSchema = insertEnrollmentSchema.extend({
+  parentId: z.string().optional(), // set server-side from session
   childInfo: z.object({
     firstName: z.string().min(1),
     lastName: z.string().min(1),
@@ -83,6 +193,27 @@ function authMiddleware(req: any, res: any, next: any) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Proxy /__mockup/ to the mockup sandbox dev server (port 23636) — dev only
+  if (process.env.NODE_ENV !== 'production') {
+    app.use('/__mockup', (req: any, res: any) => {
+      import('http').then(({ default: http }) => {
+        const options = {
+          hostname: 'localhost',
+          port: 23636,
+          path: '/__mockup' + req.url,
+          method: req.method,
+          headers: { ...req.headers, host: 'localhost:23636' },
+        };
+        const proxyReq = http.request(options, (proxyRes: any) => {
+          res.writeHead(proxyRes.statusCode, proxyRes.headers);
+          proxyRes.pipe(res, { end: true });
+        });
+        proxyReq.on('error', () => res.status(502).end('Mockup sandbox not available'));
+        req.pipe(proxyReq, { end: true });
+      });
+    });
+  }
+
   // Session middleware
   app.use(sessionConfig);
   // Mobile auth middleware
@@ -225,6 +356,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (athlete) {
         const valid = await bcrypt.compare(password, athlete.password);
         if (!valid) return res.status(401).json({ message: "Invalid credentials" });
+        const s = req.session as any;
+        s.majRole = "athlete";
+        s.majAthleteId = athlete.id;
+        delete s.majCoachUser;
         const { password: _, ...safe } = athlete;
         return res.json({ role: "athlete", ...safe });
       }
@@ -234,10 +369,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (coach) {
         const valid = await bcrypt.compare(password, coach.password);
         if (!valid) return res.status(401).json({ message: "Invalid credentials" });
+        const s = req.session as any;
+        s.majRole = "coach";
+        s.majCoachUser = coach.username;
+        delete s.majAthleteId;
         const { password: _, ...safe } = coach;
         // Return all athletes for coach view
         const athletes = await storage.getAllMajAthletes();
-        return res.json({ role: "coach", ...safe, athletes });
+        const safeAthletes = athletes.map(({ password: __, ...a }) => a);
+        return res.json({ role: "coach", ...safe, athletes: safeAthletes });
       }
 
       return res.status(401).json({ message: "Invalid credentials" });
@@ -246,7 +386,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/maj/athletes", async (req, res) => {
+  // Restore a signed-in athlete/coach without re-entering credentials.
+  app.get("/api/maj/me", async (req, res) => {
+    try {
+      const s = (req.session ?? {}) as any;
+      if (s.majRole === "athlete" && s.majAthleteId) {
+        const athlete = await storage.getMajAthleteById(s.majAthleteId);
+        if (athlete) {
+          const { password: _, ...safe } = athlete;
+          return res.json({ role: "athlete", ...safe });
+        }
+      }
+      if (s.majRole === "coach" && s.majCoachUser) {
+        const coach = await storage.getMajCoachByUsername(s.majCoachUser);
+        if (coach) {
+          const { password: _, ...safe } = coach;
+          const athletes = await storage.getAllMajAthletes();
+          const safeAthletes = athletes.map(({ password: __, ...a }) => a);
+          return res.json({ role: "coach", ...safe, athletes: safeAthletes });
+        }
+      }
+      return res.status(401).json({ message: "No active session" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/maj/logout", (req, res) => {
+    const s = (req.session ?? {}) as any;
+    delete s.majRole;
+    delete s.majAthleteId;
+    delete s.majCoachUser;
+    res.json({ ok: true });
+  });
+
+  // ── MAJ Push Notification endpoints ──────────────────────────────
+
+  app.get("/api/maj/push/public-key", (_req, res) => {
+    res.json({ key: process.env.VAPID_PUBLIC_KEY || null });
+  });
+
+  app.post("/api/maj/push/subscribe", canAccessMajAthlete(req => req.body.athleteId), async (req, res) => {
+    try {
+      const { athleteId, subscription } = req.body;
+      if (!athleteId || !subscription?.endpoint || !subscription?.keys?.p256dh || !subscription?.keys?.auth) {
+        return res.status(400).json({ message: "athleteId and subscription required" });
+      }
+      await storage.savePushSubscription({
+        athleteId,
+        endpoint: subscription.endpoint,
+        p256dh: subscription.keys.p256dh,
+        auth: subscription.keys.auth,
+      });
+      res.json({ ok: true });
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
+  app.post("/api/maj/push/unsubscribe", canAccessMajAthlete(req => req.body.athleteId), async (req, res) => {
+    try {
+      if (req.body.endpoint) await storage.deletePushSubscription(req.body.endpoint);
+      res.json({ ok: true });
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
+  // Called by a daily scheduled job (cron) — sends a streak nudge to every
+  // athlete who has reminders on and hasn't finished their current week.
+  app.post("/api/maj/push/streak-reminders", async (req, res) => {
+    try {
+      const secret = process.env.REMINDER_SECRET;
+      if (!secret || req.headers["x-reminder-secret"] !== secret) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      if (!pushConfigured()) return res.json({ sent: 0, message: "Push not configured" });
+
+      const subs = await storage.getAllPushSubscriptions();
+      const athleteIds = Array.from(new Set(subs.map(s => s.athleteId)));
+      let sent = 0;
+      for (const id of athleteIds) {
+        const athlete = await storage.getMajAthleteById(id);
+        if (!athlete || majWeekComplete(athlete)) continue;
+        const firstName = (athlete.fullName || "").split(" ")[0] || "Athlete";
+        const streakBit = (athlete.streak || 0) >= 2
+          ? `your ${athlete.streak}-week streak is on the line! 🔥`
+          : `Week ${athlete.currentWeek} is waiting for you 💪`;
+        sent += await sendPushToAthlete(id, {
+          title: "My Athletic Journey",
+          body: `${firstName}, ${streakBit}`,
+          url: "/my-athletic-journey",
+        });
+      }
+      res.json({ sent, athletesChecked: athleteIds.length });
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
+  app.get("/api/maj/athletes", isMajCoach, async (req, res) => {
     try {
       const athletes = await storage.getAllMajAthletes();
       const safe = athletes.map(({ password, ...a }) => a);
@@ -256,7 +495,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/maj/athletes", async (req, res) => {
+  app.post("/api/maj/athletes", isAdmin, async (req, res) => {
     try {
       const { fullName, username, password, grade, program } = req.body;
       if (!fullName || !username || !password) {
@@ -281,7 +520,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/maj/athlete/:id", async (req, res) => {
+  app.get("/api/maj/athlete/:id", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const athlete = await storage.getMajAthleteById(req.params.id);
       if (!athlete) return res.status(404).json({ message: "Athlete not found" });
@@ -293,11 +532,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/maj/athlete/:id/progress", async (req, res) => {
+  app.post("/api/maj/athlete/:id/progress", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
-      const { xp, currentModule, currentWeek, streak, sessionsCompleted, reflectionsSubmitted, earnedBadgeKeys, completedWeeks } = req.body;
+      const { xp, currentModule, currentWeek, streak, streakFreezes, lastWeekCompletedAt, avatar, sessionsCompleted, reflectionsSubmitted, earnedBadgeKeys, completedWeeks } = req.body;
       const updated = await storage.updateMajAthleteProgress(req.params.id, {
-        xp, currentModule, currentWeek, streak, sessionsCompleted, reflectionsSubmitted, earnedBadgeKeys, completedWeeks
+        xp, currentModule, currentWeek, streak, streakFreezes, lastWeekCompletedAt, avatar, sessionsCompleted, reflectionsSubmitted, earnedBadgeKeys, completedWeeks
       });
       const { password: _, ...safe } = updated;
       res.json(safe);
@@ -306,7 +545,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/maj/reflection", async (req, res) => {
+  app.post("/api/maj/reflection", canAccessMajAthlete(req => req.body.athleteId), async (req, res) => {
     try {
       const { athleteId, moduleNum, weekNum, prompt, response: reflResponse } = req.body;
       if (!athleteId || !moduleNum || !weekNum || !prompt || !reflResponse) {
@@ -319,7 +558,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/maj/badge", async (req, res) => {
+  app.post("/api/maj/badge", canAccessMajAthlete(req => req.body.athleteId), async (req, res) => {
     try {
       const { athleteId, badgeKey, badgeName, badgeIcon, xpAwarded, awardedBy } = req.body;
       if (!athleteId || !badgeKey || !badgeName || !badgeIcon) {
@@ -332,7 +571,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/maj/athlete/:id/assessments", async (req, res) => {
+  app.get("/api/maj/athlete/:id/assessments", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const assessments = await storage.getRunAssessmentsForAthlete(req.params.id);
       res.json(assessments);
@@ -341,7 +580,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/maj/assessments", async (req, res) => {
+  app.post("/api/maj/assessments", isMajCoach, async (req, res) => {
     try {
       const assessment = await storage.createRunAssessment(req.body);
       res.status(201).json(assessment);
@@ -350,7 +589,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/maj/athlete/:id/skill-assessments", async (req, res) => {
+  app.get("/api/maj/athlete/:id/skill-assessments", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const assessments = await storage.getSkillAssessmentsForAthlete(req.params.id);
       res.json(assessments);
@@ -360,7 +599,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Latest assessment within the last 14 days — used for the home page coach banner
-  app.get("/api/maj/athlete/:id/latest-assessment", async (req, res) => {
+  app.get("/api/maj/athlete/:id/latest-assessment", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const assessments = await storage.getSkillAssessmentsForAthlete(req.params.id);
       if (!assessments.length) return res.json(null);
@@ -372,7 +611,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/maj/athlete/:id/notifications", async (req, res) => {
+  app.get("/api/maj/athlete/:id/notifications", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const assessments = await storage.getSkillAssessmentsForAthlete(req.params.id);
       const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
@@ -393,22 +632,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
         date: a.assessment_date || a.created_at,
         createdAt: a.created_at,
       }));
-      res.json(notifications);
+      // Merge in coach kudos from the same window
+      const kudos = await storage.getKudosForAthlete(req.params.id);
+      const recentKudos = kudos
+        .filter((k: any) => k.createdAt && new Date(k.createdAt).getTime() > cutoff)
+        .map((k: any) => ({
+          id: k.id,
+          type: "kudos",
+          title: `${k.emoji} Kudos from ${k.coachName || "your coach"}!`,
+          body: k.message,
+          coach: k.coachName,
+          date: k.createdAt,
+          createdAt: k.createdAt,
+        }));
+      const merged = [...notifications, ...recentKudos].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      res.json(merged);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
 
-  app.post("/api/maj/skill-assessments", async (req, res) => {
+  app.post("/api/maj/skill-assessments", isMajCoach, async (req, res) => {
     try {
       const assessment = await storage.createSkillAssessment(req.body);
+      // Fire-and-forget push so the athlete hears about coach feedback right away
+      if (req.body.athleteId) {
+        const typeLabels: Record<string, string> = {
+          run: "Running 🏃", jump: "Jump & Land ⬆️", throw: "Throw 🎯", leap: "Bound & Leap 🦘"
+        };
+        const skill = typeLabels[req.body.assessmentType] || "skills";
+        sendPushToAthlete(req.body.athleteId, {
+          title: "Coach feedback! 📋",
+          body: `${req.body.coachName || "Your coach"} just assessed your ${skill} — open MAJ to read it`,
+          url: "/my-athletic-journey",
+        }).catch(() => {});
+      }
       res.status(201).json(assessment);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
 
-  app.post("/api/maj/export/athlete-assessments", async (req, res) => {
+  // One-tap coach kudos — saved for the athlete's bell and pushed instantly
+  app.post("/api/maj/kudos", isMajCoach, async (req, res) => {
+    try {
+      const { athleteId, emoji, message, coachName } = req.body;
+      if (!athleteId || !emoji || !message) {
+        return res.status(400).json({ message: "athleteId, emoji and message required" });
+      }
+      const kudos = await storage.createMajKudos({ athleteId, coachName, emoji, message });
+      sendPushToAthlete(athleteId, {
+        title: `${emoji} Kudos from ${coachName || "your coach"}!`,
+        body: message,
+        url: "/my-athletic-journey",
+      }).catch(() => {});
+      res.status(201).json(kudos);
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
+  app.post("/api/maj/export/athlete-assessments", isMajCoach, async (req, res) => {
     try {
       const { athleteId, athleteName } = req.body;
       if (!athleteId || !athleteName) return res.status(400).json({ message: "athleteId and athleteName required" });
@@ -422,7 +708,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/maj/wellness", async (req, res) => {
+  app.post("/api/maj/wellness", canAccessMajAthlete(req => req.body.athleteId), async (req, res) => {
     try {
       const record = await storage.createWellnessCheckIn(req.body);
       res.status(201).json(record);
@@ -431,7 +717,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/maj/athlete/:id/wellness", async (req, res) => {
+  app.get("/api/maj/athlete/:id/wellness", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const records = await storage.getWellnessForAthlete(req.params.id);
       res.json(records);
@@ -440,7 +726,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/maj/athlete/:id/reflections", async (req, res) => {
+  app.get("/api/maj/athlete/:id/reflections", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const reflections = await storage.getMajReflectionsForAthlete(req.params.id);
       res.json(reflections);
@@ -449,7 +735,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/maj/reflection/:id/note", async (req, res) => {
+  app.put("/api/maj/reflection/:id/note", isMajCoach, async (req, res) => {
     try {
       const { coachNote } = req.body;
       const updated = await storage.updateMajReflectionCoachNote(req.params.id, coachNote);
@@ -471,6 +757,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const { fileURLToPath } = await import("url");
     const __dirname = dirname(fileURLToPath(import.meta.url));
     res.sendFile(resolve(__dirname, "../public/p2a-logo.png"));
+  });
+
+  app.get("/module2-overview", async (req, res) => {
+    const { readFileSync } = await import("fs");
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const filePath = resolve(__dirname, "../public/module2-overview.html");
+    try {
+      const content = readFileSync(filePath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(content);
+    } catch {
+      res.status(404).send("Page not found");
+    }
+  });
+
+  // White-label sales demo — fully client-side, sample data only
+  app.get("/velocity-demo", async (req, res) => {
+    const { readFileSync } = await import("fs");
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const filePath = resolve(__dirname, "../public/velocity-demo.html");
+    try {
+      const content = readFileSync(filePath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(content);
+    } catch {
+      res.status(404).send("Page not found");
+    }
+  });
+
+  // Public landing / onboarding page for MAJ — parents' front door
+  app.get("/journey", async (req, res) => {
+    const { readFileSync } = await import("fs");
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const filePath = resolve(__dirname, "../public/journey.html");
+    try {
+      const content = readFileSync(filePath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(content);
+    } catch {
+      res.status(404).send("Page not found");
+    }
   });
 
   app.get("/my-athletic-journey", async (req, res) => {
@@ -658,6 +991,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/auth/register", async (req, res) => {
     try {
+      // Auto-generate userId from email prefix if not provided
+      if (!req.body.userId && req.body.email) {
+        const prefix = req.body.email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "");
+        const suffix = Math.floor(1000 + Math.random() * 9000);
+        req.body.userId = `${prefix}${suffix}`;
+      }
+
       const userData = insertUserSchema.parse(req.body);
       
       // Hash password
@@ -714,6 +1054,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Classes routes
+  app.get("/api/classes/sibling-discount", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.json({ eligible: false, count: 0 });
+    const { term, year } = req.query as { term: string; year: string };
+    if (!term || !year) return res.json({ eligible: false, count: 0 });
+    try {
+      const count = await storage.getActiveEnrolmentCountForParent(userId, term, parseInt(year, 10));
+      res.json({ eligible: count >= 2, count });
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to check sibling discount' });
+    }
+  });
+
   app.get("/api/classes", async (req, res) => {
     try {
       const filters = {
@@ -726,25 +1079,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const classesWithSpots = await storage.getClassesWithSpots(filters);
       res.json(classesWithSpots);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  });
-
-  app.get("/api/classes/sibling-discount", async (req, res) => {
-    const userId = (req.session as any)?.userId;
-    if (!userId) return res.json({ eligible: false, count: 0 });
-
-    const { term, year } = req.query as { term?: string; year?: string };
-    if (!term || !year) return res.json({ eligible: false, count: 0 });
-
-    try {
-      const count = await storage.getActiveEnrolmentCountForParent(
-        userId,
-        term,
-        parseInt(year, 10)
-      );
-      res.json({ eligible: count >= 2, count });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -775,7 +1109,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      const classData = insertClassSchema.parse(req.body);
+      const body = { ...req.body };
+      // Compute pricePerTerm from pricePerSession × session count
+      if (body.pricePerSession && body.startDate && body.endDate && body.dayOfWeek) {
+        const sessions = storage.countSessions(new Date(body.startDate), new Date(body.endDate), parseInt(body.dayOfWeek));
+        body.pricePerTerm = (parseFloat(body.pricePerSession) * sessions).toFixed(2);
+      }
+      if (!body.pricePerTerm) {
+        return res.status(400).json({ message: "Cannot compute term price — ensure pricePerSession, startDate, endDate and dayOfWeek are all provided." });
+      }
+      const classData = insertClassSchema.parse(body);
       const newClass = await storage.createClass(classData);
       res.json(newClass);
     } catch (error: any) {
@@ -795,7 +1138,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      const updates = req.body;
+      const updates = { ...req.body };
+      // Recompute pricePerTerm if pricePerSession changes
+      if (updates.pricePerSession) {
+        const existing = await storage.getClass(req.params.id);
+        const startDate = updates.startDate ?? existing?.startDate;
+        const endDate = updates.endDate ?? existing?.endDate;
+        const dayOfWeek = updates.dayOfWeek ?? existing?.dayOfWeek;
+        if (startDate && endDate && dayOfWeek) {
+          const sessions = storage.countSessions(new Date(startDate), new Date(endDate), parseInt(dayOfWeek));
+          updates.pricePerTerm = (parseFloat(updates.pricePerSession) * sessions).toFixed(2);
+        }
+      }
       const updatedClass = await storage.updateClass(req.params.id, updates);
       res.json(updatedClass);
     } catch (error: any) {
@@ -1074,6 +1428,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Children routes (requires authentication)
+  // Public athlete lookup by name (minimal data, no PII)
+  app.get("/api/children/lookup", async (req, res) => {
+    const { name } = req.query as { name: string };
+    if (!name || name.trim().length < 2) return res.json([]);
+    try {
+      const term = name.trim().toLowerCase();
+      const all = await db
+        .select({
+          id: children.id,
+          firstName: children.firstName,
+          lastName: children.lastName,
+          dateOfBirth: children.dateOfBirth,
+        })
+        .from(children);
+      const matches = all.filter((c) => {
+        const full = `${c.firstName} ${c.lastName}`.toLowerCase();
+        return full.includes(term) || c.firstName.toLowerCase().startsWith(term) || c.lastName.toLowerCase().startsWith(term);
+      }).slice(0, 8);
+      // Return only name + rough age (no DOB, no parent ID)
+      const now = new Date();
+      res.json(matches.map((c) => ({
+        id: c.id,
+        firstName: c.firstName,
+        lastName: c.lastName,
+        age: now.getFullYear() - new Date(c.dateOfBirth).getFullYear(),
+      })));
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.get("/api/children", async (req, res) => {
     const userId = (req.session as any)?.userId;
     if (!userId) {
@@ -1172,6 +1557,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/enrollments/waitlist", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ error: 'Not authenticated' });
+
+    const { childId, classId } = req.body;
+    if (!childId || !classId) {
+      return res.status(400).json({ error: 'childId and classId are required' });
+    }
+
+    try {
+      const result = await storage.createWaitlistWithHolidayReservation(childId, classId, userId);
+      const child = await storage.getChild(childId);
+      const cls = await storage.getClass(classId);
+      const user = await storage.getUser(userId);
+      if (child && cls && user?.mobile) {
+        const message = result.holidayReservation
+          ? `${child.firstName} is on the waitlist for ${cls.name}! 🎁 Bonus: a spot has been reserved in our next holiday program. We'll SMS you if a class spot opens. — Power2ADAPT`
+          : `${child.firstName} is on the waitlist for ${cls.name}. We'll SMS you if a spot opens — you'll have 24 hours to confirm. — Power2ADAPT`;
+        await smsService.sendSMS(user.mobile, message).catch(() => {});
+      }
+      res.json(result);
+    } catch (error: any) {
+      console.error('Waitlist error:', error);
+      res.status(500).json({ error: 'Failed to join waitlist' });
+    }
+  });
+
   app.post("/api/enrollments", async (req, res) => {
     const userId = (req.session as any)?.userId;
     if (!userId) {
@@ -1179,7 +1591,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      const { childInfo, ...enrollmentData } = enrollmentFormSchema.parse(req.body);
+      const parsed = enrollmentFormSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ message: parsed.error.issues.map((i: any) => `${i.path.join('.')}: ${i.message}`).join('; ') });
+      }
+      const { childInfo, ...enrollmentData } = parsed.data;
       
       let childId = enrollmentData.childId;
       
@@ -1201,6 +1617,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const classData = await storage.getClass(enrollmentData.classId);
       if (!classData) {
         return res.status(404).json({ message: "Class not found" });
+      }
+
+      // Term 3 enrollment lock — enrolments open 5 June 2026 AEST
+      const TERM3_OPENS = new Date("2026-06-05T00:00:00+10:00");
+      if (new Date() < TERM3_OPENS) {
+        return res.status(403).json({ message: "Term 3 enrolments open on 5 June 2026. Check back then to secure your spot!" });
       }
       
       const enrollmentStatus = (classData.currentEnrollment || 0) >= classData.maxCapacity ? "waitlist" : "pending_payment";
@@ -1260,39 +1682,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('SMS notification failed:', smsError);
         // Don't fail the enrollment if SMS fails
       }
-
-      // Holiday program auto-reservation for waitlisted students
-      let holidayReservation = null;
-      if (enrollmentStatus === "waitlist") {
-        try {
-          const childData = await storage.getChild(childId);
-          if (childData?.dateOfBirth) {
-            const dob = new Date(childData.dateOfBirth);
-            const today = new Date();
-            let childAge = today.getFullYear() - dob.getFullYear();
-            if (today.getMonth() < dob.getMonth() ||
-               (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
-              childAge--;
-            }
-            const holidayClass = await storage.findHolidayClassForAge(childAge);
-            if (holidayClass) {
-              holidayReservation = await storage.createEnrollment({
-                childId,
-                classId: holidayClass.id,
-                parentId: userId,
-                status: 'pending_payment' as any,
-                waitlistHolidayReservation: true,
-                autoRenew: false,
-              });
-            }
-          }
-        } catch (holidayError) {
-          console.error('Holiday reservation error:', holidayError);
-          // Don't block the waitlist response if holiday reservation fails
-        }
-      }
-
-      res.json({ enrollment, waitlistPosition, holidayReservation });
+      
+      res.json(enrollment);
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
@@ -1331,6 +1722,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: "aud",
+        payment_method_types: ["card"],
         metadata: {
           enrollmentId: enrollment.id,
           userId,
@@ -1340,6 +1732,161 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ clientSecret: paymentIntent.client_secret });
     } catch (error: any) {
       res.status(500).json({ message: "Error creating payment intent: " + error.message });
+    }
+  });
+
+  // ── Batch payment intent — one charge for multiple enrollments (family) ──
+  app.post("/api/create-batch-payment-intent", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    try {
+      const { enrollmentIds } = req.body as { enrollmentIds: string[] };
+      if (!Array.isArray(enrollmentIds) || enrollmentIds.length === 0)
+        return res.status(400).json({ message: "enrollmentIds required" });
+
+      // Fetch all enrollments + their class prices
+      const allParentRows = await storage.getEnrollmentsByParent(userId);
+      const matched = allParentRows.filter(r => enrollmentIds.includes(r.enrollment.id));
+      if (matched.length !== enrollmentIds.length)
+        return res.status(403).json({ message: "One or more enrollments not found or not yours" });
+
+      const totalCents = matched.reduce((sum, r) => {
+        const price = parseFloat(r.class?.pricePerTerm ?? "0");
+        return sum + Math.round(price * 100);
+      }, 0);
+
+      if (!stripe) return res.status(500).json({ message: "Payment processing not configured" });
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: totalCents,
+        currency: "aud",
+        payment_method_types: ["card"],
+        metadata: {
+          enrollmentIds: enrollmentIds.join(","),
+          userId,
+        },
+      });
+
+      res.json({ clientSecret: paymentIntent.client_secret, totalCents, enrollments: matched });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error creating batch payment intent: " + error.message });
+    }
+  });
+
+  // ── Monthly subscription (3 × $110+GST monthly, for Junior Academy / Senior Squad / Elite HP) ──
+  app.post("/api/create-subscription", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+
+    try {
+      const { enrollmentId } = req.body;
+
+      const enrollment = await storage.getEnrollment(enrollmentId);
+      if (!enrollment) return res.status(404).json({ message: "Enrollment not found" });
+      if (enrollment.parentId !== userId) return res.status(403).json({ message: "Unauthorized" });
+
+      const classData = await storage.getClass(enrollment.classId);
+      if (!classData) return res.status(404).json({ message: "Class not found" });
+
+      if (!stripe) return res.status(500).json({ message: "Payment processing not configured" });
+
+      const parent = await storage.getUser(userId);
+      if (!parent) return res.status(404).json({ message: "User not found" });
+
+      // Create or retrieve Stripe customer
+      let customerId: string;
+      const existingCustomers = await stripe.customers.list({ email: parent.email || undefined, limit: 1 });
+      if (existingCustomers.data.length > 0) {
+        customerId = existingCustomers.data[0].id;
+      } else {
+        const customer = await stripe.customers.create({
+          email: parent.email || undefined,
+          name: `${parent.firstName || ""} ${parent.lastName || ""}`.trim() || undefined,
+          metadata: { userId },
+        });
+        customerId = customer.id;
+      }
+
+      // $110 + GST (10%) = $121 AUD per instalment, 3 payments
+      const instalmentAmountCents = 12100; // $121.00 AUD in cents
+
+      // Create a SetupIntent so the user enters their card — we'll charge via subscription
+      const setupIntent = await stripe.setupIntents.create({
+        customer: customerId,
+        payment_method_types: ["card"],
+        metadata: {
+          enrollmentId: enrollment.id,
+          userId,
+          instalmentAmountCents: String(instalmentAmountCents),
+          classId: classData.id,
+        },
+      });
+
+      res.json({
+        clientSecret: setupIntent.client_secret,
+        customerId,
+        instalmentAmount: 110,
+        instalmentAmountGst: 121,
+        totalInstalments: 3,
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error creating subscription: " + error.message });
+    }
+  });
+
+  // ── Activate monthly subscription after card setup ──
+  app.post("/api/activate-subscription", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+
+    try {
+      const { enrollmentId, setupIntentId } = req.body;
+      if (!stripe) return res.status(500).json({ message: "Payment processing not configured" });
+
+      const setupIntent = await stripe.setupIntents.retrieve(setupIntentId);
+      if (!setupIntent.payment_method) return res.status(400).json({ message: "No payment method found" });
+
+      const customerId = setupIntent.customer as string;
+      const instalmentAmountCents = parseInt(setupIntent.metadata.instalmentAmountCents || "12100");
+
+      // Create a one-off price for $121 AUD monthly
+      const price = await stripe.prices.create({
+        unit_amount: instalmentAmountCents,
+        currency: "aud",
+        recurring: { interval: "month" },
+        product_data: { name: "Power2ADAPT Monthly Instalment" },
+      });
+
+      // Create subscription — 3 payments then cancel
+      const subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        default_payment_method: setupIntent.payment_method as string,
+        items: [{ price: price.id }],
+        cancel_at_period_end: false,
+        metadata: {
+          enrollmentId,
+          userId,
+          maxInstalments: "3",
+          instalmentCount: "0",
+        },
+      });
+
+      // Update payment record with subscription ID and type
+      const payments = await storage.getPaymentsByEnrollment(enrollmentId);
+      if (payments.length > 0) {
+        await storage.updatePayment(payments[0].id, {
+          stripeSubscriptionId: subscription.id,
+          paymentType: "monthly",
+        } as any);
+      }
+
+      // Activate enrollment
+      await storage.updateEnrollment(enrollmentId, { status: "active" });
+      await storage.updateClassEnrollmentCount((await storage.getEnrollment(enrollmentId))!.classId);
+
+      res.json({ subscriptionId: subscription.id, status: subscription.status });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error activating subscription: " + error.message });
     }
   });
 
@@ -1355,57 +1902,114 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (event.type === 'payment_intent.succeeded') {
         const paymentIntent = event.data.object;
-        const enrollmentId = paymentIntent.metadata.enrollmentId;
-        
-        if (enrollmentId) {
-          // Update enrollment status to active
+        // Support both single enrollmentId and batch enrollmentIds (comma-separated)
+        const rawIds = paymentIntent.metadata.enrollmentIds || paymentIntent.metadata.enrollmentId;
+        const enrollmentIdList = rawIds ? rawIds.split(",").map((s: string) => s.trim()).filter(Boolean) : [];
+
+        if (enrollmentIdList.length > 0) {
+          // Update all enrollments and their payments
+          for (const enrollmentId of enrollmentIdList) {
+            await storage.updateEnrollment(enrollmentId, { status: "active" });
+            const pmts = await storage.getPaymentsByEnrollment(enrollmentId);
+            if (pmts.length > 0) {
+              await storage.updatePayment(pmts[0].id, {
+                status: "completed",
+                stripePaymentIntentId: paymentIntent.id,
+                paidAt: new Date(),
+              });
+            }
+            const enrollment = await storage.getEnrollment(enrollmentId);
+            if (enrollment) await storage.updateClassEnrollmentCount(enrollment.classId);
+          }
+
+          // Generate one combined invoice for the first payment (covers all children)
+          try {
+            const firstPayments = await storage.getPaymentsByEnrollment(enrollmentIdList[0]);
+            if (firstPayments.length > 0) {
+              const { invoiceNumber } = await invoiceService.generateInvoiceForPayment(firstPayments[0].id);
+              console.log(`Invoice ${invoiceNumber} generated (covers ${enrollmentIdList.length} enrolment(s))`);
+            }
+          } catch (invoiceError) {
+            console.log('Invoice generation failed:', invoiceError);
+          }
+
+          // Send one SMS confirmation covering all enrolled children
+          try {
+            const firstEnrollment = await storage.getEnrollment(enrollmentIdList[0]);
+            if (firstEnrollment) {
+              const parent = await storage.getUser(firstEnrollment.parentId);
+              const classData = await storage.getClass(firstEnrollment.classId);
+              if (parent?.mobile && classData) {
+                const amount = (paymentIntent.amount / 100).toFixed(2);
+                if (enrollmentIdList.length === 1) {
+                  const child = await storage.getChild(firstEnrollment.childId);
+                  await smsService.sendPaymentConfirmation(parent.mobile, child?.firstName ?? "your athlete", amount, classData.name);
+                } else {
+                  await smsService.sendSMS(parent.mobile,
+                    `Payment of $${amount} AUD confirmed for ${enrollmentIdList.length} athletes in ${classData.name}. Thank you! 🎉`
+                  );
+                }
+              }
+            }
+          } catch (smsError) {
+            console.log('Payment confirmation SMS failed:', smsError);
+          }
+        }
+      }
+
+      // ── Handle monthly subscription instalment payments ──
+      if (event.type === 'invoice.payment_succeeded') {
+        const invoice = event.data.object as any;
+        const subscriptionId = invoice.subscription;
+        if (!subscriptionId) { res.json({ received: true }); return; }
+
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const enrollmentId = subscription.metadata.enrollmentId;
+        if (!enrollmentId) { res.json({ received: true }); return; }
+
+        const currentCount = parseInt(subscription.metadata.instalmentCount || "0") + 1;
+        const maxInstalments = parseInt(subscription.metadata.maxInstalments || "3");
+
+        console.log(`Monthly instalment ${currentCount}/${maxInstalments} received for enrollment ${enrollmentId}`);
+
+        // Mark enrollment active on first payment
+        if (currentCount === 1) {
           await storage.updateEnrollment(enrollmentId, { status: "active" });
+          const enrollment = await storage.getEnrollment(enrollmentId);
+          if (enrollment) await storage.updateClassEnrollmentCount(enrollment.classId);
+        }
+
+        // Update instalment count in subscription metadata
+        await stripe.subscriptions.update(subscriptionId, {
+          metadata: { ...subscription.metadata, instalmentCount: String(currentCount) },
+        });
+
+        // Cancel subscription after final instalment
+        if (currentCount >= maxInstalments) {
+          await stripe.subscriptions.cancel(subscriptionId);
+          console.log(`Subscription ${subscriptionId} cancelled after ${maxInstalments} instalments`);
           
-          // Update payment record
+          // Update payment record to completed
           const payments = await storage.getPaymentsByEnrollment(enrollmentId);
           if (payments.length > 0) {
-            await storage.updatePayment(payments[0].id, {
-              status: "completed",
-              stripePaymentIntentId: paymentIntent.id,
-              paidAt: new Date(),
-            });
+            await storage.updatePayment(payments[0].id, { status: "completed", paidAt: new Date() });
           }
-          
-          // Update class enrollment count
+        }
+
+        // Send SMS for each instalment
+        try {
           const enrollment = await storage.getEnrollment(enrollmentId);
           if (enrollment) {
-            await storage.updateClassEnrollmentCount(enrollment.classId);
-            
-            // Generate invoice for payment
-            try {
-              const payments = await storage.getPaymentsByEnrollment(enrollmentId);
-              if (payments.length > 0) {
-                const { invoiceNumber } = await invoiceService.generateInvoiceForPayment(payments[0].id);
-                console.log(`Invoice ${invoiceNumber} generated for payment ${payments[0].id}`);
-              }
-            } catch (invoiceError) {
-              console.log('Invoice generation failed:', invoiceError);
-            }
-
-            // Send payment confirmation SMS
-            try {
-              const parent = await storage.getUser(enrollment.parentId);
-              const child = await storage.getChild(enrollment.childId);
-              const classData = await storage.getClass(enrollment.classId);
-              
-              if (parent?.mobile && child && classData) {
-                const amount = (paymentIntent.amount / 100).toFixed(2);
-                await smsService.sendPaymentConfirmation(
-                  parent.mobile,
-                  child.firstName,
-                  amount,
-                  classData.name
-                );
-              }
-            } catch (smsError) {
-              console.log('Payment confirmation SMS failed:', smsError);
+            const parent = await storage.getUser(enrollment.parentId);
+            const child = await storage.getChild(enrollment.childId);
+            const classData = await storage.getClass(enrollment.classId);
+            if (parent?.mobile && child && classData) {
+              const amount = (invoice.amount_paid / 100).toFixed(2);
+              await smsService.sendPaymentConfirmation(parent.mobile, child.firstName, amount, classData.name);
             }
           }
+        } catch (smsError) {
+          console.log('Monthly instalment SMS failed:', smsError);
         }
       }
       
@@ -2825,6 +3429,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Term Configuration Routes
+  app.get("/api/admin/term-stats", isAdmin, async (req, res) => {
+    try {
+      const statsRows = await db
+        .select({
+          term: classes.term,
+          year: classes.year,
+          classCount: sql<number>`count(distinct ${classes.id})`,
+          bookingCount: sql<number>`count(case when ${enrollmentsTable.status} in ('active', 'completed') then ${enrollmentsTable.id} end)`,
+        })
+        .from(classes)
+        .leftJoin(enrollmentsTable, eq(enrollmentsTable.classId, classes.id))
+        .groupBy(classes.term, classes.year);
+      res.json(statsRows);
+    } catch (error: any) {
+      console.error('Error getting term stats:', error);
+      res.status(500).json({ message: "Failed to fetch term stats" });
+    }
+  });
+
   app.get("/api/term-configurations", async (req, res) => {
     try {
       const termConfigs = await storage.getTermConfigurations();
@@ -2835,7 +3458,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/term-configurations", async (req, res) => {
+  app.post("/api/term-configurations", isAdmin, async (req, res) => {
     try {
       const createData = { ...req.body };
       const termConfig = await storage.createTermConfiguration(createData);
@@ -2859,7 +3482,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/term-configurations/:id", async (req, res) => {
+  app.put("/api/term-configurations/:id", isAdmin, async (req, res) => {
     try {
       const updateData = { ...req.body };
       const termConfig = await storage.updateTermConfiguration(req.params.id, updateData);
@@ -2870,7 +3493,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/term-configurations/:id", async (req, res) => {
+  app.delete("/api/term-configurations/:id", isAdmin, async (req, res) => {
     try {
       await storage.deleteTermConfiguration(req.params.id);
       res.status(204).send();
@@ -2902,7 +3525,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/term-configurations/:id/holidays", async (req, res) => {
+  app.post("/api/term-configurations/:id/holidays", isAdmin, async (req, res) => {
     try {
       const holidayData = {
         ...req.body,
@@ -2916,7 +3539,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/term-holidays/:id", async (req, res) => {
+  app.delete("/api/term-holidays/:id", isAdmin, async (req, res) => {
     try {
       await storage.deleteTermHoliday(req.params.id);
       res.status(204).send();

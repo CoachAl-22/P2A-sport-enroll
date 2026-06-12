@@ -14,7 +14,6 @@ import Enrollment from "@/pages/enrollment";
 import Admin from "@/pages/admin";
 import Import from "@/pages/import";
 import Checkout from "@/pages/checkout";
-import Confirmation from "@/pages/confirmation";
 import Analytics from "@/pages/analytics";
 import AdminSMS from "@/pages/admin-sms";
 import Blog from "@/pages/blog";
@@ -41,6 +40,8 @@ import AdminAthletes from "@/pages/admin-athletes";
 import AdminApplications from "@/pages/admin-applications";
 import AdminSurveys from "@/pages/admin-surveys";
 import Onboarding from "@/pages/onboarding";
+import ConfirmationPage from "@/pages/confirmation";
+import ReEnrol from "@/pages/re-enrol";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -72,6 +73,11 @@ function Router() {
           <Route path="/payment-support" component={PaymentSupport} />
           <Route path="/questionnaire" component={Questionnaire} />
           <Route path="/questionnaire.html" component={Questionnaire} />
+          <Route path="/enrollment/:classId" component={Enrollment} />
+          <Route path="/checkout" component={Checkout} />
+          <Route path="/checkout/:enrollmentId" component={Checkout} />
+          <Route path="/confirmation" component={ConfirmationPage} />
+          <Route path="/re-enrol" component={ReEnrol} />
           <Route path="/video-highlights/:shareableLink" component={SharedVideo} />
         </>
       ) : (
@@ -83,8 +89,10 @@ function Router() {
           <Route path="/questionnaire" component={Questionnaire} />
           <Route path="/questionnaire.html" component={Questionnaire} />
           <Route path="/enrollment/:classId" component={Enrollment} />
+          <Route path="/checkout" component={Checkout} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
-          <Route path="/confirmation" component={Confirmation} />
+          <Route path="/confirmation" component={ConfirmationPage} />
+          <Route path="/re-enrol" component={ReEnrol} />
           <Route path="/waitlist" component={Waitlist} />
           <Route path="/blog" component={Blog} />
           <Route path="/education" component={Blog} />

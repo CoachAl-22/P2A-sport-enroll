@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Athletic Journey — Power2ADAPT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#F26522">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MAJ">
-<link rel="apple-touch-icon" href="./maj-icon-180.png">
+<link rel="apple-touch-icon" href="./maj-icon.svg">
 <style>
   :root {
     --orange: #F26522;
@@ -46,14 +45,10 @@
 
   html, body {
     height: 100%;
-    width: 100%;
-    max-width: 100%;
     background: var(--black);
     font-family: var(--font-body);
     color: var(--text);
     overflow: hidden;
-    overflow-x: hidden;
-    position: fixed;
   }
 
   /* ── APP SHELL ─────────────────────────────────────── */
@@ -61,15 +56,12 @@
     width: 100%;
     max-width: 430px;
     height: 100vh;
-    height: 100dvh;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    overflow-x: hidden;
     background: var(--black);
-    padding-top: env(safe-area-inset-top);
   }
 
   .page {
@@ -80,17 +72,14 @@
     overflow-x: hidden;
     scrollbar-width: none;
     padding-bottom: 80px;
-    touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
   }
   .page::-webkit-scrollbar { display: none; }
   .page.active { display: flex; }
 
-  img, video, iframe { max-width: 100%; height: auto; }
-
   /* ── BOTTOM NAV ────────────────────────────────────── */
   .bottom-nav {
-    flex-shrink: 0;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
     background: rgba(10,10,10,0.97);
     border-top: 1px solid var(--border);
     display: flex;
@@ -243,11 +232,13 @@
     overflow: hidden;
   }
   #login-bg-logo {
-    /* In-flow above the title — can never overlap the text on any screen */
-    display: block;
-    width: 210px;
-    max-width: 65%;
-    margin: 0 auto 16px;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    opacity: 0.85;
     pointer-events: none;
     user-select: none;
   }
@@ -292,7 +283,7 @@
     border: 1px solid var(--border2);
     border-radius: var(--radius-sm);
     padding: 14px 16px;
-    font-size: 16px; /* 16px minimum stops iOS Safari auto-zooming on focus */
+    font-size: 15px;
     font-family: var(--font-body);
     color: var(--text);
     outline: none;
@@ -894,7 +885,7 @@
     border: 1px solid var(--border2);
     border-radius: var(--radius-sm);
     padding: 14px 16px;
-    font-size: 16px; /* 16px minimum stops iOS Safari auto-zooming on focus */
+    font-size: 15px;
     font-family: var(--font-body);
     color: var(--text);
     resize: vertical;
@@ -935,55 +926,6 @@
   }
 
   .reflect-done-state.show { display: block; }
-
-  /* Reflections Journal */
-  .journal-entry {
-    background: var(--surface2);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    border-left: 3px solid var(--green);
-  }
-  .journal-entry-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .journal-week-pill {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    padding: 3px 8px;
-    border-radius: 20px;
-    color: #fff;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-  .journal-theme {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text1);
-  }
-  .journal-prompt {
-    font-size: 12px;
-    color: var(--text2);
-    font-style: italic;
-    margin-bottom: 8px;
-    line-height: 1.5;
-  }
-  .journal-text {
-    font-size: 13px;
-    color: var(--text1);
-    line-height: 1.65;
-    white-space: pre-wrap;
-  }
-  .journal-empty {
-    text-align: center;
-    padding: 24px 16px;
-    color: var(--text3);
-    font-size: 13px;
-  }
 
   .done-icon {
     font-size: 48px;
@@ -1313,7 +1255,8 @@
   /* ── TOAST ─────────────────────────────────────────── */
   .toast {
     position: fixed;
-    bottom: 90px; left: 16px; right: 16px;
+    bottom: 90px; left: 50%;
+    transform: translateX(-50%) translateY(10px);
     background: var(--surface2);
     border: 1px solid var(--border2);
     border-radius: var(--radius-pill);
@@ -1323,13 +1266,13 @@
     color: var(--text);
     opacity: 0;
     transition: all 0.25s;
-    white-space: normal;
-    text-align: center;
-    z-index: 9999; /* above every overlay so confirmations are never hidden */
+    white-space: nowrap;
+    z-index: 150;
     pointer-events: none;
+    max-width: 90%;
   }
 
-  .toast.show { opacity: 1; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ── COACH BANNER ──────────────────────────────────── */
   .coach-banner {
@@ -1376,8 +1319,7 @@
     margin: 0 auto; padding-bottom: 50px;
   }
   .assess-header {
-    /* extra top padding keeps the back arrow clear of the iPhone status bar */
-    padding: calc(14px + env(safe-area-inset-top)) 20px 14px;
+    padding: 14px 20px;
     background: var(--black);
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; gap: 12px;
@@ -1433,7 +1375,7 @@
   .assess-textarea {
     width: 100%; background: var(--surface2);
     border: 1px solid var(--border2); border-radius: var(--radius-sm);
-    padding: 10px 12px; font-size: 16px; /* 16px minimum stops iOS Safari auto-zooming on focus */
+    padding: 10px 12px; font-size: 13px;
     font-family: var(--font-body); color: var(--text);
     outline: none; resize: none; height: 72px;
     transition: border-color 0.15s;
@@ -1666,124 +1608,6 @@
     z-index: 59; display: none;
   }
   #week-preview-backdrop.open { display: block; }
-
-  /* ── PAST WEEK REVIEW OVERLAY ──────────────────────────────────────── */
-  #past-week-overlay {
-    position: fixed; inset: 0; z-index: 600;
-    background: var(--black); display: none; flex-direction: column; overflow: hidden;
-  }
-  #past-week-overlay.open { display: flex; }
-  .pwr-back-bar {
-    display: flex; align-items: center; gap: 8px;
-    /* extra top padding keeps the back button clear of the iPhone status bar */
-    padding: calc(12px + env(safe-area-inset-top)) 16px 12px; border-bottom: 1px solid var(--border);
-    flex-shrink: 0; cursor: pointer; user-select: none;
-    background: var(--surface2);
-  }
-  .pwr-back-bar:active { opacity: 0.7; }
-  .pwr-back-arrow { font-size: 20px; color: var(--orange); line-height: 1; }
-  .pwr-back-label { font-size: 13px; font-weight: 700; color: var(--orange); }
-  .pwr-hero {
-    padding: 16px 16px 14px; border-bottom: 1px solid var(--border);
-    flex-shrink: 0; background: var(--surface2);
-  }
-  .pwr-hero-meta { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-  .pwr-hero-title { font-size: 20px; font-weight: 800; font-family: var(--font-display); color: var(--text); margin-bottom: 10px; line-height: 1.2; }
-  .pwr-hero-status {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 5px 12px; border-radius: 20px;
-    background: var(--green-dim); border: 1px solid var(--green);
-    font-size: 12px; font-weight: 700; color: var(--green);
-  }
-  .pwr-tabs {
-    display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; padding: 0 16px;
-  }
-  .pwr-tab {
-    flex: 1; text-align: center; padding: 11px 0; font-size: 13px; font-weight: 700;
-    color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent;
-    margin-bottom: -1px; background: none; border-top: none; border-left: none; border-right: none;
-  }
-  .pwr-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
-  .pwr-body { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px; min-height: 0; touch-action: pan-y; }
-  .pwr-pane { display: none; }
-  .pwr-pane.active { display: block; }
-  .pwr-done-banner {
-    display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 16px;
-    background: #1a3a1a; border: 1.5px solid #4caf50;
-    border-radius: var(--radius-sm);
-  }
-  .pwr-done-banner-icon { font-size: 22px; flex-shrink: 0; }
-  .pwr-done-banner-text { flex: 1; }
-  .pwr-done-banner-title { font-size: 13px; font-weight: 700; color: #6fcf6f; margin-bottom: 1px; }
-  .pwr-done-banner-sub { font-size: 11px; color: #4caf50; }
-  .pwr-reflection-box {
-    margin-top: 12px; padding: 14px; background: var(--surface2); border-radius: 10px;
-    font-size: 13px; color: var(--text2); line-height: 1.6; font-style: italic; white-space: pre-wrap;
-  }
-  .pwr-no-reflection { font-size: 13px; color: var(--text3); font-style: italic; margin-top: 8px; }
-  /* ── RESPONSIVE: TABLET & DESKTOP ──────────────────── */
-  @media (min-width: 768px) {
-    #app {
-      max-width: 560px;
-      border-left: 1px solid var(--border2);
-      border-right: 1px solid var(--border2);
-      box-shadow: 0 0 80px rgba(0,0,0,0.7);
-    }
-  }
-  @media (min-width: 1200px) {
-    #app { max-width: 600px; }
-  }
-
-  /* ── RESPONSIVE: SHORT / LANDSCAPE SCREENS ─────────── */
-  @media (max-height: 620px) {
-    .page { padding-bottom: 64px; }
-  }
-
-  /* ── REDUCED MOTION ────────────────────────────────── */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-
-  /* ── NEXT REWARD HINT ──────────────────────────────── */
-  .next-reward {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: var(--orange-dim);
-    border: 1px solid var(--orange-border);
-    border-radius: var(--radius-sm);
-    font-size: 12px;
-    color: var(--text1);
-    line-height: 1.45;
-  }
-  .next-reward strong { color: var(--orange); font-weight: 700; }
-
-  /* ── LOADING SKELETON ──────────────────────────────── */
-  .skeleton {
-    background: linear-gradient(90deg, var(--surface2) 25%, var(--surface3) 50%, var(--surface2) 75%);
-    background-size: 200% 100%;
-    animation: skeleton-shimmer 1.2s ease-in-out infinite;
-    border-radius: var(--radius-sm);
-  }
-  @keyframes skeleton-shimmer { to { background-position: -200% 0; } }
-
-  /* ── CONFETTI ──────────────────────────────────────── */
-  .confetti-piece {
-    position: absolute;
-    top: -16px;
-    width: 9px;
-    height: 14px;
-    border-radius: 2px;
-    z-index: 300;
-    pointer-events: none;
-    animation: confetti-fall linear forwards;
-  }
-  @keyframes confetti-fall {
-    to { transform: translateY(110vh) rotate(720deg); opacity: 0.85; }
-  }
 </style>
 </head>
 <body>
@@ -1791,9 +1615,10 @@
 
   <!-- ══ LOGIN PAGE ══════════════════════════════════════════════════════ -->
   <div id="page-login" class="page active" style="padding-bottom:0;">
+    <img id="login-bg-logo" src="./p2a-logo-transparent.png" alt="">
     <div style="width:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1;padding:40px 32px;position:relative;z-index:1;">
       <div style="margin-bottom:32px;text-align:center;">
-        <img id="login-bg-logo" src="./p2a-logo-transparent.png" alt="Power2ADAPT">
+        <div class="login-logo">Power2ADAPT</div>
         <div class="login-title">My Athletic<br>Journey</div>
         <div class="login-sub">Your personal performance hub</div>
       </div>
@@ -1862,19 +1687,12 @@
       </div>
       <div class="xp-track"><div class="xp-fill" id="dash-xp-bar"></div></div>
       <div class="xp-caption">290 XP to reach <em>Athlete</em> tier</div>
-      <div class="next-reward" id="next-reward-hint" style="display:none;"></div>
     </div>
 
     <div class="pad" style="padding-top:20px;">
 
       <!-- Notification alert card — shown when unread coach assessment exists -->
       <div id="notif-alert-container"></div>
-
-      <!-- Install-to-home-screen prompt — shown when running in a browser tab -->
-      <div id="install-prompt-container"></div>
-
-      <!-- Push reminder opt-in prompt — shown once until enabled or dismissed -->
-      <div id="push-prompt-container"></div>
 
       <div class="section-label">This week's mission</div>
       <div class="mission-card" onclick="navTo('thisweek')">
@@ -1885,12 +1703,9 @@
             <svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             +35 XP available
           </div>
-          <button class="mission-go-btn" onclick="event.stopPropagation(); navTo('thisweek', false, 'learn')">Start now</button>
+          <button class="mission-go-btn" onclick="event.stopPropagation(); navTo('thisweek', false, 'do')">Start now</button>
         </div>
       </div>
-
-      <div class="section-label">Weeks ahead</div>
-      <div id="journey-week-map" style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;"></div>
 
       <div class="section-label">Quick stats</div>
       <div class="stats-grid">
@@ -1933,12 +1748,15 @@
       <div class="module-item mod-locked" onclick="toast('Complete Module 3 to unlock Module 4')">
         <div class="module-thumb">🤝</div>
         <div class="module-body">
-          <div class="module-name">Module 4: Rise Above</div>
+          <div class="module-name">Module 4: Lead Yourself</div>
           <div class="mini-track"><div class="mini-fill" style="width:0%"></div></div>
           <div class="module-caption">Locked · Leadership</div>
         </div>
         <div class="module-arrow">🔒</div>
       </div>
+
+      <div class="section-label" style="margin-top:20px;">Weeks ahead</div>
+      <div id="journey-week-map" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
 
       <!-- Dynamic coach feedback banner — shown when a real assessment exists -->
       <div id="coach-banner-container" style="display:none;margin-top:8px;"></div>
@@ -1989,14 +1807,6 @@
 
     <!-- DO TAB -->
     <div class="tab-pane" id="tab-do">
-      <!-- Reminder shown when Learn hasn't been marked as read yet -->
-      <div id="learn-reminder-banner" style="display:none;margin-bottom:14px;padding:12px 14px;background:var(--orange-dim);border:1px solid var(--orange-border);border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px;">
-        <span style="font-size:20px;">📖</span>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:2px;">Read the Learn section first</div>
-          <div style="font-size:12px;color:var(--text2);">Tap <strong>Learn</strong> above and hit "Mark as read" to unlock this step and earn your XP.</div>
-        </div>
-      </div>
       <div class="do-card">
         <div class="do-tag">Your challenge this week</div>
         <div class="do-heading">Power Up — Squat Jump Challenge</div>
@@ -2029,14 +1839,6 @@
 
     <!-- REFLECT TAB -->
     <div class="tab-pane" id="tab-reflect">
-      <!-- Reminder shown when Challenge hasn't been completed yet -->
-      <div id="challenge-reminder-banner" style="display:none;margin-bottom:14px;padding:12px 14px;background:var(--orange-dim);border:1px solid var(--orange-border);border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px;">
-        <span style="font-size:20px;">⚡</span>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:2px;">Complete the challenge first</div>
-          <div style="font-size:12px;color:var(--text2);">Tap <strong>Do</strong> above and mark the challenge complete before writing your reflection.</div>
-        </div>
-      </div>
       <div id="reflect-form-area">
         <div class="reflect-prompt-box">
           <div class="reflect-tag">Weekly reflection</div>
@@ -2082,7 +1884,7 @@
     </div>
 
     <div class="profile-hero">
-      <div class="profile-avatar" id="profile-avatar" onclick="openAvatarPicker()" style="cursor:pointer;" title="Tap to choose your avatar">JT</div>
+      <div class="profile-avatar" id="profile-avatar">JT</div>
       <div class="profile-info">
         <div class="profile-name" id="profile-name">Jordan Taylor</div>
         <div class="profile-program">Emerging Athlete · Grade 5</div>
@@ -2151,27 +1953,6 @@
       </div>
     </div>
 
-    <div class="profile-section" id="sounds-section">
-      <div class="profile-section-title">Sounds</div>
-      <div class="profile-row" onclick="toggleSounds()" style="cursor:pointer;">
-        <span class="profile-row-label">Celebration sounds</span>
-        <span class="profile-row-value" id="sounds-toggle-val">On 🔊</span>
-      </div>
-    </div>
-
-    <div class="profile-section" id="push-section" style="display:none;">
-      <div class="profile-section-title">Reminders</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:12px;" id="push-status-text">Get a friendly nudge on training week so your streak stays alive.</div>
-      <button class="btn-primary" id="push-enable-btn" onclick="enablePushReminders()">Turn on reminders 🔔</button>
-    </div>
-
-    <div class="profile-section" id="profile-journal-section">
-      <div class="profile-section-title">My reflections journal</div>
-      <div id="profile-journal-list">
-        <div class="journal-empty">No reflections yet — complete a week's Reflect step to start your journal.</div>
-      </div>
-    </div>
-
     <div style="padding:16px 20px 20px;">
       <button class="logout-btn" onclick="doLogout()">Sign out</button>
     </div>
@@ -2179,7 +1960,7 @@
 
   <!-- ══ SKILL DETAIL OVERLAY ══════════════════════════════════════════ -->
   <div id="skill-detail-overlay" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.75);overflow-y:auto;">
-    <div style="background:var(--surface1);border-radius:20px 20px 0 0;margin-top:max(48px, calc(env(safe-area-inset-top) + 10px));min-height:calc(100vh - 48px);display:flex;flex-direction:column;">
+    <div style="background:var(--surface1);border-radius:20px 20px 0 0;margin-top:48px;min-height:calc(100vh - 48px);display:flex;flex-direction:column;">
 
       <!-- Header bar -->
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--surface2);flex-shrink:0;">
@@ -2204,17 +1985,6 @@
   </div>
 
   <!-- ══ BOTTOM NAV ════════════════════════════════════════════════════ -->
-  <!-- ══ QUESTS PAGE ════════════════════════════════════════════════════ -->
-  <div id="page-quests" class="page">
-    <div class="top-bar">
-      <span class="top-bar-title">Quests</span>
-      <div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--orange);letter-spacing:1px;" id="quests-progress-tag">4 Modules · 32 Weeks</div>
-    </div>
-    <div style="padding:16px 16px 90px;" id="quests-body">
-      <div style="text-align:center;padding:30px 0;color:var(--text2);">Loading quests…</div>
-    </div>
-  </div>
-
   <nav class="bottom-nav" id="bottom-nav" style="display:none;">
     <button class="nav-btn active" data-page="home" onclick="navTo('home')">
       <div class="nav-icon">
@@ -2227,12 +1997,6 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </div>
       <span class="nav-label">This Week</span>
-    </button>
-    <button class="nav-btn" id="nav-quests-btn" data-page="quests" onclick="navTo('quests')" style="display:none;">
-      <div class="nav-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-      </div>
-      <span class="nav-label">Quests</span>
     </button>
     <button class="nav-btn" data-page="badges" onclick="navTo('badges')">
       <div class="nav-icon">
@@ -2261,55 +2025,6 @@
       <span id="wps-lock-msg"><strong>Complete your current week</strong> to unlock this one.</span>
     </div>
     <button class="btn-primary" style="margin-top:16px;width:100%;" onclick="closeWeekPreview(); navTo('thisweek');">Go to this week →</button>
-  </div>
-
-  <!-- ══ PAST WEEK REVIEW OVERLAY ════════════════════════════════════ -->
-  <div id="past-week-overlay">
-    <div class="pwr-back-bar" onclick="closePastWeekReview()">
-      <span class="pwr-back-arrow">←</span>
-      <span class="pwr-back-label">Back to Journey</span>
-    </div>
-    <div class="pwr-hero">
-      <div class="pwr-hero-meta" id="pwr-meta">Module 1 · Week 1 of 8</div>
-      <div class="pwr-hero-title" id="pwr-title">Week 1 — Theme</div>
-      <div class="pwr-hero-status">✅ Week Complete · 35+ XP earned</div>
-    </div>
-    <div class="pwr-tabs">
-      <button class="pwr-tab active" onclick="switchPwrTab('learn',this)">Learn ✓</button>
-      <button class="pwr-tab" onclick="switchPwrTab('do',this)">Do ✓</button>
-      <button class="pwr-tab" onclick="switchPwrTab('reflect',this)">Reflect ✓</button>
-    </div>
-    <div class="pwr-body" id="pwr-body-scroll">
-      <div class="pwr-pane active" id="pwr-learn">
-        <div class="learn-card">
-          <div class="learn-tag">This week's concept</div>
-          <div class="learn-heading" id="pwr-learn-heading"></div>
-          <div class="learn-intro" id="pwr-learn-intro"></div>
-          <div class="learn-points" id="pwr-learn-points"></div>
-          <div class="learn-closing" id="pwr-learn-closing"></div>
-        </div>
-      </div>
-      <div class="pwr-pane" id="pwr-do">
-        <div class="do-card">
-          <div class="do-tag">Your challenge this week</div>
-          <div class="do-heading" id="pwr-do-heading"></div>
-          <div class="do-setup" id="pwr-do-setup"></div>
-          <div class="do-steps" id="pwr-do-steps"></div>
-          <div class="do-changeit" id="pwr-do-changeit" style="display:none;">
-            <div class="do-changeit-label">Change it up</div>
-            <div class="do-changeit-text" id="pwr-do-changeit-text"></div>
-          </div>
-        </div>
-      </div>
-      <div class="pwr-pane" id="pwr-reflect">
-        <div class="reflect-prompt-box">
-          <div class="reflect-tag">Weekly reflection</div>
-          <div class="reflect-question" id="pwr-reflect-question"></div>
-          <div class="reflect-hint" id="pwr-reflect-hint"></div>
-        </div>
-        <div id="pwr-reflect-text"></div>
-      </div>
-    </div>
   </div>
 
   <div class="xp-overlay" id="xp-overlay" onclick="closeOverlay()">
@@ -2428,14 +2143,6 @@
         <div class="assess-athlete-name" id="assess-athlete-name">—</div>
         <div class="assess-athlete-meta" id="assess-athlete-meta">Select a skill type below</div>
       </div>
-      <!-- One-tap kudos — instant encouragement, lands in athlete's bell + push -->
-      <div style="padding:10px 16px 2px;display:flex;align-items:center;gap:8px;">
-        <span style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text2);flex-shrink:0;">SEND KUDOS</span>
-        <button onclick="sendKudos('🔥', `You're on fire — awesome effort this week!`, this)" style="flex:1;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;padding:8px 4px;font-size:18px;cursor:pointer;transition:all 0.15s;">🔥</button>
-        <button onclick="sendKudos('💪', `Great strength and effort today — keep pushing!`, this)" style="flex:1;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;padding:8px 4px;font-size:18px;cursor:pointer;transition:all 0.15s;">💪</button>
-        <button onclick="sendKudos('⭐', `Star performance — your coach noticed!`, this)" style="flex:1;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;padding:8px 4px;font-size:18px;cursor:pointer;transition:all 0.15s;">⭐</button>
-      </div>
-      <div id="assess-wellness-panel" style="padding:0 16px 8px;display:none;"></div>
       <div id="assess-history-panel" style="padding:0 16px 8px;display:none;"></div>
       <div class="assess-type-row">
         <div class="assess-type-btn" onclick="selectAssessType('run',this)">
@@ -2480,7 +2187,7 @@ const MAJ_CONTENT = {
       title: "Ignite Your Engine",
       pillar: "Athletic Ability",
       icon: "🔥",
-      color: "#00B4D8",
+      color: "#F26522",
       totalWeeks: 8,
       moduleBadge: { key: "mod1_master", name: "Module 1 Master", icon: "🏆", xp: 50 },
       weeks: [
@@ -3028,7 +2735,7 @@ const MAJ_CONTENT = {
       title: "Train the Mind",
       pillar: "Focus",
       icon: "🧠",
-      color: "#F26522",
+      color: "#00B4D8",
       totalWeeks: 8,
       moduleBadge: { key: "mod3_master", name: "Module 3 Master", icon: "🏆", xp: 50 },
       weeks: [
@@ -3074,20 +2781,20 @@ const MAJ_CONTENT = {
               "When you are stressed or nervous, your breathing becomes shallow and fast. This sends a signal to your brain that there is danger.",
               "Slow, deep breathing reverses this. It tells your brain: we are safe, we are in control.",
               "Athletes use breathing to calm nerves before competition, reset after a mistake, and stay focused under pressure.",
-              "Box Breathing: breathe in for 4 counts, hold for 4, breathe out for 4, hold for 4. Repeat twice. Try it now.",
+              "The 4-7-8 technique: breathe in for 4 counts, hold for 7, breathe out slowly for 8. Try it now.",
               "Breathing cannot remove pressure — but it can change how your body and mind respond to it."
             ],
             closing: "This week use your breathing as a reset tool. Every time something goes wrong, breathe before you respond."
           },
           do: {
-            title: "Box Breathing Before Your Hardest Activity",
-            setup: "Before the hardest activity in your session today, you will use the Box Breathing technique. Your coach will cue you when it is time.",
+            title: "4-7-8 Breathing Before Your Hardest Activity",
+            setup: "Before the hardest activity in your session today, you will use the 4-7-8 breathing technique. Your coach will cue you when it is time.",
             steps: [
               "When your coach signals, find a standing position and relax your shoulders.",
               "Breathe in through your nose for 4 slow counts.",
-              "Hold your breath for 4 counts.",
-              "Breathe out slowly through your mouth for 4 counts.",
-              "Hold for 4 counts — that is one full box. Repeat twice more, then go straight into the activity. Notice if it changes how you feel."
+              "Hold your breath for 7 counts.",
+              "Breathe out slowly through your mouth for 8 counts.",
+              "Repeat twice, then go straight into the activity. Notice if it changes how you feel."
             ],
             changeIt: "Use the breathing technique after a mistake or frustration during the session. Reset, breathe, continue.",
             badge: null
@@ -3300,10 +3007,10 @@ const MAJ_CONTENT = {
 
     {
       num: 4,
-      title: "Rise Above",
+      title: "Lead Yourself and Others",
       pillar: "Leadership",
       icon: "🤝",
-      color: "#8B5CF6",
+      color: "#F26522",
       totalWeeks: 8,
       moduleBadge: { key: "mod4_master", name: "Module 4 Master", icon: "🏆", xp: 50 },
       weeks: [
@@ -3618,7 +3325,10 @@ const MAJ_CONTENT = {
   // Base: https://power2adapt.replit.app/api/maj
   // ═══════════════════════════════════════════════════════════════════
 
-  const API = window.MAJ_API_BASE || '/api/maj';
+  const API = window.MAJ_API_BASE ||
+    (window.location.hostname === 'power2adapt.replit.app' || window.location.hostname.endsWith('.replit.app')
+      ? '/api/maj'
+      : 'https://power2adapt.replit.app/api/maj');
 
   function escapeHTML(value) {
     return String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -3662,12 +3372,6 @@ const MAJ_CONTENT = {
     return getField(rec, 'assessment_date', 'assessmentDate', 'created_at', 'createdAt');
   }
 
-  function apiError(res, path) {
-    const err = new Error(`API error ${res.status}: ${path}`);
-    err.status = res.status;
-    return err;
-  }
-
   async function apiPost(path, body) {
     const res = await fetch(`${API}${path}`, {
       method: 'POST',
@@ -3675,7 +3379,7 @@ const MAJ_CONTENT = {
       credentials: 'include',
       body: JSON.stringify(body)
     });
-    if (!res.ok) throw apiError(res, path);
+    if (!res.ok) throw new Error(`API error ${res.status}: ${path}`);
     return res.json();
   }
 
@@ -3683,7 +3387,7 @@ const MAJ_CONTENT = {
     const res = await fetch(`${API}${path}`, {
       credentials: 'include'
     });
-    if (!res.ok) throw apiError(res, path);
+    if (!res.ok) throw new Error(`API error ${res.status}: ${path}`);
     return res.json();
   }
 
@@ -3694,7 +3398,7 @@ const MAJ_CONTENT = {
       credentials: 'include',
       body: JSON.stringify(body)
     });
-    if (!res.ok) throw apiError(res, path);
+    if (!res.ok) throw new Error(`API error ${res.status}: ${path}`);
     return res.json();
   }
 
@@ -3711,9 +3415,6 @@ const MAJ_CONTENT = {
     currentWeek: 1,
     xp: 0,
     streak: 0,
-    streakFreezes: 1,
-    lastWeekCompletedAt: null,
-    avatar: '',
     sessionsCompleted: 0,
     reflectionsSubmitted: 0,
     earnedBadgeKeys: [],
@@ -3779,13 +3480,10 @@ const MAJ_CONTENT = {
         currentModule: a.currentModule,
         currentWeek: a.currentWeek,
         streak: a.streak,
-        streakFreezes: a.streakFreezes,
-        lastWeekCompletedAt: a.lastWeekCompletedAt,
-        avatar: a.avatar || null,
         sessionsCompleted: a.sessionsCompleted,
         reflectionsSubmitted: a.reflectionsSubmitted,
         earnedBadgeKeys: a.earnedBadgeKeys,
-        completedWeeks: a.completedWeeks
+        completedWeeks: JSON.stringify(a.completedWeeks)
       });
     } catch(e) {
       console.warn('Save failed, using localStorage fallback', e);
@@ -3824,18 +3522,6 @@ const MAJ_CONTENT = {
       try { earnedBadgeKeys = JSON.parse(earnedBadgeKeys); } catch(e) { earnedBadgeKeys = []; }
     }
 
-    const currentModule = parseInt(data.currentModule || data.current_module || 1);
-    const currentWeek   = parseInt(data.currentWeek  || data.current_week  || 1);
-    const lastWeekCompletedAt = data.lastWeekCompletedAt || data.last_week_completed_at || null;
-    // Accounts that pre-date streak tracking have no completion date — derive their
-    // streak from position. Once lastWeekCompletedAt exists, the stored streak is
-    // authoritative (it can now legitimately reset, so max() would resurrect it).
-    const storedStreak  = parseInt(data.streak || 0);
-    const derivedStreak = (currentModule - 1) * 8 + (currentWeek - 1);
-    const streak        = lastWeekCompletedAt ? storedStreak : Math.max(storedStreak, derivedStreak);
-    const rawFreezes    = parseInt(data.streakFreezes ?? data.streak_freezes);
-    const streakFreezes = Number.isNaN(rawFreezes) ? 1 : rawFreezes;
-
     return {
       id: data.id,
       name: nameParts[0] || fullName,
@@ -3844,13 +3530,10 @@ const MAJ_CONTENT = {
       grade: data.grade || '',
       program: data.program || 'Emerging Athlete',
       coach: data.coach || 'Al Tait',
-      currentModule,
-      currentWeek,
+      currentModule: parseInt(data.currentModule || data.current_module || 1),
+      currentWeek: parseInt(data.currentWeek || data.current_week || 1),
       xp: parseInt(data.xp || 0),
-      streak,
-      streakFreezes,
-      lastWeekCompletedAt,
-      avatar: data.avatar || '',
+      streak: parseInt(data.streak || 0),
       sessionsCompleted: parseInt(data.sessionsCompleted || data.sessions_completed || 0),
       reflectionsSubmitted: parseInt(data.reflectionsSubmitted || data.reflections_submitted || 0),
       earnedBadgeKeys: Array.isArray(earnedBadgeKeys) ? earnedBadgeKeys : [],
@@ -3859,91 +3542,6 @@ const MAJ_CONTENT = {
   }
 
   // ── LOGIN ─────────────────────────────────────────────────────────────
-  // Shared entry point for both fresh logins and restored sessions.
-  function enterApp(data) {
-    state.role = data.role; // 'athlete' or 'coach'
-
-    if (data.role === 'coach') {
-      // Coach — athletes come back with the login//me response, so no extra
-      // fetch is needed (the /athletes endpoint requires a coach session).
-      state.coach = data;
-      document.getElementById('bottom-nav').style.display = 'flex';
-      renderCoachView(data.athletes || []);
-      navTo('home');
-    } else {
-      state.athlete = mapAthleteFromAPI(data);
-      restoreFallbackProgress();
-      document.getElementById('bottom-nav').style.display = 'flex';
-      initApp();
-      navTo('home');
-      fetchCoachBanner();
-      fetchNotifications();
-      checkStreakStatus();
-      maybeShowInstallCard();
-      maybeShowPushPrompt();
-    }
-  }
-
-  // ── STREAK FREEZE ─────────────────────────────────────────────────────
-  // Runs on login. Missing a week mid-term burns a Streak Freeze ❄️ (or resets
-  // the streak if none are left). Gaps of 3+ weeks are treated as a school
-  // term break and the streak is safe — kids shouldn't lose it over holidays.
-  function checkStreakStatus() {
-    const a = state.athlete;
-    if (!a.lastWeekCompletedAt || !a.streak) return;
-    const last = new Date(a.lastWeekCompletedAt);
-    if (Number.isNaN(last.getTime())) return;
-    const days = (Date.now() - last.getTime()) / 86400000;
-
-    if (days < 13) return; // within a normal weekly rhythm — nothing to do
-
-    if (days >= 22) {
-      // Term break — streak preserved, restart the clock
-      a.lastWeekCompletedAt = new Date().toISOString();
-      saveState();
-      setTimeout(() => toast(`Welcome back! Your ${a.streak}-week streak survived the break 🔥`), 900);
-      return;
-    }
-
-    if (a.streakFreezes > 0) {
-      a.streakFreezes -= 1;
-      a.lastWeekCompletedAt = new Date().toISOString();
-      saveState();
-      renderDashboard();
-      renderProfile();
-      setTimeout(() => showOverlay('❄️', 'Streak Freeze used!',
-        `You missed a week, but your freeze saved your ${a.streak}-week streak. ${a.streakFreezes === 0 ? 'That was your last one — complete this week to stay safe!' : `${a.streakFreezes} freeze left.`}`,
-        'Phew! 🔥'), 800);
-    } else {
-      const lost = a.streak;
-      a.streak = 0;
-      a.lastWeekCompletedAt = new Date().toISOString();
-      saveState();
-      renderDashboard();
-      renderProfile();
-      setTimeout(() => showOverlay('💤', 'Streak reset',
-        `Your ${lost}-week streak ended — but every champion restarts. Complete this week to begin a new one!`,
-        "Let's go", true), 800);
-    }
-  }
-
-  // If a save failed while offline, the progress was parked in localStorage.
-  // Re-apply it (XP only ever goes up, so higher XP = newer) and re-save.
-  function restoreFallbackProgress() {
-    try {
-      const raw = localStorage.getItem('maj_fallback');
-      if (!raw) return;
-      const saved = JSON.parse(raw);
-      if (!saved || saved.id !== state.athlete.id) return;
-      localStorage.removeItem('maj_fallback');
-      if ((saved.xp || 0) > (state.athlete.xp || 0)) {
-        state.athlete = Object.assign({}, state.athlete, saved);
-        saveState();
-        toast('Recovered your unsaved progress ✅');
-      }
-    } catch(_) {}
-  }
-
   async function doLogin() {
     const u = document.getElementById('login-user').value.trim().toLowerCase();
     const p = document.getElementById('login-pass').value;
@@ -3956,12 +3554,27 @@ const MAJ_CONTENT = {
 
     try {
       const data = await apiPost('/login', { username: u, password: p });
-      enterApp(data);
+
+      state.role = data.role; // 'athlete' or 'coach'
+
+      if (data.role === 'coach') {
+        // Coach login — load coach dashboard
+        state.coach = data;
+        document.getElementById('bottom-nav').style.display = 'flex';
+        await loadCoachDashboard();
+        navTo('home');
+      } else {
+        // Athlete login
+        state.athlete = mapAthleteFromAPI(data);
+        document.getElementById('bottom-nav').style.display = 'flex';
+        initApp();
+        navTo('home');
+        fetchCoachBanner();
+        fetchNotifications();
+      }
     } catch(e) {
       err.style.display = 'block';
-      err.textContent = (e.status === 401 || e.status === 400)
-        ? 'Incorrect username or password. Please try again.'
-        : "Can't reach the server — check your internet connection and try again.";
+      err.textContent = 'Incorrect username or password. Please try again.';
       const f = document.getElementById('login-user');
       f.style.borderColor = '#f87171';
       setTimeout(() => f.style.borderColor = '', 1500);
@@ -3975,11 +3588,15 @@ const MAJ_CONTENT = {
   document.getElementById('login-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-pass').focus(); });
 
   function doLogout() {
-    // End the server session, then reload for a completely clean slate —
-    // the coach view rewrites the Home page DOM, so switching accounts
-    // without a reload leaves the app in a broken half-state.
     document.getElementById('bottom-nav').style.display = 'none';
-    apiPost('/logout', {}).catch(() => {}).finally(() => location.reload());
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+    state.role = null;
+    state.learnDone = false;
+    state.challengeDone = false;
+    state.reflectDone = false;
+    state.athlete = Object.assign({}, DEFAULT_ATHLETE);
+    navTo('login', true);
   }
 
   // ── COACH DASHBOARD LOADER ────────────────────────────────────────────
@@ -4171,9 +3788,6 @@ const MAJ_CONTENT = {
   function renderCoachView(athletes) {
     _allAthletes = athletes;
     _activeSchool = 'All';
-    // Hide athlete-only tabs
-    const questsTab = document.getElementById('nav-quests-btn');
-    if (questsTab) questsTab.style.display = 'none';
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
     const coachFullName = (state.coach && (state.coach.fullName || state.coach.full_name)) || 'Coach';
@@ -4256,10 +3870,8 @@ const MAJ_CONTENT = {
     const tier = MAJ_CONTENT.getTier(a.xp || 0);
     const name = a.fullName || a.full_name || 'Unknown';
     const initials = name.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
-    // Pass only the ID — look up the full object in openAssessment to avoid
-    // embedding complex JSON in onclick attributes (breaks with escaped completedWeeks data).
-    const safeId = escapeAttr(a.id);
-    return `<div class="module-item" onclick="openAssessmentById('${safeId}')" style="cursor:pointer;">
+    const safeA = jsArg(a);
+    return `<div class="module-item" onclick="openAssessment(${safeA})" style="cursor:pointer;">
       <div class="module-thumb mod-active" style="font-family:var(--font-display);font-size:14px;font-weight:800;">${escapeHTML(initials)}</div>
       <div class="module-body">
         <div class="module-name">${escapeHTML(name)}</div>
@@ -4268,12 +3880,6 @@ const MAJ_CONTENT = {
       </div>
       <div style="color:var(--orange);font-size:22px;padding-right:4px;">›</div>
     </div>`;
-  }
-
-  function openAssessmentById(id) {
-    const athlete = _allAthletes.find(a => a.id === id);
-    if (!athlete) { toast('Athlete not found — please refresh'); return; }
-    openAssessment(athlete);
   }
 
   function filterAthletes(query) {
@@ -4320,56 +3926,8 @@ const MAJ_CONTENT = {
     document.querySelectorAll('.assess-type-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('assess-overlay').classList.add('open');
     document.getElementById('assess-overlay').scrollTop = 0;
-    // Load wellness and assessment history in parallel
-    loadCoachWellness(athlete);
+    // Load assessment history
     await loadAssessmentHistory(athlete);
-  }
-
-  async function loadCoachWellness(athlete) {
-    const panel = document.getElementById('assess-wellness-panel');
-    if (!panel) return;
-    panel.innerHTML = '';
-    panel.style.display = 'block';
-    try {
-      const wellness = await apiGet(`/athlete/${athlete.id}/wellness`);
-      if (!wellness || wellness.length === 0) {
-        panel.innerHTML = '<div style="font-size:12px;color:var(--text2);padding:8px 16px;">No wellness check-ins yet.</div>';
-        return;
-      }
-      const recent = wellness.slice(0, 7);
-      const avgE = Math.round(recent.reduce((s, r) => s + (r.energy || 0), 0) / recent.length);
-      const avgS = Math.round(recent.reduce((s, r) => s + (r.sleep || 0), 0) / recent.length);
-      const avgM = Math.round(recent.reduce((s, r) => s + (r.mood || 0), 0) / recent.length);
-      const energyEmoji = ['','😴','😫','😐','😊','⚡'][avgE] || '—';
-      const sleepEmoji  = ['','💀','😖','😐','😌','⭐'][avgS] || '—';
-      const moodEmoji   = ['','😞','😕','😐','😊','🔥'][avgM] || '—';
-      const eColor = avgE >= 4 ? '#4caf50' : avgE >= 3 ? '#F26522' : '#ef5350';
-      const sColor = avgS >= 4 ? '#4caf50' : avgS >= 3 ? '#F26522' : '#ef5350';
-      const mColor = avgM >= 4 ? '#4caf50' : avgM >= 3 ? '#F26522' : '#ef5350';
-      panel.innerHTML = `
-        <div style="padding:10px 16px 6px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text2);margin-bottom:8px;">WELLNESS · LAST ${recent.length} CHECK-INS</div>
-          <div style="display:flex;gap:0;justify-content:space-around;background:var(--surface2);border-radius:12px;padding:10px 0;">
-            <div style="text-align:center;">
-              <div style="font-size:22px;">${energyEmoji}</div>
-              <div style="font-size:16px;font-weight:800;color:${eColor};">${avgE}/5</div>
-              <div style="font-size:10px;color:var(--text2);">Energy</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="font-size:22px;">${sleepEmoji}</div>
-              <div style="font-size:16px;font-weight:800;color:${sColor};">${avgS}/5</div>
-              <div style="font-size:10px;color:var(--text2);">Sleep</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="font-size:22px;">${moodEmoji}</div>
-              <div style="font-size:16px;font-weight:800;color:${mColor};">${avgM}/5</div>
-              <div style="font-size:10px;color:var(--text2);">Mood</div>
-            </div>
-          </div>
-        </div>`;
-    } catch(e) {
-      panel.innerHTML = '<div style="font-size:12px;color:var(--text2);padding:8px 16px;">Could not load wellness data.</div>';
-    }
   }
 
   async function loadAssessmentHistory(athlete) {
@@ -4756,8 +4314,7 @@ const MAJ_CONTENT = {
     null:        { label: 'Not yet assessed', cls: 'not-assessed', icon: '—' }
   };
 
-  let fmsLatestByType  = {};
-  let fmsHistoryByType = {};   // all assessments grouped by skill type, newest first
+  let fmsLatestByType = {};
   let _currentSkillIndex = 0;
 
   function showSkillDetail(key) {
@@ -4808,44 +4365,6 @@ const MAJ_CONTENT = {
     const rating = rec ? (rec.overall_rating || rec.overallRating || '') : '';
     const ratingColour = { excellent:'#4ade80', good:'#86efac', developing:'#fbbf24', 'needs work':'#f87171' }[rating?.toLowerCase()] || 'var(--text2)';
 
-    // Build history section (all entries for this skill, newest first)
-    const allEntries = fmsHistoryByType[skill.key] || [];
-    const pastEntries = allEntries.slice(1); // skip index 0 = latest (already shown above)
-
-    const ratingColourMap = { excellent:'#4ade80', good:'#86efac', developing:'#fbbf24', 'needs work':'#f87171' };
-
-    function historyCard(a, idx) {
-      const dv = getAssessmentDate(a) ? new Date(getAssessmentDate(a)) : null;
-      const ds = dv && !Number.isNaN(dv.getTime())
-        ? dv.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' })
-        : 'Unknown date';
-      const st  = getAssessmentStage(a) || null;
-      const sm  = STAGE_META[st] || STAGE_META[null];
-      const rt  = a.overall_rating || a.overallRating || '';
-      const rc  = ratingColourMap[rt?.toLowerCase()] || 'var(--text2)';
-      const str = a.strengths || '';
-      const afw = a.areas_for_improvement || a.areasForImprovement || '';
-      const ns  = a.next_steps || a.nextSteps || '';
-      const cn  = a.coach_name || a.coachName || '';
-      const uid = `ph-${idx}`;
-      return `
-        <div style="background:var(--surface2);border-radius:12px;padding:14px 16px;margin-bottom:10px;border-left:3px solid var(--border2);">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;" onclick="this.parentElement.querySelector('.ph-body').style.display=this.parentElement.querySelector('.ph-body').style.display==='none'?'block':'none';">
-            <div>
-              <div style="font-size:12px;font-weight:700;color:var(--text1);">${ds}${cn ? ` · ${escapeHTML(cn)}` : ''}</div>
-              <div class="fms-stage-pill ${sm.cls}" style="font-size:11px;padding:2px 8px;margin-top:5px;display:inline-flex;">${sm.icon} ${sm.label}</div>
-              ${rt ? `<span style="font-size:11px;font-weight:700;color:${rc};text-transform:capitalize;margin-left:8px;">${rt}</span>` : ''}
-            </div>
-            <div style="font-size:18px;color:var(--text3);">›</div>
-          </div>
-          <div class="ph-body" style="display:none;">
-            ${str ? `<div style="margin-bottom:8px;"><div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:3px;">💪 STRENGTHS</div><div style="font-size:13px;line-height:1.6;color:var(--text1);">${escapeHTML(str)}</div></div>` : ''}
-            ${afw ? `<div style="margin-bottom:8px;"><div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:3px;">🎯 AREAS TO WORK ON</div><div style="font-size:13px;line-height:1.6;color:var(--text1);">${escapeHTML(afw)}</div></div>` : ''}
-            ${ns  ? `<div><div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:3px;">🚀 NEXT STEPS</div><div style="font-size:13px;line-height:1.6;color:var(--text1);">${escapeHTML(ns)}</div></div>` : ''}
-          </div>
-        </div>`;
-    }
-
     content.innerHTML = `
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
         <div style="font-size:36px;">${skill.emoji}</div>
@@ -4855,7 +4374,6 @@ const MAJ_CONTENT = {
         </div>
       </div>
       ${!rec ? `<div style="background:var(--surface2);border-radius:12px;padding:20px;text-align:center;color:var(--text2);font-size:14px;">No assessment recorded yet for this skill.</div>` : `
-        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text2);margin-bottom:10px;">LATEST ASSESSMENT</div>
         <div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;">
           <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:8px;">SKILL STAGE</div>
           <div class="fms-stage-pill ${meta.cls}" style="font-size:14px;padding:6px 14px;">${meta.icon} ${meta.label}</div>
@@ -4879,10 +4397,6 @@ const MAJ_CONTENT = {
           <div style="font-size:14px;line-height:1.6;color:var(--text);">${escapeHTML(rec.next_steps || rec.nextSteps)}</div>
         </div>` : ''}
         ${rec.reassessment_required || rec.reassessmentRequired ? `<div style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#fbbf24;">⏰ Reassessment scheduled</div>` : ''}
-        ${pastEntries.length > 0 ? `
-          <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text2);margin:20px 0 10px;">PREVIOUS ASSESSMENTS (${pastEntries.length})</div>
-          ${pastEntries.map((a, i) => historyCard(a, i)).join('')}
-        ` : ''}
       `}
     `;
     document.getElementById('skill-detail-content').scrollTop = 0;
@@ -5009,7 +4523,7 @@ const MAJ_CONTENT = {
       list.innerHTML = `<div style="text-align:center;padding:28px 0;color:var(--text2);font-size:14px;">No notifications yet</div>`;
       return;
     }
-    const typeIcons = { assessment: '📋', kudos: '👏', run: '🏃', jump: '⬆️', throw: '🎯', leap: '🦘', balance: '⚖️' };
+    const typeIcons = { assessment: '📋', run: '🏃', jump: '⬆️', throw: '🎯', leap: '🦘', balance: '⚖️' };
     list.innerHTML = _notifications.map(n => {
       const stamp = getField(n, 'date', 'createdAt', 'created_at');
       const d = stamp ? new Date(stamp) : null;
@@ -5031,23 +4545,13 @@ const MAJ_CONTENT = {
   async function fetchAndRenderFMS() {
     const container = document.getElementById('fms-grid-container');
     if (!container) return;
-    // Shimmer skeleton on first load only — keep existing cards during refreshes
-    if (!container.querySelector('.fms-card')) {
-      container.innerHTML = '<div class="fms-grid">'
-        + [0,1,2,3,4].map(i => `<div class="skeleton${i === 4 ? ' fms-wide' : ''}" style="height:88px;"></div>`).join('')
-        + '</div>';
-    }
     try {
       const assessments = await apiGet(`/athlete/${state.athlete.id}/skill-assessments`);
-      // Build latest + full history per type (API returns newest first)
-      fmsLatestByType  = {};
-      fmsHistoryByType = {};
+      // Build latest stage per type
+      fmsLatestByType = {};
       assessments.forEach(a => {
         const type = getAssessmentType(a);
-        if (!type) return;
-        if (!fmsLatestByType[type]) fmsLatestByType[type] = a;
-        if (!fmsHistoryByType[type]) fmsHistoryByType[type] = [];
-        fmsHistoryByType[type].push(a);
+        if (type && !fmsLatestByType[type]) fmsLatestByType[type] = a;
       });
 
       let html = '<div class="fms-grid">';
@@ -5129,11 +4633,6 @@ const MAJ_CONTENT = {
     renderThisWeek();
     renderBadges();
     renderProfile();
-    renderQuests();
-
-    // Show quests nav tab for athletes
-    const questsTab = document.getElementById('nav-quests-btn');
-    if (questsTab) questsTab.style.display = '';
 
     setTimeout(() => {
       const tier = MAJ_CONTENT.getTier(a.xp);
@@ -5155,7 +4654,7 @@ const MAJ_CONTENT = {
     const week = MAJ_CONTENT.getWeek(a.currentModule, a.currentWeek);
     const mod = MAJ_CONTENT.modules[a.currentModule - 1];
 
-    document.getElementById('dash-name').textContent = (a.avatar ? a.avatar + ' ' : '') + a.name;
+    document.getElementById('dash-name').textContent = a.name;
     document.getElementById('dash-xp').textContent = a.xp;
 
     const maxXP = nextTier ? nextTier.minXP : tier.minXP + 290;
@@ -5185,25 +4684,9 @@ const MAJ_CONTENT = {
     if (streakPill) {
       if (a.streak >= 5) {
         streakPill.style.display = '';
-        document.getElementById('home-streak-text').textContent = `${a.streak} week streak${a.streakFreezes > 0 ? ` · ❄️${a.streakFreezes}` : ''}`;
+        document.getElementById('home-streak-text').textContent = `${a.streak} week streak`;
       } else {
         streakPill.style.display = 'none';
-      }
-    }
-
-    // Next-reward hint — always show the closest concrete reward and how to get it
-    const hintEl = document.getElementById('next-reward-hint');
-    if (hintEl) {
-      const wkBadge = week && week.do && week.do.badge && !a.earnedBadgeKeys.includes(week.do.badge.key)
-        ? week.do.badge : null;
-      if (wkBadge) {
-        hintEl.style.display = '';
-        hintEl.innerHTML = `🎁 Next reward: <strong>${wkBadge.icon} ${escapeHTML(wkBadge.name)}</strong> — finish this week's challenge to unlock it (+${wkBadge.xp} XP)`;
-      } else if (nextTier) {
-        hintEl.style.display = '';
-        hintEl.innerHTML = `🎁 Next reward: <strong>${nextTier.icon || '🏆'} ${escapeHTML(nextTier.name)} tier</strong> — just ${nextTier.minXP - a.xp} XP to go`;
-      } else {
-        hintEl.style.display = 'none';
       }
     }
 
@@ -5260,8 +4743,8 @@ const MAJ_CONTENT = {
       } else if (isDone) {
         cls = 'week-map-card wmc-done';
         icon = '✓';
-        sub = 'Completed — tap to review';
-        onclick = `onclick="showPastWeekReview(${a.currentModule}, ${w.num})"`;
+        sub = 'Completed';
+        onclick = `onclick="navTo('thisweek')"`;
       } else {
         cls = 'week-map-card wmc-locked';
         icon = '🔒';
@@ -5301,72 +4784,6 @@ const MAJ_CONTENT = {
   function closeWeekPreview() {
     document.getElementById('week-preview-backdrop').classList.remove('open');
     document.getElementById('week-preview-sheet').classList.remove('open');
-  }
-
-  function showPastWeekReview(moduleNum, weekNum) {
-    const week = MAJ_CONTENT.getWeek(moduleNum, weekNum);
-    if (!week) return;
-    const wp = getWeekProgress(moduleNum, weekNum);
-
-    // Header
-    document.getElementById('pwr-title').textContent = `Week ${weekNum} — ${week.theme}`;
-    document.getElementById('pwr-meta').textContent = `Module ${moduleNum} · Week ${weekNum} of 8`;
-    const weekXP = 35 + (week.do.badge ? week.do.badge.xp : 0);
-    document.querySelector('.pwr-hero-status').textContent = `✅ Week Complete · ${weekXP} XP earned`;
-
-    // LEARN tab
-    document.getElementById('pwr-learn-heading').textContent = week.learn.concept;
-    document.getElementById('pwr-learn-intro').textContent = week.learn.intro;
-    document.getElementById('pwr-learn-points').innerHTML = week.learn.points.map(p =>
-      `<div class="learn-point"><div class="learn-dot"></div><span>${escapeHTML(p)}</span></div>`
-    ).join('');
-    const closingEl = document.getElementById('pwr-learn-closing');
-    closingEl.textContent = week.learn.closing || '';
-    closingEl.style.display = week.learn.closing ? 'block' : 'none';
-
-    // DO tab
-    document.getElementById('pwr-do-heading').textContent = week.do.title;
-    document.getElementById('pwr-do-setup').textContent = week.do.setup;
-    document.getElementById('pwr-do-steps').innerHTML = week.do.steps.map((s, i) =>
-      `<div class="do-step"><div class="step-num">${i + 1}</div><span>${escapeHTML(s)}</span></div>`
-    ).join('');
-    const changeitEl = document.getElementById('pwr-do-changeit');
-    if (week.do.changeIt) {
-      document.getElementById('pwr-do-changeit-text').textContent = week.do.changeIt;
-      changeitEl.style.display = 'block';
-    } else {
-      changeitEl.style.display = 'none';
-    }
-
-    // REFLECT tab
-    document.getElementById('pwr-reflect-question').textContent = `"${week.reflect.prompt}"`;
-    document.getElementById('pwr-reflect-hint').textContent = week.reflect.hint;
-    const reflectTextEl = document.getElementById('pwr-reflect-text');
-    const saved = (wp.reflectionText || '').trim();
-    if (saved) {
-      reflectTextEl.innerHTML = `<div class="pwr-reflection-box">"${escapeHTML(saved)}"</div>`;
-    } else {
-      reflectTextEl.innerHTML = `<div class="pwr-no-reflection">No reflection text saved for this week.</div>`;
-    }
-
-    // Reset to Learn tab
-    switchPwrTab('learn', document.querySelector('#past-week-overlay .pwr-tab'));
-
-    document.getElementById('past-week-overlay').classList.add('open');
-    document.getElementById('pwr-body-scroll').scrollTop = 0;
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closePastWeekReview() {
-    document.getElementById('past-week-overlay').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function switchPwrTab(name, btn) {
-    document.querySelectorAll('#past-week-overlay .pwr-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('#past-week-overlay .pwr-pane').forEach(p => p.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    document.getElementById('pwr-' + name).classList.add('active');
   }
 
   // ── RENDER THIS WEEK ─────────────────────────────────────────────────
@@ -5448,33 +4865,12 @@ const MAJ_CONTENT = {
       doBtn.classList.remove('done');
     }
 
-    // Show learn reminder banner if Learn not yet done
-    const learnBanner = document.getElementById('learn-reminder-banner');
-    if (learnBanner) learnBanner.style.display = wp.learn ? 'none' : 'flex';
-
-    // Show challenge reminder banner on Reflect tab if Challenge not yet done
-    const challengeBanner = document.getElementById('challenge-reminder-banner');
-    if (challengeBanner) challengeBanner.style.display = wp.challenge ? 'none' : 'flex';
-
     // REFLECT tab
     document.querySelector('.reflect-question').textContent = `"${week.reflect.prompt}"`;
     document.querySelector('.reflect-hint').textContent = week.reflect.hint;
     if (wp.reflect) {
       document.getElementById('reflect-form-area').style.display = 'none';
-      const reflectDoneEl = document.getElementById('reflect-done');
-      reflectDoneEl.classList.add('show');
-      const savedText = wp.reflectionText || '';
-      let reflectTextEl = document.getElementById('reflect-saved-text');
-      if (!reflectTextEl) {
-        reflectTextEl = document.createElement('div');
-        reflectTextEl.id = 'reflect-saved-text';
-        reflectTextEl.style.cssText = 'margin-top:12px;padding:12px 14px;background:var(--surface2);border-radius:10px;font-size:13px;color:var(--text2);line-height:1.55;font-style:italic;';
-        const doneIcon = reflectDoneEl.querySelector('.done-icon');
-        if (doneIcon && doneIcon.nextSibling) reflectDoneEl.insertBefore(reflectTextEl, doneIcon.nextSibling);
-        else reflectDoneEl.appendChild(reflectTextEl);
-      }
-      reflectTextEl.textContent = savedText ? `"${savedText}"` : '';
-      reflectTextEl.style.display = savedText ? 'block' : 'none';
+      document.getElementById('reflect-done').classList.add('show');
     } else {
       document.getElementById('reflect-form-area').style.display = 'block';
       document.getElementById('reflect-done').classList.remove('show');
@@ -5485,7 +4881,6 @@ const MAJ_CONTENT = {
 
     // Fix #1: Next Week button — show only when all 3 parts done
     renderNextWeekButton();
-    updateTabLockState();
 
     // XP pill
     const xpAvail = 10 + 10 + 15 + (week.do.badge && !week.do.badge.coachRequired ? week.do.badge.xp : 0);
@@ -5587,94 +4982,12 @@ const MAJ_CONTENT = {
     }).join('');
   }
 
-  // ── RENDER QUESTS ─────────────────────────────────────────────────────
-  function renderQuests() {
-    const body = document.getElementById('quests-body');
-    if (!body) return;
-    const a = state.athlete;
-
-    const html = MAJ_CONTENT.modules.map(mod => {
-      const modUnlocked = a.currentModule >= mod.num;
-
-      const weekCards = mod.weeks.map(wk => {
-        const isCurrentWeek = a.currentModule === mod.num && a.currentWeek === wk.num;
-        const isCompleted = a.currentModule > mod.num ||
-                            (a.currentModule === mod.num && a.currentWeek > wk.num);
-        const isLocked = !modUnlocked || (a.currentModule === mod.num && a.currentWeek < wk.num);
-        const wp = getWeekProgress(mod.num, wk.num);
-        const weekXP = 35 + (wk.do.badge ? wk.do.badge.xp : 0);
-        const allDone = wp.learn && wp.challenge && wp.reflect;
-
-        const statusIcon = allDone ? '✅' : isCurrentWeek ? '🔥' : isLocked ? '🔒' : '○';
-        const cardOpacity = isLocked ? '0.4' : '1';
-        const borderCol = isCurrentWeek ? mod.color : 'var(--border2)';
-        const borderWidth = isCurrentWeek ? '2px' : '1px';
-
-        const questOnclick = isCompleted
-          ? `onclick="showPastWeekReview(${mod.num}, ${wk.num})"`
-          : isCurrentWeek
-          ? `onclick="navTo('thisweek')"`
-          : '';
-        const questCursor = (isCompleted || isCurrentWeek) ? 'cursor:pointer;' : '';
-        const reviewHint = isCompleted ? `<div style="font-size:11px;color:var(--text3);margin-top:3px;">Tap to review ›</div>` : '';
-        return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;margin-bottom:8px;border:${borderWidth} solid ${borderCol};opacity:${cardOpacity};${questCursor}" ${questOnclick}>
-          <div style="font-size:20px;min-width:26px;text-align:center;margin-top:3px;">${statusIcon}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
-              <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:0.5px;">WEEK ${wk.num}</div>
-              <div style="font-size:10px;font-weight:700;padding:2px 6px;background:rgba(255,193,7,0.15);color:#FFC107;border-radius:20px;">+${weekXP} XP</div>
-              ${wk.do.badge ? `<div style="font-size:10px;font-weight:700;padding:2px 6px;background:rgba(255,255,255,0.07);color:var(--text2);border-radius:20px;">${wk.do.badge.icon} ${escapeHTML(wk.do.badge.name)}</div>` : ''}
-            </div>
-            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;">${escapeHTML(wk.theme)}</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.35;">${escapeHTML(wk.do.title)}</div>
-            ${reviewHint}
-          </div>
-        </div>`;
-      }).join('');
-
-      const doneCount = mod.weeks.filter(wk => {
-        const wp = getWeekProgress(mod.num, wk.num);
-        return wp.learn && wp.challenge && wp.reflect;
-      }).length;
-
-      const statusLabel = a.currentModule > mod.num ? 'Complete' :
-                          a.currentModule === mod.num ? 'Active' : 'Locked';
-      const statusBg = a.currentModule > mod.num ? '#4caf5022' : a.currentModule === mod.num ? mod.color : 'var(--surface2)';
-      const statusColor = a.currentModule > mod.num ? '#4caf50' : a.currentModule === mod.num ? '#fff' : 'var(--text2)';
-
-      return `<div style="margin-bottom:22px;">
-        <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:${mod.color}18;border:1.5px solid ${mod.color}50;border-radius:14px;margin-bottom:10px;">
-          <div style="font-size:28px;">${mod.icon}</div>
-          <div style="flex:1;">
-            <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:${mod.color};margin-bottom:2px;">QUEST ${mod.num}</div>
-            <div style="font-size:15px;font-weight:800;color:var(--text);">${escapeHTML(mod.title)}</div>
-            <div style="font-size:11px;color:var(--text2);">${escapeHTML(mod.pillar)} · ${doneCount}/8 weeks done</div>
-          </div>
-          <div style="font-size:10px;font-weight:700;padding:4px 10px;background:${statusBg};color:${statusColor};border-radius:20px;">${statusLabel}</div>
-        </div>
-        ${weekCards}
-      </div>`;
-    }).join('');
-
-    body.innerHTML = html;
-
-    const tag = document.getElementById('quests-progress-tag');
-    if (tag) {
-      const totalDone = MAJ_CONTENT.modules.reduce((sum, mod) =>
-        sum + mod.weeks.filter(wk => {
-          const wp = getWeekProgress(mod.num, wk.num);
-          return wp.learn && wp.challenge && wp.reflect;
-        }).length, 0);
-      tag.textContent = `${totalDone} / 32 done`;
-    }
-  }
-
   // ── RENDER PROFILE ───────────────────────────────────────────────────
   function renderProfile() {
     const a = state.athlete;
     const tier = MAJ_CONTENT.getTier(a.xp);
     const nextTier = MAJ_CONTENT.getNextTier(a.xp);
-    document.getElementById('profile-avatar').textContent = a.avatar || a.initials;
+    document.getElementById('profile-avatar').textContent = a.initials;
     document.getElementById('profile-name').textContent = a.fullName;
     document.getElementById('profile-xp').textContent = a.xp;
     document.getElementById('profile-sessions').textContent = a.sessionsCompleted;
@@ -5683,47 +4996,10 @@ const MAJ_CONTENT = {
     document.getElementById('profile-tier-icon').textContent = tier.icon;
     document.getElementById('profile-module-val').textContent = `Module ${a.currentModule} — Week ${a.currentWeek}`;
     document.getElementById('profile-reflects-val').textContent = `${a.reflectionsSubmitted} of 32`;
-    document.getElementById('profile-streak-val').textContent = `🔥 ${a.streak} weeks · ❄️ ${a.streakFreezes} freeze${a.streakFreezes === 1 ? '' : 's'}`;
-    updatePushUI();
-    updateSoundsUI();
+    document.getElementById('profile-streak-val').textContent = `${a.icon || '🔥'} ${a.streak} weeks`;
     document.getElementById('profile-next-tier-val').textContent = nextTier
       ? `${nextTier.name} — ${nextTier.minXP - a.xp} XP away`
       : 'Maximum tier reached!';
-
-    // ── Reflections Journal ────────────────────────────────────────────
-    const journalList = document.getElementById('profile-journal-list');
-    const cw = a.completedWeeks || {};
-    const entries = Object.entries(cw)
-      .filter(([, v]) => v.reflect === true)
-      .map(([key, v]) => {
-        const [mod, wk] = key.split('-').map(Number);
-        return { mod, wk, text: (v.reflectionText || '').trim() };
-      })
-      .sort((a, b) => a.mod !== b.mod ? a.mod - b.mod : a.wk - b.wk);
-
-    if (!entries.length) {
-      journalList.innerHTML = '<div class="journal-empty">No reflections yet — complete a week\'s Reflect step to start your journal.</div>';
-    } else {
-      journalList.innerHTML = entries.map(({ mod, wk, text }) => {
-        const weekData = MAJ_CONTENT.getWeek(mod, wk);
-        const modData  = MAJ_CONTENT.modules[mod - 1];
-        const color    = modData ? modData.color : 'var(--green)';
-        const theme    = weekData ? weekData.theme : `Week ${wk}`;
-        const prompt   = weekData ? weekData.reflect.prompt : '';
-        const bodyHtml = text
-          ? `<div class="journal-text">${escapeHTML(text)}</div>`
-          : `<div style="font-size:12px;color:var(--text3);font-style:italic;">Reflection submitted — text not available for entries made before the app update.</div>`;
-        return `
-          <div class="journal-entry" style="border-left-color:${color}">
-            <div class="journal-entry-header">
-              <span class="journal-week-pill" style="background:${color}">M${mod} · W${wk}</span>
-              <span class="journal-theme">${escapeHTML(theme)}</span>
-            </div>
-            ${prompt ? `<div class="journal-prompt">"${escapeHTML(prompt)}"</div>` : ''}
-            ${bodyHtml}
-          </div>`;
-      }).join('');
-    }
   }
 
   // ── NAVIGATION ───────────────────────────────────────────────────────
@@ -5766,19 +5042,9 @@ const MAJ_CONTENT = {
       }
     }
 
-    // Refresh the notification bell whenever Home is opened
-    if (pageId === 'home' && state.role === 'athlete' && state.athlete && state.athlete.id) {
-      fetchNotifications();
-    }
-
     // Load FMS tracker when profile is opened
     if (pageId === 'profile' && state.athlete && !state.athlete.isCoach) {
       fetchAndRenderFMS();
-    }
-
-    // Render quests page when opened
-    if (pageId === 'quests' && state.athlete && !state.athlete.isCoach) {
-      renderQuests();
     }
   }
 
@@ -5816,36 +5082,11 @@ const MAJ_CONTENT = {
 
   // ── TABS (THIS WEEK) ─────────────────────────────────────────────────
   function switchTab(btn, tabId) {
-    const a = state.athlete;
-    const wp = getWeekProgress(a.currentModule, a.currentWeek);
-    if (tabId === 'do' && !wp.learn) {
-      toast('Read the concept first and mark it as read to unlock Do 🔒');
-      return;
-    }
-    if (tabId === 'reflect' && !wp.challenge) {
-      toast('Complete the challenge first to unlock Reflect 🔒');
-      return;
-    }
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-' + tabId).classList.add('active');
     state.activeTab = tabId;
-  }
-
-  function updateTabLockState() {
-    const a = state.athlete;
-    const wp = getWeekProgress(a.currentModule, a.currentWeek);
-    const doBtn = document.querySelector(".tab-btn[onclick*=\",'do'\"]");
-    const reflectBtn = document.querySelector(".tab-btn[onclick*=\",'reflect'\"]");
-    if (doBtn) {
-      doBtn.style.opacity = wp.learn ? '1' : '0.4';
-      doBtn.title = wp.learn ? '' : 'Complete Learn first';
-    }
-    if (reflectBtn) {
-      reflectBtn.style.opacity = wp.challenge ? '1' : '0.4';
-      reflectBtn.title = wp.challenge ? '' : 'Complete Do first';
-    }
   }
 
   // ── MARK LEARN COMPLETE ───────────────────────────────────────────────
@@ -5854,7 +5095,6 @@ const MAJ_CONTENT = {
     const wp = getWeekProgress(a.currentModule, a.currentWeek);
     if (wp.learn) return;
 
-    const _prevXP_learn = a.xp;
     markWeekProgress(a.currentModule, a.currentWeek, 'learn');
     state.learnDone = true;
     a.xp += 10;
@@ -5867,8 +5107,6 @@ const MAJ_CONTENT = {
 
     updateXP();
     renderNextWeekButton();
-    updateTabLockState();
-    _checkTierUp(_prevXP_learn);
     showOverlay('📖', '+10 XP!', "Concept learned! Head to the DO tab for this week's challenge.");
 
     await saveState();
@@ -5883,14 +5121,7 @@ const MAJ_CONTENT = {
       if (reflectBtn) switchTab(reflectBtn, 'reflect');
       return;
     }
-    if (!wp.learn) {
-      toast('📖 Read the Learn section first — tap Learn above and hit "Mark as read"');
-      const learnBtn = document.querySelector(".tab-btn[onclick*='learn']");
-      if (learnBtn) switchTab(learnBtn, 'learn');
-      return;
-    }
 
-    const _prevXP_challenge = a.xp;
     markWeekProgress(a.currentModule, a.currentWeek, 'challenge');
     state.challengeDone = true;
 
@@ -5905,7 +5136,6 @@ const MAJ_CONTENT = {
 
     updateXP();
     renderNextWeekButton();
-    updateTabLockState();
 
     // Award badge to API if this week has a non-coach-required badge
     if (week && week.do.badge && !week.do.badge.coachRequired) {
@@ -5940,7 +5170,6 @@ const MAJ_CONTENT = {
     if (reflectPane) reflectPane.classList.add('active');
     state.activeTab = 'reflect';
 
-    _checkTierUp(_prevXP_challenge);
     showOverlay(icon, `+${xpEarned} XP!`, sub, "What's next → Reflect");
     document.querySelectorAll('.stat-val')[0].textContent = a.sessionsCompleted;
 
@@ -5963,12 +5192,6 @@ const MAJ_CONTENT = {
     const a = state.athlete;
     const wp = getWeekProgress(a.currentModule, a.currentWeek);
     if (wp.reflect) return;
-    if (!wp.challenge) {
-      toast('⚡ Complete the challenge first — tap Do above and mark it complete');
-      const doBtn = document.querySelector(".tab-btn[onclick*='do']");
-      if (doBtn) switchTab(doBtn, 'do');
-      return;
-    }
 
     const responseText = document.getElementById('reflect-input').value.trim();
     const week = MAJ_CONTENT.getWeek(a.currentModule, a.currentWeek);
@@ -5988,9 +5211,6 @@ const MAJ_CONTENT = {
     }
 
     markWeekProgress(a.currentModule, a.currentWeek, 'reflect');
-    const _reflectKey = weekKey(a.currentModule, a.currentWeek);
-    if (state.athlete.completedWeeks[_reflectKey]) state.athlete.completedWeeks[_reflectKey].reflectionText = responseText;
-    const _prevXP_reflect = a.xp;
     state.reflectDone = true;
     a.xp += 15;
     a.reflectionsSubmitted += 1;
@@ -6000,7 +5220,6 @@ const MAJ_CONTENT = {
 
     updateXP();
     renderNextWeekButton();
-    _checkTierUp(_prevXP_reflect);
 
     setTimeout(() => {
       showOverlay('✍️', '+15 XP!',
@@ -6020,7 +5239,7 @@ const MAJ_CONTENT = {
 
     if (isLastWeek && isLastModule) {
       showOverlay('👑', 'Level 1 Complete!',
-        'All 4 quests conquered! You\'re ready to graduate into the Empowered Athlete program — talk to Coach Al about your next step.');
+        'You have completed all 4 modules. Talk to Coach Al about your Level 2 journey!');
       return;
     }
 
@@ -6041,13 +5260,6 @@ const MAJ_CONTENT = {
     state.challengeDone = false;
     state.reflectDone = false;
 
-    a.streak += 1;
-    a.lastWeekCompletedAt = new Date().toISOString();
-    // Earn a Streak Freeze ❄️ at every 4-week milestone (hold a maximum of 2)
-    if (a.streak % 4 === 0 && a.streakFreezes < 2) {
-      a.streakFreezes += 1;
-      setTimeout(() => toast(`❄️ Streak Freeze earned! You now have ${a.streakFreezes} — it protects your streak if you miss a week.`), 3200);
-    }
     await saveState();
     renderDashboard();
     renderThisWeek();
@@ -6068,16 +5280,6 @@ const MAJ_CONTENT = {
       document.getElementById('mod1-fill').style.width =
         Math.round(((a.currentWeek - 1) / 8) * 100) + '%';
     }, 300);
-  }
-
-  // ── TIER ADVANCEMENT CHECK ───────────────────────────────────────────
-  function _checkTierUp(prevXP) {
-    const cur = MAJ_CONTENT.getTier(state.athlete.xp);
-    const prev = MAJ_CONTENT.getTier(prevXP);
-    if (cur.name !== prev.name) {
-      setTimeout(() => showOverlay(cur.icon, `🏅 ${cur.name} Tier!`,
-        `You've advanced to the ${cur.name} tier — incredible progress! Keep building.`), 2600);
-    }
   }
 
   // ── XP UPDATE ────────────────────────────────────────────────────────
@@ -6115,33 +5317,12 @@ const MAJ_CONTENT = {
   }
 
   // ── OVERLAY ──────────────────────────────────────────────────────────
-  function showOverlay(icon, title, sub, btnLabel, quiet) {
+  function showOverlay(icon, title, sub, btnLabel) {
     document.getElementById('overlay-icon').textContent = icon;
     document.getElementById('overlay-title').textContent = title;
     document.getElementById('overlay-sub').textContent = sub;
     document.querySelector('.xp-pop-close').textContent = btnLabel || 'Keep going 🔥';
     document.getElementById('xp-overlay').classList.add('show');
-    if (!quiet) celebrate(); // no confetti for bad-news overlays like a streak reset
-  }
-
-  // ── CELEBRATION: confetti + haptics ───────────────────────────────────
-  function celebrate() {
-    if (navigator.vibrate) { try { navigator.vibrate([40, 60, 40]); } catch(_) {} }
-    playSuccessSound();
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const app = document.getElementById('app');
-    const colors = ['#F26522', '#00B4D8', '#22c55e', '#facc15', '#ffffff'];
-    for (let i = 0; i < 28; i++) {
-      const p = document.createElement('div');
-      p.className = 'confetti-piece';
-      p.style.left = (4 + Math.random() * 92) + '%';
-      p.style.background = colors[i % colors.length];
-      p.style.animationDuration = (1.1 + Math.random() * 0.9) + 's';
-      p.style.animationDelay = (Math.random() * 0.3) + 's';
-      p.style.transform = 'rotate(' + Math.floor(Math.random() * 360) + 'deg)';
-      app.appendChild(p);
-      setTimeout(() => p.remove(), 2600);
-    }
   }
 
   function closeOverlay() {
@@ -6157,317 +5338,6 @@ const MAJ_CONTENT = {
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
   }
-
-  // ── CELEBRATION SOUNDS ────────────────────────────────────────────────
-  // Synthesised with the Web Audio API — no audio files, works offline.
-  let _audioCtx = null;
-
-  function soundsEnabled() { return localStorage.getItem('maj_sounds_off') !== '1'; }
-
-  function toggleSounds() {
-    const turningOn = !soundsEnabled();
-    localStorage.setItem('maj_sounds_off', turningOn ? '0' : '1');
-    updateSoundsUI();
-    if (turningOn) playSuccessSound(); // instant preview
-    toast(turningOn ? 'Sounds on 🔊' : 'Sounds off 🔇');
-  }
-
-  function updateSoundsUI() {
-    const el = document.getElementById('sounds-toggle-val');
-    if (el) el.textContent = soundsEnabled() ? 'On 🔊' : 'Off 🔇';
-  }
-
-  function playSuccessSound() {
-    if (!soundsEnabled()) return;
-    try {
-      _audioCtx = _audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      if (_audioCtx.state === 'suspended') _audioCtx.resume();
-      const now = _audioCtx.currentTime;
-      // Bright rising arpeggio: C5 → E5 → G5 → C6
-      [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
-        const osc = _audioCtx.createOscillator();
-        const gain = _audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.value = freq;
-        const t = now + i * 0.09;
-        gain.gain.setValueAtTime(0.0001, t);
-        gain.gain.exponentialRampToValueAtTime(0.16, t + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
-        osc.connect(gain).connect(_audioCtx.destination);
-        osc.start(t);
-        osc.stop(t + 0.3);
-      });
-    } catch(_) {}
-  }
-
-  // ── EMOJI AVATAR PICKER ───────────────────────────────────────────────
-  const AVATAR_CHOICES = ['🏃','⚡','🔥','🦘','🦁','🐆','🦅','🚀','⭐','🏆','💪','🎯','🌟','🐉','🦄','😎','🤩','🥷','🤖','👑','🌈','💥','🏅','⚽'];
-
-  function openAvatarPicker() {
-    if (!state.athlete || !state.athlete.id) return;
-    const existing = document.getElementById('avatar-picker-modal');
-    if (existing) existing.remove();
-    const modal = document.createElement('div');
-    modal.id = 'avatar-picker-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;';
-    modal.innerHTML = `
-      <div style="background:var(--surface2);border-radius:18px;padding:22px;max-width:340px;width:100%;">
-        <div style="font-family:var(--font-display);font-size:20px;font-weight:800;margin-bottom:4px;">Choose your avatar</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:16px;">Pick the emoji that feels most like you</div>
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px;">
-          ${AVATAR_CHOICES.map(e => `<button onclick="pickAvatar('${e}')" style="background:${state.athlete.avatar === e ? 'var(--orange-dim)' : 'var(--surface3)'};border:1.5px solid ${state.athlete.avatar === e ? 'var(--orange)' : 'transparent'};border-radius:10px;padding:8px 0;font-size:22px;cursor:pointer;">${e}</button>`).join('')}
-        </div>
-        <button onclick="pickAvatar('')" style="width:100%;background:none;border:1px solid var(--border2);color:var(--text2);border-radius:10px;padding:10px;font-size:13px;cursor:pointer;margin-bottom:8px;">Use my initials instead</button>
-        <button onclick="document.getElementById('avatar-picker-modal').remove()" style="width:100%;background:var(--surface3);border:none;color:var(--text);border-radius:10px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;">Close</button>
-      </div>`;
-    document.body.appendChild(modal);
-    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-  }
-
-  function pickAvatar(emoji) {
-    state.athlete.avatar = emoji;
-    saveState();
-    renderProfile();
-    renderDashboard();
-    const modal = document.getElementById('avatar-picker-modal');
-    if (modal) modal.remove();
-    toast(emoji ? `Avatar set ${emoji}` : 'Back to your initials');
-  }
-
-  // ── COACH KUDOS ───────────────────────────────────────────────────────
-  async function sendKudos(emoji, message, btn) {
-    if (!assessState.athlete || !assessState.athlete.id) return;
-    // Instant button feedback so the coach never double-taps waiting for the API
-    if (btn) {
-      btn.disabled = true;
-      btn.style.transform = 'scale(1.15)';
-      btn.style.borderColor = 'var(--orange)';
-      btn.style.background = 'var(--orange-dim)';
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.style.transform = '';
-        btn.style.borderColor = 'var(--border2)';
-        btn.style.background = 'var(--surface2)';
-      }, 1800);
-    }
-    const name = (assessState.athlete.fullName || assessState.athlete.full_name || 'Athlete').split(' ')[0];
-    const coachName = state.coach ? (state.coach.fullName || state.coach.full_name || state.coach.username) : 'Coach';
-    try {
-      await apiPost('/kudos', { athleteId: assessState.athlete.id, emoji, message, coachName });
-      toast(`${emoji} Kudos sent to ${name}!`);
-    } catch(e) {
-      toast('Could not send kudos — check connection');
-    }
-  }
-
-  // ── PUSH REMINDERS ────────────────────────────────────────────────────
-  function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
-  function isStandalone() {
-    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  }
-  function pushSupported() {
-    return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
-  }
-
-  function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-    const rawData = window.atob(base64);
-    const output = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; i++) output[i] = rawData.charCodeAt(i);
-    return output;
-  }
-
-  async function enablePushReminders() {
-    if (!pushSupported()) {
-      toast(isIOS() && !isStandalone()
-        ? 'Add MAJ to your Home Screen first, then turn on reminders from the app'
-        : 'Notifications are not supported on this device');
-      return;
-    }
-    try {
-      const perm = await Notification.requestPermission();
-      if (perm !== 'granted') { toast('Notifications were not allowed'); updatePushUI(); return; }
-      const { key } = await apiGet('/push/public-key');
-      if (!key) { toast('Reminders are not set up on the server yet'); return; }
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(key)
-      });
-      await apiPost('/push/subscribe', { athleteId: state.athlete.id, subscription: sub.toJSON() });
-      toast('Reminders are on! 🔔');
-      updatePushUI();
-      maybeShowPushPrompt();
-    } catch (e) {
-      console.warn('Push enable failed', e);
-      toast('Could not turn on reminders — please try again');
-    }
-  }
-
-  function updatePushUI() {
-    const section = document.getElementById('push-section');
-    const statusEl = document.getElementById('push-status-text');
-    const btn = document.getElementById('push-enable-btn');
-    if (!section || !state.athlete || !state.athlete.id) return;
-    if (!pushSupported()) {
-      if (isIOS() && !isStandalone()) {
-        section.style.display = 'block';
-        statusEl.textContent = 'To get streak reminders on iPhone: tap Share, then "Add to Home Screen", then turn reminders on from the installed app.';
-        btn.style.display = 'none';
-      } else {
-        section.style.display = 'none';
-      }
-      return;
-    }
-    section.style.display = 'block';
-    if (Notification.permission === 'granted') {
-      // Permission granted isn't enough — confirm a real subscription exists
-      statusEl.textContent = 'Checking reminder status…';
-      btn.style.display = 'none';
-      navigator.serviceWorker.ready
-        .then(reg => reg.pushManager.getSubscription())
-        .then(sub => {
-          if (sub) {
-            statusEl.textContent = 'Reminders are on 🔔 — you\'ll get a nudge when your weekly challenge is waiting.';
-            btn.style.display = 'none';
-          } else {
-            statusEl.textContent = 'Almost there — tap below to finish turning on reminders.';
-            btn.style.display = 'block';
-          }
-        })
-        .catch(() => {
-          statusEl.textContent = 'Get a friendly nudge on training week so your streak stays alive.';
-          btn.style.display = 'block';
-        });
-    } else if (Notification.permission === 'denied') {
-      statusEl.textContent = 'Notifications are blocked in your device settings. Allow them for this app to get streak reminders.';
-      btn.style.display = 'none';
-    } else {
-      statusEl.textContent = 'Get a friendly nudge on training week so your streak stays alive.';
-      btn.style.display = 'block';
-    }
-  }
-
-  // ── INSTALL TO HOME SCREEN ────────────────────────────────────────────
-  let _deferredInstall = null;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();           // Android: hold the native prompt for our button
-    _deferredInstall = e;
-    maybeShowInstallCard();
-  });
-
-  function installCardWanted() {
-    if (isStandalone()) return false;
-    if (localStorage.getItem('maj_install_dismissed')) return false;
-    return isIOS() || !!_deferredInstall;
-  }
-
-  function maybeShowInstallCard() {
-    const container = document.getElementById('install-prompt-container');
-    if (!container) return;
-    if (!state.athlete || !state.athlete.id || !installCardWanted()) { container.innerHTML = ''; return; }
-    container.innerHTML = `
-      <div class="coach-banner" style="background:var(--cyan-dim);border-color:rgba(0,180,216,0.3);">
-        <div class="coach-banner-icon">📲</div>
-        <div class="coach-banner-text" onclick="promptInstall()" style="cursor:pointer;">
-          <div class="coach-banner-title">Get MAJ on your home screen</div>
-          <div class="coach-banner-sub">One tap to install — it unlocks coach notifications too</div>
-        </div>
-        <div onclick="dismissInstallCard()" style="color:var(--text3);font-size:18px;padding:4px 6px;cursor:pointer;flex-shrink:0;">✕</div>
-      </div>`;
-  }
-
-  async function promptInstall() {
-    if (_deferredInstall) {
-      _deferredInstall.prompt();
-      const choice = await _deferredInstall.userChoice.catch(() => null);
-      _deferredInstall = null;
-      if (choice && choice.outcome === 'accepted') {
-        toast('Installing MAJ 🎉 Find it on your home screen');
-        dismissInstallCard();
-      } else {
-        maybeShowInstallCard();
-      }
-    } else if (isIOS()) {
-      showIOSInstallSheet();
-    }
-  }
-
-  function showIOSInstallSheet() {
-    const existing = document.getElementById('ios-install-modal');
-    if (existing) existing.remove();
-    const modal = document.createElement('div');
-    modal.id = 'ios-install-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9998;display:flex;align-items:center;justify-content:center;padding:24px;';
-    modal.innerHTML = `
-      <div style="background:var(--surface2);border-radius:18px;padding:24px;max-width:330px;width:100%;">
-        <div style="font-size:34px;margin-bottom:10px;">📲</div>
-        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;margin-bottom:14px;">Add MAJ to your home screen</div>
-        <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;color:var(--text2);line-height:1.5;">
-          <div><strong style="color:var(--orange);">1.</strong> Tap the <strong style="color:var(--text);">Share button</strong> at the bottom of Safari (the square with the ↑ arrow)</div>
-          <div><strong style="color:var(--orange);">2.</strong> Scroll down and tap <strong style="color:var(--text);">"Add to Home Screen"</strong></div>
-          <div><strong style="color:var(--orange);">3.</strong> Tap <strong style="color:var(--text);">Add</strong> — then open MAJ from its new icon 🎉</div>
-        </div>
-        <button onclick="document.getElementById('ios-install-modal').remove()" style="width:100%;margin-top:18px;background:var(--orange);border:none;color:#fff;border-radius:10px;padding:12px;font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:0.5px;cursor:pointer;">Got it</button>
-      </div>`;
-    document.body.appendChild(modal);
-    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-  }
-
-  function dismissInstallCard() {
-    localStorage.setItem('maj_install_dismissed', '1');
-    const container = document.getElementById('install-prompt-container');
-    if (container) container.innerHTML = '';
-    maybeShowPushPrompt();
-  }
-
-  // One-time Home card inviting athletes to turn reminders on
-  function maybeShowPushPrompt() {
-    const container = document.getElementById('push-prompt-container');
-    if (!container || !state.athlete || !state.athlete.id) return;
-    // One card at a time — install comes first (notifications need it on iPhone anyway)
-    if (installCardWanted()) { container.innerHTML = ''; return; }
-    const dismissed = localStorage.getItem(`maj_push_prompt_dismissed_${state.athlete.id}`);
-    const show = pushSupported() && Notification.permission === 'default' && !dismissed;
-    if (!show) { container.innerHTML = ''; return; }
-    container.innerHTML = `
-      <div class="coach-banner" style="background:var(--orange-dim);border-color:var(--orange-border);">
-        <div class="coach-banner-icon">🔔</div>
-        <div class="coach-banner-text" onclick="enablePushReminders()" style="cursor:pointer;">
-          <div class="coach-banner-title" style="color:var(--orange);">Never lose your streak</div>
-          <div class="coach-banner-sub">Tap to get a reminder when your weekly challenge is waiting</div>
-        </div>
-        <div onclick="dismissPushPrompt()" style="color:var(--text3);font-size:18px;padding:4px 6px;cursor:pointer;flex-shrink:0;">✕</div>
-      </div>`;
-  }
-
-  function dismissPushPrompt() {
-    if (state.athlete && state.athlete.id) {
-      localStorage.setItem(`maj_push_prompt_dismissed_${state.athlete.id}`, '1');
-    }
-    const container = document.getElementById('push-prompt-container');
-    if (container) container.innerHTML = '';
-  }
-
-  // Refresh notifications when the app comes back to the foreground — so a
-  // push received while the app was closed is reflected in the bell right away.
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && state.role === 'athlete' && state.athlete && state.athlete.id) {
-      fetchNotifications();
-    }
-  });
-
-  // ── SESSION RESTORE ───────────────────────────────────────────────────
-  // Skip the login screen if the server still has a session for this device.
-  (async function restoreSession() {
-    try {
-      const me = await apiGet('/me');
-      if (me && me.role) enterApp(me);
-    } catch(_) {
-      // No active session — stay on the login page.
-    }
-  })();
 
   // ── SERVICE WORKER REGISTRATION ───────────────────────────────────────
   if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 2: Sharpen the Tools — Power2ADAPT MAJ Program</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      font-size: 11pt;
+      line-height: 1.5;
+    }
+
+    /* ── COVER ── */
+    .cover {
+      background: #111;
+      color: #fff;
+      padding: 60px 50px 50px;
+      min-height: 220px;
+      position: relative;
+    }
+    .cover-eyebrow {
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #F26522;
+      margin-bottom: 10px;
+    }
+    .cover-title {
+      font-size: 28pt;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .cover-title span { color: #F26522; }
+    .cover-subtitle {
+      font-size: 13pt;
+      color: #ccc;
+      margin-bottom: 24px;
+    }
+    .cover-meta {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .cover-meta-item {
+      text-align: center;
+    }
+    .cover-meta-val {
+      font-size: 20pt;
+      font-weight: 900;
+      color: #F26522;
+    }
+    .cover-meta-lbl {
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #aaa;
+    }
+
+    /* ── BODY ── */
+    .body { padding: 40px 50px; max-width: 800px; margin: 0 auto; }
+
+    .section-heading {
+      font-size: 10pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #F26522;
+      margin: 36px 0 14px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #F26522;
+    }
+
+    .intro-box {
+      background: #f9f5f2;
+      border-left: 4px solid #F26522;
+      padding: 16px 20px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 24px;
+    }
+    .intro-box p { color: #333; }
+
+    /* ── WEEK CARDS ── */
+    .week-card {
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      page-break-inside: avoid;
+    }
+    .week-header {
+      background: #111;
+      color: #fff;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .week-num {
+      background: #F26522;
+      color: #fff;
+      font-size: 8pt;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .week-theme {
+      font-size: 12pt;
+      font-weight: 700;
+    }
+    .week-badge-pill {
+      margin-left: auto;
+      background: #F2652220;
+      border: 1px solid #F26522;
+      color: #F26522;
+      font-size: 8pt;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .week-body { padding: 16px 18px; }
+
+    .concept-label {
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #999;
+      margin-bottom: 3px;
+    }
+    .concept-title {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 10px;
+    }
+    .concept-intro {
+      font-size: 10pt;
+      color: #444;
+      margin-bottom: 12px;
+    }
+
+    .key-points {
+      list-style: none;
+      margin-bottom: 12px;
+    }
+    .key-points li {
+      font-size: 10pt;
+      color: #333;
+      padding: 4px 0 4px 18px;
+      position: relative;
+    }
+    .key-points li::before {
+      content: "•";
+      color: #F26522;
+      font-weight: 900;
+      position: absolute;
+      left: 0;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .col-box {
+      background: #f8f8f8;
+      border-radius: 6px;
+      padding: 12px 14px;
+    }
+    .col-box-label {
+      font-size: 8pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #F26522;
+      margin-bottom: 6px;
+    }
+    .col-box p, .col-box li {
+      font-size: 9.5pt;
+      color: #333;
+    }
+    .col-box ol { padding-left: 16px; }
+    .col-box ol li { margin-bottom: 3px; }
+
+    .reflect-box {
+      background: #f0f7ff;
+      border-left: 3px solid #3b82f6;
+      border-radius: 0 6px 6px 0;
+      padding: 10px 14px;
+      margin-top: 12px;
+    }
+    .reflect-box .col-box-label { color: #3b82f6; }
+    .reflect-box p { font-size: 9.5pt; color: #1e3a5f; font-style: italic; }
+
+    /* ── XP TABLE ── */
+    .xp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 10pt;
+    }
+    .xp-table th {
+      background: #111;
+      color: #fff;
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 9pt;
+    }
+    .xp-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #eee;
+    }
+    .xp-table tr:last-child td { border-bottom: none; }
+    .xp-table tr:nth-child(even) td { background: #fafafa; }
+    .xp-badge { color: #F26522; font-weight: 700; }
+
+    /* ── FOOTER ── */
+    .doc-footer {
+      margin-top: 48px;
+      padding-top: 16px;
+      border-top: 1px solid #ddd;
+      font-size: 9pt;
+      color: #999;
+      text-align: center;
+    }
+
+    @media print {
+      .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .week-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .week-card { page-break-inside: avoid; }
+      .print-btn { display: none; }
+    }
+
+    .print-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 32px;
+      background: #F26522;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 11pt;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-eyebrow">My Athletic Journey · Power2ADAPT</div>
+    <div class="cover-title">Module 2:<br><span>Sharpen the Tools</span></div>
+    <div class="cover-subtitle">An 8-Week Skill Development Program for Student Athletes</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-val">8</div>
+        <div class="cover-meta-lbl">Weeks</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-val">Skill</div>
+        <div class="cover-meta-lbl">Pillar</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-val">3</div>
+        <div class="cover-meta-lbl">Badges available</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-val">100+</div>
+        <div class="cover-meta-lbl">XP to earn</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="print-btn" onclick="window.print()">⬇ Save as PDF / Print</button>
+
+  <div class="body">
+
+    <div class="section-heading">About This Module</div>
+    <div class="intro-box">
+      <p>Module 2 follows directly from Module 1 (Ignite Your Engine) and shifts the focus from athletic foundations to deliberate skill development. Each student chooses one skill to focus on at Week 1 — and tracks that same skill all the way through to a coach-assessed showcase at Week 8.</p>
+      <br>
+      <p>The program is delivered through Power2ADAPT's <strong>My Athletic Journey (MAJ)</strong> digital platform. Every session has three parts: <strong>Learn</strong> (read a short concept), <strong>Do</strong> (complete the session challenge), and <strong>Reflect</strong> (write a personal reflection). Students must complete all three parts to progress to the next week and earn their XP.</p>
+    </div>
+
+    <div class="section-heading">The 3-Step Weekly Structure</div>
+    <table class="xp-table">
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>What Students Do</th>
+          <th>XP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>📖 Learn</strong></td>
+          <td>Read a short concept article (2–3 min) and tap "Mark as read"</td>
+          <td>10 XP</td>
+        </tr>
+        <tr>
+          <td><strong>⚡ Do</strong></td>
+          <td>Complete the session challenge with their coach or group</td>
+          <td>10 XP + badge XP</td>
+        </tr>
+        <tr>
+          <td><strong>✏️ Reflect</strong></td>
+          <td>Write a personal reflection (minimum 5 words, aim for 30+)</td>
+          <td>15 XP</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-heading">Weekly Breakdown</div>
+
+    <!-- WEEK 1 -->
+    <div class="week-card">
+      <div class="week-header">
+        <span class="week-num">Week 1</span>
+        <span class="week-theme">What is Skill?</span>
+      </div>
+      <div class="week-body">
+        <div class="concept-label">Learning Concept</div>
+        <div class="concept-title">Skill is Repeating a Movement Correctly Under Pressure</div>
+        <div class="concept-intro">This module is about developing skills as an athlete. Skill is not about being talented — it is about being deliberate. The most skilled athletes got there through focused repetition, not accident.</div>
+        <ul class="key-points">
+          <li>A skill is any movement you can perform reliably and accurately, even when tired or under pressure.</li>
+          <li>Skills are built through deliberate, focused practice — quality repetition beats quantity every time.</li>
+          <li>Every athlete has strengths and areas to develop. Both matter.</li>
+          <li>This module: choose one skill to focus on and build it across 8 weeks.</li>
+        </ul>
+        <div class="two-col">
+          <div class="col-box">
+            <div class="col-box-label">⚡ Session Challenge</div>
+            <p><strong>Choose Your Skill — Set Your Goal</strong></p>
+            <ol>
+              <li>Discuss skill options with coach (throwing, catching, footwork, jumping, sport-specific)</li>
+              <li>Choose one skill and write it down</li>
+              <li>Agree with coach on what success looks like at Week 8</li>
+              <li>Complete 15 quality reps of chosen skill</li>
+              <li>Rate current skill level out of 10 (baseline)</li>
+            </ol>
+          </div>
+          <div class="col-box">
+            <div class="col-box-label">✏️ Reflection Prompt</div>
+            <p><em>"What skill do I most want to improve — and why does it matter to me?"</em></p>
+            <br>
+            <p style="color:#888;font-size:9pt;">Students connect their skill choice to the sports and activities they love.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 2 -->
+    <div class="week-card">
+      <div class="week-header">
+        <span class="week-num">Week 2</span>
+        <span class="week-theme">Repetition</span>
+        <span class="week-badge-pill">🔁 Rep Champion Badge</span>
+      </div>
+      <div class="week-body">
+        <div class="concept-label">Learning Concept</div>
+        <div class="concept-title">Why Repetition Builds Skill — The Brain-Body Connection</div>
+        <div class="concept-intro">When you repeat a movement over and over, your brain builds a physical pathway — like a trail through a forest. The more you walk the trail, the clearer it becomes.</div>
+        <ul class="key-points">
+          <li>The brain learns movement through repetition — every rep strengthens the signal between brain and muscles.</li>
+          <li>Quality matters more than quantity: 20 focused reps beat 100 lazy ones every time.</li>
+          <li>Mistakes are part of the process — the brain learns from errors as long as you pay attention to them.</li>
+        </ul>
+        <div class="two-col">
+          <div class="col-box">
+            <div class="col-box-label">⚡ Session Challenge</div>
+            <p><strong>20 Quality Repetitions Challenge</strong></p>
+            <ol>
+              <li>Remind yourself what good technique looks like</li>
+              <li>Complete 20 reps, one at a time — no rushing</li>
+              <li>Check in after every 5 reps: still correct?</li>
+              <li>Slow down if technique breaks — don't repeat errors</li>
+              <li>Rate quality out of 10 after 20 reps</li>
+            </ol>
+          </div>
+          <div class="col-box">
+            <div class="col-box-label">✏️ Reflection Prompt</div>
+            <p><em>"What did you notice about your movement after 20 focused repetitions?"</em></p>
+            <br>
+            <p style="color:#888;font-size:9pt;">Did it start to feel more automatic? What will you focus on fixing next week?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 3 -->
+    <div class="week-card">
+      <div class="week-header">
+        <span class="week-num">Week 3</span>
+        <span class="week-theme">Footwork</span>
+      </div>
+      <div class="week-body">
+        <div class="concept-label">Learning Concept</div>
+        <div class="concept-title">Footwork is the Foundation of All Athletic Skill</div>
+        <div class="concept-intro">Every skill in sport starts with your feet. Where your feet are, how fast they move, and how they connect with the ground determines almost everything else your body can do.</div>
+        <ul class="key-points">
+          <li>Good footwork puts you in the right position to execute your skill cleanly.</li>
+          <li>Poor footwork forces the upper body to compensate — creating errors and injury risk.</li>
+          <li>Fast feet come from light contact with the ground — think quick, not heavy.</li>
+        </ul>
+        <div class="two-col">
+          <div class="col-box">
+            <div class="col-box-label">⚡ Session Challenge</div>
+            <p><strong>Footwork Ladder or Cone Drill Time Trial</strong></p>
+            <ol>
+              <li>Walk through the pattern slowly first</li>
+              <li>Run through 3 times — focus on foot placement, not speed</li>
+              <li>Coach records time on 4th (full-speed) run</li>
+              <li>Complete 3 more runs trying to improve time</li>
+              <li>Note fastest clean time — revisited in Week 7</li>
+            </ol>
+          </div>
+          <div class="col-box">
+            <div class="col-box-label">✏️ Reflection Prompt</div>
+            <p><em>"How does your footwork affect everything else you do as an athlete?"</em></p>
+            <br>
+            <p style="color:#888;font-size:9pt;">Think about a moment when feet were in a bad position — what happened to the rest of the movement?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 4 -->
+    <div class="week-card">
+      <div class="week-header">
+        <span class="week-num">Week 4</span>
+        <span class="week-theme">Throw &amp; Catch</span>
+      </div>
+      <div class="week-body">
+        <div class="concept-label">Learning Concept</div>
+        <div class="concept-title">How Accuracy and Timing Work Together</div>
+        <div class="concept-intro">Throwing and catching develop hand-eye coordination, timing, and communication. Even if a student's sport doesn't involve throwing, the coordination it builds transfers to everything.</div>
+        <ul class="key-points">
+          <li>Accuracy in throwing comes from a consistent release point and follow-through every time.</li>
+          <li>Catching starts with your eyes — track the object all the way into your hands.</li>
+          <li>Communication between passer and receiver makes both athletes better.</li>
+        </ul>
+        <div class="two-col">
+          <div class="col-box">
+            <div class="col-box-label">⚡ Session Challenge</div>
+            <p><strong>20 Consecutive Catches — Partner Challenge</strong></p>
+            <ol>
+              <li>Start 3 metres apart</li>
+              <li>Count every clean catch aloud together</li>
+              <li>When you drop, reset and go again without frustration</li>
+              <li>When 20 is reached, each take one step back and repeat</li>
+              <li>Record longest streak and furthest distance</li>
+            </ol>
+          </div>
+          <div class="col-box">
+            <div class="col-box-label">✏️ Reflection Prompt</div>
+            <p><em>"What did your partner do that helped you catch better — and what did you do to help them?"</em></p>
+            <br>
+            <p style="color:#888;font-size:9pt;">Quality of throws, communication, encouragement — how did working together change performance?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 5 -->
+    <div class="week-card">
+      <div class="week-header">
+        <span class="week-num">Week 5</span>
+        <span class="week-theme">Agility</span>
+        <span class="week-badge-pill">💨 Agility Ace Badge</span>
+      </div>
+      <div class="week-body">
+        <div class="concept-label">Learning Concept</div>
+        <div class="concept-title">Agility — Changing Direction Without Losing Speed</div>
+        <div class="concept-intro">Agility is the ability to change direction quickly and under control — without losing speed or balance. It is one of the most valued qualities in sport and it is highly trainable.</div>
+        <ul class="key-points">
+          <li>True agility is reactive — responding to what's happening, not just running a set pattern.</li>
+          <li>Good deceleration is essential — you have to slow down to change direction fast.</li>
+          <li>Low body position and bent knees provide a stable base to push off from.</li>
+        </ul>
+        <div class="two-col">
+          <div class="col-box">
+            <div class="col-box-label">⚡ Session Challenge</div>
+            <p><strong>Agility Course — Time Trial</strong></p>
+            <ol>
+              <li>Walk through the course to learn the pattern</li>
+              <li>Complete at 70% speed — focus on clean direction changes</li>
+              <li>Coach records time on first full-speed attempt</li>
+              <li>Complete 3 more attempts — improve time without losing control</li>
+              <li>Record best time (retested in Week 7)</li>
+            </ol>
+          </div>
+          <div class="col-box">
+            <div class="col-box-label">✏️ Reflection Prompt</div>
+            <p><em>"What slowed you down on the agility course — and what is your plan to fix it?"</em></p>
+            <br>
+            <p style="color:#888;font-size:9pt;">Body position? Foot placement on turns? Acceleration out of the change? Be honest and specific.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 6 -->
+    <div class="week-card">
+      <div class="week-header">
+        <span class="week-num">Week 6</span>
+        <span class="week-theme">Skill Under Pressure</span>
+      </div>
+      <div class="week-body">
+        <div class="concept-label">Learning Concept</div>
+        <div class="concept-title">Why Skills Break Down When You Are Tired or Competing</div>
+        <div class="concept-intro">Under pressure, the brain reverts to older, less refined movement patterns. Physical fatigue and mental pressure both disrupt smooth movement — which is why practising under pressure is essential.</div>
+        <ul class="key-points">
+          <li>Physical fatigue makes technique harder to maintain — the body takes shortcuts when tired.</li>
+          <li>Mental pressure creates tension that disrupts smooth movement execution.</li>
+          <li>Focusing on process (technique) rather than outcome helps skill hold up under pressure.</li>
+        </ul>
+        <div class="two-col">
+          <div class="col-box">
+            <div class="col-box-label">⚡ Session Challenge</div>
+            <p><strong>Skill Under Fatigue — Repeat Week 2 After a Warm-Up Circuit</strong></p>
+            <ol>
+              <li>Complete the full warm-up circuit at strong effort (deliberate fatigue)</li>
+              <li>Immediately attempt 20 quality reps of chosen skill</li>
+              <li>Notice how technique feels different when tired</li>
+              <li>Apply the same focus and cues used when fresh</li>
+              <li>Rate quality out of 10 — compare to Week 2 rating</li>
+            </ol>
+          </div>
+          <div class="col-box">
+            <div class="col-box-label">✏️ Reflection Prompt</div>
+            <p><em>"Was your skill better or worse when you were tired — and what did you do to keep going?"</em></p>
+            <br>
+            <p style="color:#888;font-size:9pt;">What strategy helped maintain technique? What fell apart first? What held up best?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 7 -->
+    <div class="week-card">
+      <div class="week-header">
+        <span class="week-num">Week 7</span>
+        <span class="week-theme">Game Situation</span>
+      </div>
+      <div class="week-body">
+        <div class="concept-label">Learning Concept</div>
+        <div class="concept-title">Applying Your Skill in a Team Game Context</div>
+        <div class="concept-intro">Skills trained in isolation need to be tested in a game. A game introduces unpredictability, teammates, opponents, and decisions — all of which make executing your skill harder and more meaningful.</div>
+        <ul class="key-points">
+          <li>Game situations require reading what's happening and then executing your skill.</li>
+          <li>Decision-making speed is part of skill in a game — the right skill at the wrong time is still an error.</li>
+          <li>Mistakes in games are normal. What matters is your response — reset and go again.</li>
+        </ul>
+        <div class="two-col">
+          <div class="col-box">
+            <div class="col-box-label">⚡ Session Challenge</div>
+            <p><strong>Game Activity — Skill in Action</strong></p>
+            <ol>
+              <li>Before the game, remind yourself of your skill focus</li>
+              <li>During the game, look for moments to use your skill consciously</li>
+              <li>After each round, check: Did I use my skill? Was it effective?</li>
+              <li>Ask a teammate: Did you notice me using my skill?</li>
+              <li>Share one successful moment with your coach</li>
+            </ol>
+          </div>
+          <div class="col-box">
+            <div class="col-box-label">✏️ Reflection Prompt</div>
+            <p><em>"When in the game did you use your skill well — and what made that moment possible?"</em></p>
+            <br>
+            <p style="color:#888;font-size:9pt;">Positioning, decision-making, timing — what set them up to execute successfully in a live situation?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 8 -->
+    <div class="week-card">
+      <div class="week-header">
+        <span class="week-num">Week 8</span>
+        <span class="week-theme">Skill Showcase — Capstone</span>
+        <span class="week-badge-pill">🏆 Module 2 Master Badge</span>
+      </div>
+      <div class="week-body">
+        <div class="concept-label">Learning Concept</div>
+        <div class="concept-title">Showing What You Have Learned</div>
+        <div class="concept-intro">This is the Module 2 capstone. Eight weeks ago students chose a skill, rated themselves, and started building. Today they demonstrate what they have developed — with their coach assessing progress against the Week 1 baseline.</div>
+        <ul class="key-points">
+          <li>Skill development is a process, not an event — 8 weeks of deliberate practice compounds.</li>
+          <li>A showcase is not about perfection — it is about demonstrating honest progress and the habits that created it.</li>
+          <li>The skills built this module are permanent. They don't go away.</li>
+        </ul>
+        <div class="two-col">
+          <div class="col-box">
+            <div class="col-box-label">⚡ Session Challenge (Coach-Assessed)</div>
+            <p><strong>Skill Demonstration — vs. Week 1 Baseline</strong></p>
+            <ol>
+              <li>Warm up specifically for the chosen skill</li>
+              <li>Complete 20 quality reps with coach observing</li>
+              <li>Rate skill level out of 10 — compare to Week 1 rating</li>
+              <li>Ask coach: "What is the biggest technical improvement you've seen?"</li>
+              <li>Set one skill goal to continue into Module 3</li>
+            </ol>
+          </div>
+          <div class="col-box">
+            <div class="col-box-label">✏️ Reflection Prompt</div>
+            <p><em>"How has this skill changed for me over 8 weeks — and what made the difference?"</em></p>
+            <br>
+            <p style="color:#888;font-size:9pt;">What habits, cues, and moments created the improvement? What will they keep doing?</p>
+          </div>
+        </div>
+        <div class="reflect-box" style="margin-top:14px;">
+          <div class="col-box-label">🏆 Module 2 Master Badge</div>
+          <p>Awarded by coach upon successful skill demonstration at Week 8 capstone. Worth 50 XP.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- XP SUMMARY -->
+    <div class="section-heading">XP &amp; Badges Summary</div>
+    <table class="xp-table">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Theme</th>
+          <th>XP Available</th>
+          <th>Badge</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>What is Skill?</td><td>35 XP</td><td>—</td></tr>
+        <tr><td>2</td><td>Repetition</td><td class="xp-badge">60 XP</td><td>🔁 Rep Champion (25 XP)</td></tr>
+        <tr><td>3</td><td>Footwork</td><td>35 XP</td><td>—</td></tr>
+        <tr><td>4</td><td>Throw &amp; Catch</td><td>35 XP</td><td>—</td></tr>
+        <tr><td>5</td><td>Agility</td><td class="xp-badge">60 XP</td><td>💨 Agility Ace (25 XP)</td></tr>
+        <tr><td>6</td><td>Skill Under Pressure</td><td>35 XP</td><td>—</td></tr>
+        <tr><td>7</td><td>Game Situation</td><td>35 XP</td><td>—</td></tr>
+        <tr><td>8</td><td>Skill Showcase</td><td class="xp-badge">85 XP</td><td>🏆 Module 2 Master (50 XP, coach confirms)</td></tr>
+        <tr style="font-weight:700;background:#fff9f5;"><td colspan="2">Total</td><td class="xp-badge">380 XP</td><td>3 badges</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-heading">How the Digital Platform Works</div>
+    <div class="intro-box">
+      <p>Students access <strong>My Athletic Journey (MAJ)</strong> on their phone or tablet before, during, or after each Power2ADAPT session. The app guides them through the three-step weekly structure and automatically unlocks the next week once all three steps are complete.</p>
+      <br>
+      <p>Coaches can view each athlete's progress, submit skill assessments, and leave feedback notes through the coach login. Badges are awarded in-app and visible on the student's profile.</p>
+    </div>
+
+    <div class="doc-footer">
+      Power2ADAPT · My Athletic Journey (MAJ) · Module 2: Sharpen the Tools<br>
+      power2adapt.online · For more information contact your Power2ADAPT coach or administrator
+    </div>
+
+  </div>
+
+  <button class="print-btn" onclick="window.print()">⬇ Save as PDF / Print</button>
+
+</body>
+</html>

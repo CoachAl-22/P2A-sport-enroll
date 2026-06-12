@@ -1,299 +1,231 @@
-import { useState } from "react";
-import { useParams, useLocation } from "wouter";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { useParams, useLocation, Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/layout/navbar";
-import ChildForm from "@/components/classes/child-form";
+import EnrollmentForm from "@/components/classes/enrollment-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-type Step = 'child' | 'new-child' | 'summary' | 'waitlist-confirmed';
+import { Calendar, MapPin, Users, Clock, DollarSign } from "lucide-react";
+import { APPLICATION_ONLY_PROGRAMS } from "@/lib/constants";
 
 export default function Enrollment() {
-  const { classId } = useParams<{ classId: string }>();
-  const [, setLocation] = useLocation();
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const { classId } = useParams();
 
-  const [step, setStep] = useState<Step>('child');
-  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
-  const [newChildId, setNewChildId] = useState<string | null>(null);
-  const [newChildName, setNewChildName] = useState<string | null>(null);
-  const [waitlistResult, setWaitlistResult] = useState<{ waitlistPosition?: number; holidayReservation: any | null } | null>(null);
-
-  const activeChildId = selectedChildId ?? newChildId;
-
-  const { data: classDetails, isLoading: classLoading } = useQuery({
+  const { data: classDetails, isLoading } = useQuery({
     queryKey: ["/api/classes", classId],
     queryFn: async () => {
-      const res = await fetch(`/api/classes/${classId}`);
-      if (!res.ok) throw new Error('Failed to fetch class');
-      return res.json();
+      const response = await fetch(`/api/classes/${classId}`);
+      if (!response.ok) throw new Error('Failed to fetch class details');
+      return response.json();
     },
     enabled: !!classId,
   });
 
-  const { data: children = [] } = useQuery<any[]>({
-    queryKey: ["/api/children"],
-  });
-
-  const { data: siblingDiscount } = useQuery({
-    queryKey: ["/api/classes/sibling-discount", classDetails?.class?.term, classDetails?.class?.year],
-    queryFn: () =>
-      fetch(`/api/classes/sibling-discount?term=${classDetails.class.term}&year=${classDetails.class.year}`)
-        .then(r => r.json()),
-    enabled: !!classDetails?.class?.term,
-  });
-
-  const cls = classDetails?.class;
-  const venue = classDetails?.venue;
-  const spotsLeft = cls ? Math.max(0, cls.maxCapacity - (cls.currentEnrollment ?? 0)) : 0;
-  const isWaitlist = spotsLeft === 0;
-  const pricePerTerm = parseFloat(cls?.pricePerTerm ?? '0');
-  const discountedPrice = siblingDiscount?.eligible
-    ? Math.round(pricePerTerm * 0.8 * 100) / 100
-    : null;
-
-  const selectedChild = children.find((c: any) => c.id === activeChildId);
-  // newChildName is set immediately on child creation so the summary renders before cache refreshes
-  const childName = selectedChild
-    ? `${selectedChild.firstName} ${selectedChild.lastName}`
-    : newChildName;
-
-  const getDayName = (dow: number) => {
-    return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dow];
+  const getDayName = (dayOfWeek: number) => {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    return days[dayOfWeek];
   };
 
-  const enrollMutation = useMutation({
-    mutationFn: async () => {
-      if (!activeChildId) throw new Error('No child selected');
-      const res = await apiRequest("POST", "/api/enrollments", {
-        classId,
-        childId: activeChildId,
-        autoRenew: true,
-      });
-      return res.json();
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/enrollments"] });
-      const enrollment = data.enrollment ?? data; // handle both old and new response shape
-      if (enrollment.status === 'pending_payment') {
-        setLocation(`/checkout/${enrollment.id}`);
-      } else {
-        // Waitlist — show confirmation screen
-        setWaitlistResult({
-          waitlistPosition: data.waitlistPosition,
-          holidayReservation: data.holidayReservation ?? null,
-        });
-        setStep('waitlist-confirmed');
-      }
-    },
-    onError: (error: any) => {
-      toast({ title: "Enrolment failed", description: error.message, variant: "destructive" });
-    },
-  });
+  const getStatusInfo = (classData: any) => {
+    if (!classData?.class) return { status: "unknown", color: "bg-gray-100 text-gray-800", canEnroll: false };
+    
+    const { currentEnrollment, maxCapacity } = classData.class;
+    const spotsLeft = maxCapacity - currentEnrollment;
+    
+    if (spotsLeft > 0) {
+      return {
+        status: "available",
+        color: "bg-green-100 text-green-800",
+        canEnroll: true,
+        message: `${spotsLeft} spots available`
+      };
+    } else {
+      return {
+        status: "waitlist",
+        color: "bg-yellow-100 text-yellow-800",
+        canEnroll: true,
+        message: "Join waitlist"
+      };
+    }
+  };
 
-  // Step indicator
-  const StepIndicator = () => (
-    <div className="flex items-center gap-2 mb-8">
-      <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${step === 'child' || step === 'new-child' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'}`}>1</div>
-      <div className="flex-1 h-0.5 bg-gray-200">
-        <div className={`h-full bg-blue-600 transition-all ${step === 'summary' ? 'w-full' : 'w-0'}`} />
-      </div>
-      <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${step === 'summary' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'}`}>2</div>
-    </div>
-  );
-
-  if (classLoading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+          <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
         </div>
       </div>
     );
   }
 
-  if (!cls) {
+  if (!classDetails) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="max-w-md mx-auto px-4 py-12 text-center text-gray-500">Class not found.</div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Card>
+            <CardContent className="py-12 text-center">
+              <p className="text-gray-500">Class not found</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  const statusInfo = getStatusInfo(classDetails);
+  const isApplicationOnly = APPLICATION_ONLY_PROGRAMS.includes(classDetails?.class?.sportType);
+
+  if (isApplicationOnly) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-md mx-auto px-4 py-16 text-center">
+          <div className="text-5xl mb-4">📋</div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">This is an application-only program</h1>
+          <p className="text-gray-500 mb-8">
+            Junior Academy, Senior Squad, and High Performance programs require an application. Our coaching team reviews all applications before offering a place.
+          </p>
+          <Link href={`/questionnaire?classId=${classId}&className=${encodeURIComponent(classDetails?.class?.name ?? '')}`}>
+            <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 mb-3">
+              Complete your application →
+            </Button>
+          </Link>
+          <Link href="/classes">
+            <Button variant="ghost" className="w-full text-gray-500">
+              ← Back to classes
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="max-w-md mx-auto px-4 py-8">
-        {step !== 'waitlist-confirmed' && <StepIndicator />}
+      
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
+            Class Enrollment
+          </h1>
+          <p className="text-gray-600">
+            Complete your enrollment for this athletic program
+          </p>
+        </div>
 
-        {/* Step 1: Child selection */}
-        {(step === 'child') && (
-          <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Who are you enrolling?</h2>
-            <p className="text-sm text-gray-500 mb-6">
-              {isWaitlist ? 'Select the child to add to the waitlist.' : 'Select a child or add a new one.'}
-            </p>
-
-            {(children as any[]).map((child: any) => (
-              <button
-                key={child.id}
-                onClick={() => { setSelectedChildId(child.id); setStep('summary'); }}
-                className="w-full flex items-center gap-3 p-4 mb-3 border-2 border-gray-200 rounded-xl hover:border-blue-600 text-left transition-colors"
-              >
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600">
-                  {child.firstName[0]}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Class Details */}
+          <div className="lg:col-span-1">
+            <Card className="sticky top-4">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl font-heading font-bold">
+                    {classDetails.class?.name}
+                  </CardTitle>
+                  <Badge className={statusInfo.color}>
+                    {statusInfo.status === "available" ? "Available" : "Waitlist"}
+                  </Badge>
                 </div>
-                <div>
-                  <div className="font-semibold text-gray-900">{child.firstName} {child.lastName}</div>
-                  <div className="text-sm text-gray-500">
-                    Age {(() => {
-                      const dob = new Date(child.dateOfBirth);
-                      const today = new Date();
-                      let age = today.getFullYear() - dob.getFullYear();
-                      if (today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) age--;
-                      return age;
-                    })()}
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {classDetails.class?.imageUrl && (
+                  <img
+                    src={classDetails.class.imageUrl}
+                    alt={classDetails.class.name}
+                    className="w-full h-32 object-cover rounded-lg"
+                  />
+                )}
+                
+                <div className="space-y-3">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      {classDetails.class && `${getDayName(classDetails.class.dayOfWeek)}s ${classDetails.class.startTime} - ${classDetails.class.endTime}`}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-600">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      {classDetails.venue?.name}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-600">
+                    <Users className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      Ages {classDetails.class?.minAge}-{classDetails.class?.maxAge} • {statusInfo.message}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-600">
+                    <Clock className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      9 weeks ({new Date(classDetails.class?.startDate).toLocaleDateString()} - {new Date(classDetails.class?.endDate).toLocaleDateString()})
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-600">
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    <span className="text-sm">
+                      ${classDetails.class?.pricePerTerm} AUD per term
+                    </span>
                   </div>
                 </div>
-              </button>
-            ))}
 
-            <button
-              onClick={() => setStep('new-child')}
-              className="w-full flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-400 text-gray-500 hover:text-blue-600 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-2xl">+</div>
-              <span className="font-medium">Add a new child</span>
-            </button>
-
-            {isWaitlist && (
-              <p className="text-xs text-gray-400 mt-4 text-center">
-                No payment required now. You'll only be charged if a spot opens and you confirm.
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* Step 1b: New child form */}
-        {step === 'new-child' && (
-          <div>
-            <button
-              onClick={() => setStep('child')}
-              className="text-sm text-gray-400 hover:text-gray-600 mb-4 flex items-center gap-1"
-            >
-              Back
-            </button>
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Add a new child</h2>
-            <ChildForm
-              onCreated={(childId, firstName, lastName) => {
-                setNewChildId(childId);
-                setNewChildName(`${firstName} ${lastName}`);
-                queryClient.invalidateQueries({ queryKey: ["/api/children"] });
-                setStep('summary');
-              }}
-            />
-          </div>
-        )}
-
-        {/* Step 2: Booking summary */}
-        {step === 'summary' && (
-          <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Here's what you're booking</h2>
-
-            <div className="bg-gray-50 rounded-2xl p-5 mb-6 flex flex-col gap-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Child</span>
-                <span className="font-medium text-gray-900">{childName}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Class</span>
-                <span className="font-medium text-gray-900">{cls.name}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">When</span>
-                <span className="font-medium text-gray-900">{getDayName(cls.dayOfWeek)}s, {cls.startTime}--{cls.endTime}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Venue</span>
-                <span className="font-medium text-gray-900">{venue?.name ?? '--'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Term</span>
-                <span className="font-medium text-gray-900">{cls.term?.replace('_', ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}, {cls.year} (10 weeks)</span>
-              </div>
-              <div className="border-t pt-3 flex justify-between">
-                <span className="text-gray-500">Price</span>
-                <div className="text-right">
-                  {discountedPrice ? (
-                    <>
-                      <span className="line-through text-gray-400 mr-2">${pricePerTerm.toLocaleString('en-AU')}</span>
-                      <span className="font-bold text-green-700">${discountedPrice.toLocaleString('en-AU')} AUD</span>
-                      <div className="text-xs text-green-600">20% sibling discount applied</div>
-                    </>
-                  ) : (
-                    <span className="font-bold text-gray-900">${pricePerTerm.toLocaleString('en-AU')} AUD</span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <Button
-              onClick={() => enrollMutation.mutate()}
-              disabled={enrollMutation.isPending}
-              className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-blue-700 active:scale-95 transition-all mb-3 h-auto"
-            >
-              {enrollMutation.isPending ? 'Processing...' : isWaitlist ? 'Join waitlist' : 'Confirm and pay →'}
-            </Button>
-            <button
-              onClick={() => setStep('child')}
-              className="w-full text-gray-500 py-3 text-sm hover:text-gray-700"
-            >
-              ← Change child
-            </button>
-          </div>
-        )}
-        {/* Waitlist confirmation */}
-        {step === 'waitlist-confirmed' && (
-          <div className="text-center py-4">
-            <div className="text-5xl mb-4">📋</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">You're on the waitlist!</h2>
-            <p className="text-gray-500 mb-6">
-              {childName} is{waitlistResult?.waitlistPosition ? ` #${waitlistResult.waitlistPosition}` : ''} on the waitlist for {cls?.name}.
-            </p>
-
-            {waitlistResult?.holidayReservation && (
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
-                <div className="flex gap-3">
-                  <span className="text-2xl">🎁</span>
+                {classDetails.class?.description && (
                   <div>
-                    <div className="font-semibold text-amber-800 mb-1">Waitlist bonus</div>
-                    <p className="text-sm text-amber-700">
-                      {childName} has been automatically reserved a spot in our next holiday program.
-                      We'll be in touch with details.
+                    <h4 className="font-semibold text-gray-900 mb-2">About this class</h4>
+                    <p className="text-sm text-gray-600">
+                      {classDetails.class.description}
                     </p>
                   </div>
-                </div>
-              </div>
-            )}
+                )}
 
-            <p className="text-sm text-gray-400 mb-8">
-              We'll SMS you if a class spot opens — you'll have 24 hours to confirm and pay.
-            </p>
-
-            <a
-              href="/classes"
-              className="block w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 text-center"
-            >
-              Browse other classes
-            </a>
+                {classDetails.coach && (
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">Your Coach</h4>
+                    <p className="text-sm text-gray-600">
+                      {classDetails.coach.firstName} {classDetails.coach.lastName}
+                    </p>
+                    {classDetails.coach.bio && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {classDetails.coach.bio}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
-        )}
+
+          {/* Enrollment Form */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-heading font-bold">
+                  Enrollment Information
+                </CardTitle>
+                <p className="text-gray-600">
+                  Please provide the required information to complete your enrollment
+                </p>
+              </CardHeader>
+              <CardContent>
+                <EnrollmentForm 
+                  classId={classId!} 
+                  classDetails={classDetails} 
+                  canEnroll={statusInfo.canEnroll}
+                  isWaitlist={statusInfo.status === "waitlist"}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

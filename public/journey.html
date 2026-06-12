@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>My Athletic Journey — Power2ADAPT | Your child's training, gamified</title>
+<meta name="description" content="My Athletic Journey is Power2ADAPT's training companion app for young athletes — weekly challenges, XP, badges, streaks and real coach feedback. Included with every term program.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="./maj-icon-180.png">
+<meta name="theme-color" content="#0a0a0a">
+<style>
+  :root {
+    --orange: #F26522;
+    --orange-dim: rgba(242,101,34,0.14);
+    --orange-border: rgba(242,101,34,0.3);
+    --cyan: #00B4D8;
+    --cyan-dim: rgba(0,180,216,0.12);
+    --green: #22c55e;
+    --green-dim: rgba(34,197,94,0.12);
+    --black: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --surface3: #222222;
+    --border: #1e1e1e;
+    --border2: #2a2a2a;
+    --text: #ffffff;
+    --text2: #9a9a9a;
+    --text3: #6b6b6b;
+    --font-display: 'Barlow Condensed', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-pill: 100px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Atmospheric noise grain over everything */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+
+  /* ── NAV ─────────────────────────────────────────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1080px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 700; letter-spacing: 3px;
+    color: var(--orange); text-transform: uppercase; text-decoration: none;
+  }
+  .wordmark span { color: var(--text); }
+  .nav-cta {
+    background: var(--orange); color: #fff; text-decoration: none;
+    font-family: var(--font-display); font-weight: 700; letter-spacing: 1px;
+    font-size: 15px; padding: 9px 22px; border-radius: var(--radius-pill);
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(242,101,34,0.45); }
+
+  /* ── HERO ────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    padding: 72px 0 40px;
+    overflow: hidden;
+  }
+  /* big radial glow + faint track-lane lines */
+  .hero::before {
+    content: '';
+    position: absolute; inset: -200px -100px auto;
+    height: 720px;
+    background:
+      radial-gradient(620px 420px at 75% 30%, rgba(242,101,34,0.18), transparent 65%),
+      radial-gradient(500px 380px at 15% 75%, rgba(0,180,216,0.08), transparent 65%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(115deg, transparent 0 119px, rgba(255,255,255,0.022) 119px 120px);
+    pointer-events: none;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 36px; align-items: center;
+    position: relative;
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 18px;
+    border: 1px solid var(--orange-border); border-radius: var(--radius-pill);
+    padding: 6px 14px; background: var(--orange-dim);
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(56px, 9vw, 104px);
+    line-height: 0.92;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  h1 em { font-style: normal; color: var(--orange); display: block; }
+  .hero-sub {
+    font-size: 18px; color: var(--text2); max-width: 480px;
+    margin-bottom: 30px;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 600; }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .btn-big {
+    background: var(--orange); color: #fff; text-decoration: none;
+    font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: 1px;
+    padding: 16px 34px; border-radius: var(--radius-sm); text-transform: uppercase;
+    transition: transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 8px 32px rgba(242,101,34,0.35);
+    border: none; cursor: pointer;
+  }
+  .btn-big:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(242,101,34,0.5); }
+  .btn-ghost {
+    color: var(--text); text-decoration: none;
+    font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: 1px;
+    padding: 15px 26px; border-radius: var(--radius-sm); text-transform: uppercase;
+    border: 1.5px solid var(--border2); background: rgba(255,255,255,0.02);
+    transition: border-color 0.2s, background 0.2s;
+    cursor: pointer;
+  }
+  .btn-ghost:hover { border-color: var(--orange-border); background: var(--orange-dim); }
+  .hero-note { font-size: 12px; color: var(--text3); margin-top: 16px; }
+
+  /* staggered hero reveal */
+  .hr-1, .hr-2, .hr-3, .hr-4, .hr-5 { opacity: 0; transform: translateY(18px); animation: rise 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+  .hr-2 { animation-delay: 0.1s; } .hr-3 { animation-delay: 0.2s; }
+  .hr-4 { animation-delay: 0.32s; } .hr-5 { animation-delay: 0.45s; }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+  /* ── PHONE MOCKUP (pure CSS render of the app) ───────── */
+  .phone-zone { display: flex; justify-content: center; position: relative; }
+  .phone {
+    width: 280px; height: 580px;
+    background: #000;
+    border-radius: 44px;
+    border: 3px solid #2e2e2e;
+    box-shadow: 0 40px 90px rgba(0,0,0,0.8), 0 0 80px rgba(242,101,34,0.12);
+    position: relative;
+    overflow: hidden;
+    transform: rotate(3deg);
+    animation: floaty 7s ease-in-out infinite;
+  }
+  @keyframes floaty { 0%,100% { transform: rotate(3deg) translateY(0); } 50% { transform: rotate(3deg) translateY(-12px); } }
+  .phone-notch {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    width: 86px; height: 24px; background: #000; border-radius: 14px; z-index: 5;
+    border: 1px solid #1c1c1c;
+  }
+  .ph-screen { position: absolute; inset: 0; background: var(--black); padding: 44px 14px 0; font-size: 11px; }
+  .ph-topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .ph-title { font-family: var(--font-display); font-size: 9px; font-weight: 700; letter-spacing: 1.6px; color: var(--orange); }
+  .ph-streak {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: var(--orange-dim); border: 1px solid var(--orange-border);
+    border-radius: 20px; padding: 2px 8px; font-size: 8px; font-weight: 700; color: var(--orange);
+  }
+  .ph-greet { font-size: 8px; color: var(--text2); margin: 10px 0 1px; letter-spacing: 0.5px; }
+  .ph-name { font-family: var(--font-display); font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 7px; }
+  .ph-tier {
+    display: inline-flex; align-items: center; gap: 5px; background: var(--surface2);
+    border: 1px solid var(--border2); border-radius: 20px; padding: 3px 10px 3px 4px; margin-bottom: 12px;
+  }
+  .ph-tier-dot { width: 15px; height: 15px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-size: 7px; }
+  .ph-tier-txt { font-family: var(--font-display); font-size: 9px; font-weight: 700; letter-spacing: 1px; color: var(--orange); }
+  .ph-xprow { display: flex; justify-content: space-between; font-size: 8px; color: var(--text2); margin-bottom: 4px; }
+  .ph-xprow b { color: var(--cyan); font-family: var(--font-display); font-size: 10px; }
+  .ph-track { height: 5px; background: var(--surface2); border-radius: 20px; overflow: hidden; margin-bottom: 4px; }
+  .ph-fill { height: 100%; width: 0; background: var(--cyan); border-radius: 20px; animation: xpfill 2.2s 0.9s cubic-bezier(0.22,1,0.36,1) forwards; }
+  @keyframes xpfill { to { width: 66%; } }
+  .ph-xpcap { font-size: 7.5px; color: var(--text2); text-align: right; margin-bottom: 12px; }
+  .ph-xpcap em { color: var(--cyan); font-style: normal; }
+  .ph-mission {
+    background: var(--orange); border-radius: 13px; padding: 12px; position: relative; overflow: hidden; margin-bottom: 12px;
+  }
+  .ph-mission::before { content: ''; position: absolute; top: -18px; right: -12px; width: 70px; height: 70px; background: rgba(255,255,255,0.08); border-radius: 50%; }
+  .ph-mtag { font-size: 6.5px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.65); text-transform: uppercase; margin-bottom: 3px; }
+  .ph-mtitle { font-family: var(--font-display); font-size: 14px; font-weight: 800; color: #fff; line-height: 1.05; margin-bottom: 9px; max-width: 80%; }
+  .ph-mfoot { display: flex; justify-content: space-between; align-items: center; }
+  .ph-mxp { background: rgba(0,0,0,0.22); border-radius: 20px; padding: 3px 8px; font-size: 7.5px; font-weight: 700; color: #fff; }
+  .ph-go { background: #fff; color: var(--orange); border-radius: 20px; padding: 4px 11px; font-size: 8px; font-weight: 700; }
+  .ph-label { font-size: 6.5px; font-weight: 700; letter-spacing: 1.5px; color: var(--text3); text-transform: uppercase; margin-bottom: 7px; }
+  .ph-badges { display: flex; gap: 9px; }
+  .ph-badge { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .ph-ring {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--surface);
+    border: 1.5px solid rgba(242,101,34,0.4); display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .ph-ring.lk { filter: grayscale(1) opacity(0.3); border-color: var(--border2); }
+  .ph-bname { font-size: 6.5px; color: var(--text2); }
+  .ph-nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(10,10,10,0.97); border-top: 1px solid var(--border);
+    display: flex; padding: 8px 0 14px;
+  }
+  .ph-nav div { flex: 1; text-align: center; font-size: 12px; opacity: 0.4; }
+  .ph-nav div.on { opacity: 1; }
+  .ph-nav span { display: block; font-size: 5.5px; color: var(--text2); margin-top: 2px; }
+  .ph-nav div.on span { color: var(--orange); }
+  /* floating kudos toast over the phone */
+  .ph-kudos {
+    position: absolute; top: 90px; right: -28px;
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: 12px;
+    padding: 9px 13px; font-size: 11px; display: flex; gap: 8px; align-items: center;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.6);
+    opacity: 0; animation: kudosIn 0.6s 2.2s cubic-bezier(0.22,1,0.36,1) forwards;
+    z-index: 6;
+  }
+  @keyframes kudosIn { from { opacity: 0; transform: translateY(14px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .ph-kudos b { display: block; font-size: 10px; }
+  .ph-kudos small { color: var(--text2); font-size: 8.5px; }
+
+  /* ── SECTIONS ────────────────────────────────────────── */
+  section { padding: 72px 0; position: relative; }
+  .sec-label {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--orange); margin-bottom: 14px;
+  }
+  .sec-label::before { content: ''; width: 26px; height: 2px; background: var(--orange); }
+  h2 {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(34px, 5vw, 54px); line-height: 1; text-transform: uppercase;
+    margin-bottom: 14px; letter-spacing: -0.5px;
+  }
+  .sec-sub { color: var(--text2); font-size: 16px; max-width: 560px; margin-bottom: 40px; }
+
+  /* scroll reveal */
+  .rv { opacity: 0; transform: translateY(26px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+  .rv.in { opacity: 1; transform: translateY(0); }
+
+  /* value cards */
+  .cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .vcard {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 26px 24px;
+  }
+  .vcard .ic { font-size: 30px; margin-bottom: 14px; display: block; }
+  .vcard h3 { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .vcard p { font-size: 14px; color: var(--text2); }
+
+  /* Learn Do Reflect */
+  .ldr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .ldr-card { border-radius: var(--radius); padding: 26px 24px; border: 1px solid var(--border); background: var(--surface); border-top: 3px solid var(--cyan); }
+  .ldr-card.do { border-top-color: var(--orange); }
+  .ldr-card.reflect { border-top-color: var(--green); }
+  .ldr-step { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 2px; color: var(--cyan); margin-bottom: 8px; }
+  .ldr-card.do .ldr-step { color: var(--orange); }
+  .ldr-card.reflect .ldr-step { color: var(--green); }
+  .ldr-card h3 { font-family: var(--font-display); font-size: 26px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
+  .ldr-card p { font-size: 14px; color: var(--text2); }
+  .ldr-xp { display: inline-block; margin-top: 14px; font-size: 11px; font-weight: 700; color: #FFC107; background: rgba(255,193,7,0.12); border-radius: 20px; padding: 3px 10px; }
+
+  /* feature chips */
+  .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .chip {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 18px 16px; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .chip .ce { font-size: 22px; }
+  .chip b { display: block; font-size: 14px; margin-bottom: 2px; }
+  .chip span { font-size: 12px; color: var(--text2); line-height: 1.45; }
+
+  /* ── PATHWAY ─────────────────────────────────────────── */
+  .pathway { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+  .pathway::before {
+    content: ''; position: absolute; top: 26px; left: 12%; right: 12%;
+    height: 2px; background: linear-gradient(90deg, var(--orange), var(--cyan));
+    opacity: 0.45;
+  }
+  .pw {
+    position: relative; text-align: center; padding: 0 12px;
+  }
+  .pw-dot {
+    width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 14px;
+    background: var(--surface2); border: 2px solid var(--border2);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+    position: relative; z-index: 1;
+  }
+  .pw.now .pw-dot { background: var(--orange-dim); border-color: var(--orange); box-shadow: 0 0 26px rgba(242,101,34,0.35); }
+  .pw-tag {
+    display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--orange); background: var(--orange-dim);
+    border-radius: 20px; padding: 3px 10px; margin-bottom: 8px;
+  }
+  .pw h3 { font-family: var(--font-display); font-size: 19px; font-weight: 800; text-transform: uppercase; line-height: 1.05; margin-bottom: 5px; }
+  .pw p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  @media (max-width: 900px) {
+    .pathway { grid-template-columns: 1fr; gap: 26px; }
+    .pathway::before { left: 25px; right: auto; top: 6%; bottom: 6%; width: 2px; height: auto; background: linear-gradient(180deg, var(--orange), var(--cyan)); }
+    .pw { display: flex; text-align: left; gap: 16px; align-items: flex-start; padding: 0; }
+    .pw-dot { margin: 0; flex-shrink: 0; }
+  }
+
+  /* ── ACCESS STEPS ────────────────────────────────────── */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; counter-reset: step; margin-bottom: 36px; }
+  .step {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 26px 24px; position: relative;
+  }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; top: -16px; left: 20px;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--orange); color: #fff;
+    font-family: var(--font-display); font-weight: 800; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 18px rgba(242,101,34,0.4);
+  }
+  .step h3 { font-family: var(--font-display); font-size: 21px; font-weight: 700; text-transform: uppercase; margin: 8px 0; }
+  .step p { font-size: 14px; color: var(--text2); }
+
+  /* install panel — device tabs */
+  .install {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius);
+    padding: 28px; display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 28px; align-items: center;
+  }
+  .install-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+  .itab {
+    background: var(--surface2); border: 1.5px solid var(--border2); color: var(--text2);
+    font-family: var(--font-body); font-weight: 600; font-size: 13px;
+    border-radius: var(--radius-pill); padding: 8px 18px; cursor: pointer; transition: all 0.15s;
+  }
+  .itab.on { background: var(--orange-dim); border-color: var(--orange); color: var(--orange); }
+  .ipanel { display: none; }
+  .ipanel.on { display: block; }
+  .ipanel ol { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .ipanel li { display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; color: var(--text2); }
+  .ipanel li b { color: var(--text); }
+  .inum {
+    flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--surface3);
+    color: var(--orange); font-family: var(--font-display); font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .ios-glyph { display: inline-block; transform: translateY(2px); }
+  .qr-card {
+    background: #fff; border-radius: var(--radius); padding: 18px; text-align: center;
+  }
+  .qr-card svg { width: 100%; height: auto; display: block; }
+  .qr-card p { color: #333; font-size: 12px; font-weight: 600; margin-top: 10px; font-family: var(--font-body); }
+
+  /* ── NEW FAMILIES ────────────────────────────────────── */
+  .join {
+    background: linear-gradient(135deg, #1a0f06 0%, #120a04 60%, var(--surface) 100%);
+    border: 1.5px solid var(--orange-border); border-radius: 22px;
+    padding: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+    position: relative; overflow: hidden;
+  }
+  .join::before {
+    content: ''; position: absolute; top: -80px; right: -60px; width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(242,101,34,0.22), transparent 70%); pointer-events: none;
+  }
+  .join h2 { font-size: clamp(30px, 4vw, 44px); }
+  .join-points { list-style: none; margin: 22px 0 0; display: flex; flex-direction: column; gap: 12px; }
+  .join-points li { display: flex; gap: 10px; font-size: 14.5px; color: var(--text2); }
+  .join-points li::before { content: '✓'; color: var(--green); font-weight: 700; }
+  .join-points b { color: var(--text); }
+
+  .form { display: flex; flex-direction: column; gap: 12px; position: relative; }
+  .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fl { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; color: var(--text2); text-transform: uppercase; margin-bottom: 5px; display: block; }
+  .fi {
+    width: 100%; background: rgba(10,10,10,0.6); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 13px 14px; font-size: 16px;
+    font-family: var(--font-body); color: var(--text); outline: none; transition: border-color 0.2s;
+  }
+  .fi:focus { border-color: var(--orange); }
+  .fi::placeholder { color: var(--text3); }
+  textarea.fi { min-height: 76px; resize: vertical; }
+  .form-err { font-size: 13px; color: #f87171; display: none; }
+  .form-ok {
+    display: none; text-align: center; padding: 40px 16px;
+  }
+  .form-ok .big { font-size: 46px; display: block; margin-bottom: 12px; }
+  .form-ok h3 { font-family: var(--font-display); font-size: 28px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
+  .form-ok p { color: var(--text2); font-size: 14.5px; }
+
+  /* ── FAQ ─────────────────────────────────────────────── */
+  .faq { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .qa { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px 22px; }
+  .qa b { display: block; font-size: 15px; margin-bottom: 6px; }
+  .qa p { font-size: 13.5px; color: var(--text2); }
+
+  /* ── FOOTER ──────────────────────────────────────────── */
+  footer { border-top: 1px solid var(--border); padding: 36px 0 48px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .foot p { font-size: 12.5px; color: var(--text3); }
+  .foot a.print-link { color: var(--text2); font-size: 12.5px; }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .hero { padding-top: 48px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+    .phone-zone { order: 2; }
+    .cards3, .ldr, .steps { grid-template-columns: 1fr; gap: 26px; }
+    .steps .step { margin-top: 10px; }
+    .chips { grid-template-columns: 1fr 1fr; }
+    .install { grid-template-columns: 1fr; }
+    .qr-card { max-width: 240px; margin: 0 auto; }
+    .join { grid-template-columns: 1fr; padding: 30px 22px; }
+    .faq { grid-template-columns: 1fr; }
+    section { padding: 54px 0; }
+  }
+  @media (max-width: 520px) {
+    .chips { grid-template-columns: 1fr; }
+    .frow { grid-template-columns: 1fr; }
+    .phone { width: 250px; height: 520px; }
+    .ph-kudos { right: -8px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0s !important; transition-duration: 0.01ms !important; }
+    .rv { opacity: 1; transform: none; }
+    .hr-1,.hr-2,.hr-3,.hr-4,.hr-5 { opacity: 1; transform: none; }
+  }
+
+  /* ── PRINT: turns this page into the parent handout ──── */
+  @media print {
+    body::before, .nav, .phone-zone, #features, #join, #faq, footer .nav-cta, .hero-ctas, .install-tabs, #panel-android, .hero-note { display: none !important; }
+    body { background: #fff; color: #111; }
+    .hero::before, .hero::after { display: none; }
+    h1, h2, .ph-name { color: #111; }
+    h1 em { color: #F26522; }
+    .hero { padding: 10px 0 0; }
+    .hero-sub, .sec-sub, .vcard p, .step p, .ipanel li { color: #444; }
+    section { padding: 16px 0; page-break-inside: avoid; }
+    .vcard, .step, .install, .ldr-card, .qa { background: #fff; border-color: #ddd; }
+    .vcard h3, .step h3, .ldr-card h3 { color: #111; }
+    .install { grid-template-columns: 1fr 0.5fr; }
+    .ipanel { display: block !important; }
+    .qr-card { border: 1px solid #ddd; }
+    .print-url { display: block !important; font-size: 14px; font-weight: 700; color: #111; margin-top: 14px; }
+  }
+  .print-url { display: none; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="https://www.power2adapt.online">Power2<span>ADAPT</span></a>
+    <a class="nav-cta" href="/my-athletic-journey">Open the App</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow hr-1">⚡ Power2ADAPT · For Athletes 5–13</div>
+      <h1 class="hr-2">My Athletic<em>Journey</em></h1>
+      <p class="hero-sub hr-3">Your child's training companion — weekly challenges, XP and badges, streaks, and <strong>real feedback from Coach Al</strong>, all in one app they'll actually want to open.</p>
+      <div class="hero-ctas hr-4">
+        <a class="btn-big" href="/my-athletic-journey">Open the App →</a>
+        <a class="btn-ghost" href="#join">New here? Request access</a>
+      </div>
+      <p class="hero-note hr-5">Included free with every Power2ADAPT term program · Works on iPhone, iPad &amp; Android</p>
+      <span class="print-url">📱 Get started: www.power2adapt.online/journey</span>
+    </div>
+
+    <div class="phone-zone hr-5">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="ph-screen">
+          <div class="ph-topbar">
+            <span class="ph-title">MY ATHLETIC JOURNEY</span>
+            <span class="ph-streak">🔥 5 week streak · ❄️1</span>
+          </div>
+          <div class="ph-greet">Welcome back</div>
+          <div class="ph-name">😎 Jordan</div>
+          <div class="ph-tier"><span class="ph-tier-dot">⭐</span><span class="ph-tier-txt">CONTENDER</span></div>
+          <div class="ph-xprow"><span>XP PROGRESS</span><span><b>580</b> / 870</span></div>
+          <div class="ph-track"><div class="ph-fill"></div></div>
+          <div class="ph-xpcap">290 XP to reach <em>Athlete</em> tier</div>
+          <div class="ph-mission">
+            <div class="ph-mtag">Module 1 · Week 4 of 8</div>
+            <div class="ph-mtitle">Power Up — Squat Jump Challenge</div>
+            <div class="ph-mfoot"><span class="ph-mxp">⭐ +35 XP available</span><span class="ph-go">Start now</span></div>
+          </div>
+          <div class="ph-label">My badges</div>
+          <div class="ph-badges">
+            <div class="ph-badge"><div class="ph-ring">⚡</div><span class="ph-bname">Power Up</span></div>
+            <div class="ph-badge"><div class="ph-ring">🔁</div><span class="ph-bname">Rep Champ</span></div>
+            <div class="ph-badge"><div class="ph-ring">💨</div><span class="ph-bname">Agility Ace</span></div>
+            <div class="ph-badge"><div class="ph-ring lk">🏆</div><span class="ph-bname">Module 1</span></div>
+          </div>
+          <div class="ph-nav">
+            <div class="on">🏠<span>Home</span></div>
+            <div>⚡<span>This Week</span></div>
+            <div>🧭<span>Quests</span></div>
+            <div>🏅<span>Badges</span></div>
+            <div>👤<span>Profile</span></div>
+          </div>
+        </div>
+        <div class="ph-kudos">👏 <span><b>🔥 Kudos from Coach Al!</b><small>You're on fire — awesome effort!</small></span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ WHY ═══════════════════════════════════════════════ -->
+<section id="why">
+  <div class="wrap">
+    <div class="rv"><span class="sec-label">For Parents</span>
+    <h2>Training that sticks — <br>between sessions too</h2>
+    <p class="sec-sub">Most kids train once a week and forget everything by Tuesday. My Athletic Journey keeps the learning alive all week, and lets you see exactly what your child is working on.</p></div>
+    <div class="cards3">
+      <div class="vcard rv"><span class="ic">🎓</span><h3>A real curriculum</h3><p>32 weeks across 4 modules — Athletic Ability, Skill, Focus and Leadership — matched to what we coach on the track each week.</p></div>
+      <div class="vcard rv"><span class="ic">👟</span><h3>Real coach feedback</h3><p>Coach Al assesses each athlete's running, jumping and throwing technique in the app — and your child gets the feedback (and kudos!) straight to their phone.</p></div>
+      <div class="vcard rv"><span class="ic">🛡️</span><h3>Healthy gamification</h3><p>XP, badges and streaks reward effort and reflection — not screen time. A session takes minutes, there are no ads, and no social feeds.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══════════════════════════════════════ -->
+<section id="how">
+  <div class="wrap">
+    <div class="rv"><span class="sec-label">Each Week</span>
+    <h2>Learn. Do. Reflect.</h2>
+    <p class="sec-sub">Every training week follows the same simple loop — about 15 minutes of app time, with the "Do" happening out on the track.</p></div>
+    <div class="ldr">
+      <div class="ldr-card rv"><div class="ldr-step">STEP 1 — LEARN</div><h3>One big idea</h3><p>A short, age-pitched concept: what creates speed, why landings matter, how focus works. Read it before training.</p><span class="ldr-xp">+10 XP</span></div>
+      <div class="ldr-card do rv"><div class="ldr-step">STEP 2 — DO</div><h3>The challenge</h3><p>A physical challenge tied to that week's session — squat jumps, fast starts, relay exchanges — completed at training.</p><span class="ldr-xp">+10 XP & badges</span></div>
+      <div class="ldr-card reflect rv"><div class="ldr-step">STEP 3 — REFLECT</div><h3>Think it through</h3><p>A guided journal prompt. Coach Al reads every reflection — it's where the real development happens.</p><span class="ldr-xp">+15 XP</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES KIDS LOVE ════════════════════════════════ -->
+<section id="features">
+  <div class="wrap">
+    <div class="rv"><span class="sec-label">The Fun Bit</span>
+    <h2>Why kids keep coming back</h2></div>
+    <div class="chips">
+      <div class="chip rv"><span class="ce">🔥</span><span><b>Streaks &amp; freezes</b><span>Weekly streaks build momentum — and a Streak Freeze protects it if life gets busy.</span></span></div>
+      <div class="chip rv"><span class="ce">🏅</span><span><b>20+ badges</b><span>Power Up, Agility Ace, Module Master — earned through effort, confirmed by the coach.</span></span></div>
+      <div class="chip rv"><span class="ce">👏</span><span><b>Coach kudos</b><span>One tap from Coach Al sends a 🔥 straight to your child's pocket. Watch their face.</span></span></div>
+      <div class="chip rv"><span class="ce">😎</span><span><b>Their own identity</b><span>Emoji avatars, tiers from Rookie to Legacy, and a journal that becomes theirs.</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PATHWAY ═══════════════════════════════════════════ -->
+<section id="pathway">
+  <div class="wrap">
+    <div class="rv"><span class="sec-label">Where It Leads</span>
+    <h2>Stage one of a real athlete pathway</h2>
+    <p class="sec-sub">My Athletic Journey isn't a dead end — graduate all four quests and your child steps onto the Power2ADAPT development pathway.</p></div>
+    <div class="pathway rv">
+      <div class="pw now">
+        <div class="pw-dot">🧭</div>
+        <div><span class="pw-tag">You start here</span>
+        <h3>My Athletic<br>Journey</h3>
+        <p>4 quests · 32 weeks<br>Prep – Year 6</p></div>
+      </div>
+      <div class="pw">
+        <div class="pw-dot">⚡</div>
+        <div><span class="pw-tag" style="visibility:hidden;">·</span>
+        <h3>Empowered<br>Athlete</h3>
+        <p>Junior Academy —<br>the next level of training</p></div>
+      </div>
+      <div class="pw">
+        <div class="pw-dot">🎯</div>
+        <div><span class="pw-tag" style="visibility:hidden;">·</span>
+        <h3>Senior<br>Squad</h3>
+        <p>Competitive development<br>for committed athletes</p></div>
+      </div>
+      <div class="pw">
+        <div class="pw-dot">🏆</div>
+        <div><span class="pw-tag" style="visibility:hidden;">·</span>
+        <h3>High Performance<br>Squad</h3>
+        <p>Elite coaching for athletes<br>chasing the top</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GETTING STARTED ═══════════════════════════════════ -->
+<section id="start">
+  <div class="wrap">
+    <div class="rv"><span class="sec-label">Getting Started</span>
+    <h2>On your child's device in two minutes</h2></div>
+    <div class="steps">
+      <div class="step rv"><h3>Get your login</h3><p>Coach Al creates each athlete's account and gives you the username and password at training. Already enrolled but no login yet? Just ask at the next session.</p></div>
+      <div class="step rv"><h3>Open &amp; sign in</h3><p>Tap "Open the App" on this page (or scan the QR code) and sign in. You stay signed in — no password every time.</p></div>
+      <div class="step rv"><h3>Add it to the home screen</h3><p>This makes MAJ a real app icon on the phone — and it's what switches on coach notifications. Steps below for your device. 👇</p></div>
+    </div>
+
+    <div class="install rv">
+      <div>
+        <div class="install-tabs">
+          <button class="itab on" id="tab-ios" onclick="showPanel('ios')">📱 iPhone / iPad</button>
+          <button class="itab" id="tab-android" onclick="showPanel('android')">🤖 Android</button>
+        </div>
+        <div class="ipanel on" id="panel-ios">
+          <ol>
+            <li><span class="inum">1</span><span>Open the app in <b>Safari</b> and sign in</span></li>
+            <li><span class="inum">2</span><span>Tap the <b>Share button</b> <span class="ios-glyph">⎋</span> at the bottom of the screen (the square with the arrow)</span></li>
+            <li><span class="inum">3</span><span>Scroll down and tap <b>"Add to Home Screen"</b>, then <b>Add</b></span></li>
+            <li><span class="inum">4</span><span>Open MAJ from its new icon, go to <b>Profile → Reminders</b> and turn on notifications 🔔</span></li>
+          </ol>
+        </div>
+        <div class="ipanel" id="panel-android">
+          <ol>
+            <li><span class="inum">1</span><span>Open the app in <b>Chrome</b> and sign in</span></li>
+            <li><span class="inum">2</span><span>Tap the <b>install banner</b> that appears — or the ⋮ menu → <b>"Add to Home screen"</b></span></li>
+            <li><span class="inum">3</span><span>Open MAJ from its new icon, go to <b>Profile → Reminders</b> and turn on notifications 🔔</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="qr-card">
+        <svg viewBox="0 0 33 33" xmlns="http://www.w3.org/2000/svg"><path stroke="#0a0a0a" d="M2 2.5h7m1 0h2m3 0h2m2 0h1m4 0h7m-29 1h1m5 0h1m1 0h4m1 0h1m5 0h2m1 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m1 0h5m3 0h2m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m3 0h1m1 0h4m3 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h4m1 0h1m2 0h1m1 0h2m2 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m5 0h1m3 0h1m3 0h1m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-20 1h2m2 0h1m1 0h1m2 0h3m-21 1h1m2 0h7m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m1 0h3m-25 1h1m2 0h1m1 0h2m3 0h2m1 0h3m1 0h1m1 0h2m1 0h2m-27 1h1m2 0h3m3 0h1m1 0h1m1 0h3m3 0h2m1 0h1m2 0h1m-27 1h3m4 0h1m2 0h1m1 0h1m4 0h1m2 0h1m1 0h1m2 0h1m2 0h1m-28 1h1m1 0h1m1 0h5m1 0h1m1 0h3m3 0h2m1 0h2m4 0h1m-29 1h3m1 0h2m1 0h6m1 0h5m3 0h1m1 0h5m-27 1h1m3 0h3m5 0h2m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m-29 1h1m3 0h2m2 0h1m2 0h1m1 0h3m2 0h1m1 0h2m1 0h2m1 0h1m1 0h1m-29 1h7m1 0h1m3 0h1m7 0h1m4 0h1m-26 1h2m2 0h1m3 0h3m4 0h1m2 0h4m2 0h1m1 0h2m-28 1h3m3 0h1m1 0h2m2 0h6m1 0h2m1 0h1m2 0h1m2 0h1m-29 1h2m2 0h1m3 0h1m1 0h4m1 0h1m2 0h1m1 0h7m-27 1h2m2 0h4m3 0h1m1 0h1m2 0h2m1 0h9m-20 1h2m1 0h1m1 0h1m1 0h1m1 0h4m3 0h2m-26 1h7m1 0h1m1 0h4m1 0h6m1 0h1m1 0h2m-26 1h1m5 0h1m1 0h1m1 0h4m1 0h1m1 0h1m2 0h1m3 0h1m-25 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m2 0h1m2 0h7m2 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m3 0h3m1 0h3m1 0h1m1 0h1m4 0h1m-29 1h1m1 0h3m1 0h1m3 0h3m1 0h2m1 0h1m1 0h1m1 0h1m1 0h2m1 0h3m-29 1h1m5 0h1m5 0h1m1 0h1m3 0h2m1 0h3m1 0h2m1 0h1m-29 1h7m1 0h1m4 0h1m1 0h1m3 0h2m3 0h2"/></svg>
+        <p>Scan to open this page<br>power2adapt.online/journey</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ NEW FAMILIES ══════════════════════════════════════ -->
+<section id="join">
+  <div class="wrap">
+    <div class="join rv">
+      <div>
+        <span class="sec-label">New to Power2ADAPT?</span>
+        <h2>The app comes with the program</h2>
+        <p class="sec-sub" style="margin-bottom:0;">My Athletic Journey is exclusive to Power2ADAPT athletes — every child enrolled in a term program gets full access included.</p>
+        <ul class="join-points">
+          <li><b>Weekly coached sessions</b>&nbsp;at Melbourne venues — athletics-based training for ages 5–13 (Prep to Year 6)</li>
+          <li><b>Full app access</b>&nbsp;— curriculum, badges, streaks and coach feedback all term</li>
+          <li><b>Programs for every level</b>&nbsp;— Foundation, Emerging, Academy and Senior Squad</li>
+        </ul>
+      </div>
+      <div>
+        <form class="form" id="access-form" onsubmit="return submitAccess(event)">
+          <div class="frow">
+            <div><label class="fl" for="f-name">Parent name *</label><input class="fi" id="f-name" required placeholder="Your name"></div>
+            <div><label class="fl" for="f-phone">Mobile *</label><input class="fi" id="f-phone" required inputmode="tel" placeholder="04XX XXX XXX"></div>
+          </div>
+          <div><label class="fl" for="f-email">Email *</label><input class="fi" id="f-email" type="email" required placeholder="you@email.com"></div>
+          <div class="frow">
+            <div><label class="fl" for="f-child">Child's first name *</label><input class="fi" id="f-child" required placeholder="e.g. Jordan"></div>
+            <div><label class="fl" for="f-age">Child's age *</label><input class="fi" id="f-age" required inputmode="numeric" placeholder="e.g. 10"></div>
+          </div>
+          <div><label class="fl" for="f-msg">Anything we should know?</label><textarea class="fi" id="f-msg" placeholder="Sports they play, what they're hoping to get out of it…"></textarea></div>
+          <div class="form-err" id="form-err"></div>
+          <button class="btn-big" id="form-btn" type="submit" style="width:100%;">Request Access</button>
+          <p style="font-size:11.5px;color:var(--text3);text-align:center;">Coach Al will be in touch within 1–2 days about the next term program.</p>
+        </form>
+        <div class="form-ok" id="form-ok">
+          <span class="big">🎉</span>
+          <h3>Request received!</h3>
+          <p>Thanks — Coach Al will contact you within 1–2 days with program details and your child's app login.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ═══════════════════════════════════════════════ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="rv"><span class="sec-label">Common Questions</span>
+    <h2>Quick answers</h2></div>
+    <div class="faq">
+      <div class="qa rv"><b>Does the app cost anything?</b><p>No — it's included with every Power2ADAPT term program enrolment.</p></div>
+      <div class="qa rv"><b>How does my child get a login?</b><p>Coach Al creates every account personally and hands the login to you at training. There's no public sign-up — that's deliberate, for the kids' safety.</p></div>
+      <div class="qa rv"><b>Is my child's data safe?</b><p>Yes. Each athlete can only see their own journey, only their coach can see their reflections, and there are no social feeds, ads, or contact with other users.</p></div>
+      <div class="qa rv"><b>What devices does it work on?</b><p>Any iPhone, iPad, Android phone or tablet, and any computer browser. Adding it to the home screen makes it work like a normal app, including notifications.</p></div>
+      <div class="qa rv"><b>How much screen time is it?</b><p>About 15 minutes a week — read one concept, mark off the challenge done at training, and write a short reflection.</p></div>
+      <div class="qa rv"><b>Forgot the password?</b><p>Ask Coach Al at training or send a message — he can reset it in under a minute.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <p>© Power2ADAPT · Melbourne, Australia · <a href="https://www.power2adapt.online" style="color:var(--text2);">power2adapt.online</a></p>
+    <a class="print-link" href="#" onclick="window.print(); return false;">🖨️ Print the parent handout</a>
+    <a class="nav-cta" href="/my-athletic-journey">Open the App</a>
+  </div>
+</footer>
+
+<script>
+  // Device-aware install tab
+  function showPanel(which) {
+    document.getElementById('tab-ios').classList.toggle('on', which === 'ios');
+    document.getElementById('tab-android').classList.toggle('on', which === 'android');
+    document.getElementById('panel-ios').classList.toggle('on', which === 'ios');
+    document.getElementById('panel-android').classList.toggle('on', which === 'android');
+  }
+  if (/android/i.test(navigator.userAgent)) showPanel('android');
+
+  // Scroll reveals
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  // Request-access form → existing Power2ADAPT enquiry system
+  async function submitAccess(ev) {
+    ev.preventDefault();
+    const err = document.getElementById('form-err');
+    const btn = document.getElementById('form-btn');
+    err.style.display = 'none';
+
+    const name  = document.getElementById('f-name').value.trim();
+    const phone = document.getElementById('f-phone').value.replace(/\s/g, '');
+    const email = document.getElementById('f-email').value.trim();
+    const child = document.getElementById('f-child').value.trim();
+    const age   = document.getElementById('f-age').value.trim();
+    const note  = document.getElementById('f-msg').value.trim();
+
+    if (!/^(\+?61|0)[2-478]\d{8}$/.test(phone)) {
+      err.textContent = 'Please enter a valid Australian phone number (e.g. 0412 345 678).';
+      err.style.display = 'block';
+      return false;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/contact-enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          contactMethod: 'phone',
+          subject: 'My Athletic Journey — App Access Request',
+          message: `MAJ app access request via /journey landing page.\nChild: ${child}, age ${age}.${note ? `\nParent note: ${note}` : ''}`
+        })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      document.getElementById('access-form').style.display = 'none';
+      document.getElementById('form-ok').style.display = 'block';
+    } catch (e) {
+      err.textContent = "Couldn't send just now — please try again, or message Coach Al directly.";
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Request Access';
+    }
+    return false;
+  }
+</script>
+</body>
+</html>

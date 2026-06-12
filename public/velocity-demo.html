@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>My Athletic Journey — Power2ADAPT</title>
+<title>Velocity Kids Sports — White-Label Demo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#F26522">
+<meta name="theme-color" content="#14B8A6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MAJ">
-<link rel="apple-touch-icon" href="./maj-icon-180.png">
+<meta name="apple-mobile-web-app-title" content="VKS">
 <style>
   :root {
-    --orange: #F26522;
-    --orange-dim: rgba(242,101,34,0.15);
-    --orange-border: rgba(242,101,34,0.25);
-    --cyan: #00B4D8;
-    --cyan-dim: rgba(0,180,216,0.15);
+    /* VELOCITY KIDS SPORTS theme — teal primary, gold secondary.
+       White-label note: re-skinning the entire app = changing these tokens. */
+    --orange: #14B8A6;
+    --orange-dim: rgba(20,184,166,0.15);
+    --orange-border: rgba(20,184,166,0.25);
+    --cyan: #FACC15;
+    --cyan-dim: rgba(250,204,21,0.13);
     --black: #0a0a0a;
     --surface: #111111;
     --surface1: #111111;
@@ -32,7 +32,7 @@
     --text1: #ffffff;
     --text2: #888888;
     --text3: #6b6b6b;
-    --accent: #F26522;
+    --accent: #14B8A6;
     --green: #22c55e;
     --green-dim: rgba(34,197,94,0.12);
     --font-display: 'Barlow Condensed', sans-serif;
@@ -159,9 +159,9 @@
   .icon-btn:active { background: var(--surface2); }
 
   @keyframes notif-pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(242,101,34,0.7); }
-    70%  { box-shadow: 0 0 0 7px rgba(242,101,34,0); }
-    100% { box-shadow: 0 0 0 0 rgba(242,101,34,0); }
+    0%   { box-shadow: 0 0 0 0 rgba(20,184,166,0.7); }
+    70%  { box-shadow: 0 0 0 7px rgba(20,184,166,0); }
+    100% { box-shadow: 0 0 0 0 rgba(20,184,166,0); }
   }
   .notif-dot {
     min-width: 16px; height: 16px;
@@ -1006,7 +1006,7 @@
     align-items: center;
     gap: 6px;
     background: var(--cyan-dim);
-    border: 1px solid rgba(0,180,216,0.3);
+    border: 1px solid rgba(250,204,21,0.3);
     border-radius: var(--radius-pill);
     padding: 6px 16px;
     font-size: 15px;
@@ -1052,16 +1052,16 @@
   .badge-grid-ring.locked { filter: grayscale(1) opacity(0.25); }
 
   .badge-grid-ring.earned {
-    border-color: rgba(242,101,34,0.4);
+    border-color: rgba(20,184,166,0.4);
     background: var(--orange-dim);
   }
 
   .badge-grid-ring.master {
     width: 80px; height: 80px;
     font-size: 34px;
-    border-color: rgba(242,101,34,0.6);
+    border-color: rgba(20,184,166,0.6);
     background: var(--orange-dim);
-    box-shadow: 0 0 0 4px rgba(242,101,34,0.1);
+    box-shadow: 0 0 0 4px rgba(20,184,166,0.1);
   }
 
   .badge-new-tag {
@@ -1112,7 +1112,7 @@
   }
 
   .tier-item.current { border-color: var(--orange); background: var(--orange-dim); }
-  .tier-item.achieved { border-color: rgba(0,180,216,0.3); }
+  .tier-item.achieved { border-color: rgba(250,204,21,0.3); }
 
   .tier-emoji { font-size: 22px; flex-shrink: 0; }
 
@@ -1131,7 +1131,7 @@
   .tier-item:not(.current):not(.achieved) .tier-name { color: var(--text3); }
 
   .tier-req { font-size: 11px; color: var(--text2); }
-  .tier-item.current .tier-req { color: rgba(242,101,34,0.7); }
+  .tier-item.current .tier-req { color: rgba(20,184,166,0.7); }
 
   .tier-status {
     font-size: 10px;
@@ -1334,7 +1334,7 @@
   /* ── COACH BANNER ──────────────────────────────────── */
   .coach-banner {
     background: var(--cyan-dim);
-    border: 1px solid rgba(0,180,216,0.2);
+    border: 1px solid rgba(250,204,21,0.2);
     border-radius: var(--radius-sm);
     padding: 12px 14px;
     display: flex;
@@ -1793,12 +1793,18 @@
   <div id="page-login" class="page active" style="padding-bottom:0;">
     <div style="width:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1;padding:40px 32px;position:relative;z-index:1;">
       <div style="margin-bottom:32px;text-align:center;">
-        <img id="login-bg-logo" src="./p2a-logo-transparent.png" alt="Power2ADAPT">
-        <div class="login-title">My Athletic<br>Journey</div>
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:4px;color:var(--orange);text-transform:uppercase;margin-bottom:8px;">⚡ Velocity</div>
+        <div class="login-title">Kids Sports<br>Journey</div>
         <div class="login-sub">Your personal performance hub</div>
+        <div style="display:inline-block;margin-top:10px;background:rgba(250,204,21,0.12);border:1px solid rgba(250,204,21,0.35);color:#FACC15;font-size:11px;font-weight:700;letter-spacing:1.5px;border-radius:20px;padding:4px 12px;">WHITE-LABEL DEMO · SAMPLE DATA</div>
       </div>
 
-      <div class="login-form">
+      <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        <button class="btn-primary" style="margin-top:0;" onclick="demoLogin('athlete')">👟 Explore as an Athlete</button>
+        <button class="btn-primary" style="margin-top:0;background:var(--surface2);border:1.5px solid var(--orange);color:var(--orange);" onclick="demoLogin('coach')">📋 Explore as a Coach</button>
+      </div>
+
+      <div class="login-form" style="display:none;">
         <div class="input-group">
           <label class="input-label">Username</label>
           <input class="input-field" id="login-user" type="text" placeholder="Enter your username" autocomplete="off" autocapitalize="none">
@@ -1807,11 +1813,11 @@
           <label class="input-label">Password</label>
           <input class="input-field" id="login-pass" type="password" placeholder="Enter your password">
         </div>
-        <div class="login-error" id="login-error">Incorrect username or password. Try: jordan / athlete1</div>
+        <div class="login-error" id="login-error">Incorrect username or password.</div>
         <button class="btn-primary" onclick="doLogin()">Let's Go</button>
       </div>
 
-      <div class="login-hint">Demo login: <span>jordan</span> / <span>athlete1</span></div>
+      <div class="login-hint">Sample data only — no real athletes, no sign-up needed.<br>Licensed deployments use each provider's own branding, content &amp; secure accounts.</div>
     </div>
   </div>
 
@@ -1833,10 +1839,10 @@
   <!-- ══ DASHBOARD PAGE ══════════════════════════════════════════════════ -->
   <div id="page-home" class="page">
     <div class="top-bar">
-      <span class="top-bar-title">My Athletic Journey</span>
+      <span class="top-bar-title">Velocity Kids Sports</span>
       <div style="display:flex;align-items:center;gap:8px;">
         <div class="streak-pill" id="home-streak-pill" style="display:none;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="#F26522"><path d="M12 2C8.5 9 6 12 6 16a6 6 0 0012 0c0-4-2.5-7-6-14z"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#14B8A6"><path d="M12 2C8.5 9 6 12 6 16a6 6 0 0012 0c0-4-2.5-7-6-14z"/></svg>
           <span id="home-streak-text">5 week streak</span>
         </div>
         <div class="icon-btn" onclick="openNotifications()">
@@ -1951,7 +1957,7 @@
     <div class="top-bar">
       <span class="top-bar-title">This Week</span>
       <div class="streak-pill">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="#F26522"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="#14B8A6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         +35 XP this week
       </div>
     </div>
@@ -2116,7 +2122,7 @@
       </div>
       <div class="profile-row" onclick="toast('Contact your coach to update your details')">
         <span class="profile-row-label">Coach</span>
-        <span class="profile-row-value">Al Tait <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+        <span class="profile-row-value">Sam Carter <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
       </div>
       <div class="profile-row" onclick="toast('Contact your coach to update your details')">
         <span class="profile-row-label">Level</span>
@@ -2327,7 +2333,7 @@
   <!-- ══ WELLNESS CHECK-IN OVERLAY ════════════════════════════════════ -->
   <div class="wellness-overlay hidden" id="wellness-overlay">
     <div class="wellness-card">
-      <div class="wellness-eyebrow">Power2ADAPT · MAJ</div>
+      <div class="wellness-eyebrow">Velocity Kids Sports</div>
       <div class="wellness-title">Before we start —</div>
       <div class="wellness-sub">Quick check-in. Takes 10 seconds. Helps your coach understand how you're tracking.</div>
 
@@ -2480,7 +2486,7 @@ const MAJ_CONTENT = {
       title: "Ignite Your Engine",
       pillar: "Athletic Ability",
       icon: "🔥",
-      color: "#00B4D8",
+      color: "#FACC15",
       totalWeeks: 8,
       moduleBadge: { key: "mod1_master", name: "Module 1 Master", icon: "🏆", xp: 50 },
       weeks: [
@@ -2524,20 +2530,20 @@ const MAJ_CONTENT = {
             points: [
               "Good movement is the foundation that every other athletic quality is built on.",
               "If your technique is wrong, going faster just makes the problem worse — not better.",
-              "Skipping, jumping, and running all require your body to work in a coordinated pattern.",
-              "Today's agility circuit has five stations — each one trains a different movement pattern. Pay attention to each one.",
-              "The cross country run teaches you something speed work cannot: how to judge your own pace and keep going when it gets hard."
+              "Skipping, jumping, side-stepping and sprinting all require your body to work in a coordinated pattern.",
+              "Today's movement circuit has five stations from five different sports — each one trains a different movement pattern.",
+              "Great footballers, netballers and basketballers all share the same foundation: they move well BEFORE they move fast."
             ],
-            closing: "Slow is smooth. Smooth is fast. Quality first, speed second. — P2A coaching principle"
+            closing: "Slow is smooth. Smooth is fast. Quality first, speed second. — Velocity coaching principle"
           },
           do: {
-            title: "Agility Circuit + Out-and-Back Run",
-            setup: "Two parts today. First, the agility circuit — 5 stations (ladder, weaving cones, hurdles, dodge and weave, skater hops). Then a steady out-and-back run — your goal is to reach the turnaround in a set time and run back in the same time.",
+            title: "Five-Sport Movement Circuit",
+            setup: "Five stations, five sports, one focus: quality movement. Basketball defensive slides, soccer dribble weave, netball jump-stop landings, hockey low-dribble shuttles, and AFL ground-ball pickups on the move.",
             steps: [
-              "At each circuit station, focus on the movement, not speed. Ask: Am I doing this correctly?",
-              "Pick ONE cue to apply across every station today — for example, 'fast arms' or 'knees up'.",
-              "For the run: set off at a pace where you can breathe and talk. Judge it — do not sprint and fade.",
-              "On the way back, check your form: head still, arms driving, shoulders relaxed.",
+              "At each station, focus on the movement, not speed. Ask: Am I doing this correctly?",
+              "Pick ONE cue to apply across every station today — for example, 'low and balanced' or 'soft landings'.",
+              "Basketball slides: stay low, never cross your feet. Netball landings: quiet feet, knees bent.",
+              "Notice which sport's movement feels most natural to you — and which feels hardest.",
               "After the session, ask your coach: What was one thing I did well, and one thing to work on?"
             ],
             changeIt: "At each circuit station, try to coach yourself between turns: What did I do well? What can I improve? Then apply it next turn.",
@@ -2589,22 +2595,22 @@ const MAJ_CONTENT = {
             intro: "Power is strength applied quickly. It shows up in jumping, bounding, throwing, and explosive starts. Today you will train two types of power: lower body power through jumping and bounding, and upper body power through throwing.",
             points: [
               "Every time you jump and land well, you are training your muscles to produce and absorb force safely.",
-              "Bounding is a power exercise — each bound should feel like you are driving forward and upward.",
-              "In the bounding hoops, drive your knee to the sky and push strong to the middle of each hoop.",
-              "In the hop-step-jump sequence: hop over the hurdle, bound to the dot, stick the landing in the hoop.",
+              "Power wins moments in every sport: the rebound in basketball, the mark in AFL, the intercept jump in netball.",
+              "Drive your arms and your knee to the sky on take-off — your arms add height to every jump.",
+              "Landing is half the skill: a basketballer who lands balanced is ready for the next play instantly.",
               "Soft landings are not weak — they are skilled. Landing control is what protects your body."
             ],
             closing: "Power cues this week: Jet wings on take-off. Reach for the sky. Motorbike landing."
           },
           do: {
-            title: "Bounding Hoops + Hop-Step-Jump",
-            setup: "Two jumping challenges today. First: bounding hoops — bound through a line of hoops, trying to cover more distance each time. Then: hop-step-jump — hop over the hurdle, bound to the dot, land in the hoop.",
+            title: "Rebound & Land Challenge",
+            setup: "Three jump challenges from three sports. Basketball rebound jumps (jump, catch at your highest point, land balanced), netball intercept jumps (jump-catch-land in one motion), and AFL mark jumps (attack the ball at its highest point).",
             steps: [
-              "For bounding: start with arms at your side. Drive them hard as you push off for each bound.",
-              "Try to land in the middle of each hoop — accuracy AND power.",
-              "For hop-step-jump: set up your hurdle, dot, and hoop about 1 metre apart each.",
-              "Hop over the hurdle, drive off the dot with a big bound, then stick your landing in the hoop.",
-              "Ask your coach to make the gaps wider when you are ready for more challenge."
+              "For every jump: arms swing back, then drive up hard as you take off.",
+              "Catch the ball at the TOP of your jump — not on the way down.",
+              "Land soft and balanced: bent knees, quiet feet, ready to move again instantly.",
+              "Count your clean reps — a clean rep is a high catch AND a controlled landing.",
+              "Ask your coach to throw the ball higher or wider when you are ready for more challenge."
             ],
             changeIt: "How far apart can you set the hoops and still land in them? Can you increase the hop-step-jump spacing each round?",
             badge: { key: "power_up", name: "Power Up", icon: "⚡", xp: 25 }
@@ -2616,68 +2622,68 @@ const MAJ_CONTENT = {
         },
         {
           num: 5,
-          theme: "Hurdles & Relay",
+          theme: "Change of Direction",
           learn: {
-            concept: "Hurdle Rhythm, Baton Changes, and Running as a Team",
-            intro: "Today you learn two skills that take individual running ability and apply it in a team context: hurdle running and relay baton changes. Both require technical precision — but also trust, timing, and communication.",
+            concept: "Cutting, Dodging and Evading — The Skill That Wins Games",
+            intro: "Watch any great player in any sport — basketball, soccer, AFL, netball, hockey — and you will see the same thing: they change direction faster than everyone else. Today you learn the mechanics of the cut.",
             points: [
-              "Hurdle running is not about jumping over the hurdle — it is about attacking it at speed with a quick, controlled step-over.",
-              "Your lead leg clears the hurdle; your trail leg whips through fast. Both matter equally.",
-              "A relay is won or lost in the changeover zone. A fast baton exchange can make up a full second.",
-              "The key to a relay exchange: the incoming runner calls 'hand', the outgoing runner reaches back with a straight arm — no looking back.",
-              "Great teams practise the changeover as much as the running. Technique under pressure is the goal."
+              "To change direction fast, you first have to slow down fast. Deceleration is a skill — low hips, short steps, chest up.",
+              "The cut itself: plant your outside foot wide, push HARD off it, and drive your arms in the new direction.",
+              "Stay low through the change — tall players get beaten, low players do the beating.",
+              "In a game you react to opponents, not cones. Reactive agility — reading and responding — is the real skill.",
+              "Every sport calls it something different: the crossover step, the side-step, the dodge, the prop. The mechanics are the same."
             ],
-            closing: "Hurdle cue: toes up, knees up, use your arms the whole way. Relay cue: arm straight back, call to run, go!"
+            closing: "Cutting cue: brakes on, get low, plant wide, push hard, arms drive. Say it before every rep."
           },
           do: {
-            title: "Hurdle Relay — Team Best Time",
-            setup: "Your team will race over two lines of hurdles and then compete in a full relay with baton changes. The goal: improve your team's time from the first relay to the last by running better, not just trying harder.",
+            title: "Evasion Grid + Mirror Drill",
+            setup: "Two challenges today. First: the evasion grid — beat a defender across the square using your best dodge or side-step. Then: the mirror drill — face a partner, copy every cut they make, then swap roles.",
             steps: [
-              "Before the hurdle relay: practise one run-through of each hurdle line. Focus on rhythm — do not slow down approaching the hurdle.",
-              "In the relay: call your exchange zone clearly. Incoming runner says 'hand' at the right moment.",
-              "Outgoing runner: reach back with a straight arm, look forward, and accelerate as soon as the baton touches your hand.",
-              "After each relay, discuss as a team: what went well, what can we sharpen?",
-              "Final relay: everyone brings their best technique. Notice if your team's time improves."
+              "In the grid, set up your defender with a fake one way, then cut hard the other way.",
+              "Plant your outside foot WIDE on every cut — that is where the push comes from.",
+              "In the mirror drill, react as fast as you can. Watch your partner's hips, not their feet — hips do not lie.",
+              "Count how many times you beat the defender cleanly. Then swap and defend — defending teaches you what works.",
+              "After each round, your coach gives you one cue. Apply it next round."
             ],
-            changeIt: "Try the relay with 3–4 changeover zones instead of one. More changeovers = more chances to practise the exchange under pressure.",
+            changeIt: "Add a ball — dribble (basketball/hockey) or carry (AFL/netball) while evading. Can you still cut hard with the ball in play?",
             badge: null
           },
           reflect: {
-            prompt: "What was harder — the hurdles or the relay exchange — and what did you do to get better at it?",
-            hint: "Think about one specific moment you improved during the session. What changed? Was it a cue, a focus shift, or something a teammate said?"
+            prompt: "What is your go-to move to beat a defender — and what makes it work?",
+            hint: "Think about your best moment in the grid today. Was it the fake? The low body position? The speed out of the cut? What would make it even harder to stop?"
           }
         },
         {
           num: 6,
-          theme: "Endurance",
+          theme: "Game Fitness",
           learn: {
-            concept: "The Endurance Challenge — Running at Your Own Pace",
-            intro: "Endurance is your ability to keep going. Today you will face one of the hardest things in sport: running for a sustained time without stopping. Not a sprint — a personal test of effort, pace judgement, and mental toughness.",
+            concept: "Repeat Sprint Ability — The Fitness That Games Actually Demand",
+            intro: "No team sport asks you to run at one pace for 20 minutes. Games ask you to sprint, recover, and sprint again — dozens of times. That quality is called repeat sprint ability, and it is what separates the player who is still fast in the last quarter.",
             points: [
-              "Your aerobic base is built by running at a sustained, moderate effort — not flat out. If you cannot hold a short conversation, you are going too fast.",
-              "The endurance challenge today: run continuously for half your age in minutes without stopping. Every minute you complete without walking earns 10 points.",
-              "Pace judgement is a skill. Setting off too fast is the most common mistake — and it costs you in the final minutes.",
-              "Curve running is a separate skill: hugging the inside of the curve, leaning slightly in, keeping your running line tight.",
-              "Mental toughness: when it gets hard, focus on the next 30 seconds — not the whole remaining time."
+              "Game fitness = sprint, recover, repeat. The faster your body recovers between efforts, the more often you can go hard.",
+              "Recovery is active: walk tall, hands off knees, big slow breaths. Slumping over actually slows your recovery.",
+              "Your first sprint and your tenth sprint should look the same. Fading technique is the first sign of fading fitness.",
+              "The last few efforts are where game fitness is built — when your legs say stop and you deliver one more quality rep.",
+              "Mental toughness: when it gets hard, focus on the next effort only — not how many are left."
             ],
-            closing: "Endurance cue: relaxed shoulders, steady breathing, head still. Run smooth — not fast, not slow. Run YOUR pace."
+            closing: "Game fitness cue: sprint hard, recover tall, go again. Quality every rep — especially the last one."
           },
           do: {
-            title: "Age Endurance Challenge + Curve Running",
-            setup: "Part 1: Run continuously for half your age in minutes without stopping (e.g., if you are 12, run for 6 minutes). Every complete minute without walking = 10 points. Part 2: Curve running — practise hugging the inside of the curve over 50m.",
+            title: "Repeat Sprint Challenge",
+            setup: "The classic game-fitness test: 10 shuttle sprints (20m out, 20m back) with 30 seconds recovery between each. Your score is how many shuttles you complete without your technique falling apart — your coach is watching for quality, not just speed.",
             steps: [
-              "Before the endurance run, set your pace. The first lap should feel easy — almost too easy.",
-              "Count your laps. After each lap, check: Can I keep this up? Am I fading or steady?",
-              "When you want to walk, pick a landmark 20m ahead and run to it. Then pick another one.",
-              "For curve running: lean slightly into the bend, keep your feet close to the inside line without stepping on it.",
-              "After both activities, note your score and how you felt — you will try to beat it next time."
+              "Sprint every shuttle at match intensity — this only works if every rep is honest.",
+              "Between reps: walk tall, hands on head, big breaths. Practise recovering like a pro.",
+              "From rep 6 onward, say your cue before each effort: fast arms, tall body, quality rep.",
+              "Notice exactly when it gets hard — that moment is your current edge. Next time, push it one rep further.",
+              "Record your quality-rep score. You will beat it in Week 8."
             ],
-            changeIt: "Can you increase your endurance time by 1 minute from where you started today? What would you do differently to make that happen?",
+            changeIt: "Add a ball skill at each turn — a bounce, a trap, a pickup. Can you keep your skills sharp when your legs are burning? That is real game fitness.",
             badge: null
           },
           reflect: {
-            prompt: "What was hardest about the endurance challenge — and what strategy did you use to keep going?",
-            hint: "Was it boredom, pain, or the urge to walk? What did you tell yourself? Did pacing yourself in the early laps actually help at the end?"
+            prompt: "Which rep did it get hard — and what did you do in that moment?",
+            hint: "Be precise. Rep 5? Rep 7? What did your body want to do, and what did you actually do? That gap between wanting to stop and choosing to go is where athletes are made."
           }
         },
         {
@@ -2734,7 +2740,7 @@ const MAJ_CONTENT = {
             steps: [
               "Warm up well — this is your best performance session.",
               "Complete the coach-led movement assessment. Focus on quality in every movement.",
-              "Choose your personal best challenge: Sprint relay, Squat jump, or Tennis Ball Target — whichever is your strongest.",
+              "Choose your personal best challenge: Repeat sprint shuttle, Vertical jump, or Target passing — whichever is your strongest.",
               "Give it your absolute best attempt. This is your highlight reel moment.",
               "Sit with your coach after the session for 5 minutes and ask: What is the biggest improvement you have seen in me this term?"
             ],
@@ -2754,7 +2760,7 @@ const MAJ_CONTENT = {
       title: "Sharpen the Tools",
       pillar: "Skill",
       icon: "🎯",
-      color: "#F26522",
+      color: "#14B8A6",
       totalWeeks: 8,
       moduleBadge: { key: "mod2_master", name: "Module 2 Master", icon: "🏆", xp: 50 },
       weeks: [
@@ -3028,7 +3034,7 @@ const MAJ_CONTENT = {
       title: "Train the Mind",
       pillar: "Focus",
       icon: "🧠",
-      color: "#F26522",
+      color: "#14B8A6",
       totalWeeks: 8,
       moduleBadge: { key: "mod3_master", name: "Module 3 Master", icon: "🏆", xp: 50 },
       weeks: [
@@ -3577,10 +3583,10 @@ const MAJ_CONTENT = {
 
   // ── JOURNEY TIERS ─────────────────────────────────────────────────────────
   tiers: [
-    { name: "Rookie",     icon: "🌱", minXP: 0,    req: "Complete Module 1",           reward: "P2A sticker pack + digital Rookie badge" },
-    { name: "Contender",  icon: "⭐", minXP: 290,  req: "Complete Modules 1 + 2",      reward: "P2A water bottle + social media spotlight" },
-    { name: "Athlete",    icon: "💪", minXP: 580,  req: "Complete Modules 1, 2 + 3",   reward: "P2A training cap + certificate" },
-    { name: "Elite",      icon: "🔥", minXP: 870,  req: "Complete all 4 modules",      reward: "P2A training top + early camp access" },
+    { name: "Rookie",     icon: "🌱", minXP: 0,    req: "Complete Module 1",           reward: "VKS sticker pack + digital Rookie badge" },
+    { name: "Contender",  icon: "⭐", minXP: 290,  req: "Complete Modules 1 + 2",      reward: "VKS water bottle + social media spotlight" },
+    { name: "Athlete",    icon: "💪", minXP: 580,  req: "Complete Modules 1, 2 + 3",   reward: "VKS training cap + certificate" },
+    { name: "Elite",      icon: "🔥", minXP: 870,  req: "Complete all 4 modules",      reward: "VKS training top + early camp access" },
     { name: "Legacy",     icon: "👑", minXP: 1800, req: "Complete Level 2 or Level 3",   reward: "Named P2A legacy honours + full gear pack" }
   ],
 
@@ -3662,40 +3668,166 @@ const MAJ_CONTENT = {
     return getField(rec, 'assessment_date', 'assessmentDate', 'created_at', 'createdAt');
   }
 
-  function apiError(res, path) {
-    const err = new Error(`API error ${res.status}: ${path}`);
-    err.status = res.status;
+  // ════════════════════════════════════════════════════════════════════
+  // DEMO MODE — fully self-contained. No server, no database, no real
+  // athlete data. Every API call below is answered from sample data.
+  // In a licensed deployment this block is replaced by the live API layer.
+  // ════════════════════════════════════════════════════════════════════
+  const daysAgo = n => new Date(Date.now() - n * 86400000).toISOString();
+  const dateOnly = n => daysAgo(n).slice(0, 10);
+
+  const DEMO_ATHLETE_RAW = {
+    role: 'athlete',
+    id: 'demo-athlete-1',
+    username: 'riley',
+    fullName: 'Riley Thompson',
+    grade: 'Year 4',
+    program: 'Velocity All-Sports',
+    coach: 'Sam Carter',
+    school: 'Northside Primary',
+    avatar: '🏀',
+    currentModule: 1,
+    currentWeek: 5,
+    xp: 310,
+    streak: 4,
+    streakFreezes: 2,
+    lastWeekCompletedAt: daysAgo(6),
+    sessionsCompleted: 4,
+    reflectionsSubmitted: 4,
+    earnedBadgeKeys: ['power_up'],
+    completedWeeks: {
+      '1-1': { learn: true, challenge: true, reflect: true, reflectionText: 'Being an athlete means trying my best even when it gets hard. I want to be the kind of player my teammates can count on.' },
+      '1-2': { learn: true, challenge: true, reflect: true, reflectionText: 'The netball landings were hardest because I kept landing loud. When I bent my knees more it got way quieter.' },
+      '1-3': { learn: true, challenge: true, reflect: true, reflectionText: 'I felt fastest in the partner chase when I pumped my arms really fast. I won 4 chases!' },
+      '1-4': { learn: true, challenge: true, reflect: true, reflectionText: 'I felt the most power in my legs on the rebound jumps. Swinging my arms made me jump way higher than usual.' }
+    }
+  };
+
+  const DEMO_ROSTER = [
+    DEMO_ATHLETE_RAW,
+    { id: 'demo-athlete-2', fullName: 'Ava Chen',     school: 'Northside Primary', program: 'Velocity All-Sports', grade: 'Year 3', currentModule: 1, currentWeek: 3, xp: 180, streak: 2, avatar: '⚽' },
+    { id: 'demo-athlete-3', fullName: 'Marcus Webb',  school: 'Northside Primary', program: 'Velocity All-Sports', grade: 'Year 5', currentModule: 1, currentWeek: 6, xp: 395, streak: 5, avatar: '🏉' },
+    { id: 'demo-athlete-4', fullName: "Sofia Russo",  school: 'Bayview College',   program: 'Velocity All-Sports', grade: 'Year 4', currentModule: 1, currentWeek: 5, xp: 340, streak: 4, avatar: '🏑' },
+    { id: 'demo-athlete-5', fullName: "Jack O'Brien", school: 'Bayview College',   program: 'Velocity All-Sports', grade: 'Year 6', currentModule: 2, currentWeek: 1, xp: 480, streak: 6, avatar: '🦘' },
+    { id: 'demo-athlete-6', fullName: 'Mia Patel',    school: 'Bayview College',   program: 'Velocity All-Sports', grade: 'Year 3', currentModule: 1, currentWeek: 2, xp: 95,  streak: 1, avatar: '🥅' }
+  ];
+
+  const DEMO_COACH = {
+    role: 'coach',
+    id: 'demo-coach-1',
+    username: 'coachsam',
+    fullName: 'Sam Carter',
+    athletes: DEMO_ROSTER
+  };
+
+  // Skill assessments (newest first) — exercises the FMS map + coach history
+  let DEMO_ASSESSMENTS = [
+    {
+      id: 'demo-assess-2', athlete_id: 'demo-athlete-1',
+      assessment_type: 'jump', skill_acquisition_stage: 'cognitive',
+      overall_rating: 'Good', coach_name: 'Sam Carter',
+      assessment_date: dateOnly(3), created_at: daysAgo(3),
+      strengths: 'Strong arm drive on take-off and great elevation attacking the ball.',
+      areas_for_improvement: 'Landings are still loud — knees need to bend more on impact.',
+      next_steps: 'Practise 10 quiet jump-stop landings before each session this fortnight.',
+      reassessment_required: false
+    },
+    {
+      id: 'demo-assess-1', athlete_id: 'demo-athlete-1',
+      assessment_type: 'run', skill_acquisition_stage: 'associative',
+      overall_rating: 'Excellent', coach_name: 'Sam Carter',
+      assessment_date: dateOnly(14), created_at: daysAgo(14),
+      strengths: 'Fast arm drive and excellent first-step quickness off the mark.',
+      areas_for_improvement: 'Tends to look down when fatigued in the final reps.',
+      next_steps: 'Cue "eyes up" on every rep after the halfway point of any drill.',
+      reassessment_required: false
+    }
+  ];
+
+  let DEMO_KUDOS = [
+    { id: 'demo-kudos-1', type: 'kudos', title: '🔥 Kudos from Sam Carter!', body: "You're on fire — awesome effort this week!", coach: 'Sam Carter', date: daysAgo(2), createdAt: daysAgo(2) }
+  ];
+
+  const DEMO_WELLNESS = [
+    { energy: 4, sleep: 4, mood: 5, check_date: dateOnly(2) },
+    { energy: 3, sleep: 4, mood: 4, check_date: dateOnly(7) },
+    { energy: 4, sleep: 3, mood: 4, check_date: dateOnly(9) },
+    { energy: 5, sleep: 5, mood: 5, check_date: dateOnly(14) },
+    { energy: 3, sleep: 3, mood: 3, check_date: dateOnly(16) }
+  ];
+
+  function demoNotifications() {
+    const a = DEMO_ASSESSMENTS.filter(x => x.athlete_id === 'demo-athlete-1').map(x => ({
+      id: x.id, type: 'assessment',
+      title: `Coach assessment — ${({run:'Run',jump:'Jump & Land',throw:'Throw',leap:'Bound & Leap'})[x.assessment_type] || x.assessment_type}`,
+      body: x.next_steps ? `Next steps: ${x.next_steps}` : `Rated: ${x.overall_rating}`,
+      coach: x.coach_name, date: x.created_at, createdAt: x.created_at
+    }));
+    return [...a, ...DEMO_KUDOS].sort((p, q) => new Date(q.createdAt) - new Date(p.createdAt));
+  }
+
+  function demoError(status) {
+    const err = new Error('demo ' + status);
+    err.status = status;
     return err;
   }
 
-  async function apiPost(path, body) {
-    const res = await fetch(`${API}${path}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) throw apiError(res, path);
-    return res.json();
+  async function mockApi(method, path, body) {
+    await new Promise(r => setTimeout(r, 120)); // a touch of realism
+    if (path === '/me') throw demoError(401);
+    if (path === '/login') return DEMO_ATHLETE_RAW;
+    if (path === '/logout') return { ok: true };
+    if (path === '/athletes') return DEMO_ROSTER;
+    if (path === '/push/public-key') return { key: null };
+    if (/^\/athlete\/[^/]+\/skill-assessments$/.test(path)) {
+      const id = path.split('/')[2];
+      return DEMO_ASSESSMENTS.filter(x => x.athlete_id === id);
+    }
+    if (/^\/athlete\/[^/]+\/latest-assessment$/.test(path)) {
+      const id = path.split('/')[2];
+      return DEMO_ASSESSMENTS.find(x => x.athlete_id === id) || null;
+    }
+    if (/^\/athlete\/[^/]+\/notifications$/.test(path)) {
+      return path.split('/')[2] === 'demo-athlete-1' ? demoNotifications() : [];
+    }
+    if (/^\/athlete\/[^/]+\/wellness$/.test(path)) {
+      return path.split('/')[2] === 'demo-athlete-1' ? DEMO_WELLNESS : [];
+    }
+    if (/^\/athlete\/[^/]+\/reflections$/.test(path)) return [];
+    if (/^\/athlete\/[^/]+\/progress$/.test(path)) return Object.assign({}, DEMO_ATHLETE_RAW, body);
+    if (path === '/skill-assessments') {
+      const rec = {
+        id: 'demo-assess-' + Date.now(), athlete_id: body.athleteId,
+        assessment_type: body.assessmentType, skill_acquisition_stage: body.skillAcquisitionStage,
+        overall_rating: body.overallRating, coach_name: body.coachName,
+        assessment_date: body.assessmentDate, created_at: new Date().toISOString(),
+        strengths: body.strengths, areas_for_improvement: body.areasForImprovement,
+        next_steps: body.nextSteps, reassessment_required: body.reassessmentRequired
+      };
+      DEMO_ASSESSMENTS.unshift(rec);
+      return rec;
+    }
+    if (path === '/kudos') {
+      DEMO_KUDOS.unshift({
+        id: 'demo-kudos-' + Date.now(), type: 'kudos',
+        title: `${body.emoji} Kudos from ${body.coachName || 'your coach'}!`,
+        body: body.message, coach: body.coachName,
+        date: new Date().toISOString(), createdAt: new Date().toISOString()
+      });
+      return { ok: true };
+    }
+    if (path === '/reflection' || path === '/badge' || path === '/wellness'
+        || path === '/push/subscribe' || path === '/push/unsubscribe') return { ok: true };
+    if (path === '/export/athlete-assessments') throw demoError(503);
+    throw demoError(404);
   }
 
-  async function apiGet(path) {
-    const res = await fetch(`${API}${path}`, {
-      credentials: 'include'
-    });
-    if (!res.ok) throw apiError(res, path);
-    return res.json();
-  }
+  async function apiPost(path, body) { return mockApi('POST', path, body); }
+  async function apiGet(path)        { return mockApi('GET', path); }
+  async function apiPatch(path, body){ return mockApi('PATCH', path, body); }
 
-  async function apiPatch(path, body) {
-    const res = await fetch(`${API}${path}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) throw apiError(res, path);
-    return res.json();
+  function demoLogin(role) {
+    enterApp(role === 'coach' ? DEMO_COACH : DEMO_ATHLETE_RAW);
   }
 
   // ── DEFAULT ATHLETE STATE ─────────────────────────────────────────────
@@ -3706,7 +3838,7 @@ const MAJ_CONTENT = {
     initials: '',
     grade: '',
     program: 'Emerging Athlete',
-    coach: 'Al Tait',
+    coach: 'Sam Carter',
     currentModule: 1,
     currentWeek: 1,
     xp: 0,
@@ -3843,7 +3975,7 @@ const MAJ_CONTENT = {
       initials,
       grade: data.grade || '',
       program: data.program || 'Emerging Athlete',
-      coach: data.coach || 'Al Tait',
+      coach: data.coach || 'Sam Carter',
       currentModule,
       currentWeek,
       xp: parseInt(data.xp || 0),
@@ -4206,7 +4338,7 @@ const MAJ_CONTENT = {
       <div style="padding:20px 20px 8px;">
         <div style="font-size:13px;color:var(--text2);margin-bottom:4px;letter-spacing:0.5px;">${escapeHTML(greeting)},</div>
         <div style="font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:2px;">${escapeHTML(firstName)} 👋</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Power2ADAPT · My Athletic Journey</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Velocity Kids Sports · Coach Dashboard</div>
 
         ${tabsHtml}
 
@@ -4343,9 +4475,9 @@ const MAJ_CONTENT = {
       const energyEmoji = ['','😴','😫','😐','😊','⚡'][avgE] || '—';
       const sleepEmoji  = ['','💀','😖','😐','😌','⭐'][avgS] || '—';
       const moodEmoji   = ['','😞','😕','😐','😊','🔥'][avgM] || '—';
-      const eColor = avgE >= 4 ? '#4caf50' : avgE >= 3 ? '#F26522' : '#ef5350';
-      const sColor = avgS >= 4 ? '#4caf50' : avgS >= 3 ? '#F26522' : '#ef5350';
-      const mColor = avgM >= 4 ? '#4caf50' : avgM >= 3 ? '#F26522' : '#ef5350';
+      const eColor = avgE >= 4 ? '#4caf50' : avgE >= 3 ? '#14B8A6' : '#ef5350';
+      const sColor = avgS >= 4 ? '#4caf50' : avgS >= 3 ? '#14B8A6' : '#ef5350';
+      const mColor = avgM >= 4 ? '#4caf50' : avgM >= 3 ? '#14B8A6' : '#ef5350';
       panel.innerHTML = `
         <div style="padding:10px 16px 6px;">
           <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text2);margin-bottom:8px;">WELLNESS · LAST ${recent.length} CHECK-INS</div>
@@ -4396,7 +4528,7 @@ const MAJ_CONTENT = {
       return;
     }
     const typeLabels = { run: '🏃 Running', jump: '⬆️ Vertical Jump', throw: '🎯 Throw', leap: '🦘 Leap' };
-    const ratingColour = { P: '#4caf50', I: '#F26522', R: '#ef5350', Y: '#4caf50', NI: '#F26522', NO: '#ef5350' };
+    const ratingColour = { P: '#4caf50', I: '#14B8A6', R: '#ef5350', Y: '#4caf50', NI: '#14B8A6', NO: '#ef5350' };
     const html = `
       <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text2);margin-bottom:8px;">ASSESSMENT HISTORY (${history.length})</div>
       ${history.slice().reverse().map(a => {
@@ -4409,7 +4541,7 @@ const MAJ_CONTENT = {
         const areas = a.areas_for_improvement || a.areasForImprovement || '';
         const next = a.next_steps || a.nextSteps || '';
         const coach = a.coach_name || a.coachName || '';
-        const stageColour = stage === 'autonomous' ? '#4caf50' : stage === 'associative' ? '#F26522' : stage === 'cognitive' ? '#2196f3' : '#666';
+        const stageColour = stage === 'autonomous' ? '#4caf50' : stage === 'associative' ? '#14B8A6' : stage === 'cognitive' ? '#2196f3' : '#666';
         const uid = `hist-${idPart(a.id)}`;
         return `<div style="background:var(--surface2);border-radius:10px;padding:12px 14px;margin-bottom:8px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
@@ -4533,7 +4665,7 @@ const MAJ_CONTENT = {
 
     // Coaching cues panel
     if (cfg.coachCues && cfg.coachCues.length) {
-      html += `<div style="background:rgba(242,101,34,0.08);border:1px solid rgba(242,101,34,0.25);border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+      html += `<div style="background:rgba(20,184,166,0.08);border:1px solid rgba(20,184,166,0.25);border-radius:12px;padding:14px 16px;margin-bottom:16px;">
         <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--orange);margin-bottom:10px;">COACHING CUES — ${cfg.label.toUpperCase()}</div>
         <div style="display:flex;flex-direction:column;gap:6px;">
           ${cfg.coachCues.map(c => `<div style="font-size:12px;color:var(--text);line-height:1.4;display:flex;gap:8px;"><span style="color:var(--orange);flex-shrink:0;">›</span><span>${c}</span></div>`).join('')}
@@ -4922,7 +5054,7 @@ const MAJ_CONTENT = {
             <div class="coach-banner-title">${escapeHTML(coachName)} assessed your ${escapeHTML(skillLabel)}</div>
             ${sub ? `<div class="coach-banner-sub">${escapeHTML(sub)}${sub.length === 90 ? '…' : ''}</div>` : ''}
           </div>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00B4D8" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FACC15" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
         </div>`;
       container.style.display = 'block';
     } catch(e) {
@@ -5062,7 +5194,7 @@ const MAJ_CONTENT = {
           : null;
         const isWide = idx === 4;
         const hasData = !!rec;
-        html += `<div class="fms-card${isWide ? ' fms-wide' : ''}" onclick="showSkillDetail('${skill.key}')" style="cursor:pointer;${hasData ? 'border-color:rgba(242,101,34,0.25);' : ''}">
+        html += `<div class="fms-card${isWide ? ' fms-wide' : ''}" onclick="showSkillDetail('${skill.key}')" style="cursor:pointer;${hasData ? 'border-color:rgba(20,184,166,0.25);' : ''}">
           <div class="fms-card-top">
             <div class="fms-emoji">${skill.emoji}</div>
             <div>
@@ -6004,7 +6136,7 @@ const MAJ_CONTENT = {
 
     setTimeout(() => {
       showOverlay('✍️', '+15 XP!',
-        `Reflection submitted! Coach Al will read this. Reflections: ${a.reflectionsSubmitted} of 32.`);
+        `Reflection submitted! Coach Sam will read this. Reflections: ${a.reflectionsSubmitted} of 32.`);
     }, 600);
 
     document.querySelectorAll('.stat-val')[1].textContent = a.reflectionsSubmitted;
@@ -6020,7 +6152,7 @@ const MAJ_CONTENT = {
 
     if (isLastWeek && isLastModule) {
       showOverlay('👑', 'Level 1 Complete!',
-        'All 4 quests conquered! You\'re ready to graduate into the Empowered Athlete program — talk to Coach Al about your next step.');
+        'All 4 quests conquered! You\'re ready to graduate into the Empowered Athlete program — talk to Coach Sam about your next step.');
       return;
     }
 
@@ -6130,7 +6262,7 @@ const MAJ_CONTENT = {
     playSuccessSound();
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const app = document.getElementById('app');
-    const colors = ['#F26522', '#00B4D8', '#22c55e', '#facc15', '#ffffff'];
+    const colors = ['#14B8A6', '#FACC15', '#22c55e', '#facc15', '#ffffff'];
     for (let i = 0; i < 28; i++) {
       const p = document.createElement('div');
       p.className = 'confetti-piece';
@@ -6281,7 +6413,7 @@ const MAJ_CONTENT = {
   async function enablePushReminders() {
     if (!pushSupported()) {
       toast(isIOS() && !isStandalone()
-        ? 'Add MAJ to your Home Screen first, then turn on reminders from the app'
+        ? 'Add the app to your Home Screen first, then turn on reminders from the app'
         : 'Notifications are not supported on this device');
       return;
     }
@@ -6368,10 +6500,10 @@ const MAJ_CONTENT = {
     if (!container) return;
     if (!state.athlete || !state.athlete.id || !installCardWanted()) { container.innerHTML = ''; return; }
     container.innerHTML = `
-      <div class="coach-banner" style="background:var(--cyan-dim);border-color:rgba(0,180,216,0.3);">
+      <div class="coach-banner" style="background:var(--cyan-dim);border-color:rgba(250,204,21,0.3);">
         <div class="coach-banner-icon">📲</div>
         <div class="coach-banner-text" onclick="promptInstall()" style="cursor:pointer;">
-          <div class="coach-banner-title">Get MAJ on your home screen</div>
+          <div class="coach-banner-title">Get the app on your home screen</div>
           <div class="coach-banner-sub">One tap to install — it unlocks coach notifications too</div>
         </div>
         <div onclick="dismissInstallCard()" style="color:var(--text3);font-size:18px;padding:4px 6px;cursor:pointer;flex-shrink:0;">✕</div>
@@ -6384,7 +6516,7 @@ const MAJ_CONTENT = {
       const choice = await _deferredInstall.userChoice.catch(() => null);
       _deferredInstall = null;
       if (choice && choice.outcome === 'accepted') {
-        toast('Installing MAJ 🎉 Find it on your home screen');
+        toast('Installing 🎉 Find it on your home screen');
         dismissInstallCard();
       } else {
         maybeShowInstallCard();
@@ -6403,7 +6535,7 @@ const MAJ_CONTENT = {
     modal.innerHTML = `
       <div style="background:var(--surface2);border-radius:18px;padding:24px;max-width:330px;width:100%;">
         <div style="font-size:34px;margin-bottom:10px;">📲</div>
-        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;margin-bottom:14px;">Add MAJ to your home screen</div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;margin-bottom:14px;">Add the app to your home screen</div>
         <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;color:var(--text2);line-height:1.5;">
           <div><strong style="color:var(--orange);">1.</strong> Tap the <strong style="color:var(--text);">Share button</strong> at the bottom of Safari (the square with the ↑ arrow)</div>
           <div><strong style="color:var(--orange);">2.</strong> Scroll down and tap <strong style="color:var(--text);">"Add to Home Screen"</strong></div>
@@ -6469,14 +6601,9 @@ const MAJ_CONTENT = {
     }
   })();
 
-  // ── SERVICE WORKER REGISTRATION ───────────────────────────────────────
-  if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(reg => console.log('MAJ SW registered, scope:', reg.scope))
-        .catch(err => console.warn('MAJ SW registration failed:', err));
-    });
-  }
+  // ── SERVICE WORKER ────────────────────────────────────────────────────
+  // Disabled in demo mode — licensed deployments register a service worker
+  // here for offline support and push notifications.
 
 </script>
 </body>

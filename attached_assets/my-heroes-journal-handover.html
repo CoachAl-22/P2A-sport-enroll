@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Heroes Journal — Handover Document for Claude Code</title>
+<style>
+  :root {
+    --orange: #F26522;
+    --cyan: #00B4D8;
+    --dark: #1a1a1a;
+    --mid: #2d2d2d;
+    --light-bg: #f8f7f5;
+    --text: #1a1a1a;
+    --muted: #666;
+    --border: #ddd;
+    --green: #22c55e;
+    --purple: #8b5cf6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Georgia', serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+    background: #fff;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 32px;
+  }
+  h1 { font-size: 2.4em; color: var(--orange); margin-bottom: 4px; font-family: Arial, sans-serif; font-weight: 900; }
+  h2 { font-size: 1.6em; color: var(--dark); border-bottom: 3px solid var(--orange); padding-bottom: 6px; margin-top: 40px; font-family: Arial, sans-serif; }
+  h3 { font-size: 1.2em; color: var(--orange); margin-top: 28px; font-family: Arial, sans-serif; }
+  h4 { font-size: 1em; color: var(--dark); margin-top: 20px; margin-bottom: 6px; font-family: Arial, sans-serif; font-weight: 700; }
+  .subtitle { font-size: 1.1em; color: var(--muted); margin-bottom: 32px; }
+  .callout {
+    background: #fff8f5;
+    border-left: 4px solid var(--orange);
+    padding: 14px 18px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .callout.blue { background: #f0faff; border-color: var(--cyan); }
+  .callout.green { background: #f0fff5; border-color: var(--green); }
+  .callout.purple { background: #faf0ff; border-color: var(--purple); }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+  th { background: var(--orange); color: white; padding: 8px 12px; text-align: left; font-family: Arial, sans-serif; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--light-bg); }
+  .module-block {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    margin: 24px 0;
+    overflow: hidden;
+  }
+  .module-header {
+    background: var(--orange);
+    color: white;
+    padding: 16px 20px;
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    font-size: 1.2em;
+  }
+  .module-header.cyan { background: var(--cyan); }
+  .module-header.dark { background: var(--dark); }
+  .module-body { padding: 20px; }
+  .week-block {
+    background: var(--light-bg);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 12px 0;
+    border: 1px solid var(--border);
+  }
+  .week-num { display: inline-block; background: var(--orange); color: white; border-radius: 20px; padding: 2px 10px; font-size: 0.8em; font-weight: 700; font-family: Arial, sans-serif; margin-bottom: 6px; }
+  .week-theme { font-weight: 700; font-size: 1.05em; color: var(--dark); }
+  .week-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .week-cell { background: white; border-radius: 6px; padding: 10px; border: 1px solid var(--border); }
+  .week-cell-label { font-size: 0.75em; font-weight: 700; color: var(--orange); font-family: Arial, sans-serif; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .week-cell p { font-size: 0.85em; color: var(--muted); margin: 0; }
+  .badge-pill { display: inline-block; background: #fff3e0; border: 1px solid var(--orange); border-radius: 20px; padding: 3px 10px; font-size: 0.8em; font-weight: 700; color: var(--orange); font-family: Arial, sans-serif; }
+  .tag { display: inline-block; background: #f0f0f0; border-radius: 20px; padding: 3px 10px; font-size: 0.78em; color: var(--muted); font-family: Arial, sans-serif; margin: 2px; }
+  .section-divider { border: none; border-top: 2px dashed var(--border); margin: 36px 0; }
+  code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; font-size: 0.88em; font-family: monospace; color: #c0392b; }
+  pre { background: #1a1a1a; color: #f8f8f2; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; margin: 12px 0; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 4px 0; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+  @media(max-width: 700px) { .week-grid { grid-template-columns: 1fr; } .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<h1>My Heroes Journal</h1>
+<div class="subtitle">Handover Document · Power2ADAPT · For Claude Code</div>
+
+<div class="callout">
+  <strong>Purpose of this document:</strong> This is a comprehensive brief for building <em>My Heroes Journal</em> — a printed or digital PDF/HTML reflection and progress journal for student athletes and their parents. It documents the full content library from the <em>My Athletic Journey (MAJ)</em> progressive web app so the journal can stand alone as an alternative engagement tool.
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<h2>1. Project Overview</h2>
+
+<h3>What is My Heroes Journal?</h3>
+<p>
+  My Heroes Journal is a companion document to Power2ADAPT's <em>My Athletic Journey</em> (MAJ) app. While the app tracks weekly progress digitally, the journal gives students a physical (or printable digital) record of their 32-week Level 1 journey. Parents can read it to understand what their child is learning each week; students can write in it as an alternative to the app's reflect tab.
+</p>
+
+<h3>Key audiences</h3>
+<div class="two-col">
+  <div class="callout">
+    <strong>🧒 Students (ages 8–16)</strong><br>
+    A personal journal they feel proud to own. Each weekly spread has the lesson concept, their session activity, and a reflection prompt with space to write. Achievements and badges are celebrated visually.
+  </div>
+  <div class="callout blue">
+    <strong>👨‍👩‍👧 Parents</strong><br>
+    A progress report they can actually read. Shows what their child is working on each week, what skills they are developing, and how they are growing as an athlete and person — not just scores and times.
+  </div>
+</div>
+
+<h3>Format options</h3>
+<ul>
+  <li><strong>HTML (primary)</strong> — A beautifully designed single-page or multi-page HTML file that can be saved as PDF from the browser, or hosted as a web page.</li>
+  <li><strong>Print PDF</strong> — Designed for A4 printing. Possibly 2 versions: a full Level 1 journal (all 32 weeks), and a per-module booklet (8 weeks each).</li>
+  <li><strong>Interactive HTML</strong> — Optionally, fields where students can type their reflections online.</li>
+</ul>
+
+<h3>Brand / Design Direction</h3>
+<ul>
+  <li><strong>Primary colour:</strong> #F26522 (Power2ADAPT orange)</li>
+  <li><strong>Secondary colour:</strong> #00B4D8 (cyan, used for Module 3)</li>
+  <li><strong>Typography:</strong> Barlow Condensed (headings, display) + DM Sans (body). Both free on Google Fonts.</li>
+  <li><strong>Tone:</strong> Bold, motivating, sporty. Feels like a premium training journal, not a school workbook.</li>
+  <li><strong>Print-friendly:</strong> White background, high contrast, avoid large dark fills when printing.</li>
+  <li><strong>Space for writing:</strong> Each reflect section needs ruled lines or a generous box for handwritten responses.</li>
+</ul>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════ -->
+<h2>2. The My Athletic Journey (MAJ) App — Source Content</h2>
+
+<p>The journal's content is drawn entirely from the MAJ PWA. Here is a quick technical overview for context:</p>
+
+<table>
+  <tr><th>Attribute</th><th>Detail</th></tr>
+  <tr><td>File</td><td><code>public/my-athletic-journey.html</code> — single HTML file, ~5400 lines</td></tr>
+  <tr><td>Served at</td><td><code>/my-athletic-journey</code> on the Power2ADAPT server</td></tr>
+  <tr><td>Architecture</td><td>Vanilla JS PWA (no framework). All content in <code>const MAJ_CONTENT</code> JS object.</td></tr>
+  <tr><td>Database tables</td><td><code>maj_weekly_progress</code>, <code>maj_wellness</code>, <code>maj_skill_assessments</code></td></tr>
+  <tr><td>Personas</td><td>Athlete (student) and Coach — coaches see skill assessment tools, athletes see their journey.</td></tr>
+  <tr><td>XP system</td><td>Learn tab = 10 XP · Do tab = 10 XP · Reflect tab = 15 XP · Badges = 25–100 XP</td></tr>
+</table>
+
+<h3>Level 1 Structure</h3>
+<table>
+  <tr><th>Module</th><th>Title</th><th>Pillar</th><th>Weeks</th><th>Icon</th></tr>
+  <tr><td>1</td><td>Ignite Your Engine</td><td>Athletic Ability</td><td>8</td><td>🔥</td></tr>
+  <tr><td>2</td><td>Master Your Skills</td><td>Skill</td><td>8</td><td>🎯</td></tr>
+  <tr><td>3</td><td>Train the Mind</td><td>Focus</td><td>8</td><td>🧠</td></tr>
+  <tr><td>4</td><td>Lead Yourself and Others</td><td>Leadership</td><td>8</td><td>🤝</td></tr>
+</table>
+
+<p>Modules unlock sequentially. Each week has three required steps: <strong>Learn</strong>, <strong>Do</strong>, and <strong>Reflect</strong>. All three must be completed to progress to the next week.</p>
+
+<h3>Journey Tiers (XP milestones)</h3>
+<table>
+  <tr><th>Tier</th><th>Icon</th><th>Min XP</th><th>Requirement</th><th>Reward</th></tr>
+  <tr><td>Rookie</td><td>🌱</td><td>0</td><td>Complete Module 1</td><td>P2A sticker pack + digital badge</td></tr>
+  <tr><td>Contender</td><td>⭐</td><td>290</td><td>Modules 1 + 2</td><td>P2A water bottle + social media spotlight</td></tr>
+  <tr><td>Athlete</td><td>💪</td><td>580</td><td>Modules 1, 2 + 3</td><td>P2A training cap + certificate</td></tr>
+  <tr><td>Elite</td><td>🔥</td><td>870</td><td>All 4 modules</td><td>P2A training top + early camp access</td></tr>
+  <tr><td>Legacy</td><td>👑</td><td>1800</td><td>Level 2 or Level 3</td><td>Named P2A legacy honours + full gear pack</td></tr>
+</table>
+
+<h3>Wellness Check-In (pre-session)</h3>
+<p>Before each week, athletes rate three dimensions on a 1–5 emoji scale:</p>
+<ul>
+  <li>🔋 <strong>Energy</strong> — 1 (Drained) → 3 (OK) → 5 (Charged)</li>
+  <li>😴 <strong>Sleep</strong> — 1 (Terrible) → 3 (OK) → 5 (Great)</li>
+  <li>🙂 <strong>Mood</strong> — 1 (Rough) → 3 (OK) → 5 (Pumped)</li>
+</ul>
+<p>Saved to <code>maj_wellness</code> table per athlete per day. Coaches see a 7-day rolling average. This is a good candidate for a <em>weekly self-check box</em> in the journal.</p>
+
+<h3>FMS Skills Map (Profile page)</h3>
+<p>5 Fundamental Movement Skills tracked per athlete:</p>
+<ul>
+  <li>🏃 Run · ⬆️ Jump &amp; Land · 🎯 Throw · 🦘 Bound/Leap · ⚖️ Balance &amp; Agility</li>
+</ul>
+<p>Each skill has a Skill Acquisition Stage: <strong>Cognitive</strong> → <strong>Associative</strong> → <strong>Autonomous</strong></p>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════ -->
+<h2>3. Full Content Library — All 4 Modules</h2>
+
+<p>The following is the complete week-by-week content extracted from <code>MAJ_CONTENT.modules</code> in the app. Each week entry has <code>learn</code>, <code>do</code>, and <code>reflect</code> sections.</p>
+
+<!-- ── MODULE 1 ── -->
+<div class="module-block">
+  <div class="module-header">🔥 Module 1: Ignite Your Engine &nbsp;·&nbsp; Pillar: Athletic Ability &nbsp;·&nbsp; 8 Weeks</div>
+  <div class="module-body">
+    <p><em>This module builds the physical foundation — speed, power, coordination, endurance, and movement quality. Athletes discover their starting point, train across all physical qualities, and end with a coach-assessed capstone.</em></p>
+
+    <div class="week-block">
+      <div class="week-num">Week 1</div> <span class="week-theme">Know Your Engine</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> What is Athletic Ability — and Why Does it Matter?</p>
+          <p>Athletic ability is not something you are born with — it is built. Key parts: Speed, Power, Coordination, Endurance, Movement Quality. Every elite athlete started exactly where you are now.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Baseline Movement Assessment</strong></p>
+          <p>Coach observes run, jump, throw, change of direction. Not a test — a starting point. Ask coach: What is one thing I do well, and one to improve? Keep notes to compare at Week 8.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What does being an athlete mean to me?"</em></p>
+          <p>Think about what kind of athlete you want to become — not just what you can do now, but who you want to be.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 2</div> <span class="week-theme">Move Well</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Why Movement Quality Comes Before Speed</p>
+          <p>Good movement is the foundation everything else is built on. Skipping, jumping, and running require coordinated patterns. "Slow is smooth. Smooth is fast. Quality first, speed second." — P2A coaching principle</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Agility Circuit + Out-and-Back Run</strong></p>
+          <p>5-station agility circuit (ladder, weaving cones, hurdles, dodge and weave, skater hops), then steady out-and-back run matching pace each way. Pick ONE cue to apply across every station.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"Which movement felt hardest today — and why do you think that is?"</em></p>
+          <p>Was it coordination? Did fatigue break your technique? Did a specific station catch you off guard?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 3</div> <span class="week-theme">Speed</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> What Creates Speed — Fast Starts, Arms, and Reaction</p>
+          <p>Speed comes from: powerful push-off, fast arm drive, forward lean from ankles. Arms control legs. First 10m is where races are won. Cue: "Head still, short fast arms, fast feet."</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Fast Starts + Partner Chase</strong></p>
+          <p>Practise fast starts from different positions (standing, crouching, 3-point). Then Partner Chase — one person starts 1m ahead, other must tag them before 10m mark.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"When did you feel fastest today — and what were you doing differently in that moment?"</em></p>
+          <p>Arm drive? More relaxed? Different start position? One rep where everything clicked?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 4</div> <span class="week-theme">Power</span>
+      <span class="badge-pill">⚡ Power Up Badge (25 XP)</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Jump, Bound, and Throw — How to Generate Explosive Power</p>
+          <p>Power = strength applied quickly. Two types trained: lower body (jumping/bounding) and upper body (throwing). Cues: "Jet wings on take-off. Reach for the sky. Motorbike landing."</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Bounding Hoops + Hop-Step-Jump</strong></p>
+          <p>Bounding hoops — bound through a line of hoops for distance. Hop-step-jump — hop over hurdle, bound to dot, land in hoop. Drive arms hard from push-off. Soft landings = skilled, not weak.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"Where in your body did you feel the most power today — and what helped you generate it?"</em></p>
+          <p>Arms, legs, core? Did arm drive change your jump height? Did knee lift change bounding distance?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 5</div> <span class="week-theme">Hurdles &amp; Relay</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Hurdle Rhythm, Baton Changes, and Running as a Team</p>
+          <p>Hurdle = attack at speed with controlled step-over; lead leg clears, trail leg whips through. Relay won/lost in changeover zone. Cues: "Toes up, knees up, use arms. Arm straight back, call to run, go!"</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Hurdle Relay — Team Best Time</strong></p>
+          <p>Race over two hurdle lines, then full relay with baton changes. Goal: improve team time by running better technique, not just harder. Incoming runner calls "hand"; outgoing extends arm straight back and accelerates immediately.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What was harder — the hurdles or the relay exchange — and what did you do to get better at it?"</em></p>
+          <p>Identify one specific moment you improved. What changed — a cue, a focus shift, or something a teammate said?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 6</div> <span class="week-theme">Endurance</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> The Endurance Challenge — Running at Your Own Pace</p>
+          <p>Aerobic base built by sustained moderate effort — not flat out. If you can't hold a short conversation, you're too fast. Mental toughness: when hard, focus on the next 30 seconds, not the whole remaining time. Cue: "Relaxed shoulders, steady breathing, head still."</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Age Endurance Challenge + Curve Running</strong></p>
+          <p>Run continuously for half your age in minutes without stopping (e.g. age 12 → 6 minutes). Every complete minute without walking = 10 points. Then curve running — practise hugging the inside of a 50m curve.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What was hardest about the endurance challenge — and what strategy did you use to keep going?"</em></p>
+          <p>Boredom, pain, or urge to walk? What did you tell yourself? Did early pacing actually help at the end?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 7</div> <span class="week-theme">Putting it Together</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Speed + Strength + Coordination + Endurance — All in One Session</p>
+          <p>Skipping = coordination + power. Plyometrics (pogos, squat jumps) = explosive power. Strength exercises = foundation. Circular relay = speed while tired. Throw accuracy = brain-body skill under fatigue. Notice how much more capable you are than Week 1.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Fitness Circuit + Circular Relay + Throw for Accuracy</strong></p>
+          <p>Four areas: skipping/plyometrics, strength exercises (push-ups, lunges, squats, planks), circular relay, overarm throw for accuracy. Set one personal target before starting. Coach it high-5 at changeover.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What has improved most since Week 1 — and how do you know?"</em></p>
+          <p>Identify a specific moment today where you were better than when you started. What was different — in your body, technique, or mindset?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 8</div> <span class="week-theme">Capstone — My Athletic Highlight Reel</span>
+      <span class="badge-pill">🏆 Module 1 Master Badge (50 XP) — Coach Required</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Looking Back to See How Far You Have Come</p>
+          <p>Week 1 = starting point. Week 8 = measure of progress. Athletic development is not a straight line — some weeks were harder. Every session, every reflection, every challenge counts. After today, Module 2 — Skill — begins.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Coach Assessment + Personal Best Attempt</strong></p>
+          <p>Coach compares movement quality to Week 1 baseline. Athlete chooses personal best challenge: Sprint relay, Squat jump, or Tennis Ball Target. Coach awards Module 1 Master badge upon completion.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What am I most proud of from Module 1 — and what will I do differently in Module 2?"</em></p>
+          <p>Not about what you achieved. About who you became. What habits will you carry forward? What will you do better?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODULE 2 ── -->
+<div class="module-block">
+  <div class="module-header">🎯 Module 2: Master Your Skills &nbsp;·&nbsp; Pillar: Skill &nbsp;·&nbsp; 8 Weeks</div>
+  <div class="module-body">
+    <p><em>Athletes choose one skill to develop for the entire 8 weeks. Focuses on deliberate practice, footwork, pressure performance, game application, and a Week 8 coach-assessed skill showcase.</em></p>
+
+    <div class="week-block">
+      <div class="week-num">Week 1</div> <span class="week-theme">What is Skill?</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Skill is Repeating a Movement Correctly Under Pressure</p>
+          <p>Skill is not talent — it is deliberate repetition with attention. Every athlete has skills they are strongest at and ones to develop. This module: choose one skill and build it across 8 weeks.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Choose Your Skill — Set Your Goal</strong></p>
+          <p>Talk with coach about skill options (throwing, catching, footwork, jumping, sport-specific). Write: "My skill focus for Module 2 is..." Agree on what success at Week 8 looks like. Complete 15 quality reps. Rate current level out of 10.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What skill do I most want to improve — and why does it matter to me?"</em></p>
+          <p>How does this skill connect to the sports or activities you love? Why is getting better at it important personally?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 2</div> <span class="week-theme">Repetition</span>
+      <span class="badge-pill">🔁 Rep Champion Badge (25 XP)</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Why Repetition Builds Skill — The Brain-Body Connection</p>
+          <p>Brain learns movement like a trail through a forest — more use = clearer path. Quality over quantity: 20 focused reps beat 100 lazy ones. Early reps are slow; later reps become automatic. Mistakes are part of learning.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>20 Quality Repetitions Challenge</strong></p>
+          <p>Not speed — quality. 20 reps with full focus on technique. Check in every 5 reps: "Am I still doing it correctly?" If technique breaks, slow down. Rate quality out of 10. Optional: ask coach to film last 5 reps and watch back.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What did you notice about your movement after 20 focused repetitions?"</em></p>
+          <p>Did it start to feel more automatic? Did you find something not quite right? What will you fix next week?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 3</div> <span class="week-theme">Footwork</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Footwork is the Foundation of All Athletic Skill</p>
+          <p>Where your feet are and how fast they move determines everything else. Poor footwork forces the upper body to compensate. Fast feet come from light ground contact. The best athletes in every sport have exceptional footwork — never an accident.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Footwork Ladder or Cone Drill Challenge</strong></p>
+          <p>Walk through pattern slowly first. 3 runs for foot placement (not speed). Coach records time on 4th full-speed run. 3 more runs to improve time while keeping clean footwork. Note fastest clean time to beat in future.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"How does your footwork affect everything else you do as an athlete?"</em></p>
+          <p>Think about a moment when your feet were in a bad position. What happened to the rest of your movement as a result?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 4</div> <span class="week-theme">Throw and Catch</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> How Accuracy and Timing Work Together</p>
+          <p>Throwing accuracy = consistent release point + follow-through. Catching starts with the eyes — track object all the way into hands. Communication between passer and receiver makes both better. Pressure reveals true skill level.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>20 Consecutive Catches — Partner Challenge</strong></p>
+          <p>Work with a partner. 20 consecutive catches without a drop — drop = restart from zero. Start 3m apart. When you reach 20, both take one step back and try again. Record longest streak and furthest distance.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What did your partner do that helped you catch better — and what did you do to help them?"</em></p>
+          <p>Quality of throws, communication, encouragement. How did working together change your performance?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 5</div> <span class="week-theme">Agility</span>
+      <span class="badge-pill">💨 Agility Ace Badge (25 XP)</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Agility — Changing Direction Without Losing Speed</p>
+          <p>True agility is reactive — responding to things happening around you. Change of direction requires good deceleration first. Low body position and bent knees = stable push-off base. Eyes lead body. Agility is trainable through cone drills and reaction games.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Agility Course — Time Trial</strong></p>
+          <p>Walk through course once. 70% speed run for clean direction changes. Coach records first full-speed time. 3 more attempts to improve. Record best time — will retest in Week 7. Optional: coach calls Left/Right at decision cone.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What slowed you down on the agility course — and what is your plan to fix it?"</em></p>
+          <p>Body position? Foot placement on turns? Acceleration out of the change? Be honest and specific.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 6</div> <span class="week-theme">Skill Under Pressure</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Why Skills Break Down When You Are Tired or Competing</p>
+          <p>Under pressure, brain reverts to older, less refined movement patterns. Physical fatigue makes technique harder. Mental pressure creates tension that disrupts smooth movement. Solution: practise skill in pressured conditions. Focus on process, not outcome.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Skill Under Fatigue Challenge</strong></p>
+          <p>Complete chosen skill from Week 2 — but after a full warm-up circuit that leaves you genuinely tired. 20 quality skill repetitions immediately after circuit. Notice how technique feels different when tired. Rate quality out of 10 and compare to Week 2.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"Was your skill better or worse when you were tired — and what did you do to keep going?"</em></p>
+          <p>What strategy helped maintain technique when hard? What fell apart first? What held up best?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 7</div> <span class="week-theme">Game Situation</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Applying Your Skill in a Team Game Context</p>
+          <p>Game situations require reading what is happening and then executing. Decision-making speed is part of skill — right skill at wrong time = still an error. Communication with teammates makes game skills more effective. Mistakes in games are normal — what matters is your response.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Game Activity — Skill in Action</strong></p>
+          <p>Coach runs a game activity. Consciously apply Module 2 skill focus during the game. Look for moments to use your skill — don't force it but don't avoid it. After each round self-check: "Did I use my skill? Was it effective?" Ask a teammate what it looked like.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"When in the game did you use your skill well — and what made that moment possible?"</em></p>
+          <p>Positioning, decision-making, timing. What set you up to execute successfully in a live situation?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 8</div> <span class="week-theme">Skill Showcase — Capstone</span>
+      <span class="badge-pill">🏆 Module 2 Master Badge (50 XP) — Coach Required</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Showing What You Have Learned</p>
+          <p>8 weeks ago you chose a skill and rated yourself. Today you demonstrate what you have developed. A showcase is not about perfection — it is about honest progress and the habits that created it. After today, Module 3 — Focus — begins.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Coach-Assessed Skill Demonstration</strong></p>
+          <p>Warm up specifically for your skill. Complete 20 quality reps with coach observing. Rate skill out of 10 — compare to Week 1 rating. Ask coach: "What is the biggest technical improvement you have seen over 8 weeks?" Set one goal to continue into Module 3.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"How has this skill changed for me over 8 weeks — and what made the difference?"</em></p>
+          <p>Specific habits, cues, and moments that created improvement. What will you keep doing? What did you learn about how you develop as an athlete?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODULE 3 ── -->
+<div class="module-block">
+  <div class="module-header cyan">🧠 Module 3: Train the Mind &nbsp;·&nbsp; Pillar: Focus &nbsp;·&nbsp; 8 Weeks</div>
+  <div class="module-body">
+    <p><em>Develops the mental performance toolkit: focus, breathing, self-talk, attention control, pressure management, and team focus. Athletes build skills they carry into sport, school, and life.</em></p>
+
+    <div class="week-block">
+      <div class="week-num">Week 1</div> <span class="week-theme">What is Focus?</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Focus is a Skill You Can Train — Not Something You Either Have or Do Not</p>
+          <p>Focus = directing attention to what matters most, right now. Most athletes have never been taught how to focus. Distractions are everywhere; focus is choosing what to pay attention to despite them. Attention is trainable.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Mindful Warm-Up Challenge</strong></p>
+          <p>Coach leads 2-minute quiet focus routine before session. During session, notice 3 moments when attention fully locks in and 3 moments when it drifts. After session, write what you noticed.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What makes it hard for me to focus during training — and when is my focus at its best?"</em></p>
+          <p>What conditions help you lock in? What pulls you away?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 2</div> <span class="week-theme">Breathing and Calm</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> How Breathing Controls Your Body and Your Mind</p>
+          <p>Breathing is the only automatic function you can also control consciously. Shallow, fast breathing = danger signal to brain. Slow, deep breathing = safe, in control. The 4-7-8 technique: breathe in 4 counts, hold 7, breathe out 8. Breathing can't remove pressure — but changes how your body responds to it.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>4-7-8 Breathing Before Your Hardest Activity</strong></p>
+          <p>Before hardest activity: stand still, relax shoulders. Breathe in through nose for 4 counts. Hold 7 counts. Breathe out slowly through mouth for 8 counts. Repeat twice, then go straight into the activity. Also use as reset tool after mistakes.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"Did breathing help you feel more in control — and how did it change your performance?"</em></p>
+          <p>Compare normal day vs. after breathing exercise. Was there a difference? What was it?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 3</div> <span class="week-theme">Self-Talk</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> The Words in Your Head Affect Your Performance</p>
+          <p>Negative self-talk creates tension and reduces performance. Positive self-talk is not pretending — it is choosing words that help. Cue words: short powerful phrases for key moments (Drive, Relax, Reset, Trust it). Elite athletes all use self-talk deliberately — it is trained, not accidental.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Build Your Self-Talk Toolkit</strong></p>
+          <p>Write 3 encouraging phrases for when training gets hard (personal, should feel true). Choose one cue word for today. Use cue word out loud (quietly) at least 5 times during session. After mistake — use self-talk instead of going silent or negative.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What did you say to yourself when things got tough today — and did it help?"</em></p>
+          <p>Were the words helpful or unhelpful? What is one phrase you will keep because it genuinely helped?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 4</div> <span class="week-theme">Attention Control</span>
+      <span class="badge-pill">🌬️ Calm Under Pressure Badge (25 XP)</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> The Difference Between Focusing on the Task and Focusing on the Outcome</p>
+          <p>Task focus = what you are doing right now. Outcome focus = what might happen as a result. Outcome focus during execution creates anxiety and disrupts automatic movement. Simple cue: "What do I need to do RIGHT NOW?"</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Task Focus Drill — Process Over Outcome</strong></p>
+          <p>Choose one activity to be your task focus activity. Identify specific task focus: arm drive, soft landing, eyes on target. Every time mind goes to score/outcome, gently bring it back to task cue. Rate task focus out of 10.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What happened to your performance when you focused only on the task — not the outcome?"</em></p>
+          <p>More automatic? More controlled? Hard to stop thinking about the score? What does that tell you about where your attention usually goes?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 5</div> <span class="week-theme">Pressure and Nerves</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Why Nerves are Normal — and How to Use Them</p>
+          <p>Nerves = body getting ready to perform. Increased heart rate, alert senses, adrenaline are all performance tools. The feeling of nerves is almost identical to excitement — you can choose the label. Trying to make nerves disappear usually makes them worse. Repeated pressure exposure builds confidence.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Mini Competition — Pre-Performance Routine</strong></p>
+          <p>Design a 30-second pre-performance routine: breathing + cue word + one physical reset (roll shoulders, shake hands). Use it before every turn in the competition. Notice how you feel first turn vs. last turn. Share routine with coach.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"How did you feel before the challenge — and what helped you settle and perform?"</em></p>
+          <p>Describe your nerves honestly. What did they feel like? What did you do? What made the biggest difference once it started?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 6</div> <span class="week-theme">Consistency</span>
+      <span class="badge-pill">📊 Consistent Performer Badge (25 XP)</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Focus and Consistency are Directly Connected</p>
+          <p>Consistent performance comes from consistent focus, not talent. Easy to focus when fresh/excited — real skill is focusing when tired or struggling. Building a pre-session routine = mental consistency. Consistent focus compounds over time — small improvements each week = major development over a season.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Full Session Focus and Effort Log</strong></p>
+          <p>For every activity: rate effort/10 and focus/10. Set target before session (e.g. effort 8, focus 7). After each activity, rate quickly. At end, identify highest and lowest focus moments. Show log to coach and discuss one insight.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"When was your focus highest this session — and what was different at those moments?"</em></p>
+          <p>Look at your log. What activity, moment, or condition produced your best focus? Can you recreate it deliberately?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 7</div> <span class="week-theme">Focus in a Team</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> How Your Focus — or Lack of It — Affects the People Around You</p>
+          <p>Your energy and attention are contagious. A focused athlete raises the standard around them. Team focus built through shared purpose. The most focused teams communicate more, reset faster, and maintain higher intensity for longer.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Team Relay — Pre-Activity Focus Agreement</strong></p>
+          <p>Before relay: team spends 60 seconds agreeing on one shared focus cue (e.g. "drive hard off the mark"). Say it together before each race. If focus drops, one teammate calls the cue to re-engage. After relay: discuss as team when focus helped and when it was lost.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"How did our team's collective focus change the result — and what was your role in maintaining it?"</em></p>
+          <p>When was team focus strong? When did it drop? What did you personally do to keep it or bring it back?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 8</div> <span class="week-theme">My Focus Toolkit — Capstone</span>
+      <span class="badge-pill">🏆 Module 3 Master Badge (50 XP) — Coach Required</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Building a Mental Performance Toolkit You Will Use for Life</p>
+          <p>Your mental performance toolkit = the strategies that work best for you personally. Different athletes respond to different tools. A toolkit is only useful if you actually use it — the goal is to make these tools automatic. After today, Module 4 — Leadership — begins.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Full Session Using Your Complete Toolkit</strong></p>
+          <p>Use all three mental tools deliberately: breathing, cue word, task focus — especially under pressure and after mistakes. Before session: write down your three tools and when you plan to use each. After each activity: did I use my tools? At end: tell coach your tools and give one example of using each.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What are the 3 focus tools I will keep using beyond this module — and why do they work for me?"</em></p>
+          <p>Be specific about each tool. When do you use it? What does it feel like? What does it do for your performance? These are yours to keep forever.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODULE 4 ── -->
+<div class="module-block">
+  <div class="module-header dark">🤝 Module 4: Lead Yourself and Others &nbsp;·&nbsp; Pillar: Leadership &nbsp;·&nbsp; 8 Weeks</div>
+  <div class="module-body">
+    <p><em>Leadership begins with leading yourself — your effort, attitude, and response to difficulty. Athletes build a leadership identity across 8 weeks: self-leadership, teammate skills, communication, handling mistakes, feedback, competition, personal leadership style, and a Level 1 Capstone.</em></p>
+
+    <div class="week-block">
+      <div class="week-num">Week 1</div> <span class="week-theme">What is Leadership?</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Leadership Starts With Leading Yourself — Before Leading Others</p>
+          <p>Self-leadership = taking responsibility for your own effort, attitude, and growth without being told. You do not need a title to be a leader — you lead through your actions. Leadership is not about being loud or best. It is about being consistent and trustworthy.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>My Self-Leadership Commitment</strong></p>
+          <p>Three areas of self-leadership: effort, attitude, reliability. Choose one area to develop most over next 8 weeks. Write: "This module I will lead myself better by..." Share commitment with coach. Make one deliberate leadership action during session.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What kind of leader am I right now — and what kind of leader do I want to become?"</em></p>
+          <p>What are you already doing well as a self-leader? What is your biggest growth area? Where do you want to be at the end of Module 4?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 2</div> <span class="week-theme">Being a Great Teammate</span>
+      <span class="badge-pill">💬 Encourager Badge (30 XP) — Coach Required</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> The Difference Between Being Good and Being Great to Be Around</p>
+          <p>Great teammates encourage others — especially when things go wrong. Being a great teammate = supportive AND demanding high standards. How you respond to your own mistakes sets the tone for how the whole team responds. Noticing and celebrating others' good work is a leadership act.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Encourage 3 Teammates — Intentional Support Challenge</strong></p>
+          <p>Before session, identify 3 teammates to focus on encouraging. During session, find a specific moment where each does something well and name it (not just "Good job" — be specific: "Great arm drive on that sprint"). Deliver encouragement in the moment.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"How did encouraging others change how you felt and performed in the session?"</em></p>
+          <p>Did focusing outward take your mind off your own performance? Did it increase your energy? How did the session feel different?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 3</div> <span class="week-theme">Communication</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> How Athletes Communicate — Words, Body Language, and Energy</p>
+          <p>Communication in sport is more than words. Your body language, eye contact, energy, and positioning all send messages. Positive body language lifts everyone around you. Clear verbal communication: call for the ball, signal your intent. Listening is as important as speaking.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Relay Communication Challenge</strong></p>
+          <p>During relay, every handover must include a clear verbal and physical signal — no silent handovers. Before relay: agree as team on handover signal (a word + gesture). Practise it 5 times standing still. If handover is silent, that team runs the lap again. Standard is clear communication every time.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What did you do to communicate better with your team today — and what impact did it have?"</em></p>
+          <p>Think about both verbal and non-verbal. When did clear communication help most? When did poor communication cause a problem?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 4</div> <span class="week-theme">Handling Mistakes</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> How Leaders Respond to Errors — Their Own and Others</p>
+          <p>Your response to a mistake is more important than the mistake itself. A reset cue is a physical or verbal action that signals to your brain: that is done, I am moving on. Accountability without self-punishment: acknowledge, identify what to do differently, move on.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Reset Cue Practice</strong></p>
+          <p>Coach models a reset cue. Build and practise your own: a physical action (clap, short breath out, tap thigh) + a word (Next, Reset, Done). Practise 10 times before session. Use it every time you make a mistake during session. Tell coach your cue and demonstrate it at end.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"How did you handle a mistake or frustration today — and what would you do the same or differently next time?"</em></p>
+          <p>Did your reset cue help? Was there a moment you responded poorly? What triggered it, and what would a leader have done instead?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 5</div> <span class="week-theme">Giving and Receiving Feedback</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Feedback is a Leadership Tool — Giving it Well is a Skill</p>
+          <p>Effective feedback: specific, timely, focused on the action not the person. Feedback sandwich: one positive observation + one specific improvement + one encouraging close. Asking for feedback is strength, not weakness. Teams that give and receive feedback well improve faster.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Feedback Partner Challenge</strong></p>
+          <p>Pair with teammate. Agree on what skill/movement you will each observe. Watch partner during one activity — find something specific they are doing well. Deliver: "I noticed that you..., and it works because..." Receive partner's feedback with openness. Ask a follow-up question.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What was hard about giving feedback — and what was hard about receiving it?"</em></p>
+          <p>Which was harder for you, and why? What does that tell you about your leadership strengths and growth areas?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 6</div> <span class="week-theme">Leading in Competition</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> How Pressure Reveals Leadership — Staying Steady When it Counts</p>
+          <p>Steady leadership under pressure = same effort, same communication, same reset response regardless of score. Panic is contagious. So is calm. The leader who stays composed gives everyone else permission to do the same. After a mistake in competition, your response in the next 10 seconds defines your leadership.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Team Competition — Lift the Team Regardless of the Score</strong></p>
+          <p>Before competition: agree as team on one leadership behaviour you will all bring. During: focus on leadership mission more than the score. When behind, find a way to lift energy — a word, reset cue, physical signal. After (win or lose): lead team reflection: "What did we do well? What do we build on?"</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What did you do to help your team when things were hard — and how did they respond?"</em></p>
+          <p>Think about a specific moment of difficulty. What did you do? What impact did it have on team energy or performance?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 7</div> <span class="week-theme">My Leadership Style</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> There is No One Type of Leader — Finding What Works for You</p>
+          <p>Common myth: leaders must be loud. In reality, some of the best sport leaders are quiet and consistent, leading entirely through their actions. Leadership styles: vocal/energetic · quiet/consistent · leading by example · leading through encouragement · leading through challenge. Your most effective style = the one that is authentic to who you are.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Session Leadership Rotation</strong></p>
+          <p>Coach nominates different session leader for each rotation. When it is your turn: lead the warm-up or activity setup, give clear instructions, encourage teammates, manage the activity. After rotation: ask 2 teammates "How did I go? What could I do better?" Observe others in their leadership turns.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What style of leadership felt most natural for me today — and what does that tell me about the leader I am becoming?"</em></p>
+          <p>When did you feel most comfortable and confident? Vocal or leading through action? What did teammates respond to best?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-block">
+      <div class="week-num">Week 8</div> <span class="week-theme">The Athlete I Am Becoming — Level 1 Capstone</span>
+      <span class="badge-pill">👑 Level 1 Complete — Legacy Athlete (100 XP) — Coach Required</span>
+      <div class="week-grid">
+        <div class="week-cell">
+          <div class="week-cell-label">Learn</div>
+          <p><strong>Concept:</strong> Level 1 Is Complete — Reflecting on the Full Journey</p>
+          <p>32 weeks of training, reflection, and growth across Athletic Ability, Skill, Focus, and Leadership. The four pillars are not separate — they work together as one complete athlete. The habits you have built are your foundation for Level 2, Level 3, and everything beyond. Excellence Through Consistency is not a tagline. It is what you have lived.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Do</div>
+          <p><strong>Level 1 Athletic Journey Reflection — Share With Your Coach</strong></p>
+          <p>Complete Level 1 reflection (longer than normal — give it full effort). Sit with coach for 5 minutes. Share one thing most proud of from Level 1. Share one thing still want to develop in Level 2. Coach presents Level 1 completion and Journey Tier achievement — 👑 Legacy Athlete.</p>
+        </div>
+        <div class="week-cell">
+          <div class="week-cell-label">Reflect</div>
+          <p><em>"What has changed about me as an athlete and a person across this level — and what am I most proud of?"</em></p>
+          <p>Take your time. Think across all four modules. What can you do now that you couldn't before — physically, mentally, as a teammate, as a leader? What moment meant the most? What are you taking into Level 2?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════ -->
+<h2>4. Badge System — Complete List</h2>
+
+<table>
+  <tr><th>Badge Key</th><th>Name</th><th>Icon</th><th>XP</th><th>Module / Week</th><th>Coach Required?</th></tr>
+  <tr><td><code>power_up</code></td><td>Power Up</td><td>⚡</td><td>25</td><td>Module 1 Week 4</td><td>No</td></tr>
+  <tr><td><code>mod1_master</code></td><td>Module 1 Master</td><td>🏆</td><td>50</td><td>Module 1 Week 8</td><td>Yes</td></tr>
+  <tr><td><code>rep_champion</code></td><td>Rep Champion</td><td>🔁</td><td>25</td><td>Module 2 Week 2</td><td>No</td></tr>
+  <tr><td><code>agility_ace</code></td><td>Agility Ace</td><td>💨</td><td>25</td><td>Module 2 Week 5</td><td>No</td></tr>
+  <tr><td><code>mod2_master</code></td><td>Module 2 Master</td><td>🏆</td><td>50</td><td>Module 2 Week 8</td><td>Yes</td></tr>
+  <tr><td><code>calm_performer</code></td><td>Calm Under Pressure</td><td>🌬️</td><td>25</td><td>Module 3 Week 4</td><td>No</td></tr>
+  <tr><td><code>consistent_performer</code></td><td>Consistent Performer</td><td>📊</td><td>25</td><td>Module 3 Week 6</td><td>No</td></tr>
+  <tr><td><code>mod3_master</code></td><td>Module 3 Master</td><td>🏆</td><td>50</td><td>Module 3 Week 8</td><td>Yes</td></tr>
+  <tr><td><code>encourager</code></td><td>Encourager</td><td>💬</td><td>30</td><td>Module 4 Week 2</td><td>Yes</td></tr>
+  <tr><td><code>mod4_master</code></td><td>Level 1 Complete — Legacy Athlete</td><td>👑</td><td>100</td><td>Module 4 Week 8</td><td>Yes</td></tr>
+</table>
+
+<p><strong>Total possible XP (Level 1):</strong><br>
+32 weeks × 35 XP (learn + do + reflect) = 1,120 base XP<br>
++ Badges: 25 + 50 + 25 + 25 + 50 + 25 + 25 + 50 + 30 + 100 = 405 badge XP<br>
+<strong>Maximum: ~1,525 XP</strong></p>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════ -->
+<h2>5. Journal Design — Suggested Structure</h2>
+
+<h3>Per-Week Spread (2 pages in print)</h3>
+<div class="callout">
+  <strong>Left page (student-facing):</strong>
+  <ol>
+    <li>Module number + Week number + Theme name</li>
+    <li>Weekly Wellness Check (3 emoji rows for Energy / Sleep / Mood — circle your level)</li>
+    <li><strong>Learn</strong> — concept title + 2–3 key points distilled into plain language</li>
+    <li><strong>Do</strong> — activity title + setup summary</li>
+    <li>Badge indicator: "This week I could earn [badge name] 🏅" — if applicable</li>
+  </ol>
+  <strong>Right page (reflection — plenty of writing space):</strong>
+  <ol>
+    <li>Large reflect prompt (verbatim from the content library above)</li>
+    <li>Hint text in lighter style</li>
+    <li>Ruled lines or a generous write-in box (approx 12–15 lines)</li>
+    <li>My Key Takeaway from this week (single line)</li>
+    <li>Coach comment box (optional — a small boxed area at the bottom for coach initials/stamp)</li>
+  </ol>
+</div>
+
+<h3>Module Opener Page</h3>
+<div class="callout blue">
+  Full-bleed (or nearly full-bleed) page per module with: module icon, title, pillar (e.g. Athletic Ability), a 1-paragraph overview of what this module builds, and a progress tracker showing 8 weeks as circles to tick off.
+</div>
+
+<h3>Front matter (pages 1–4)</h3>
+<ul>
+  <li><strong>Cover page:</strong> "My Heroes Journal" — student name, coach name, season/year, P2A logo</li>
+  <li><strong>What is My Athletic Journey?</strong> — short explanation for students and parents</li>
+  <li><strong>How to use this journal</strong> — explains Learn / Do / Reflect / XP / Badges</li>
+  <li><strong>My XP Tracker</strong> — a visual progress bar or sticker-style tracker for the 32 weeks</li>
+</ul>
+
+<h3>Back matter (last 4–6 pages)</h3>
+<ul>
+  <li><strong>My Level 1 Highlights</strong> — favourite moment from each module, proudest achievement</li>
+  <li><strong>My Badge Collection</strong> — a page with outlined badge icons to colour/sticker in as earned</li>
+  <li><strong>My Journey Tier</strong> — visual tier ladder from Rookie → Legacy</li>
+  <li><strong>Parent notes</strong> — blank page for parent to write observations across the term</li>
+  <li><strong>Coach final assessment</strong> — space for coach to write a final narrative comment at Level 1 completion</li>
+</ul>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════ -->
+<h2>6. Technical Notes for Claude Code</h2>
+
+<h3>Data source</h3>
+<p>All content above is extracted from <code>public/my-athletic-journey.html</code> (the <code>MAJ_CONTENT</code> JavaScript object). The journal does not need to connect to any API — it is a static document using this content directly. Do not re-fetch data from the app; use the content library in this handover document as the single source of truth.</p>
+
+<h3>Suggested tech approach</h3>
+<div class="callout green">
+  <strong>Recommended:</strong> A single self-contained HTML file with embedded CSS. No build step, no dependencies. Use CSS <code>@media print</code> rules for print layout. Use Google Fonts (Barlow Condensed + DM Sans) loaded from CDN.
+</div>
+
+<h3>Page break rules (for print)</h3>
+<ul>
+  <li>Each module opener: <code>page-break-before: always</code></li>
+  <li>Each week block: aim for 2 pages (avoid orphaning reflect prompts)</li>
+  <li>Use <code>page-break-inside: avoid</code> on week blocks</li>
+</ul>
+
+<h3>Colour variables</h3>
+<pre>
+--orange: #F26522;        /* Module 1, Module 2, Module 4 headers; primary accent */
+--cyan: #00B4D8;          /* Module 3 header; secondary accent */
+--dark: #1a1a1a;          /* Module 4 header (alternative) */
+--green: #22c55e;         /* Badge earned / completed state */
+--text: #1a1a1a;          /* Body text */
+--muted: #666;            /* Hint text, secondary content */
+--light-bg: #f8f7f5;      /* Alternating row / week block backgrounds */
+--border: #ddd;           /* Card borders */
+</pre>
+
+<h3>Fonts</h3>
+<pre>
+&lt;link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"&gt;
+
+/* Use Barlow Condensed for: headings, module names, week numbers, XP labels */
+/* Use DM Sans for: body text, reflect prompts, hints, labels */
+</pre>
+
+<h3>Interactivity (optional)</h3>
+<p>If building an interactive HTML version (not print-only), consider:</p>
+<ul>
+  <li>Contenteditable <code>div</code> or <code>textarea</code> for reflection fields</li>
+  <li><code>localStorage</code> to save reflections per week</li>
+  <li>Checkbox system to mark Learn / Do / Reflect complete</li>
+  <li>Auto-calculate XP and show progress bar</li>
+  <li>No backend required — all local storage</li>
+</ul>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════ -->
+<h2>7. Example Week Spread — Visual Reference</h2>
+
+<p>The following shows how a single week should be laid out in the journal. This is Week 4 of Module 1 (Power) as an example:</p>
+
+<div style="border: 2px solid var(--orange); border-radius: 12px; overflow: hidden; margin: 20px 0;">
+  <div style="background: var(--orange); color: white; padding: 12px 20px; font-family: Arial, sans-serif; font-weight: 900; font-size: 1.1em;">
+    🔥 MODULE 1 · WEEK 4 &nbsp;&nbsp; POWER
+  </div>
+  <div style="padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <div>
+      <h4 style="color: var(--orange); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;">🔋 MY WELLNESS CHECK</h4>
+      <p style="font-size: 0.85em; color: var(--muted);">Energy &nbsp; 😩 · 😕 · 😐 · 😊 · ⚡ &nbsp; (circle one)</p>
+      <p style="font-size: 0.85em; color: var(--muted);">Sleep &nbsp;&nbsp;&nbsp; 😩 · 😕 · 😐 · 😊 · ⭐ &nbsp; (circle one)</p>
+      <p style="font-size: 0.85em; color: var(--muted);">Mood &nbsp;&nbsp;&nbsp; 😩 · 😕 · 😐 · 😊 · 🔥 &nbsp; (circle one)</p>
+
+      <h4 style="color: var(--orange); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 16px; margin-bottom: 8px;">📖 LEARN</h4>
+      <p style="font-size: 0.9em;"><strong>Jump, Bound, and Throw — How to Generate Explosive Power</strong></p>
+      <ul style="font-size: 0.85em; color: var(--muted); margin-top: 6px;">
+        <li>Power = strength applied quickly</li>
+        <li>Drive your knee to the sky and push strong</li>
+        <li>Soft landings are skilled, not weak</li>
+        <li>Cue: "Jet wings on take-off. Reach for the sky. Motorbike landing."</li>
+      </ul>
+
+      <h4 style="color: var(--orange); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 16px; margin-bottom: 8px;">🏃 DO THIS SESSION</h4>
+      <p style="font-size: 0.9em;"><strong>Bounding Hoops + Hop-Step-Jump</strong></p>
+      <p style="font-size: 0.85em; color: var(--muted);">Bound through hoops for distance. Hop over hurdle, bound to dot, land in hoop. Coach challenge: how far apart can you set the hoops and still land in them?</p>
+
+      <div style="margin-top: 16px; background: #fff3e0; border-radius: 8px; padding: 10px 12px; border: 1px solid #ffd580;">
+        <p style="font-size: 0.8em; font-weight: 700; color: var(--orange);">⚡ BADGE AVAILABLE THIS WEEK</p>
+        <p style="font-size: 0.85em; color: var(--dark);">Power Up Badge — 25 XP</p>
+        <p style="font-size: 0.8em; color: var(--muted);">Ask your coach to award this when you demonstrate your best jump or bound.</p>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="color: var(--orange); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;">✏️ REFLECT</h4>
+      <p style="font-size: 1em; font-style: italic; color: var(--dark); margin-bottom: 8px;">"Where in your body did you feel the most power today — and what helped you generate it?"</p>
+      <p style="font-size: 0.8em; color: var(--muted); margin-bottom: 16px;"><em>Think about your arms, legs, and core. Did arm drive make a difference to your jump? Did your knee lift change your bounding distance?</em></p>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+
+      <h4 style="color: var(--orange); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 20px; margin-bottom: 6px;">⭐ MY KEY TAKEAWAY</h4>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+      <div style="border-bottom: 1px solid var(--border); margin: 8px 0; height: 24px;"></div>
+
+      <div style="margin-top: 20px; border: 1px dashed var(--border); border-radius: 8px; padding: 10px 12px;">
+        <p style="font-size: 0.75em; color: var(--muted); font-weight: 700;">COACH INITIALS / STAMP</p>
+        <div style="height: 36px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<h2>8. Quick-Reference Summary for Claude Code</h2>
+
+<div class="callout green">
+  <strong>Build checklist:</strong>
+  <ul>
+    <li>☐ Single self-contained HTML file (embedded CSS, no external JS dependencies)</li>
+    <li>☐ Google Fonts: Barlow Condensed (headings) + DM Sans (body)</li>
+    <li>☐ Front matter: Cover · About MAJ · How to use · XP Tracker</li>
+    <li>☐ Module opener page for each of the 4 modules</li>
+    <li>☐ 32 weekly spreads (8 per module) with Learn / Do / Reflect structure</li>
+    <li>☐ Wellness check circles on each week page</li>
+    <li>☐ Badge callout box on weeks that award badges (10 total — see Section 4)</li>
+    <li>☐ Back matter: Level 1 Highlights · Badge Collection · Journey Tier · Parent Notes · Coach Comment</li>
+    <li>☐ CSS @media print rules: page-break-before on module openers, avoid breaks inside week blocks</li>
+    <li>☐ Colour scheme: orange #F26522 (Modules 1/2/4), cyan #00B4D8 (Module 3), dark #1a1a1a (alternative)</li>
+    <li>☐ Optional: localStorage-backed interactive reflect fields and XP tracker</li>
+  </ul>
+</div>
+
+<div class="callout">
+  <strong>P2A brand values to reflect in design:</strong> Bold · Motivating · Trustworthy · Excellence Through Consistency. The journal should feel like something a student is proud to carry — not a cheap school handout.
+</div>
+
+<p style="text-align: center; color: var(--muted); font-size: 0.85em; margin-top: 40px;">
+  My Heroes Journal Handover Document · Power2ADAPT · Generated for Claude Code<br>
+  All content © Power2ADAPT. Source: <code>public/my-athletic-journey.html</code> — <code>MAJ_CONTENT</code> object
+</p>
+
+</body>
+</html>

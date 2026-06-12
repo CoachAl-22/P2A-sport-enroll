@@ -1,0 +1,83 @@
+You are building features for the My Athletic Journey (MAJ) app for Power2ADAPT. Work through the 5 parts below in order. Read the existing codebase fully before writing any code. Verify each part works before moving to the next. Do not add anything not listed here.
+
+---
+
+## PART 1 -- FIX 3 BUGS FIRST
+
+Read the existing code, then fix these 3 bugs. Use athlete "Ollie Bardis" to verify each fix works.
+
+**Bug 1 -- Streak not updating:** Streak shows 0 even after consecutive completed weeks. Fix so streak increments by 1 per consecutive completed week and persists correctly.
+
+**Bug 2 -- Completed weeks reverting:** Marking a week complete does not persist -- reverts to incomplete on next load. Fix save/load logic so completed state is permanent once set.
+
+**Bug 3 -- Reflections not persisting:** Reflection text disappears on next load. Fix save/load logic so reflection text persists per athlete per week.
+
+Confirm all 3 bugs are fixed before continuing.
+
+---
+
+## PART 2 -- IMPLEMENT ALL 4 QUESTS
+
+Each Quest = 8 weeks. Each week has: Concept (what to learn), Do (the activity), Reflect (reflection prompt). Display each week as a card with: week number, theme name, XP pill (gold), badge pill on badge weeks, and the 3 content blocks.
+
+Badge weeks require coach verification -- do not auto-award.
+
+### Quest I -- Ignite Your Engine | Colour: #00B4D8
+W1 Know Your Engine 30XP | W2 Move Well 25XP | W3 Speed 25XP | W4 Power 50XP (Power Up Badge +25XP, coach required) | W5 Hurdles & Relay 25XP | W6 Endurance 25XP | W7 Putting it Together 25XP | W8 My Athletic Highlight Reel 85XP (Module 1 Master Badge +50XP, coach required) | TOTAL: 290 XP
+
+### Quest II -- Sharpen the Tools | Colour: #F26522
+Reference the full content and XP values in MAJ-QUEST-II.html
+
+### Quest III -- Train the Mind | Colour: #F26522
+Reference MAJ-QUEST-III.html. IMPORTANT: Week 2 breathing = Box Breathing (4 in, hold 4, out 4) -- not 4-7-8.
+
+### Quest IV -- Rise Above | Colour: #8B5CF6
+Reference MAJ-QUEST-IV.html
+
+---
+
+## PART 3 -- JOURNEY TIERS
+
+Show on athlete profile. Auto-advance tier when XP threshold is hit. Show congratulations message on advancement.
+
+| Tier | Icon | XP |
+|------|------|----|
+| Rookie | 🌱 | 0 |
+| Contender | ⭐ | 290 |
+| Athlete | 💪 | 580 |
+| Elite | 🔥 | 870 |
+| Legacy | 👑 | 1800 |
+
+Display: current tier icon + name, XP earned, XP needed for next tier.
+
+---
+
+## PART 4 -- WELLNESS CHECK-IN
+
+Shown to athlete once per week before opening their session. Saved to maj_wellness table (athlete ID + date + 3 scores).
+
+3 dimensions on a 1-5 emoji tap scale:
+- 🔋 Energy: 1=Drained, 3=OK, 5=Charged
+- 😴 Sleep: 1=Terrible, 3=OK, 5=Great
+- 🙂 Mood: 1=Rough, 3=OK, 5=Pumped
+
+Coach view: 7-day rolling average per athlete across all 3 dimensions.
+
+---
+
+## PART 5 -- FMS SKILLS MAP
+
+On athlete profile. Coach-only updates (not athlete self-report).
+
+5 skills with 3 stages each (Cognitive → Associative → Autonomous):
+- 🏃 Run
+- ⬆️ Jump & Land
+- 🎯 Throw
+- 🦘 Bound & Leap
+- ⚖️ Balance & Agility
+
+Display as progress bar or stage pill per skill. Coach selects stage from a dropdown or button on the athlete's profile.
+
+---
+
+Do not add anything beyond what is listed above. Read existing code first. Verify each part before moving on.

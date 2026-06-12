@@ -22,7 +22,6 @@ const loginSchema = z.object({
 const registerSchema = z.object({
   email: z.string().email("Valid email is required"),
   mobile: z.string().min(10, "Valid mobile number is required"),
-  userId: z.string().min(3, "User ID must be at least 3 characters"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -146,14 +145,23 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </TabsList>
 
           <TabsContent value="login">
+            <div className="mb-4 rounded-lg bg-blue-50 border border-blue-100 px-4 py-3 text-sm text-blue-800">
+              <p className="font-semibold mb-1">💡 How to log in</p>
+              <ul className="space-y-0.5 text-blue-700 text-xs list-none">
+                <li>📧 Use the <strong>email address</strong> you registered with</li>
+                <li>📱 Or your <strong>mobile number</strong> (e.g. 0412 345 678)</li>
+                <li>🔑 Plus the password you created when you signed up</li>
+              </ul>
+              <p className="mt-2 text-xs text-blue-600">Not sure? Contact us and we'll look you up.</p>
+            </div>
             <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
               <div>
                 <Label htmlFor="identifier" className="block text-sm font-medium text-gray-700 mb-2">
-                  Your Login Details
+                  Email or Mobile Number
                 </Label>
                 <Input
                   id="identifier"
-                  placeholder="Email, mobile number, or user ID"
+                  placeholder="e.g. jane@email.com or 0412 345 678"
                   {...loginForm.register("identifier")}
                   className="w-full"
                 />
@@ -266,22 +274,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {registerForm.formState.errors.mobile && (
                   <p className="text-red-500 text-sm mt-1">
                     {registerForm.formState.errors.mobile.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-2">
-                  User ID
-                </Label>
-                <Input
-                  id="userId"
-                  placeholder="Choose a unique user ID"
-                  {...registerForm.register("userId")}
-                />
-                {registerForm.formState.errors.userId && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {registerForm.formState.errors.userId.message}
                   </p>
                 )}
               </div>

@@ -25,10 +25,14 @@ import {
   majReflections,
   majBadges,
   majCoaches,
+  majPushSubscriptions,
+  majKudos,
   type MajAthlete,
   type MajReflection,
   type MajBadge,
   type MajCoach,
+  type MajPushSubscription,
+  type MajKudosEntry,
   type User,
   type InsertUser,
   type Child,
@@ -120,8 +124,8 @@ export interface IStorage {
     dayOfWeek?: number;
   }): Promise<Class[]>;
   getClassesWithSpots(filters: { sportType?: string; venueId?: string; term?: string; year?: number; dayOfWeek?: number; }): Promise<any[]>;
-  findHolidayClassForAge(childAge: number): Promise<any | null>;
   getActiveEnrolmentCountForParent(parentId: string, term: string, year: number): Promise<number>;
+  createWaitlistWithHolidayReservation(childId: string, classId: string, parentId: string): Promise<{ waitlistEntry: any; holidayReservation: any | null }>;
   createClass(classData: InsertClass): Promise<Class>;
   updateClass(id: string, updates: Partial<Class>): Promise<Class>;
   deleteClass(id: string): Promise<void>;
@@ -390,7 +394,7 @@ export class DatabaseStorage implements IStorage {
   // Class operations
   async getClass(id: string): Promise<Class | undefined> {
     const [classData] = await db.select().from(classes).where(eq(classes.id, id));
-    return classData;
+    return classData ? this.enrichClassPrice(classData) : undefined;
   }
 
   async getClassWithDetails(id: string): Promise<any> {
@@ -415,20 +419,24 @@ export class DatabaseStorage implements IStorage {
       .orderBy(asc(classes.dayOfWeek), asc(classes.startTime));
   }
 
-  async findHolidayClassForAge(childAge: number): Promise<any | null> {
-    const results = await db
-      .select()
-      .from(classes)
-      .where(
-        and(
-          eq(classes.isHolidayProgram, true),
-          eq(classes.isEnrollmentOpen, true),
-          lte(classes.minAge, childAge),
-          gte(classes.maxAge, childAge)
-        )
-      )
-      .limit(1);
-    return results[0] ?? null;
+  countSessions(startDate: Date | string, endDate: Date | string, dayOfWeek: number): number {
+    // dayOfWeek: 1=Mon … 6=Sat, 7=Sun  →  JS getDay(): 0=Sun, 1=Mon … 6=Sat
+    const jsDow = dayOfWeek === 7 ? 0 : dayOfWeek;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    // advance start to first matching weekday
+    while (start.getDay() !== jsDow) start.setDate(start.getDate() + 1);
+    let count = 0;
+    const cur = new Date(start);
+    while (cur <= end) { count++; cur.setDate(cur.getDate() + 7); }
+    return count;
+  }
+
+  enrichClassPrice(cls: any): any {
+    if (!cls.pricePerSession) return cls;
+    const sessions = this.countSessions(cls.startDate, cls.endDate, cls.dayOfWeek);
+    const computedTerm = (parseFloat(cls.pricePerSession) * sessions).toFixed(2);
+    return { ...cls, sessionCount: sessions, pricePerTerm: computedTerm };
   }
 
   async getClassesByFilters(filters: {
@@ -456,11 +464,13 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(classes.dayOfWeek, filters.dayOfWeek));
     }
 
-    return await db
-      .select()
+    const rows = await db
+      .select({ class: classes, venue: venues })
       .from(classes)
+      .leftJoin(venues, eq(classes.venueId, venues.id))
       .where(and(...conditions))
       .orderBy(asc(classes.dayOfWeek), asc(classes.startTime));
+    return rows.map((r) => this.enrichClassPrice({ ...r.class, venue: r.venue }));
   }
 
   async getClassesWithSpots(filters: {
@@ -473,7 +483,7 @@ export class DatabaseStorage implements IStorage {
     const classRows = await this.getClassesByFilters(filters);
     return classRows.map((cls) => ({
       ...cls,
-      spotsRemaining: (cls.maxCapacity ?? 0) - (cls.currentEnrollment ?? 0),
+      spotsRemaining: cls.maxCapacity - (cls.currentEnrollment ?? 0),
       spotsTaken: cls.currentEnrollment ?? 0,
     }));
   }
@@ -492,6 +502,61 @@ export class DatabaseStorage implements IStorage {
         )
       );
     return rows.length;
+  }
+
+  async createWaitlistWithHolidayReservation(
+    childId: string,
+    classId: string,
+    parentId: string
+  ): Promise<{ waitlistEntry: any; holidayReservation: any | null }> {
+    const existingEntries = await db
+      .select()
+      .from(waitlists)
+      .where(
+        and(
+          eq(waitlists.classId, classId),
+          eq(waitlists.status, 'active')
+        )
+      );
+    const nextPosition = existingEntries.length + 1;
+
+    const [waitlistEntry] = await db.insert(waitlists).values({
+      classId,
+      childId,
+      parentId,
+      position: nextPosition,
+      status: 'active',
+    }).returning();
+
+    const childRows = await db.select().from(children).where(eq(children.id, childId)).limit(1);
+    if (!childRows[0]) return { waitlistEntry, holidayReservation: null };
+
+    const childAge = new Date().getFullYear() - new Date(childRows[0].dateOfBirth).getFullYear();
+
+    const holidayClass = await db
+      .select()
+      .from(classes)
+      .where(
+        and(
+          eq(classes.isHolidayProgram, true),
+          lte(classes.minAge, childAge),
+          gte(classes.maxAge, childAge),
+          eq(classes.isEnrollmentOpen, true)
+        )
+      )
+      .limit(1);
+
+    if (!holidayClass[0]) return { waitlistEntry, holidayReservation: null };
+
+    const [holidayReservation] = await db.insert(enrollments).values({
+      childId,
+      classId: holidayClass[0].id,
+      parentId,
+      status: 'pending_payment',
+      waitlistHolidayReservation: true,
+    }).returning();
+
+    return { waitlistEntry, holidayReservation };
   }
 
   async createClass(classData: InsertClass): Promise<Class> {
@@ -539,21 +604,30 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getEnrollmentsByParent(parentId: string): Promise<any[]> {
-    return await db
+    const rows = await db
       .select({
         enrollment: enrollments,
         child: children,
         class: classes,
         venue: venues,
         coach: coaches,
+        payment: payments,
       })
       .from(enrollments)
       .leftJoin(children, eq(enrollments.childId, children.id))
       .leftJoin(classes, eq(enrollments.classId, classes.id))
       .leftJoin(venues, eq(classes.venueId, venues.id))
       .leftJoin(coaches, eq(classes.coachId, coaches.id))
+      .leftJoin(payments, eq(payments.enrollmentId, enrollments.id))
       .where(eq(enrollments.parentId, parentId))
-      .orderBy(desc(enrollments.createdAt));
+      .orderBy(desc(enrollments.createdAt), desc(payments.createdAt));
+    // Deduplicate: one row per enrollment (keep the most recent payment)
+    const seen = new Set<string>();
+    return rows.filter(row => {
+      if (seen.has(row.enrollment.id)) return false;
+      seen.add(row.enrollment.id);
+      return true;
+    });
   }
 
   async getEnrollmentsByClass(classId: string): Promise<any[]> {
@@ -1585,13 +1659,22 @@ export class DatabaseStorage implements IStorage {
     currentModule?: number;
     currentWeek?: number;
     streak?: number;
+    streakFreezes?: number;
+    lastWeekCompletedAt?: string | Date | null;
+    avatar?: string | null;
     sessionsCompleted?: number;
     reflectionsSubmitted?: number;
     earnedBadgeKeys?: string[];
     completedWeeks?: any[];
   }): Promise<MajAthlete> {
+    // Client sends lastWeekCompletedAt as an ISO string — convert for the timestamp column
+    const { lastWeekCompletedAt, ...rest } = data;
+    const set: any = { ...rest, updatedAt: new Date() };
+    if (lastWeekCompletedAt !== undefined) {
+      set.lastWeekCompletedAt = lastWeekCompletedAt ? new Date(lastWeekCompletedAt) : null;
+    }
     const [updated] = await db.update(majAthletes)
-      .set({ ...data, updatedAt: new Date() })
+      .set(set)
       .where(eq(majAthletes.id, id))
       .returning();
     return updated;
@@ -1653,6 +1736,55 @@ export class DatabaseStorage implements IStorage {
   async getMajCoachByUsername(username: string): Promise<MajCoach | undefined> {
     const [coach] = await db.select().from(majCoaches).where(eq(majCoaches.username, username));
     return coach;
+  }
+
+  // ── MAJ Kudos ────────────────────────────────────────────────────
+
+  async createMajKudos(data: {
+    athleteId: string;
+    coachName?: string;
+    emoji: string;
+    message: string;
+  }): Promise<MajKudosEntry> {
+    const [kudos] = await db.insert(majKudos).values(data).returning();
+    return kudos;
+  }
+
+  async getKudosForAthlete(athleteId: string): Promise<MajKudosEntry[]> {
+    return await db.select().from(majKudos)
+      .where(eq(majKudos.athleteId, athleteId))
+      .orderBy(desc(majKudos.createdAt));
+  }
+
+  // ── MAJ Push Subscriptions ───────────────────────────────────────
+
+  async savePushSubscription(data: {
+    athleteId: string;
+    endpoint: string;
+    p256dh: string;
+    auth: string;
+  }): Promise<MajPushSubscription> {
+    const [sub] = await db.insert(majPushSubscriptions)
+      .values(data)
+      .onConflictDoUpdate({
+        target: majPushSubscriptions.endpoint,
+        set: { athleteId: data.athleteId, p256dh: data.p256dh, auth: data.auth },
+      })
+      .returning();
+    return sub;
+  }
+
+  async getPushSubscriptionsForAthlete(athleteId: string): Promise<MajPushSubscription[]> {
+    return await db.select().from(majPushSubscriptions)
+      .where(eq(majPushSubscriptions.athleteId, athleteId));
+  }
+
+  async getAllPushSubscriptions(): Promise<MajPushSubscription[]> {
+    return await db.select().from(majPushSubscriptions);
+  }
+
+  async deletePushSubscription(endpoint: string): Promise<void> {
+    await db.delete(majPushSubscriptions).where(eq(majPushSubscriptions.endpoint, endpoint));
   }
 
   async createRunAssessment(data: Record<string, any>): Promise<any> {

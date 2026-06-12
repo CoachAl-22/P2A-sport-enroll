@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
 import OneClickChat from "@/components/one-click-chat";
 import { Calendar, MapPin, Users, CreditCard, Smartphone, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X, Menu, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ProgramQuiz } from '@/components/ProgramQuiz';
 
 export default function Landing() {
+  const [, setLocation] = useLocation();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
   const [isHighPerformanceSquadModalOpen, setIsHighPerformanceSquadModalOpen] = useState(false);
@@ -17,7 +17,6 @@ export default function Landing() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFoundationInfoModalOpen, setIsFoundationInfoModalOpen] = useState(false);
   const [isEmergingAthletesInfoModalOpen, setIsEmergingAthletesInfoModalOpen] = useState(false);
-  const [showQuiz, setShowQuiz] = useState(false);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -169,48 +168,51 @@ export default function Landing() {
         )}
       </nav>
 
-      {/* Hero */}
-      <section className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center bg-white">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl max-w-lg">
-          Help your athlete run faster, jump higher, and train smarter.
-        </h1>
-        <p className="mt-4 text-lg text-gray-500 max-w-md">
-          Term-based athletic programs for kids aged 5–17 on the Mornington Peninsula.
-        </p>
-        <button
-          onClick={() => setShowQuiz(true)}
-          className="mt-8 w-full max-w-xs bg-blue-600 text-white py-4 px-6 rounded-xl text-lg font-semibold hover:bg-blue-700 active:scale-95 transition-all"
-        >
-          Find the right class →
-        </button>
-        <button
-          className="mt-4 text-sm text-gray-400 underline underline-offset-2 hover:text-gray-600 bg-transparent border-0 cursor-pointer"
-          onClick={() => { window.location.href = '/classes'; }}
-        >
-          Browse all classes ↓
-        </button>
-      </section>
-
-      {/* Trust signals */}
-      <section className="bg-gray-50 py-8 px-4">
-        <div className="flex flex-col sm:flex-row justify-center gap-6 max-w-2xl mx-auto">
-          {[
-            { icon: '📅', text: 'Term-based programs, ages 5–17' },
-            { icon: '📍', text: 'Mornington Peninsula venues' },
-            { icon: '🏅', text: 'Coached by accredited Level 2–4 coaches' },
-          ].map(({ icon, text }) => (
-            <div key={text} className="flex items-center gap-2 text-sm text-gray-600">
-              <span className="text-xl">{icon}</span>
-              <span>{text}</span>
+      {/* Hero Section */}
+      <section className="relative gradient-primary text-white py-20">
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')",
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 className="text-4xl md:text-6xl font-heading font-bold leading-tight mb-6">
+                Where All Athletes <span className="text-secondary-500">Thrive</span>
+              </h1>
+              <p className="text-xl mb-8 text-blue-100">
+                Expert coaching at your child's school. Flexible programs that build confidence, skill and athletic movements. Ages 5 to 13 welcome. For Senior Squad and High Performance, Ages 14+
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  onClick={() => setLocation('/classes')}
+                  className="bg-secondary-500 hover:bg-secondary-600 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg"
+                >
+                  Find the Right Class →
+                </Button>
+                <Button 
+                  onClick={() => {
+                    const classesSection = document.getElementById('classes');
+                    classesSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  variant="outline"
+                  className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary-500 px-8 py-4 rounded-lg font-heading font-semibold text-lg"
+                >
+                  Explore Programs
+                </Button>
+              </div>
             </div>
-          ))}
+            <div className="hidden md:block">
+              <img 
+                src="/images/georgia-goss-comp.jpg" 
+                alt="Young athletes in training" 
+                className="rounded-xl shadow-2xl"
+              />
+            </div>
+          </div>
         </div>
       </section>
-
-      {/* Quiz modal */}
-      {showQuiz && (
-        <ProgramQuiz onClose={() => setShowQuiz(false)} />
-      )}
 
       {/* Quick Stats */}
       <section className="py-16 bg-white">

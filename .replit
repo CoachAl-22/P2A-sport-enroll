@@ -46,5 +46,15 @@ externalPort = 8081
 localPort = 8082
 externalPort = 3000
 
+[[ports]]
+localPort = 23636
+externalPort = 3002
+
 [agent]
 integrations = ["javascript_object_storage:2.0.0", "javascript_stripe:1.0.0", "google-sheet:1.0.0"]
+
+[userenv]
+
+[userenv.shared]
+VAPID_SUBJECT = "mailto:info@power2adapt.com.au"
+REMINDER_SECRET = "2832f3ca1bb9bb4b2aaff1c9b6d66dba71f5f5d5a018022be79492308b71e284"

@@ -47,6 +47,10 @@ export default function AdminTermConfig() {
     queryKey: ["/api/term-configurations"],
   });
 
+  const { data: termStats = [] } = useQuery<any[]>({
+    queryKey: ["/api/admin/term-stats"],
+  });
+
   const { data: selectedConfigHolidays } = useQuery({
     queryKey: ["/api/term-configurations", selectedConfigForHolidays?.id, "holidays"],
     enabled: !!selectedConfigForHolidays?.id,
@@ -482,12 +486,18 @@ export default function AdminTermConfig() {
                   <TableHead>Duration</TableHead>
                   <TableHead>Dates</TableHead>
                   <TableHead>Pricing</TableHead>
+                  <TableHead>No. of Classes</TableHead>
+                  <TableHead>No. of Bookings</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {(termConfigs || []).map((config: any) => (
+                {(termConfigs || []).map((config: any) => {
+                  const stats = termStats.find(
+                    (s: any) => s.term === config.term && Number(s.year) === Number(config.year)
+                  );
+                  return (
                   <TableRow key={config.id}>
                     <TableCell className="font-medium">
                       {getTermDisplayName(config.term)}
@@ -512,6 +522,12 @@ export default function AdminTermConfig() {
                           Total: ${(Number(config.pricePerWeek) * config.weeksCount * 1.1).toFixed(2)} inc. GST
                         </div>
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-semibold text-gray-800">{stats ? stats.classCount : <span className="text-gray-400">—</span>}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-semibold text-gray-800">{stats ? stats.bookingCount : <span className="text-gray-400">—</span>}</span>
                     </TableCell>
                     <TableCell>
                       <Badge variant={config.active ? "default" : "secondary"}>
@@ -551,7 +567,8 @@ export default function AdminTermConfig() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           </CardContent>

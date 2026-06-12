@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Hero's Journal — My Athletic Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #0a0a0a;
+    --orange: #F26522;
+    --cyan:   #00B4D8;
+    --gold:   #F5C842;
+    --red:    #e05522;
+    --ink:    #1a1a1a;
+    --ink2:   #444444;
+    --ink3:   #888888;
+    --page:   #ffffff;
+    --rule:   #e8e8e8;
+    --rule2:  #f0f0f0;
+    --font-h: 'Barlow Condensed', sans-serif;
+    --font-b: 'DM Sans', sans-serif;
+  }
+
+  body { background: #ccc; font-family: var(--font-b); }
+
+  /* ── A5 PAGE ──────────────────────────────────────── */
+  .page {
+    width: 148mm;
+    min-height: 210mm;
+    background: var(--page);
+    margin: 6mm auto;
+    padding: 10mm 12mm;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── COVER PAGE ───────────────────────────────────── */
+  .cover {
+    background: var(--navy);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .cover-top {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14mm 12mm 8mm;
+    position: relative;
+  }
+  .cover-watermark {
+    position: absolute;
+    font-size: 120mm;
+    opacity: 0.04;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -58%);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .cover-brand {
+    font-family: var(--font-h);
+    font-size: 9pt;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 8mm;
+    text-align: center;
+  }
+  .cover-title {
+    font-family: var(--font-h);
+    font-size: 42pt;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.92;
+    text-align: center;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-bottom: 4mm;
+    position: relative;
+  }
+  .cover-title span { color: var(--orange); }
+  .cover-subtitle {
+    font-family: var(--font-h);
+    font-size: 13pt;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    margin-bottom: 8mm;
+  }
+  .cover-creed {
+    font-size: 8pt;
+    color: rgba(255,255,255,0.3);
+    font-style: italic;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .cover-bottom {
+    background: var(--orange);
+    padding: 5mm 12mm;
+  }
+  .cover-name-label {
+    font-family: var(--font-h);
+    font-size: 8pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 1.5mm;
+  }
+  .cover-name-line {
+    border-bottom: 1.5px solid rgba(255,255,255,0.6);
+    height: 7mm;
+    margin-bottom: 3mm;
+  }
+  .cover-name-row {
+    display: flex;
+    gap: 6mm;
+  }
+  .cover-name-col { flex: 1; }
+
+  /* ── INSIDE FRONT ─────────────────────────────────── */
+  .inside-front {
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 14mm 14mm;
+  }
+  .inside-icon { font-size: 36pt; margin-bottom: 6mm; }
+  .inside-title {
+    font-family: var(--font-h);
+    font-size: 22pt;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-bottom: 5mm;
+  }
+  .inside-title span { color: var(--orange); }
+  .inside-text {
+    font-size: 9.5pt;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 110mm;
+    margin-bottom: 7mm;
+  }
+  .inside-creed {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 6mm;
+    width: 100%;
+  }
+  .creed-line {
+    font-family: var(--font-h);
+    font-size: 10pt;
+    font-weight: 600;
+    color: var(--orange);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 2.5mm;
+  }
+
+  /* ── STANDARD INTERIOR ────────────────────────────── */
+  .page-label {
+    font-family: var(--font-h);
+    font-size: 7.5pt;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 1.5mm;
+  }
+  .page-title {
+    font-family: var(--font-h);
+    font-size: 22pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4mm;
+  }
+  .page-rule { height: 1px; background: var(--rule); margin-bottom: 4mm; }
+  .page-rule.orange { background: var(--orange); opacity: 0.3; }
+
+  .field-label {
+    font-family: var(--font-h);
+    font-size: 7pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 1mm;
+  }
+  .field-line {
+    border-bottom: 1px solid var(--rule);
+    min-height: 7mm;
+    margin-bottom: 3.5mm;
+  }
+  .field-line.wide { min-height: 8mm; }
+
+  /* ruled writing area */
+  .write-area {
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 21px,
+      var(--rule) 21px,
+      var(--rule) 22px
+    );
+    min-height: 22px;
+    width: 100%;
+  }
+
+  /* ── HOW TO USE ───────────────────────────────────── */
+  .how-section { margin-bottom: 4mm; }
+  .how-row {
+    display: flex;
+    gap: 3mm;
+    align-items: flex-start;
+    margin-bottom: 3mm;
+  }
+  .how-icon {
+    font-size: 14pt;
+    flex-shrink: 0;
+    width: 8mm;
+    text-align: center;
+    margin-top: 0.5mm;
+  }
+  .how-body {}
+  .how-name {
+    font-family: var(--font-h);
+    font-size: 11pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--orange);
+    margin-bottom: 0.5mm;
+  }
+  .how-desc { font-size: 8.5pt; color: var(--ink2); line-height: 1.55; }
+
+  /* ── IDENTITY PAGE ────────────────────────────────── */
+  .identity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 5mm; }
+
+  /* ── QUEST MAP TRACKER ────────────────────────────── */
+  .tracker-quest {
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 3mm 4mm;
+    margin-bottom: 3mm;
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+  }
+  .tq-icon { font-size: 16pt; flex-shrink: 0; }
+  .tq-body { flex: 1; }
+  .tq-name {
+    font-family: var(--font-h);
+    font-size: 11pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--ink);
+    margin-bottom: 0.5mm;
+  }
+  .tq-realm { font-size: 7.5pt; color: var(--ink3); letter-spacing: 1px; text-transform: uppercase; font-family: var(--font-h); }
+  .tq-stickers { display: flex; gap: 2mm; }
+  .tq-slot {
+    width: 9mm; height: 9mm;
+    border-radius: 50%;
+    border: 1px dashed #ccc;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9pt;
+    color: #ccc;
+  }
+
+  /* ── QUEST INTRO PAGE ─────────────────────────────── */
+  .quest-intro-page.q1 { background: var(--navy); }
+  .quest-intro-page.q2 { background: var(--navy); }
+  .quest-intro-page.q3 { background: var(--navy); }
+  .quest-intro-page.q4 { background: var(--navy); }
+
+  .qi-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    padding: 8mm 6mm 6mm;
+  }
+  .qi-num {
+    font-family: var(--font-h);
+    font-size: 9pt;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 3mm;
+  }
+  .q1 .qi-num { color: var(--cyan); }
+  .q2 .qi-num { color: var(--orange); }
+  .qi-icon { font-size: 44pt; margin-bottom: 3mm; line-height: 1; }
+  .qi-realm {
+    font-family: var(--font-h);
+    font-size: 9pt;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 3mm;
+  }
+  .q1 .qi-realm { color: var(--cyan); }
+  .q2 .qi-realm { color: var(--orange); }
+  .qi-title {
+    font-family: var(--font-h);
+    font-size: 36pt;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.92;
+    color: #fff;
+    margin-bottom: 4mm;
+    letter-spacing: 1px;
+  }
+  .q1 .qi-title span { color: var(--cyan); }
+  .q2 .qi-title span { color: var(--orange); }
+  .qi-narrative {
+    font-size: 9pt;
+    font-style: italic;
+    line-height: 1.65;
+    max-width: 100mm;
+    margin-bottom: 5mm;
+  }
+  .q1 .qi-narrative { color: rgba(255,255,255,0.6); }
+  .q2 .qi-narrative { color: rgba(255,255,255,0.6); }
+  .qi-outcome {
+    font-family: var(--font-h);
+    font-size: 16pt;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.5px;
+  }
+  .q1 .qi-outcome { color: var(--cyan); }
+  .q2 .qi-outcome { color: var(--orange); }
+  .qi-archetype {
+    font-family: var(--font-h);
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 2.5mm 5mm;
+    border-radius: 100px;
+    margin-top: 4mm;
+    display: inline-block;
+  }
+  .q1 .qi-archetype { background: rgba(0,180,216,0.15); color: var(--cyan); border: 1px solid rgba(0,180,216,0.3); }
+  .q2 .qi-archetype { background: rgba(242,101,34,0.15); color: var(--orange); border: 1px solid rgba(242,101,34,0.3); }
+
+  /* ── WEEKLY PAGE ──────────────────────────────────── */
+  .week-page {}
+  .week-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 3mm;
+  }
+  .week-num-tag {
+    font-family: var(--font-h);
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 1.5mm 3.5mm;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .q1-tag { background: rgba(0,180,216,0.12); color: var(--cyan); border: 1px solid rgba(0,180,216,0.25); }
+  .q2-tag { background: rgba(242,101,34,0.12); color: var(--orange); border: 1px solid rgba(242,101,34,0.25); }
+  .badge-tag {
+    font-family: var(--font-h);
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 1.5mm 3mm;
+    border-radius: 4px;
+    background: rgba(242,101,34,0.1);
+    color: var(--orange);
+    border: 1px solid rgba(242,101,34,0.25);
+  }
+  .badge-tag.gold-tag {
+    background: rgba(245,200,66,0.1);
+    color: #c49a00;
+    border-color: rgba(245,200,66,0.35);
+  }
+  .week-page-title {
+    font-family: var(--font-h);
+    font-size: 18pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 1mm;
+  }
+  .week-narrative {
+    font-size: 8pt;
+    color: var(--ink3);
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 3mm;
+  }
+  .week-concept {
+    background: #f8f8f8;
+    border-left: 3px solid var(--orange);
+    padding: 2.5mm 3.5mm;
+    margin-bottom: 3mm;
+    border-radius: 0 4px 4px 0;
+  }
+  .week-concept.cyan { border-left-color: var(--cyan); }
+  .wc-label {
+    font-family: var(--font-h);
+    font-size: 7pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 1mm;
+  }
+  .wc-title {
+    font-family: var(--font-h);
+    font-size: 10.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .reflect-section { margin-bottom: 3mm; }
+  .reflect-prompt {
+    font-size: 8pt;
+    color: var(--ink2);
+    font-style: italic;
+    margin-bottom: 2mm;
+    line-height: 1.5;
+  }
+  .reflect-prompt strong { color: var(--ink); font-style: normal; }
+  .xp-footer {
+    position: absolute;
+    bottom: 7mm;
+    right: 12mm;
+    font-family: var(--font-h);
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #ccc;
+    text-align: right;
+  }
+  .page-num {
+    position: absolute;
+    bottom: 7mm;
+    left: 12mm;
+    font-family: var(--font-h);
+    font-size: 7.5pt;
+    color: #ccc;
+    letter-spacing: 1px;
+  }
+
+  /* ── BADGE REFLECTION PAGE ────────────────────────── */
+  .badge-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .badge-banner {
+    width: 100%;
+    border-radius: 6px;
+    padding: 4mm 5mm;
+    margin-bottom: 4mm;
+    text-align: center;
+  }
+  .badge-banner.orange { background: rgba(242,101,34,0.08); border: 1px solid rgba(242,101,34,0.2); }
+  .badge-banner.gold   { background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.25); }
+  .badge-icon { font-size: 28pt; margin-bottom: 2mm; line-height: 1; }
+  .badge-name {
+    font-family: var(--font-h);
+    font-size: 16pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1mm;
+  }
+  .badge-banner.orange .badge-name { color: var(--orange); }
+  .badge-banner.gold   .badge-name { color: #a87000; }
+  .badge-desc { font-size: 8.5pt; color: var(--ink2); font-style: italic; line-height: 1.5; }
+
+  /* ── BACK COVER ───────────────────────────────────── */
+  .back-cover {
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 14mm;
+  }
+  .bc-icon { font-size: 32pt; margin-bottom: 5mm; }
+  .bc-title {
+    font-family: var(--font-h);
+    font-size: 14pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--orange);
+    margin-bottom: 6mm;
+  }
+  .bc-creed-line {
+    font-size: 9pt;
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+    margin-bottom: 2mm;
+    line-height: 1.7;
+  }
+  .bc-url {
+    font-family: var(--font-h);
+    font-size: 9pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    margin-top: 7mm;
+  }
+
+  /* ── PRINT ────────────────────────────────────────── */
+  @media screen {
+    body { padding: 6mm 0; }
+  }
+  @media print {
+    @page { size: A5; margin: 0; }
+    body { background: none; padding: 0; }
+    .page { margin: 0; width: 148mm; min-height: 210mm; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PAGE 1: COVER                                      -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page cover" style="display:flex;flex-direction:column;min-height:210mm;">
+  <div class="cover-top" style="flex:1;">
+    <div class="cover-watermark">⚔️</div>
+    <div class="cover-brand">My Athletic Journey &nbsp;·&nbsp; Power2ADAPT</div>
+    <div class="cover-title">The<br><span>Hero's</span><br>Journal</div>
+    <div class="cover-subtitle">Quest I &amp; Quest II</div>
+    <div class="cover-creed">
+      Every athlete has potential.<br>
+      Every journey is unique.<br>
+      Every story matters.
+    </div>
+  </div>
+  <div class="cover-bottom">
+    <div class="cover-name-row">
+      <div class="cover-name-col">
+        <div class="cover-name-label">Athlete Name</div>
+        <div class="cover-name-line"></div>
+      </div>
+      <div class="cover-name-col">
+        <div class="cover-name-label">Program</div>
+        <div class="cover-name-line"></div>
+      </div>
+    </div>
+    <div class="cover-name-row">
+      <div class="cover-name-col">
+        <div class="cover-name-label">Coach</div>
+        <div class="cover-name-line"></div>
+      </div>
+      <div class="cover-name-col">
+        <div class="cover-name-label">Date Started</div>
+        <div class="cover-name-line"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PAGE 2: INSIDE FRONT — THE CREED                  -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page inside-front" style="display:flex;flex-direction:column;min-height:210mm;">
+  <div class="inside-icon">⚔️</div>
+  <div class="inside-title">This Journal<br>Belongs to a <span>Hero</span></div>
+  <p class="inside-text">
+    This is your record. Your story. Every reflection you write, every badge you earn, every week you show up — it all lives here.<br><br>
+    You are the hero of this journey. Your coach is your guide. This journal is your proof.
+  </p>
+  <div class="inside-creed">
+    <div class="creed-line">I show up.</div>
+    <div class="creed-line">I give my best effort.</div>
+    <div class="creed-line">I embrace challenges.</div>
+    <div class="creed-line">I learn from mistakes.</div>
+    <div class="creed-line">I strive to improve every day.</div>
+    <div class="creed-line" style="color:rgba(255,255,255,0.4);font-size:8pt;margin-top:3mm;text-transform:none;letter-spacing:0;">I am the hero of my journey. And my story matters.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PAGE 3: HOW TO USE THIS JOURNAL                   -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-label">Getting Started</div>
+  <div class="page-title">How to Use<br>This Journal</div>
+  <div class="page-rule orange"></div>
+  <div class="how-section">
+    <div class="how-row">
+      <div class="how-icon">📖</div>
+      <div class="how-body">
+        <div class="how-name">Learn</div>
+        <div class="how-desc">Before each session, read the concept in the MAJ app. It is short — 2 to 3 minutes. Every concept makes your practice smarter. Mark it as read to earn your XP.</div>
+      </div>
+    </div>
+    <div class="how-row">
+      <div class="how-icon">⚡</div>
+      <div class="how-body">
+        <div class="how-name">Do</div>
+        <div class="how-desc">Complete the session challenge with your coach. This is the most important part. Skill is built in the real world, not on a screen. Show up and do the work.</div>
+      </div>
+    </div>
+    <div class="how-row">
+      <div class="how-icon">✏️</div>
+      <div class="how-body">
+        <div class="how-name">Reflect</div>
+        <div class="how-desc">After every session, write your reflection in this journal. Minimum 5 words — but aim for 30 or more. The athletes who reflect grow faster than those who don't. Your journal is your proof of growth.</div>
+      </div>
+    </div>
+    <div class="how-row">
+      <div class="how-icon">🏅</div>
+      <div class="how-body">
+        <div class="how-name">Earn Your Badges</div>
+        <div class="how-desc">On badge weeks your coach assesses your performance and awards your badge in the app. When you earn it — your coach will also give you a gold star sticker for your Quest Map. Place it with pride.</div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:1px solid var(--rule);padding-top:3mm;margin-top:1mm;">
+    <div style="font-size:8pt;color:var(--ink3);font-style:italic;line-height:1.6;">
+      <strong style="color:var(--ink);font-style:normal;">The rule:</strong> Complete all three steps — Learn, Do, Reflect — to unlock the next week and earn your full XP. No shortcuts. Every step counts.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PAGE 4: MY ATHLETIC IDENTITY                      -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-label">About Me</div>
+  <div class="page-title">My Athletic<br>Identity</div>
+  <div class="page-rule orange"></div>
+
+  <div class="identity-grid">
+    <div>
+      <div class="field-label">My Name</div>
+      <div class="field-line wide"></div>
+    </div>
+    <div>
+      <div class="field-label">Age / Grade</div>
+      <div class="field-line wide"></div>
+    </div>
+    <div>
+      <div class="field-label">My Sport(s)</div>
+      <div class="field-line wide"></div>
+    </div>
+    <div>
+      <div class="field-label">My Coach</div>
+      <div class="field-line wide"></div>
+    </div>
+  </div>
+
+  <div style="margin-top:1mm;">
+    <div class="field-label">The skill I most want to improve</div>
+    <div class="field-line wide"></div>
+  </div>
+
+  <div style="margin-top:1mm;">
+    <div class="field-label">Why that skill matters to me</div>
+    <div class="write-area" style="height:110px;"></div>
+  </div>
+
+  <div style="margin-top:3mm;">
+    <div class="field-label">When I complete this journey, I want to be able to say...</div>
+    <div class="write-area" style="height:110px;"></div>
+  </div>
+
+  <div style="margin-top:3mm;">
+    <div class="field-label">My favourite athlete and what I admire about them</div>
+    <div class="write-area" style="height:110px;"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PAGE 5: QUEST PROGRESS MAP                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-label">My Journey</div>
+  <div class="page-title">Quest Progress<br>Map</div>
+  <div class="page-rule orange"></div>
+  <p style="font-size:8pt;color:var(--ink3);font-style:italic;margin-bottom:4mm;">Place your gold star sticker in the circle when your coach awards each badge. Watch your journey fill up.</p>
+
+  <div class="tracker-quest">
+    <div class="tq-icon">🧭</div>
+    <div class="tq-body">
+      <div class="tq-name" style="color:var(--cyan);">Quest I — Build the Foundations</div>
+      <div class="tq-realm" style="color:var(--cyan);">Realm of Discovery · Explorer</div>
+      <div style="font-size:7.5pt;color:var(--ink3);margin-top:1mm;font-style:italic;">Date completed: _______________</div>
+    </div>
+    <div class="tq-stickers">
+      <div class="tq-slot" style="border-color:rgba(0,180,216,0.3);"></div>
+      <div class="tq-slot" style="border-color:rgba(0,180,216,0.3);"></div>
+      <div class="tq-slot" style="border-color:rgba(0,180,216,0.3);"></div>
+    </div>
+  </div>
+
+  <div class="tracker-quest">
+    <div class="tq-icon">⚔️</div>
+    <div class="tq-body">
+      <div class="tq-name" style="color:var(--orange);">Quest II — Sharpen the Tools</div>
+      <div class="tq-realm" style="color:var(--orange);">Realm of Practice · Apprentice</div>
+      <div style="font-size:7.5pt;color:var(--ink3);margin-top:1mm;font-style:italic;">Date completed: _______________</div>
+    </div>
+    <div class="tq-stickers">
+      <div class="tq-slot" style="border-color:rgba(242,101,34,0.3);"></div>
+      <div class="tq-slot" style="border-color:rgba(242,101,34,0.3);"></div>
+      <div class="tq-slot" style="border-color:rgba(242,101,34,0.3);"></div>
+    </div>
+  </div>
+
+  <div class="tracker-quest" style="opacity:0.4;">
+    <div class="tq-icon">🔥</div>
+    <div class="tq-body">
+      <div class="tq-name">Quest III — Face the Challenge</div>
+      <div class="tq-realm">Realm of Courage · Challenger</div>
+      <div style="font-size:7.5pt;color:var(--ink3);margin-top:1mm;font-style:italic;">Date completed: _______________</div>
+    </div>
+    <div class="tq-stickers">
+      <div class="tq-slot"></div>
+      <div class="tq-slot"></div>
+      <div class="tq-slot"></div>
+    </div>
+  </div>
+
+  <div class="tracker-quest" style="opacity:0.4;">
+    <div class="tq-icon">👑</div>
+    <div class="tq-body">
+      <div class="tq-name">Quest IV — Rise Above</div>
+      <div class="tq-realm">Realm of Leadership · Hero</div>
+      <div style="font-size:7.5pt;color:var(--ink3);margin-top:1mm;font-style:italic;">Date completed: _______________</div>
+    </div>
+    <div class="tq-stickers">
+      <div class="tq-slot"></div>
+      <div class="tq-slot"></div>
+      <div class="tq-slot"></div>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid var(--rule);margin-top:3mm;padding-top:3mm;">
+    <div style="font-family:var(--font-h);font-size:8pt;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);margin-bottom:2mm;">Total XP Earned</div>
+    <div style="display:flex;gap:3mm;">
+      <div style="flex:1;border-bottom:1px solid var(--rule);height:8mm;"></div>
+      <div style="font-family:var(--font-h);font-size:9pt;color:var(--ink3);padding-top:2mm;">/ 760+ XP</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PAGE 6: QUEST I INTRO                             -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page quest-intro-page q1" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:210mm;">
+  <div class="qi-top" style="padding:0;width:100%;">
+    <div class="qi-num">Quest I</div>
+    <div class="qi-icon">🧭</div>
+    <div class="qi-realm">Realm of Discovery</div>
+    <div class="qi-title">Build the<br><span>Foundations</span></div>
+    <p class="qi-narrative">Every hero begins somewhere.<br>Year 1 is about discovering how your body moves.<br>Movement. Coordination. Confidence.<br>Your first measurable baseline.</p>
+    <div class="qi-outcome">"I Can Move."</div>
+    <div class="qi-archetype">The Explorer</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- QUEST I — WEEKS 1–8                               -->
+<!-- ══════════════════════════════════════════════════ -->
+
+<!-- Q1 W1 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q1-tag">Q1 · Week 1</span>
+      </div>
+      <div class="week-page-title">Ignite Your Engine</div>
+      <div class="week-narrative">The Explorer takes their first step into the Realm. Every hero begins somewhere — and today is where your story starts.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Athletic Development Starts With Movement</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ My skill rating today (out of 10) — this is my baseline</div>
+    <div class="field-line"></div>
+    <div class="field-label">⚡ What I worked on in today's session</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"Why did I join My Athletic Journey — and what do I want to achieve?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest I · Week 1</div>
+</div>
+
+<!-- Q1 W2 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q1-tag">Q1 · Week 2</span>
+      </div>
+      <div class="week-page-title">Speed &amp; Power</div>
+      <div class="week-narrative">The Explorer discovers what their body can do when it moves fast and with force.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Power is the Combination of Strength and Speed</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Today's challenge and how I did</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"What surprised me about how fast or powerful I can move?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="reflect-section" style="margin-top:2mm;">
+    <div class="field-label">One thing I want to improve next week</div>
+    <div class="write-area" style="height:66px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest I · Week 2</div>
+</div>
+
+<!-- Q1 W3 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q1-tag">Q1 · Week 3</span>
+      </div>
+      <div class="week-page-title">Coordination</div>
+      <div class="week-narrative">The Explorer learns to connect their mind and body — the foundation of every athletic skill.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Coordination is a Skill You Can Train</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Today's challenge and how I did</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"What coordination challenge did I struggle with — and what will help me improve it?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="reflect-section" style="margin-top:2mm;">
+    <div class="field-label">One thing I want to improve next week</div>
+    <div class="write-area" style="height:66px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest I · Week 3</div>
+</div>
+
+<!-- Q1 W4 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q1-tag">Q1 · Week 4</span>
+      </div>
+      <div class="week-page-title">Endurance</div>
+      <div class="week-narrative">The Explorer discovers how long they can keep going — and learns that effort is a choice.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Endurance is Built One Effort at a Time</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Today's challenge and how I did</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"When did I want to stop today — and what made me keep going?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="reflect-section" style="margin-top:2mm;">
+    <div class="field-label">One thing I want to improve next week</div>
+    <div class="write-area" style="height:66px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest I · Week 4</div>
+</div>
+
+<!-- Q1 W5 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q1-tag">Q1 · Week 5</span>
+      </div>
+      <div class="week-page-title">Balance &amp; Body Control</div>
+      <div class="week-narrative">The Explorer learns to control their body in space — the hidden quality that makes every other skill more consistent.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Balance is the Platform Everything Else Stands On</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Today's challenge and how I did</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"What does it feel like when your body is in balance — and when does it fall apart?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="reflect-section" style="margin-top:2mm;">
+    <div class="field-label">One thing I want to improve next week</div>
+    <div class="write-area" style="height:66px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest I · Week 5</div>
+</div>
+
+<!-- Q1 W6 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q1-tag">Q1 · Week 6</span>
+      </div>
+      <div class="week-page-title">Reaction Time</div>
+      <div class="week-narrative">The Explorer trains their brain to respond — because in sport, the fastest decision often wins.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Your Brain is the First Muscle to Train</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Today's challenge and how I did</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"What helped you react faster today — and what slowed you down?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="reflect-section" style="margin-top:2mm;">
+    <div class="field-label">One thing I want to improve next week</div>
+    <div class="write-area" style="height:66px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest I · Week 6</div>
+</div>
+
+<!-- Q1 W7 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q1-tag">Q1 · Week 7</span>
+      </div>
+      <div class="week-page-title">Teamwork &amp; Communication</div>
+      <div class="week-narrative">The Explorer discovers that the best athletes make everyone around them better.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Great Athletes Communicate — Even Without Words</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Today's challenge and how I did</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"How did working with others change your performance today — for better or worse?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="reflect-section" style="margin-top:2mm;">
+    <div class="field-label">One thing I want to bring into the Showcase next week</div>
+    <div class="write-area" style="height:66px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest I · Week 7</div>
+</div>
+
+<!-- Q1 W8 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q1-tag">Q1 · Week 8</span>
+        <span class="badge-tag gold-tag">🏅 Foundation Builder Badge</span>
+      </div>
+      <div class="week-page-title">Quest I Showcase</div>
+      <div class="week-narrative">The Explorer proves what they have built. Eight weeks of foundations demonstrated in one session.</div>
+    </div>
+  </div>
+  <div class="week-concept" style="border-left-color:var(--gold);background:rgba(245,200,66,0.05);">
+    <div class="wc-label">🏆 Coach Assessment</div>
+    <div class="wc-title">Demonstrate your foundations. Prove your baseline has improved.</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">My skill rating today (out of 10)</div>
+    <div class="field-line"></div>
+    <div class="field-label">My skill rating at Week 1 was _______ &nbsp;·&nbsp; Improvement: _______</div>
+    <div style="height:2mm;"></div>
+    <div class="field-label">What my coach said about my biggest improvement</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"What am I most proud of from Quest I — and what will I carry into Quest II?"</div>
+    <div class="write-area" style="height:154px;"></div>
+  </div>
+  <div class="xp-footer">Quest I Complete · 85 XP</div>
+  <div class="page-num">Quest I · Week 8 — Showcase</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- QUEST I BADGE PAGE                                -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page badge-page">
+  <div class="page-label">Quest I Complete</div>
+  <div class="page-title">Badge Earned</div>
+  <div class="page-rule orange"></div>
+  <div class="badge-banner orange">
+    <div class="badge-icon">🏅</div>
+    <div class="badge-name">Foundation Builder</div>
+    <div class="badge-desc">You completed Quest I. You have built the athletic base that everything else in sport stands on. You know how to move. The journey has begun.</div>
+  </div>
+  <div style="margin-bottom:3mm;">
+    <div class="field-label">Date awarded</div>
+    <div class="field-line"></div>
+    <div class="field-label">What I felt when I earned this badge</div>
+    <div class="write-area" style="height:110px;"></div>
+  </div>
+  <div>
+    <div class="field-label">A message to myself before I begin Quest II</div>
+    <div class="write-area" style="height:110px;"></div>
+  </div>
+  <div style="border:1px dashed #ccc;border-radius:50%;width:18mm;height:18mm;margin:4mm auto 0;display:flex;align-items:center;justify-content:center;">
+    <div style="font-size:7pt;color:#ccc;text-align:center;line-height:1.3;">Place<br>sticker<br>here</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PAGE: QUEST II INTRO                              -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page quest-intro-page q2" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:210mm;">
+  <div class="qi-top" style="padding:0;width:100%;">
+    <div class="qi-num">Quest II</div>
+    <div class="qi-icon">⚔️</div>
+    <div class="qi-realm">Realm of Practice</div>
+    <div class="qi-title">Sharpen<br><span>the Tools</span></div>
+    <p class="qi-narrative">You completed Quest I. You know how to move.<br>Now it is time to forge your tools.<br>Choose your weapon. Build it. Prove it.</p>
+    <div class="qi-outcome">"I Can Improve."</div>
+    <div class="qi-archetype">The Apprentice</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- QUEST II — WEEKS 1–8                              -->
+<!-- ══════════════════════════════════════════════════ -->
+
+<!-- Q2 W1 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q2-tag">Q2 · Week 1</span>
+      </div>
+      <div class="week-page-title">What Is Skill?</div>
+      <div class="week-narrative">The Apprentice enters the Realm of Practice. Choose your weapon. This decision defines your next eight weeks.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Skill is Repeating a Movement Correctly Under Pressure</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ The skill I chose to develop this Quest</div>
+    <div class="field-line"></div>
+    <div class="field-label">⚡ My skill rating today (out of 10) — this is my Quest II baseline</div>
+    <div class="field-line"></div>
+    <div class="field-label">⚡ What success looks like at Week 8 (agreed with coach)</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"What skill do I most want to improve — and why does it matter to me?"</div>
+    <div class="write-area" style="height:154px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest II · Week 1</div>
+</div>
+
+<!-- Q2 W2 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q2-tag">Q2 · Week 2</span>
+        <span class="badge-tag">🔁 Rep Champion Badge</span>
+      </div>
+      <div class="week-page-title">Repetition</div>
+      <div class="week-narrative">The forge begins. Every quality rep builds the trail between your brain and your muscles.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Why Repetition Builds Skill — The Brain-Body Connection</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Quality rating after 20 reps (out of 10)</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"What did you notice about your movement after 20 focused repetitions? Did it start to feel more automatic?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="xp-footer">60 XP · 🔁 Rep Champion</div>
+  <div class="page-num">Quest II · Week 2</div>
+</div>
+
+<!-- Q2 W3 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q2-tag">Q2 · Week 3</span>
+      </div>
+      <div class="week-page-title">Footwork</div>
+      <div class="week-narrative">Every skill starts with your feet. Time recorded today — the Apprentice will return to this number at Week 7.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Footwork is the Foundation of All Athletic Skill</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ My fastest clean time on the footwork drill today</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"How does your footwork affect everything else you do as an athlete? Think about a moment when your feet were wrong — what happened?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest II · Week 3</div>
+</div>
+
+<!-- Q2 W4 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q2-tag">Q2 · Week 4</span>
+      </div>
+      <div class="week-page-title">Throw &amp; Catch</div>
+      <div class="week-narrative">The Apprentice learns to work with others — because the best athletes make their teammates better.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">How Accuracy and Timing Work Together</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Longest catch streak &nbsp; _____ &nbsp; · &nbsp; Furthest distance &nbsp; _____</div>
+    <div style="height:3mm;"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"What did your partner do that helped you perform better — and what did you do to help them?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest II · Week 4</div>
+</div>
+
+<!-- Q2 W5 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q2-tag">Q2 · Week 5</span>
+        <span class="badge-tag">💨 Agility Ace Badge</span>
+      </div>
+      <div class="week-page-title">Agility</div>
+      <div class="week-narrative">Change direction without losing speed. One of the most valued qualities in sport — and it is trainable.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Agility — Changing Direction Without Losing Speed</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ My best agility time today (to be retested at Week 7)</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"What slowed you down on the agility course — and what is your plan to fix it by Week 7?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="xp-footer">60 XP · 💨 Agility Ace</div>
+  <div class="page-num">Quest II · Week 5</div>
+</div>
+
+<!-- Q2 W6 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q2-tag">Q2 · Week 6</span>
+      </div>
+      <div class="week-page-title">Skill Under Pressure</div>
+      <div class="week-narrative">Can the Apprentice hold technique when tired? This is what sport actually feels like. The true test begins.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Why Skills Break Down When You Are Tired or Competing</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Quality rating under fatigue (out of 10) &nbsp; · &nbsp; Week 2 rating was _____</div>
+    <div style="height:3mm;"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"Was your skill better or worse when tired — and what did you do to keep going? What held up? What fell apart?"</div>
+    <div class="write-area" style="height:198px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest II · Week 6</div>
+</div>
+
+<!-- Q2 W7 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q2-tag">Q2 · Week 7</span>
+      </div>
+      <div class="week-page-title">Game Situation</div>
+      <div class="week-narrative">The Apprentice enters the arena. Skill built in practice must now perform in the real world.</div>
+    </div>
+  </div>
+  <div class="week-concept">
+    <div class="wc-label">📖 Today's Concept</div>
+    <div class="wc-title">Applying Your Skill in a Team Game Context</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">⚡ Footwork retest time today &nbsp; _____ &nbsp; · &nbsp; Week 3 time was &nbsp; _____</div>
+    <div style="height:3mm;"></div>
+    <div class="field-label">⚡ Agility retest time today &nbsp; _____ &nbsp; · &nbsp; Week 5 time was &nbsp; _____</div>
+    <div style="height:3mm;"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"When in the game did you use your skill well — and what made that moment possible?"</div>
+    <div class="write-area" style="height:154px;"></div>
+  </div>
+  <div class="xp-footer">35 XP</div>
+  <div class="page-num">Quest II · Week 7</div>
+</div>
+
+<!-- Q2 W8 -->
+<div class="page week-page">
+  <div class="week-page-header">
+    <div>
+      <div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm;">
+        <span class="week-num-tag q2-tag">Q2 · Week 8</span>
+        <span class="badge-tag gold-tag">🏆 Module 2 Master Badge</span>
+      </div>
+      <div class="week-page-title">Skill Showcase</div>
+      <div class="week-narrative">The Final Trial. The Apprentice proves their weapon is forged. Eight weeks. One skill. Proven.</div>
+    </div>
+  </div>
+  <div class="week-concept" style="border-left-color:var(--gold);background:rgba(245,200,66,0.05);">
+    <div class="wc-label">🏆 Coach-Assessed Capstone</div>
+    <div class="wc-title">Demonstrate your skill improvement against your Week 1 baseline.</div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label">My skill rating today (out of 10)</div>
+    <div class="field-line"></div>
+    <div class="field-label">My skill rating at Q2 Week 1 was _______ &nbsp;·&nbsp; Improvement: _______</div>
+    <div style="height:2mm;"></div>
+    <div class="field-label">What my coach said about my biggest improvement</div>
+    <div class="field-line"></div>
+    <div class="field-label">One skill goal I am carrying into Quest III</div>
+    <div class="field-line"></div>
+  </div>
+  <div class="reflect-section">
+    <div class="field-label" style="color:var(--cyan);">✏️ My Reflection</div>
+    <div class="reflect-prompt">"How has this skill changed over 8 weeks — and what made the difference?"</div>
+    <div class="write-area" style="height:110px;"></div>
+  </div>
+  <div class="xp-footer">Quest II Complete · 85 XP</div>
+  <div class="page-num">Quest II · Week 8 — Showcase</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- QUEST II BADGE PAGE                               -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page badge-page">
+  <div class="page-label">Quest II Complete</div>
+  <div class="page-title">Badges Earned</div>
+  <div class="page-rule orange"></div>
+  <div class="badge-banner orange" style="margin-bottom:3mm;">
+    <div style="display:flex;gap:8mm;justify-content:center;align-items:center;">
+      <div style="text-align:center;">
+        <div style="font-size:20pt;line-height:1;margin-bottom:1mm;">🔁</div>
+        <div style="font-family:var(--font-h);font-size:10pt;font-weight:700;text-transform:uppercase;color:var(--orange);">Rep Champion</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:20pt;line-height:1;margin-bottom:1mm;">💨</div>
+        <div style="font-family:var(--font-h);font-size:10pt;font-weight:700;text-transform:uppercase;color:var(--orange);">Agility Ace</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:20pt;line-height:1;margin-bottom:1mm;">🏆</div>
+        <div style="font-family:var(--font-h);font-size:10pt;font-weight:700;text-transform:uppercase;color:var(--orange);">Module 2 Master</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:3mm;">
+    <div class="field-label">Date Quest II completed</div>
+    <div class="field-line"></div>
+    <div class="field-label">What I felt when I earned the Module 2 Master badge</div>
+    <div class="write-area" style="height:110px;"></div>
+  </div>
+  <div style="margin-bottom:3mm;">
+    <div class="field-label">The biggest lesson I learned in Quest II</div>
+    <div class="write-area" style="height:110px;"></div>
+  </div>
+  <div style="display:flex;justify-content:space-around;margin-top:2mm;">
+    <div style="text-align:center;">
+      <div style="border:1px dashed #ccc;border-radius:50%;width:14mm;height:14mm;margin:0 auto 1mm;display:flex;align-items:center;justify-content:center;font-size:6pt;color:#ccc;text-align:center;line-height:1.3;">sticker</div>
+      <div style="font-size:7pt;color:#ccc;">Rep Champion</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="border:1px dashed #ccc;border-radius:50%;width:14mm;height:14mm;margin:0 auto 1mm;display:flex;align-items:center;justify-content:center;font-size:6pt;color:#ccc;text-align:center;line-height:1.3;">sticker</div>
+      <div style="font-size:7pt;color:#ccc;">Agility Ace</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="border:1px dashed #ccc;border-radius:50%;width:14mm;height:14mm;margin:0 auto 1mm;display:flex;align-items:center;justify-content:center;font-size:6pt;color:#ccc;text-align:center;line-height:1.3;">sticker</div>
+      <div style="font-size:7pt;color:#ccc;">Module 2 Master</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- BACK COVER                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page back-cover" style="min-height:210mm;">
+  <div class="bc-icon">👑</div>
+  <div class="bc-title">The Journey Continues</div>
+  <div class="bc-creed-line">Every athlete has potential.</div>
+  <div class="bc-creed-line">Every journey is unique.</div>
+  <div class="bc-creed-line">Every story matters.</div>
+  <div class="bc-creed-line" style="margin-top:4mm;">I am the hero of my journey.</div>
+  <div class="bc-creed-line">And my story matters.</div>
+  <div class="bc-url">power2adapt.online &nbsp;·&nbsp; My Athletic Journey</div>
+</div>
+
+</body>
+</html>

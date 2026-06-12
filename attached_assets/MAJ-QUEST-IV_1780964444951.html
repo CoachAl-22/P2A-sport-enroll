@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quest IV: Rise Above — My Athletic Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:            #0a0a0a;
+    --surface:       #111111;
+    --card:          #161616;
+    --card-hover:    #1e1e1e;
+    --accent:        #8B5CF6;
+    --accent-light:  #a78bfa;
+    --accent-bg:     rgba(139, 92, 246, 0.1);
+    --accent-border: rgba(139, 92, 246, 0.3);
+    --orange:        #F26522;
+    --text:          #e8e8e8;
+    --text-muted:    #888;
+    --gold:          #f5c842;
+    --gold-bg:       rgba(245, 200, 66, 0.12);
+    --green:         #06D6A0;
+    --border:        #242424;
+    --border2:       #2e2e2e;
+    --radius-sm:     10px;
+    --radius-md:     16px;
+    --radius-lg:     20px;
+    --shadow:        0 6px 20px rgba(0,0,0,0.5);
+    --font-h:        'Barlow Condensed', sans-serif;
+    --font-b:        'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-b);
+    line-height: 1.55;
+    padding-bottom: 60px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── NAV ───────────────────────────────────────── */
+  .app-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-brand {
+    font-family: var(--font-h);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .nav-badge {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    color: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* ── HERO ──────────────────────────────────────── */
+  .hero-banner {
+    background: linear-gradient(135deg, #1a0a35 0%, #0a0a0a 100%);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-lg);
+    padding: 36px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 0 40px rgba(139,92,246,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-banner::after {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background: var(--accent);
+    filter: blur(90px);
+    top: -60px;
+    right: -60px;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-h);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .quest-tag {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 8px;
+  }
+  .hero-banner h1 {
+    font-family: var(--font-h);
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .hero-banner h1 .accent { color: var(--accent); }
+  .hero-sub {
+    font-family: var(--font-h);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero-intro {
+    font-size: 13px;
+    color: #bba8e0;
+    line-height: 1.65;
+    font-style: italic;
+    background: rgba(0,0,0,0.25);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    position: relative;
+  }
+
+  /* ── PANEL CARD ─────────────────────────────────── */
+  .panel-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .panel-card h2 {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .panel-card h2 .accent { color: var(--accent); }
+
+  /* ── MADE IT HERE ───────────────────────────────── */
+  .made-it-panel {
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
+  }
+  .made-it-panel h2 { color: var(--accent); }
+  .made-it-panel p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  .quest-steps { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+  .quest-step-item {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .quest-step-item.active {
+    border-color: var(--accent-border);
+    background: rgba(139,92,246,0.08);
+    color: var(--text);
+    font-weight: 600;
+  }
+  .step-check { font-size: 16px; flex-shrink: 0; }
+
+  /* ── IDENTITY ───────────────────────────────────── */
+  .identity-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .identity-card {
+    background: var(--card);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .identity-icon {
+    font-size: 28px;
+    line-height: 1;
+    background: rgba(255,255,255,0.04);
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+  .identity-name {
+    font-family: var(--font-h);
+    font-size: 17px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--accent-light);
+    margin-bottom: 3px;
+  }
+  .identity-statement {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .identity-when {
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.7;
+    line-height: 1.35;
+  }
+  .identity-choice {
+    font-size: 13px;
+    color: var(--text-muted);
+    border: 1px dashed var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    text-align: center;
+  }
+
+  /* ── ARC MAP ─────────────────────────────────────── */
+  .scroll-wrapper {
+    overflow-x: auto;
+    padding: 4px 0 12px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scroll-wrapper::-webkit-scrollbar { display: none; }
+  .arc-map {
+    display: flex;
+    gap: 8px;
+    width: max-content;
+    padding: 0 2px;
+  }
+  .map-node {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 8px;
+    width: 90px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .map-node.badge-week { border-color: var(--accent-border); }
+  .map-node.capstone { border-color: var(--gold); }
+  .node-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-h);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .badge-week .node-dot {
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
+    color: var(--accent-light);
+  }
+  .capstone .node-dot {
+    background: var(--gold-bg);
+    border-color: var(--gold);
+    color: var(--gold);
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  .node-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.2;
+    height: 28px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .badge-week .node-label { color: var(--accent-light); }
+  .capstone .node-label { color: var(--gold); }
+
+  /* ── WEEK CARDS ─────────────────────────────────── */
+  .weeks-title {
+    font-family: var(--font-h);
+    font-size: 26px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    padding-left: 2px;
+  }
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .week-card.badge-week { border-color: var(--accent-border); }
+  .week-card.capstone { border-color: var(--gold); box-shadow: 0 0 20px rgba(245,200,66,0.1); }
+
+  .week-header {
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .week-number {
+    font-family: var(--font-h);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-bg);
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+  .capstone .week-number { color: var(--gold); background: var(--gold-bg); }
+  .week-theme {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+  }
+  .week-narrative {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.45;
+    margin-top: 3px;
+  }
+  .week-xp {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-bg);
+    border: 1px solid rgba(245,200,66,0.2);
+    padding: 5px 12px;
+    border-radius: 100px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .badge-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: rgba(139,92,246,0.06);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-h);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+  }
+  .badge-pill.gold-pill { color: var(--gold); background: rgba(245,200,66,0.06); }
+
+  .week-body {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .col-block {
+    background: var(--card);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .col-header {
+    font-family: var(--font-h);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .col-header.concept { color: #60c8f0; }
+  .col-header.do      { color: var(--green); }
+  .col-header.reflect { color: var(--gold); }
+  .col-title {
+    font-family: var(--font-h);
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 5px;
+    color: var(--text);
+  }
+  .col-text { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
+  .col-text ul { padding-left: 14px; margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+  .col-text li { color: var(--text); }
+
+  /* ── XP TABLE ────────────────────────────────────── */
+  .xp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .xp-table th {
+    font-family: var(--font-h);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .xp-table td {
+    padding: 9px 8px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .xp-table .badge-row { background: var(--accent-bg); }
+  .xp-table tr:last-child td {
+    border-bottom: none;
+    font-family: var(--font-h);
+    font-size: 16px;
+    color: var(--text);
+    padding-top: 12px;
+  }
+  .xp-val {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: right;
+  }
+  .xp-cum {
+    font-family: var(--font-h);
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+  .xp-table tr:last-child .xp-val { color: var(--green); font-size: 18px; }
+
+  /* ── LEVEL COMPLETE ──────────────────────────────── */
+  .victory-screen {
+    background: linear-gradient(180deg, #1a0a35 0%, #0a0a0a 100%);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius-lg);
+    padding: 40px 24px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(245,200,66,0.1);
+  }
+  .crown-display {
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 12px;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+  }
+  .victory-screen h2 {
+    font-family: var(--font-h);
+    font-size: 40px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .complete-rule {
+    border: none;
+    border-top: 1px solid rgba(245,200,66,0.25);
+    width: 50%;
+    margin: 0 auto 16px;
+  }
+  .victory-screen p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  .legacy-statement {
+    font-family: var(--font-h);
+    font-size: 28px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-light);
+    margin: 16px 0 !important;
+  }
+
+  /* ── TABLET TWO-COL ─────────────────────────────── */
+  @media (min-width: 480px) {
+    .week-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .week-body .col-block:nth-child(3) { grid-column: span 2; }
+  }
+
+  /* ── PRINT ──────────────────────────────────────── */
+  @media print {
+    @page { size: A4; margin: 14mm 16mm; }
+    body { background: var(--bg); color: var(--text); }
+    .app-nav { display: none; }
+    .hero-banner, .panel-card, .week-card, .victory-screen {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .panel-card, .week-card { page-break-inside: avoid; }
+    .weeks-title { page-break-before: always; }
+    .victory-screen { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="app-nav">
+  <div class="nav-inner">
+    <div class="nav-brand">My Athletic Journey</div>
+    <div class="nav-badge">Quest IV</div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero-banner">
+    <div class="hero-eyebrow">My Athletic Journey · Power2ADAPT</div>
+    <div class="quest-tag">👑 Quest IV: Rise Above</div>
+    <h1>RISE <span class="accent">ABOVE</span></h1>
+    <div class="hero-sub">Realm of Leadership · The Hero</div>
+    <p class="hero-intro"><em>The weapon was physical. The tools were mental. The arena was internal. Now the challenge is the people beside you. The Hero who rises above does not climb alone -- they lift everyone with them.</em></p>
+  </section>
+
+  <!-- YOU MADE IT HERE -->
+  <div class="panel-card made-it-panel" id="made-it-here">
+    <h2>You Made It Here</h2>
+    <p>Four Quests. Four years. You explored your foundations, sharpened your tools, trained your mind, and now you are here.</p>
+    <ul class="quest-steps">
+      <li class="quest-step-item"><span class="step-check">✔</span> Quest I: You learned how to move.</li>
+      <li class="quest-step-item"><span class="step-check">✔</span> Quest II: You learned how to practise.</li>
+      <li class="quest-step-item"><span class="step-check">✔</span> Quest III: You learned how to think.</li>
+      <li class="quest-step-item active"><span class="step-check">⭐</span> Quest IV: You will learn how to lead.</li>
+    </ul>
+    <p>The final chapter is not about you anymore -- it is about what you give to the people around you.</p>
+  </div>
+
+  <!-- IDENTITY -->
+  <div class="panel-card" id="identity">
+    <h2>Choose Your <span class="accent">Leadership Identity</span></h2>
+    <div class="identity-grid">
+      <div class="identity-card">
+        <div class="identity-icon">🗣️</div>
+        <div>
+          <div class="identity-name">Vocal Leader</div>
+          <div class="identity-statement">"I lift the room with my energy and words"</div>
+          <div class="identity-when">In competition, during team relays, calling encouragement</div>
+        </div>
+      </div>
+      <div class="identity-card">
+        <div class="identity-icon">🤫</div>
+        <div>
+          <div class="identity-name">Lead by Example</div>
+          <div class="identity-statement">"I set the standard through what I do, not what I say"</div>
+          <div class="identity-when">In training discipline, effort consistency, reset response</div>
+        </div>
+      </div>
+      <div class="identity-card">
+        <div class="identity-icon">🤝</div>
+        <div>
+          <div class="identity-name">Encourager</div>
+          <div class="identity-statement">"I make everyone around me feel capable"</div>
+          <div class="identity-when">After mistakes, before challenges, in quiet one-on-one moments</div>
+        </div>
+      </div>
+    </div>
+    <div class="identity-choice">My Leadership Identity for Quest IV: _______________</div>
+  </div>
+
+  <!-- ARC MAP -->
+  <div class="panel-card" id="timeline">
+    <h2>The 8-Week Arc</h2>
+    <div class="scroll-wrapper">
+      <div class="arc-map">
+        <div class="map-node">
+          <div class="node-dot">W1</div>
+          <div class="node-label">What is Leadership?</div>
+        </div>
+        <div class="map-node badge-week">
+          <div class="node-dot">W2</div>
+          <div class="node-label">Being a Great Teammate 💬</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W3</div>
+          <div class="node-label">Communication</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W4</div>
+          <div class="node-label">Handling Mistakes</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W5</div>
+          <div class="node-label">Feedback</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W6</div>
+          <div class="node-label">Leading in Competition</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W7</div>
+          <div class="node-label">My Leadership Style</div>
+        </div>
+        <div class="map-node capstone">
+          <div class="node-dot">W8</div>
+          <div class="node-label">The Athlete I Am Becoming 👑</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK CARDS -->
+  <div id="weeks-section">
+    <div class="weeks-title">Week by Week</div>
+
+    <!-- W1 -->
+    <div class="week-card" id="week-1">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q4 · Week 1</div>
+          <div class="week-theme">What is Leadership?</div>
+          <div class="week-narrative">The Hero's final journey begins with the hardest question: who are you as a leader right now?</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Self-Leadership</div>
+          <div class="col-text">
+            Self-leadership = taking responsibility for your own effort, attitude, and growth without being told. You do not need a title to be a leader -- you lead through your actions.
+            <ul>
+              <li>Leadership is not about being loud or the best</li>
+              <li>It is about being consistent and trustworthy</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">My Self-Leadership Commitment</div>
+          <div class="col-text">
+            Three areas: effort, attitude, reliability. Choose one to develop most over 8 weeks.
+            <ul>
+              <li>Write "This module I will lead myself better by..."</li>
+              <li>Share commitment with coach</li>
+              <li>Make one deliberate leadership action during session</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Your Starting Point</div>
+          <div class="col-text">"What kind of leader am I right now -- and what kind of leader do I want to become?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W2 -->
+    <div class="week-card badge-week" id="week-2">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q4 · Week 2</div>
+          <div class="week-theme">Being a Great Teammate</div>
+          <div class="week-narrative">The Hero discovers that great leadership begins with noticing others.</div>
+        </div>
+        <div class="week-xp">65 XP</div>
+      </div>
+      <div class="badge-pill">💬 Encourager · 30 XP · Coach Required</div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Teammates First</div>
+          <div class="col-text">
+            Great teammates encourage others -- especially when things go wrong. Being a great teammate = supportive AND demanding high standards.
+            <ul>
+              <li>How you respond to your own mistakes sets the tone for the whole team</li>
+              <li>Noticing and celebrating others' good work is a leadership act</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Encourage 3 Teammates</div>
+          <div class="col-text">
+            Identify 3 teammates to encourage. Find a specific moment each does something well and name it specifically -- not "good job", but "Great arm drive on that sprint".
+            <ul>
+              <li>Deliver encouragement in the moment</li>
+              <li>Earn the Encourager badge</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">The Effect</div>
+          <div class="col-text">"How did encouraging others change how you felt and performed in the session?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W3 -->
+    <div class="week-card" id="week-3">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q4 · Week 3</div>
+          <div class="week-theme">Communication</div>
+          <div class="week-narrative">The Hero learns that leadership is broadcast through every signal -- not just words.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Signals Beyond Words</div>
+          <div class="col-text">
+            Communication in sport is more than words. Body language, eye contact, energy, and positioning all send messages.
+            <ul>
+              <li>Positive body language lifts everyone around you</li>
+              <li>Listening is as important as speaking</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Relay Communication Challenge</div>
+          <div class="col-text">
+            Every handover must include a clear verbal and physical signal -- no silent handovers.
+            <ul>
+              <li>Agree as team on handover signal (word + gesture)</li>
+              <li>Practise 5 times standing still</li>
+              <li>Silent handover = team runs a lap</li>
+              <li>Standard: clear communication every time</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Impact Check</div>
+          <div class="col-text">"What did you do to communicate better with your team today -- and what impact did it have?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W4 -->
+    <div class="week-card" id="week-4">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q4 · Week 4</div>
+          <div class="week-theme">Handling Mistakes</div>
+          <div class="week-narrative">The Hero's response to a mistake in the next 10 seconds defines their leadership.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">The Reset</div>
+          <div class="col-text">
+            Your response to a mistake is more important than the mistake itself. A reset cue signals to your brain: that is done, I am moving on.
+            <ul>
+              <li>Accountability without self-punishment</li>
+              <li>Acknowledge, identify what to do differently, move on</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Reset Cue Practice</div>
+          <div class="col-text">
+            Build and practise your own reset cue: a physical action (clap, short breath out, tap thigh) + a word (Next, Reset, Done).
+            <ul>
+              <li>Practise 10 times before session</li>
+              <li>Use it every time you make a mistake during session</li>
+              <li>Tell coach your cue and demonstrate it at end</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Mistake Response</div>
+          <div class="col-text">"How did you handle a mistake or frustration today -- and what would you do the same or differently next time?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W5 -->
+    <div class="week-card" id="week-5">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q4 · Week 5</div>
+          <div class="week-theme">Giving and Receiving Feedback</div>
+          <div class="week-narrative">The Hero learns that the best teams tell each other the truth -- with care.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Feedback That Helps</div>
+          <div class="col-text">
+            Effective feedback: specific, timely, focused on the action not the person.
+            <ul>
+              <li>Feedback sandwich: positive + specific improvement + encouraging close</li>
+              <li>Asking for feedback is strength, not weakness</li>
+              <li>Teams that give and receive feedback well improve faster</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Feedback Partner Challenge</div>
+          <div class="col-text">
+            Pair with a teammate. Observe during one activity.
+            <ul>
+              <li>Deliver: "I noticed that you..., and it works because..."</li>
+              <li>Receive partner's feedback with openness</li>
+              <li>Ask a follow-up question</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Both Sides</div>
+          <div class="col-text">"What was hard about giving feedback -- and what was hard about receiving it?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W6 -->
+    <div class="week-card" id="week-6">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q4 · Week 6</div>
+          <div class="week-theme">Leading in Competition</div>
+          <div class="week-narrative">The Hero stays steady when everyone else is looking for a signal.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Steady Under Pressure</div>
+          <div class="col-text">
+            Steady leadership = same effort, same communication, same reset response regardless of score.
+            <ul>
+              <li>Panic is contagious. So is calm.</li>
+              <li>The leader who stays composed gives everyone else permission to do the same</li>
+              <li>Your response in the next 10 seconds defines your leadership</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Lift the Team Regardless of Score</div>
+          <div class="col-text">
+            Before: agree on one leadership behaviour to bring.
+            <ul>
+              <li>During: focus on leadership mission more than the score</li>
+              <li>When behind: find a way to lift energy</li>
+              <li>After (win or lose): lead team reflection -- "What did we do well? What do we build on?"</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Hard Moments</div>
+          <div class="col-text">"What did you do to help your team when things were hard -- and how did they respond?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W7 -->
+    <div class="week-card" id="week-7">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q4 · Week 7</div>
+          <div class="week-theme">My Leadership Style</div>
+          <div class="week-narrative">The Hero discovers there is no one way to lead -- only the way that is authentically theirs.</div>
+        </div>
+        <div class="week-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Your Authentic Style</div>
+          <div class="col-text">
+            Leadership styles: vocal/energetic · quiet/consistent · leading by example · leading through encouragement · leading through challenge.
+            <ul>
+              <li>Your most effective style = the one authentic to who you are</li>
+              <li>Common myth: leaders must be loud. Some of the best sport leaders are quiet and consistent</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Session Leadership Rotation</div>
+          <div class="col-text">
+            Different session leader for each rotation. When your turn: lead warm-up or activity setup, give clear instructions, encourage teammates.
+            <ul>
+              <li>After rotation: ask 2 teammates "How did I go? What could I do better?"</li>
+              <li>Observe others in their leadership turns</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Natural Style</div>
+          <div class="col-text">"What style of leadership felt most natural for me today -- and what does that tell me about the leader I am becoming?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W8 CAPSTONE -->
+    <div class="week-card capstone" id="week-8">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q4 · Week 8 · Capstone</div>
+          <div class="week-theme">The Athlete I Am Becoming</div>
+          <div class="week-narrative">The Hero's journey is complete. What began four Quests ago ends here -- and a new level begins.</div>
+        </div>
+        <div class="week-xp">135 XP</div>
+      </div>
+      <div class="badge-pill gold-pill">👑 Legacy Athlete · 100 XP · Coach Required · Level 1 Complete</div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">The Complete Athlete</div>
+          <div class="col-text">
+            32 weeks of training, reflection, and growth across Athletic Ability, Skill, Focus, and Leadership. The four pillars work together as one complete athlete.
+            <ul>
+              <li>The habits built are the foundation for Level 2, Level 3, and everything beyond</li>
+              <li>Excellence Through Consistency is not a tagline. It is what you have lived</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Level 1 Athletic Journey Reflection</div>
+          <div class="col-text">
+            Complete full Level 1 reflection (longer than normal -- give it full effort). Sit with coach for 5 minutes.
+            <ul>
+              <li>Share one thing most proud of from Level 1</li>
+              <li>Share one thing still want to develop in Level 2</li>
+              <li>Coach presents Legacy Athlete badge</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Your Level 1 Legacy</div>
+          <div class="col-text">"What has changed about me as an athlete and a person across this level -- and what am I most proud of?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XP TABLE -->
+  <div class="panel-card" id="xp-table">
+    <h2>XP Summary</h2>
+    <table class="xp-table">
+      <thead>
+        <tr>
+          <th>Wk</th>
+          <th>Theme</th>
+          <th style="text-align:right">Base</th>
+          <th style="text-align:right">Badge</th>
+          <th style="text-align:right">Total</th>
+          <th style="text-align:right">Running</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>What is Leadership?</td><td class="xp-val">35</td><td class="xp-cum">--</td><td class="xp-val">35</td><td class="xp-cum">35</td></tr>
+        <tr class="badge-row"><td>2</td><td>Being a Great Teammate</td><td class="xp-val">35</td><td class="xp-val">💬 30</td><td class="xp-val">65</td><td class="xp-cum">100</td></tr>
+        <tr><td>3</td><td>Communication</td><td class="xp-val">35</td><td class="xp-cum">--</td><td class="xp-val">35</td><td class="xp-cum">135</td></tr>
+        <tr><td>4</td><td>Handling Mistakes</td><td class="xp-val">35</td><td class="xp-cum">--</td><td class="xp-val">35</td><td class="xp-cum">170</td></tr>
+        <tr><td>5</td><td>Giving and Receiving Feedback</td><td class="xp-val">35</td><td class="xp-cum">--</td><td class="xp-val">35</td><td class="xp-cum">205</td></tr>
+        <tr><td>6</td><td>Leading in Competition</td><td class="xp-val">35</td><td class="xp-cum">--</td><td class="xp-val">35</td><td class="xp-cum">240</td></tr>
+        <tr><td>7</td><td>My Leadership Style</td><td class="xp-val">35</td><td class="xp-cum">--</td><td class="xp-val">35</td><td class="xp-cum">275</td></tr>
+        <tr class="badge-row"><td>8</td><td>The Athlete I Am Becoming</td><td class="xp-val">35</td><td class="xp-val">👑 100</td><td class="xp-val">135</td><td class="xp-cum">410</td></tr>
+        <tr>
+          <td colspan="4"><strong>Quest IV Total</strong></td>
+          <td class="xp-val"><strong>410 XP</strong></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- LEVEL COMPLETE -->
+  <div class="victory-screen" id="level-complete">
+    <div class="crown-display">👑</div>
+    <h2>Level 1 Complete</h2>
+    <hr class="complete-rule">
+    <p>Level 1 is complete.</p>
+    <p>You trained your body. You built your skills. You mastered your mind. You learned to lead.</p>
+    <p class="legacy-statement">You are a Legacy Athlete.</p>
+    <p>What you do next is up to you.</p>
+  </div>
+
+</div>
+</body>
+</html>

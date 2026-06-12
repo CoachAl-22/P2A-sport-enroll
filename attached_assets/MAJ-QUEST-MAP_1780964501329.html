@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Athletic Journey — Quest Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #0a0a0a;
+    --card:   #141414;
+    --card2:  #1a1a1a;
+    --border: #2a2a2a;
+    --orange: #F26522;
+    --cyan:   #00B4D8;
+    --gold:   #F5C842;
+    --red:    #e05522;
+    --text:   #ffffff;
+    --text2:  #aaaaaa;
+    --text3:  #555555;
+    --font-h: 'Barlow Condensed', sans-serif;
+    --font-b: 'DM Sans', sans-serif;
+  }
+
+  /* Fixed single-page canvas — A3 landscape ratio (420:297 = 1.414:1) */
+  html, body {
+    width: 1414px;
+    height: 1000px;
+    overflow: hidden;
+    background: var(--navy);
+    color: var(--text);
+    font-family: var(--font-b);
+  }
+
+  .page {
+    width: 1414px;
+    height: 1000px;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 36px 22px;
+    gap: 0;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────── */
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+  }
+  .header-left {}
+  .brand-tag {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 4px;
+  }
+  .title {
+    font-family: var(--font-h);
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .title span { color: var(--orange); }
+  .subtitle {
+    font-family: var(--font-h);
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text2);
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .tagline {
+    font-size: 12px;
+    color: var(--text3);
+    font-style: italic;
+    text-align: right;
+  }
+  .qr-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .qr-label {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text3);
+    text-align: right;
+    line-height: 1.4;
+  }
+  .qr-wrap {
+    background: #fff;
+    padding: 4px;
+    border-radius: 5px;
+    line-height: 0;
+  }
+
+  /* ── DIVIDER ─────────────────────────────────────────── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), var(--orange), var(--border), transparent);
+    margin-bottom: 14px;
+    flex-shrink: 0;
+  }
+
+  /* ── QUEST COLUMNS ───────────────────────────────────── */
+  .quests {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    flex-shrink: 0;
+    margin-bottom: 14px;
+  }
+
+  .quest {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .quest.q1 { border-color: rgba(0,180,216,0.35); }
+  .quest.q2 { border-color: rgba(242,101,34,0.35); }
+  .quest.q3 { border-color: rgba(224,85,34,0.35); }
+  .quest.q4 { border-color: rgba(245,200,66,0.4); }
+
+  .quest-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2px;
+  }
+  .quest-icon { font-size: 26px; line-height: 1; flex-shrink: 0; }
+  .quest-meta {}
+  .quest-num {
+    font-family: var(--font-h);
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    line-height: 1;
+    margin-bottom: 1px;
+  }
+  .quest-realm {
+    font-family: var(--font-h);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .q1 .quest-realm { color: var(--cyan); }
+  .q2 .quest-realm { color: var(--orange); }
+  .q3 .quest-realm { color: var(--red); }
+  .q4 .quest-realm { color: var(--gold); }
+
+  .quest-title {
+    font-family: var(--font-h);
+    font-size: 24px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+  .q1 .quest-title { color: var(--cyan); }
+  .q2 .quest-title { color: var(--orange); }
+  .q3 .quest-title { color: var(--red); }
+  .q4 .quest-title { color: var(--gold); }
+
+  .quest-year {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+
+  .quest-desc {
+    font-size: 11.5px;
+    color: var(--text2);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .quest-outcome {
+    font-family: var(--font-h);
+    font-size: 15px;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+  .q1 .quest-outcome { color: var(--cyan); }
+  .q2 .quest-outcome { color: var(--orange); }
+  .q3 .quest-outcome { color: var(--red); }
+  .q4 .quest-outcome { color: var(--gold); }
+
+  /* sticker slots — 38px matches 19mm gold star stickers at A3 scale */
+  .sticker-section {
+    margin-top: 6px;
+  }
+  .sticker-label {
+    font-size: 9px;
+    color: var(--text3);
+    font-style: italic;
+    margin-bottom: 5px;
+    letter-spacing: 0.3px;
+  }
+  .sticker-row {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .sticker-slot {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1.5px dashed #333;
+    background: rgba(255,255,255,0.015);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+  }
+  .sticker-slot.filled {
+    border-style: solid;
+    background: var(--card2);
+  }
+  .q1 .sticker-slot.filled { border-color: var(--cyan); }
+  .q2 .sticker-slot.filled { border-color: var(--orange); }
+  .q3 .sticker-slot.filled { border-color: var(--red); }
+  .q4 .sticker-slot.filled { border-color: var(--gold); }
+
+  /* ── LEGEND ──────────────────────────────────────────── */
+  .legend {
+    flex-shrink: 0;
+    margin-bottom: 12px;
+  }
+  .legend-label {
+    font-family: var(--font-h);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 7px;
+  }
+  .legend-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 9px;
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+  }
+  .legend-icon { font-size: 16px; flex-shrink: 0; line-height: 1.2; }
+  .legend-name {
+    font-family: var(--font-h);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+  .legend-desc { font-size: 9.5px; color: var(--text2); line-height: 1.35; }
+
+  /* ── FOOTER ──────────────────────────────────────────── */
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .footer-brand {
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+  .footer-creed {
+    font-size: 10.5px;
+    color: var(--text3);
+    font-style: italic;
+    text-align: center;
+  }
+  .footer-note {
+    font-size: 9.5px;
+    color: var(--text3);
+    text-align: right;
+    line-height: 1.5;
+  }
+  .sticker-compat {
+    font-size: 9.5px;
+    color: var(--text3);
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* ── PRINT ───────────────────────────────────────────── */
+  @media print {
+    @page { size: A3 landscape; margin: 0; }
+    html, body { background: #0a0a0a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="brand-tag">My Athletic Journey &middot; Power2ADAPT</div>
+      <div class="title">THE <span>QUEST</span> MAP</div>
+      <div class="subtitle">Your 4-Year Athletic Development Pathway</div>
+    </div>
+    <div class="header-right">
+      <div class="tagline">Every Athlete. Every Journey. Every Story Matters.</div>
+      <div class="qr-block">
+        <div class="qr-label">Scan to<br>log in</div>
+        <div class="qr-wrap">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=https://www.power2adapt.online/my-athletic-journey&margin=3" width="72" height="72" alt="Scan to log in">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- QUEST COLUMNS -->
+  <div class="quests">
+
+    <!-- Q1 -->
+    <div class="quest q1">
+      <div class="quest-header">
+        <span class="quest-icon">🧭</span>
+        <div class="quest-meta">
+          <div class="quest-num">Quest I</div>
+          <div class="quest-realm">Realm of Discovery</div>
+        </div>
+      </div>
+      <div class="quest-title">Build the<br>Foundations</div>
+      <div class="quest-year">Year 1 &nbsp;·&nbsp; Explorer</div>
+      <div class="quest-desc">Every hero begins somewhere. Year 1 is about discovering how your body moves — learning the athletic foundations that everything in sport is built on. Movement, coordination, and your first measurable baseline.</div>
+      <div class="quest-outcome">"I Can Move."</div>
+      <div class="sticker-section">
+        <div class="sticker-label">Place your gold star stickers here as you earn each badge</div>
+        <div class="sticker-row">
+          <div class="sticker-slot filled">🏅</div>
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quest q2">
+      <div class="quest-header">
+        <span class="quest-icon">⚔️</span>
+        <div class="quest-meta">
+          <div class="quest-num">Quest II</div>
+          <div class="quest-realm">Realm of Practice</div>
+        </div>
+      </div>
+      <div class="quest-title">Sharpen<br>the Tools</div>
+      <div class="quest-year">Year 2 &nbsp;·&nbsp; Apprentice</div>
+      <div class="quest-desc">Every hero must master their tools. Choose one skill, build it through focused repetition, and prove your improvement at the Week 8 coach-assessed showcase. Skill is not talent — it is built.</div>
+      <div class="quest-outcome">"I Can Improve."</div>
+      <div class="sticker-section">
+        <div class="sticker-label">Place your gold star stickers here as you earn each badge</div>
+        <div class="sticker-row">
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quest q3">
+      <div class="quest-header">
+        <span class="quest-icon">🔥</span>
+        <div class="quest-meta">
+          <div class="quest-num">Quest III</div>
+          <div class="quest-realm">Realm of Courage</div>
+        </div>
+      </div>
+      <div class="quest-title">Face the<br>Challenge</div>
+      <div class="quest-year">Years 3–4 &nbsp;·&nbsp; Challenger</div>
+      <div class="quest-desc">Growth begins where comfort ends. Learn to perform under pressure, make decisions in real time, and recover from setbacks without losing belief. This is where character is built.</div>
+      <div class="quest-outcome">"I Can Overcome."</div>
+      <div class="sticker-section">
+        <div class="sticker-label">Place your gold star stickers here as you earn each badge</div>
+        <div class="sticker-row">
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quest q4">
+      <div class="quest-header">
+        <span class="quest-icon">👑</span>
+        <div class="quest-meta">
+          <div class="quest-num">Quest IV</div>
+          <div class="quest-realm">Realm of Leadership</div>
+        </div>
+      </div>
+      <div class="quest-title">Rise<br>Above</div>
+      <div class="quest-year">Years 4–5 &nbsp;·&nbsp; Hero</div>
+      <div class="quest-desc">The greatest heroes help others rise. Lead through actions, mentor younger athletes, and complete the Hero Showcase — proof of everything you have built across your full journey.</div>
+      <div class="quest-outcome">"I Can Lead."</div>
+      <div class="sticker-section">
+        <div class="sticker-label">Place your gold star stickers here as you earn each badge</div>
+        <div class="sticker-row">
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot"></div>
+          <div class="sticker-slot filled">👑</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /quests -->
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-label">Badges you can earn</div>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <span class="legend-icon">🏅</span>
+        <div>
+          <div class="legend-name" style="color:var(--cyan)">Foundation Builder</div>
+          <div class="legend-desc">Complete Quest I foundations.</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon">🔁</span>
+        <div>
+          <div class="legend-name" style="color:var(--orange)">Rep Champion</div>
+          <div class="legend-desc">20 quality reps with consistent technique.</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon">💨</span>
+        <div>
+          <div class="legend-name" style="color:var(--orange)">Agility Ace</div>
+          <div class="legend-desc">Improve your agility course time.</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon">⚔️</span>
+        <div>
+          <div class="legend-name" style="color:var(--orange)">Skill Master</div>
+          <div class="legend-desc">Coach-assessed skill showcase at Week 8.</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon">🔥</span>
+        <div>
+          <div class="legend-name" style="color:var(--red)">Challenge Conqueror</div>
+          <div class="legend-desc">Perform your skill under pressure.</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon">🛡️</span>
+        <div>
+          <div class="legend-name" style="color:var(--red)">Resilience Medal</div>
+          <div class="legend-desc">Face a setback and come back stronger.</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon">🤝</span>
+        <div>
+          <div class="legend-name" style="color:var(--gold)">Guide Badge</div>
+          <div class="legend-desc">Mentor a younger athlete to succeed.</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon">👑</span>
+        <div>
+          <div class="legend-name" style="color:var(--gold)">Athletic Hero</div>
+          <div class="legend-desc">Complete the Hero Showcase. Journey proven.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-brand">Power2ADAPT</div>
+    <div>
+      <div class="footer-creed">Every athlete has potential &nbsp;·&nbsp; Every journey is unique &nbsp;·&nbsp; Every story matters</div>
+      <div class="sticker-compat" style="margin-top:4px;">⭐ Compatible with standard 19mm gold star or gold dot stickers from Officeworks &nbsp;·&nbsp; Your coach places your sticker when you earn your badge</div>
+    </div>
+    <div class="footer-note">power2adapt.online<br>My Athletic Journey</div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

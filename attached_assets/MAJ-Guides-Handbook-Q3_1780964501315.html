@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Guide's Handbook — Quest III — My Athletic Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #0a0a0a;
+    --surface: #111111;
+    --card:    #161616;
+    --card2:   #1c1c1c;
+    --border:  #242424;
+    --border2: #2e2e2e;
+    --orange:  #F26522;
+    --orange-d: rgba(242,101,34,0.1);
+    --orange-b: rgba(242,101,34,0.25);
+    --gold:    #D64A1A;
+    --gold-d:  rgba(214,74,26,0.08);
+    --gold-b:  rgba(214,74,26,0.30);
+    --cyan:    #00B4D8;
+    --cyan-d:  rgba(0,180,216,0.1);
+    --cyan-b:  rgba(0,180,216,0.25);
+    --green:   #22c55e;
+    --green-d: rgba(34,197,94,0.1);
+    --text:    #ffffff;
+    --text2:   #999999;
+    --text3:   #555555;
+    --font-h:  'Barlow Condensed', sans-serif;
+    --font-b:  'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: var(--font-b);
+    line-height: 1.6;
+  }
+
+  /* ── UTILITIES ──────────────────────────────────── */
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 28px; }
+  .label {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+  .label.gold { color: var(--gold); }
+  .divider { height: 1px; background: var(--border); max-width: 860px; margin: 0 auto; }
+  .divider.accent { background: linear-gradient(90deg, transparent, var(--border), var(--gold), var(--border), transparent); }
+
+  /* ── NAV ────────────────────────────────────────── */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 28px;
+  }
+  .nav-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .nav-brand {
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-right: 12px;
+    white-space: nowrap;
+  }
+  .nav-link {
+    font-family: var(--font-h);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .nav-link:hover { color: var(--text); border-color: var(--border2); }
+  .nav-link.active { color: var(--gold); border-color: var(--gold-b); background: var(--gold-d); }
+
+  /* ── HERO ───────────────────────────────────────── */
+  .hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 28px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '📖';
+    position: absolute;
+    font-size: 300px;
+    opacity: 0.025;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -54%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 640px; margin: 0 auto; position: relative; }
+  .hero-eyebrow {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+  .hero-tag {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .hero-title {
+    font-family: var(--font-h);
+    font-size: 68px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .hero-title span { color: var(--gold); }
+  .hero-sub {
+    font-family: var(--font-h);
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 20px;
+  }
+  .hero-intro {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.7;
+    font-style: italic;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ── SECTION BLOCKS ─────────────────────────────── */
+  .section-block { padding: 44px 0 36px; }
+  .section-title {
+    font-family: var(--font-h);
+    font-size: 34px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 6px 0 20px;
+    line-height: 1;
+  }
+
+  /* ── PHILOSOPHY CARDS ───────────────────────────── */
+  .phil-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .phil-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .phil-icon { font-size: 24px; margin-bottom: 8px; line-height: 1; }
+  .phil-title {
+    font-family: var(--font-h);
+    font-size: 17px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .phil-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* ── GUIDE VS INSTRUCTOR ────────────────────────── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .compare-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .compare-card.good { border-color: var(--gold-b); }
+  .compare-card.avoid { border-color: rgba(255,80,80,0.2); }
+  .compare-header {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-card.good .compare-header { color: var(--gold); }
+  .compare-card.avoid .compare-header { color: rgba(255,100,100,0.8); }
+  .compare-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    font-size: 12.5px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  .compare-dot { flex-shrink: 0; margin-top: 5px; width: 5px; height: 5px; border-radius: 50%; }
+  .compare-card.good .compare-dot { background: var(--gold); }
+  .compare-card.avoid .compare-dot { background: rgba(255,100,100,0.6); }
+
+  /* ── GUIDE'S CODE ───────────────────────────────── */
+  .code-block {
+    background: var(--card);
+    border: 1px solid var(--gold-b);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .code-title {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .code-line {
+    font-family: var(--font-h);
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 8px;
+    padding-left: 16px;
+    border-left: 2px solid var(--gold);
+  }
+  .code-line:last-child { margin-bottom: 0; }
+
+  /* ── BADGE STANDARDS ────────────────────────────── */
+  .badge-standard {
+    background: var(--card);
+    border: 1px solid var(--gold-b);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .bs-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .bs-icon { font-size: 22px; flex-shrink: 0; }
+  .bs-title {
+    font-family: var(--font-h);
+    font-size: 17px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--gold);
+  }
+  .bs-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+  }
+  .bs-week { font-size: 11px; color: var(--text3); letter-spacing: 1px; font-family: var(--font-h); text-transform: uppercase; }
+  .bs-xp {
+    font-family: var(--font-h);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--gold);
+    background: var(--gold-d);
+    border: 1px solid var(--gold-b);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .bs-criteria {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .bs-col-label {
+    font-family: var(--font-h);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .earned-label { color: var(--green); }
+  .notyet-label { color: rgba(255,100,100,0.7); }
+  .bs-item {
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+  .bs-dot { flex-shrink: 0; margin-top: 5px; width: 5px; height: 5px; border-radius: 50%; }
+  .earned-dot { background: var(--green); }
+  .notyet-dot { background: rgba(255,100,100,0.6); }
+  .bs-path {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-size: 11.5px;
+    color: var(--text3);
+    font-style: italic;
+  }
+
+  /* ── CALLOUT ────────────────────────────────────── */
+  .callout {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .callout.gold { background: var(--gold-d); border: 1px solid var(--gold-b); }
+  .callout-icon { font-size: 18px; flex-shrink: 0; }
+  .callout-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .callout-text strong { color: var(--text); }
+
+  /* ── QUEST DIVIDER ──────────────────────────────── */
+  .quest-divider {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 0;
+  }
+  .qd-num {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: var(--gold);
+  }
+  .qd-icon { font-size: 40px; margin-bottom: 6px; line-height: 1; }
+  .qd-title {
+    font-family: var(--font-h);
+    font-size: 40px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 4px;
+    color: var(--gold);
+  }
+  .qd-realm {
+    font-family: var(--font-h);
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ── WEEK CARD ──────────────────────────────────── */
+  .week-cards { padding: 24px 0; }
+  .week-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .week-card.badge-week { border-color: var(--gold-b); }
+
+  .week-header {
+    background: var(--card2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .wh-left {}
+  .wh-tag-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .week-tag {
+    font-family: var(--font-h);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+  .q3-tag { background: rgba(245,200,66,0.12); color: var(--gold); border: 1px solid rgba(214,74,26,0.30); }
+  .badge-pill {
+    font-family: var(--font-h);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: var(--gold-d);
+    border: 1px solid var(--gold-b);
+    color: var(--gold);
+  }
+  .week-theme {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+  .week-narrative {
+    font-size: 11.5px;
+    color: var(--text3);
+    font-style: italic;
+    margin-top: 3px;
+  }
+  .wh-xp {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text3);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* ── WEEK BODY GRID ─────────────────────────────── */
+  .week-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .week-col {
+    padding: 14px 16px;
+    border-right: 1px solid var(--border);
+  }
+  .week-col:last-child { border-right: none; }
+  .wc-label {
+    font-family: var(--font-h);
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .notice-label  { color: var(--gold); }
+  .before-label  { color: var(--text3); }
+  .during-label  { color: var(--orange); }
+  .after-label   { color: var(--text3); }
+
+  .wc-title {
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 5px;
+    line-height: 1.2;
+  }
+  .notice-col .wc-title { color: var(--gold); }
+
+  .wc-text { font-size: 11.5px; color: var(--text2); line-height: 1.55; }
+  .wc-text ul { padding-left: 12px; }
+  .wc-text li { margin-bottom: 3px; }
+  .wc-text strong { color: var(--text); }
+  .wc-text em { color: var(--text3); }
+
+  /* badge week assessment panel */
+  .assess-panel {
+    border-top: 1px solid var(--gold-b);
+    background: var(--gold-d);
+    padding: 14px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .ap-label {
+    font-family: var(--font-h);
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .ap-earned { color: var(--green); }
+  .ap-notyet { color: rgba(255,100,100,0.7); }
+  .ap-item {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    font-size: 11.5px;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+  .ap-dot { flex-shrink: 0; width: 5px; height: 5px; border-radius: 50%; margin-top: 5px; }
+  .ap-earned-dot { background: var(--green); }
+  .ap-notyet-dot { background: rgba(255,100,100,0.5); }
+  .ap-path {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text3);
+    font-style: italic;
+  }
+
+  /* ── FOOTER ─────────────────────────────────────── */
+  .page-footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 48px;
+  }
+  .footer-brand {
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+  .footer-text { font-size: 11px; color: var(--text3); font-style: italic; text-align: center; }
+  .footer-url { font-family: var(--font-h); font-size: 11px; letter-spacing: 1px; color: var(--text3); text-align: right; }
+
+  @media print {
+    @page { size: A4; margin: 14mm 16mm; }
+    body { background: #0a0a0a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sticky-nav { display: none; }
+    .hero::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <span class="nav-brand">Guide's Handbook &nbsp;Q3</span>
+    <a class="nav-link" href="#mindset">Coaching Shift</a>
+    <a class="nav-link" href="#protocols">Badge Standards</a>
+    <a class="nav-link" href="#cards">Session Cards</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">My Athletic Journey &nbsp;·&nbsp; Power2ADAPT</div>
+    <div class="hero-tag">📖 &nbsp;The Guide's Handbook &nbsp;·&nbsp; Quest III</div>
+    <h1 class="hero-title">THE GUIDE'S<br><span>HANDBOOK</span></h1>
+    <div class="hero-sub">Coach Edition &nbsp;·&nbsp; Train the Mind</div>
+    <p class="hero-intro">
+      In Quest III, the arena moves inside. You are no longer coaching what you can see -- you are coaching what you can only infer. The guide who masters this becomes the most powerful coach in the room.
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 1: THE QUEST III COACHING SHIFT           -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="mindset"></div>
+<div class="divider accent"></div>
+
+<div class="section-block">
+  <div class="wrap">
+    <div class="label gold">Section 1</div>
+    <div class="section-title" style="color:var(--gold);">The Quest III<br>Coaching Shift</div>
+
+    <!-- A WORD ON QUEST III -->
+    <div style="background:var(--card);border:1px solid var(--gold-b);border-radius:14px;padding:24px 28px;margin-bottom:24px;">
+      <div class="label gold" style="margin-bottom:8px;">A Word on Quest III</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:12px;">
+        In Quest I and II you coached bodies -- movement, technique, footwork, skill execution. You watched what athletes did and gave feedback on what you saw.
+      </p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:12px;">
+        Quest III is different. You are now coaching something you cannot directly observe. Focus, self-talk, breathing patterns, and response to pressure are internal. You infer them from behaviour: eye contact, reset speed, quality of attention after errors, what an athlete says to themselves out loud.
+      </p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;">
+        Your job in Quest III is to <strong style="color:var(--gold);">make the invisible visible</strong>. Name what you observe about each athlete's mental state. Ask questions that surface their internal experience. Coach the mind as deliberately as you coached the body.
+      </p>
+    </div>
+
+    <!-- FOUR PHILOSOPHY CARDS -->
+    <div class="label gold" style="margin-bottom:6px;">The Guide's Principles</div>
+    <div style="font-family:var(--font-h);font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">Four Principles for Quest III</div>
+    <div class="phil-grid">
+      <div class="phil-card">
+        <div class="phil-icon">🔍</div>
+        <div class="phil-title">Notice, Don't Assume</div>
+        <div class="phil-text">You cannot see an athlete's self-talk. Ask: "What did you say to yourself just then?" before assuming they were negative.</div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-icon">🔄</div>
+        <div class="phil-title">Name Mental Resets</div>
+        <div class="phil-text">When an athlete breathes deliberately or uses a cue word after a mistake, name it publicly. "Did you see that? That was a mental reset. That is the skill."</div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-icon">⚡</div>
+        <div class="phil-title">Normalise Nerves</div>
+        <div class="phil-text">Never respond to an athlete's nerves with "just relax." Instead: "Your body is getting ready. That's the signal. Use it." Normalising pressure is coaching.</div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-icon">🏆</div>
+        <div class="phil-title">Reward the Process</div>
+        <div class="phil-text">A bad performance with great mental process still gets named. "I noticed you used your breathing after that mistake and came back stronger. That's what this Quest is about."</div>
+      </div>
+    </div>
+
+    <!-- GUIDE VS INSTRUCTOR -->
+    <div class="label gold" style="margin-bottom:6px;">The Mindset Shift</div>
+    <div style="font-family:var(--font-h);font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">Guide vs. Instructor</div>
+    <div class="compare-grid">
+      <div class="compare-card good">
+        <div class="compare-header">✓ &nbsp;The Guide Does This</div>
+        <div class="compare-item"><div class="compare-dot"></div>Asks "what were you thinking?" before correcting technique</div>
+        <div class="compare-item"><div class="compare-dot"></div>Pauses before pressure activities for breathing</div>
+        <div class="compare-item"><div class="compare-dot"></div>Names self-talk used out loud by athletes</div>
+        <div class="compare-item"><div class="compare-dot"></div>Rewards resets as much as results</div>
+        <div class="compare-item"><div class="compare-dot"></div>Holds space for honest reflection after mistakes</div>
+      </div>
+      <div class="compare-card avoid">
+        <div class="compare-header">✗ &nbsp;The Instructor Does This</div>
+        <div class="compare-item"><div class="compare-dot"></div>Jumps straight to technical correction after every mistake</div>
+        <div class="compare-item"><div class="compare-dot"></div>Never addresses emotional or mental state</div>
+        <div class="compare-item"><div class="compare-dot"></div>Treats nerves as weakness or unprofessionalism</div>
+        <div class="compare-item"><div class="compare-dot"></div>Skips reflection as unimportant</div>
+        <div class="compare-item"><div class="compare-dot"></div>Only coaches the physical -- misses the whole athlete</div>
+      </div>
+    </div>
+
+    <!-- THE GUIDE'S CODE -->
+    <div class="label gold" style="margin-bottom:6px;">Your Commitment</div>
+    <div style="font-family:var(--font-h);font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">The Guide's Code &mdash; Quest III Addition</div>
+    <div class="code-block">
+      <div class="code-title">I coach the mind as deliberately as the body.</div>
+      <div class="code-line">I make the invisible visible -- I name mental states I observe.</div>
+      <div class="code-line">I never mock an athlete's nerves -- I help them use them.</div>
+      <div class="code-line">I reward the reset as much as the result.</div>
+      <div class="code-line">I ask before I tell, especially after a mistake.</div>
+      <div class="code-line">I create space for breathing before I create pressure.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 2: BADGE ASSESSMENT STANDARDS             -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="divider accent"></div>
+<div id="protocols"></div>
+
+<div class="section-block">
+  <div class="wrap">
+    <div class="label gold">Section 2</div>
+    <div class="section-title" style="color:var(--gold);">Badge Assessment<br>Standards</div>
+
+    <div class="callout gold" style="margin-bottom:24px;">
+      <span class="callout-icon">⭐</span>
+      <div class="callout-text"><strong>Quest III has three badges.</strong> Each has specific, observable criteria. Read these before every badge week so you know exactly what you are looking for during the session. A badge awarded without being earned tells an athlete their effort doesn't matter.</div>
+    </div>
+
+    <!-- BADGE 1 -->
+    <div class="badge-standard">
+      <div class="bs-header">
+        <span class="bs-icon">🌬️</span>
+        <div class="bs-title">Calm Under Pressure</div>
+        <div class="bs-meta">
+          <span class="bs-week">Week 4</span>
+          <span class="bs-xp">25 XP</span>
+        </div>
+      </div>
+      <div class="bs-criteria">
+        <div>
+          <div class="bs-col-label earned-label">✓ Earned</div>
+          <div class="bs-item"><div class="bs-dot earned-dot"></div>Demonstrates breathing or cue word use during a high-pressure moment</div>
+          <div class="bs-item"><div class="bs-dot earned-dot"></div>Maintains task focus after a mistake (observable: returns to task without prolonged negative reaction)</div>
+          <div class="bs-item"><div class="bs-dot earned-dot"></div>Can describe what mental tool they used and how it helped</div>
+        </div>
+        <div>
+          <div class="bs-col-label notyet-label">✗ Not Yet</div>
+          <div class="bs-item"><div class="bs-dot notyet-dot"></div>Reactive to pressure with no observable reset or strategy</div>
+          <div class="bs-item"><div class="bs-dot notyet-dot"></div>Cannot describe what mental approach they used</div>
+          <div class="bs-path">Path to earn: one more activity with one observed and named mental reset</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGE 2 -->
+    <div class="badge-standard">
+      <div class="bs-header">
+        <span class="bs-icon">📊</span>
+        <div class="bs-title">Consistent Performer</div>
+        <div class="bs-meta">
+          <span class="bs-week">Week 6</span>
+          <span class="bs-xp">25 XP</span>
+        </div>
+      </div>
+      <div class="bs-criteria">
+        <div>
+          <div class="bs-col-label earned-label">✓ Earned</div>
+          <div class="bs-item"><div class="bs-dot earned-dot"></div>Effort/focus log completed honestly (ratings vary -- flat 10s suggest dishonesty)</div>
+          <div class="bs-item"><div class="bs-dot earned-dot"></div>Athlete can identify their highest and lowest focus conditions from the log</div>
+          <div class="bs-item"><div class="bs-dot earned-dot"></div>Shows genuine self-awareness about what affects their concentration</div>
+        </div>
+        <div>
+          <div class="bs-col-label notyet-label">✗ Not Yet</div>
+          <div class="bs-item"><div class="bs-dot notyet-dot"></div>Log filled without honest rating or coaching conversation</div>
+          <div class="bs-item"><div class="bs-dot notyet-dot"></div>Cannot identify what changed their focus across the session</div>
+          <div class="bs-path">Path to earn: complete one honest post-session log debrief with coach</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGE 3 -->
+    <div class="badge-standard">
+      <div class="bs-header">
+        <span class="bs-icon">🏆</span>
+        <div class="bs-title">Module 3 Master</div>
+        <div class="bs-meta">
+          <span class="bs-week">Week 8</span>
+          <span class="bs-xp">50 XP &nbsp;·&nbsp; COACH REQUIRED</span>
+        </div>
+      </div>
+      <div class="bs-criteria">
+        <div>
+          <div class="bs-col-label earned-label">✓ Earned</div>
+          <div class="bs-item"><div class="bs-dot earned-dot"></div>Uses all three tools deliberately in the session (breathing, self-talk, task focus)</div>
+          <div class="bs-item"><div class="bs-dot earned-dot"></div>Can name each tool and give a real example of using it during this Quest</div>
+          <div class="bs-item"><div class="bs-dot earned-dot"></div>Shows observable change in response to pressure compared to Week 1</div>
+        </div>
+        <div>
+          <div class="bs-col-label notyet-label">✗ Not Yet</div>
+          <div class="bs-item"><div class="bs-dot notyet-dot"></div>Cannot name three tools with genuine examples</div>
+          <div class="bs-item"><div class="bs-dot notyet-dot"></div>No observable change in pressure response across 8 weeks</div>
+          <div class="bs-path">Path to earn: one additional focused session demonstrating each tool with coach observation</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 3: QUEST III SESSION CARDS                -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="divider accent"></div>
+<div id="cards"></div>
+
+<div class="quest-divider">
+  <div class="qd-num">Quest III</div>
+  <div class="qd-icon">⚔️</div>
+  <div class="qd-title">Train the Mind</div>
+  <div class="qd-realm">Realm of Courage &nbsp;·&nbsp; The Challenger</div>
+</div>
+
+<div class="week-cards">
+  <div class="wrap">
+
+    <!-- Q3 W1 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q3-tag">Q3 &middot; Week 1</span></div>
+          <div class="week-theme">What is Focus?</div>
+          <div class="week-narrative">The first session of Quest III. The guide's job today is to create safety for athletes to engage with mental concepts.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">First-session energy toward mental concepts</div>
+          <div class="wc-text">Some athletes will engage immediately. Others will be sceptical ("we're not going to meditate, are we?"). Notice both -- the sceptics often become the biggest converts. Don't push; just run the session as designed.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text">Tell athletes this Quest is different -- they will be training their minds, not just their bodies. No judgement on anyone's focus level. Today is about noticing what is already there.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Run the mindful warm-up exactly as designed -- 2 minutes, quiet, coach-led. After the session, ask: "Did anyone notice a moment when you were completely locked in? What were you doing?" Let several athletes answer. Name specific observations you made about individual athletes' focus.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Note which athletes engaged most with the mental content</li>
+            <li>Reflection prompt: <em>"What makes it hard for me to focus during training -- and when is my focus at its best?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 W2 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q3-tag">Q3 &middot; Week 2</span></div>
+          <div class="week-theme">Breathing and Calm</div>
+          <div class="week-narrative">The guide models the tool. Athletes who see the coach breathe deliberately will follow.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Willingness to try the breathing exercise</div>
+          <div class="wc-text">Some athletes will feel self-conscious. Normalise immediately: "Every high-performance athlete in the world does this." Watch for athletes who visibly relax after the exercise -- name it.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text">Read the 4-7-8 technique and practise it before the session. Lead it smoothly without reading from notes.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Lead the 4-7-8 breathing before the hardest activity yourself -- <strong>model it, don't just instruct it.</strong> Ask after: "Did anyone notice a difference? What did it feel like?" Connect to sport: "Every elite athlete has a pre-performance breathing routine. You now have one too."</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Reflection prompt out loud</li>
+            <li>Remind athletes: use this as a <em>reset tool after mistakes</em> this week, not just before activities</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 W3 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q3-tag">Q3 &middot; Week 3</span></div>
+          <div class="week-theme">Self-Talk</div>
+          <div class="week-narrative">The guide is listening this week -- to what athletes say to themselves out loud.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">What athletes say when they make a mistake</div>
+          <div class="wc-text">Negative language ("I'm so bad at this") is common and important. You will address it through the session, not by correcting individuals directly.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text">Have your own cue words ready to share as examples. Bring 2-3 examples of self-talk moments you have personally observed in athletes (without naming the athlete).</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">When you hear negative self-talk, pause the session and address the group: "I just heard something that every athlete says at some point. Let's talk about what to do instead." At the halfway point, ask athletes to share their chosen cue word with a partner.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Reflection prompt out loud</li>
+            <li>This is one of the richest reflection weeks -- <em>allow extra time</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 W4 BADGE -->
+    <div class="week-card badge-week">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row">
+            <span class="week-tag q3-tag">Q3 &middot; Week 4</span>
+            <span class="badge-pill">🌬️ Calm Under Pressure</span>
+          </div>
+          <div class="week-theme">Attention Control</div>
+          <div class="week-narrative">The guide observes where attention actually goes -- and names it without judgement.</div>
+        </div>
+        <div class="wh-xp">60 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Where attention goes under pressure</div>
+          <div class="wc-text">Task focus is observable -- eyes locked on the activity, body language present. Outcome focus is also observable -- glancing around, asking what the score is, looking away during their turn. Name neutrally: "I noticed your eyes went to the scoreboard -- what were you thinking?"</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Review each athlete's primary focus tool choice from Week 1</li>
+            <li>Prepare to assess the Calm Under Pressure badge</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Introduce task vs. outcome concept before the drill. During the drill, count silently how many times each athlete shifts to outcome focus. <strong>Give one individual cue per athlete.</strong> Use badge assessment criteria throughout.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Award Calm Under Pressure where criteria met -- sticker ritual</li>
+            <li>Confirm badge in app</li>
+            <li>Reflection prompt out loud</li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="assess-panel">
+        <div>
+          <div class="ap-label ap-earned">✓ Calm Under Pressure -- Earned</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Demonstrates breathing or cue word during a pressure moment</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Returns to task after a mistake without prolonged negative reaction</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Can describe the mental tool used and how it helped</div>
+        </div>
+        <div>
+          <div class="ap-label ap-notyet">✗ Not Yet -- What Is Needed</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Reactive to pressure with no observable reset or strategy</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Cannot describe what mental approach was used</div>
+          <div class="ap-path">Path to earn: one more activity with one observed and named mental reset</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 W5 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q3-tag">Q3 &middot; Week 5</span></div>
+          <div class="week-theme">Pressure and Nerves</div>
+          <div class="week-narrative">The guide helps athletes reframe nerves as a signal, not a threat.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">How each athlete shows nerves</div>
+          <div class="wc-text">Every athlete shows nerves differently -- some go quiet, some get louder, some rush, some freeze. By Week 5 you should know each athlete's nervous pattern. Name it privately if appropriate: "I noticed you go quiet before your turn -- that's nerves. Here's what to do with them."</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text">Design the mini-competition so pressure is genuine but not overwhelming. Achievable challenge -- managed pressure, not failure.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Before the competition, give athletes 5 minutes to design their pre-performance routine (breathing + cue word + physical reset). Have them share with a partner. Observe who uses their routine and who abandons it under real pressure.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Reflection prompt out loud</li>
+            <li>Tell athletes: <em>the routine they designed today is theirs for life</em></li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 W6 BADGE -->
+    <div class="week-card badge-week">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row">
+            <span class="week-tag q3-tag">Q3 &middot; Week 6</span>
+            <span class="badge-pill">📊 Consistent Performer</span>
+          </div>
+          <div class="week-theme">Consistency</div>
+          <div class="week-narrative">The guide models honest self-rating and coaches athletes away from people-pleasing.</div>
+        </div>
+        <div class="wh-xp">60 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Honest self-rating vs. people-pleasing</div>
+          <div class="wc-text">Athletes who rate themselves 10/10 on everything are not self-aware. Athletes whose ratings match what you observed are developing genuine self-awareness -- name it.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text">Prepare a simple effort/focus log (two columns per activity: Effort/10, Focus/10). Have it ready to hand out or read from.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Introduce the log before the first activity. <strong>Rate one activity yourself and share your honest score -- model the process.</strong> Check in with each athlete at least once about their log. The coaching conversation about the log is the learning moment.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Award Consistent Performer where criteria met -- sticker ritual</li>
+            <li>Confirm badge in app</li>
+            <li>Ask: <em>"What activity produced your best focus? Could you recreate those conditions?"</em></li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="assess-panel">
+        <div>
+          <div class="ap-label ap-earned">✓ Consistent Performer -- Earned</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Log completed honestly (ratings vary -- flat 10s suggest dishonesty)</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Athlete identifies their highest and lowest focus conditions</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Shows genuine self-awareness about what affects their concentration</div>
+        </div>
+        <div>
+          <div class="ap-label ap-notyet">✗ Not Yet -- What Is Needed</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Log filled without honest rating or coaching conversation</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Cannot identify what changed their focus across the session</div>
+          <div class="ap-path">Path to earn: one honest post-session log debrief with coach</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 W7 -->
+    <div class="week-card">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row"><span class="week-tag q3-tag">Q3 &middot; Week 7</span></div>
+          <div class="week-theme">Focus in a Team</div>
+          <div class="week-narrative">The guide spotlights team focus moments -- making the invisible visible for the whole group.</div>
+        </div>
+        <div class="wh-xp">35 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Who lifts team focus and who drains it</div>
+          <div class="wc-text">Some athletes are natural focus anchors. Others are focus drains. Name the positive behaviour publicly. Address the negative behaviour privately.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Plan groups deliberately -- mix ability and personality</li>
+            <li>Brief athletes: "Today is about what happens when everyone focuses together"</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Run the team relay with the shared focus cue protocol. Pause at least once to spotlight a team focus moment: "Stop. Did you see that? [Name] called the cue and three athletes immediately reset. <strong>That is what team focus looks like.</strong>"</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Confirm app complete</li>
+            <li>Preview Week 8 -- the capstone involves demonstrating all three tools</li>
+            <li>Reflection prompt out loud</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 W8 CAPSTONE BADGE -->
+    <div class="week-card badge-week">
+      <div class="week-header">
+        <div class="wh-left">
+          <div class="wh-tag-row">
+            <span class="week-tag q3-tag">Q3 &middot; Week 8</span>
+            <span class="badge-pill">🏆 Module 3 Master</span>
+          </div>
+          <div class="week-theme">My Focus Toolkit &mdash; Capstone</div>
+          <div class="week-narrative">The guide's coaching across 8 weeks is revealed in how each athlete performs and reflects today.</div>
+        </div>
+        <div class="wh-xp">85 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="week-col notice-col">
+          <div class="wc-label notice-label">👁 What to Notice</div>
+          <div class="wc-title">Evidence of growth from Week 1</div>
+          <div class="wc-text">Who resets faster? Who uses deliberate breathing? Whose self-talk has changed? Who maintains task focus under pressure that would have derailed them 8 weeks ago? These are the observations you name specifically during the badge conversation.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label before-label">Before Session</div>
+          <div class="wc-text"><ul>
+            <li>Review each athlete's Week 1 reflection</li>
+            <li>Recall 2-3 specific observations from across their 8 weeks</li>
+            <li>Prepare your badge conversation for each athlete individually</li>
+          </ul></div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label during-label">⚡ During Session</div>
+          <div class="wc-text">Before the session, ask each athlete to name their three tools and when they plan to use each. During activities, actively look for tool use -- <strong>every time you see it, name it immediately.</strong> At the end: individual badge conversation with each athlete. Be specific. Be honest. Be encouraging.</div>
+        </div>
+        <div class="week-col">
+          <div class="wc-label after-label">After Session</div>
+          <div class="wc-text"><ul>
+            <li>Award Module 3 Master where criteria met -- full sticker ritual</li>
+            <li>Confirm all badges in app</li>
+            <li>Tell each athlete one mental skill they carry into Quest IV</li>
+            <li>Tell them: <em>Quest IV is about leading others</em></li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="assess-panel">
+        <div>
+          <div class="ap-label ap-earned">✓ Module 3 Master -- Earned</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Uses all three tools deliberately in the session (breathing, self-talk, task focus)</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Can name each tool and give a real example of using it during this Quest</div>
+          <div class="ap-item"><div class="ap-dot ap-earned-dot"></div>Shows observable change in response to pressure compared to Week 1</div>
+        </div>
+        <div>
+          <div class="ap-label ap-notyet">✗ Not Yet -- What Is Needed</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>Cannot name three tools with genuine examples</div>
+          <div class="ap-item"><div class="ap-dot ap-notyet-dot"></div>No observable change in pressure response across 8 weeks</div>
+          <div class="ap-path">Path to earn: one additional focused session with each tool demonstrated under coach observation</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <div class="footer-brand">Power2ADAPT</div>
+  <div class="footer-text"><em>The athlete is the hero. You are the guide.</em></div>
+  <div class="footer-url">Guide's Handbook Q3 &nbsp;|&nbsp; power2adapt.online</div>
+</div>
+
+</body>
+</html>

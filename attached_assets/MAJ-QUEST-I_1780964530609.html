@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quest I: Build the Foundations — My Athletic Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:            #0a0a0a;
+    --surface:       #111111;
+    --card:          #161616;
+    --accent:        #00B4D8;
+    --accent-light:  #38c6e8;
+    --accent-bg:     rgba(0, 180, 216, 0.1);
+    --accent-border: rgba(0, 180, 216, 0.3);
+    --orange:        #F26522;
+    --text:          #e8e8e8;
+    --text-muted:    #888;
+    --gold:          #f5c842;
+    --gold-bg:       rgba(245, 200, 66, 0.12);
+    --green:         #06D6A0;
+    --border:        #242424;
+    --border2:       #2e2e2e;
+    --radius-sm:     10px;
+    --radius-md:     16px;
+    --radius-lg:     20px;
+    --shadow:        0 6px 20px rgba(0,0,0,0.5);
+    --font-h:        'Barlow Condensed', sans-serif;
+    --font-b:        'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-b);
+    line-height: 1.55;
+    padding-bottom: 60px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── NAV ───────────────────────────────────────── */
+  .app-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-brand {
+    font-family: var(--font-h);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .nav-badge {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    color: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* ── HERO ──────────────────────────────────────── */
+  .hero-banner {
+    background: linear-gradient(135deg, #001f2e 0%, #0a0a0a 100%);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-lg);
+    padding: 36px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 0 40px rgba(0,180,216,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-banner::after {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background: var(--accent);
+    filter: blur(90px);
+    top: -60px;
+    right: -60px;
+    opacity: 0.2;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-h);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .quest-tag {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 8px;
+  }
+  .hero-banner h1 {
+    font-family: var(--font-h);
+    font-size: 58px;
+    font-weight: 900;
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .hero-banner h1 .accent { color: var(--accent); }
+  .hero-sub {
+    font-family: var(--font-h);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero-intro {
+    font-size: 13px;
+    color: #9ad4e0;
+    line-height: 1.65;
+    font-style: italic;
+    background: rgba(0,0,0,0.25);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    position: relative;
+  }
+
+  /* ── PANEL CARD ─────────────────────────────────── */
+  .panel-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .panel-card h2 {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .panel-card h2 .accent { color: var(--accent); }
+  .panel-card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  .panel-card p:last-child { margin-bottom: 0; }
+  .panel-card p strong { color: var(--text); }
+
+  /* ── PILLAR GRID ─────────────────────────────────── */
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .pillar-chip {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .pillar-icon { font-size: 20px; margin-bottom: 4px; }
+  .pillar-name {
+    font-family: var(--font-h);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--accent-light);
+  }
+
+  /* ── ARC MAP ─────────────────────────────────────── */
+  .scroll-wrapper {
+    overflow-x: auto;
+    padding: 4px 0 12px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scroll-wrapper::-webkit-scrollbar { display: none; }
+  .arc-map {
+    display: flex;
+    gap: 8px;
+    width: max-content;
+    padding: 0 2px;
+  }
+  .map-node {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 8px;
+    width: 90px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .map-node.badge-week { border-color: var(--accent-border); }
+  .map-node.capstone   { border-color: var(--gold); }
+  .node-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-h);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .badge-week .node-dot {
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
+    color: var(--accent-light);
+  }
+  .capstone .node-dot {
+    background: var(--gold-bg);
+    border-color: var(--gold);
+    color: var(--gold);
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  .node-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.2;
+    height: 28px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .badge-week .node-label { color: var(--accent-light); }
+  .capstone .node-label   { color: var(--gold); }
+
+  /* ── WEEK CARDS ─────────────────────────────────── */
+  .weeks-title {
+    font-family: var(--font-h);
+    font-size: 26px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    padding-left: 2px;
+  }
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .week-card.badge-week { border-color: var(--accent-border); }
+  .week-card.capstone   { border-color: var(--gold); box-shadow: 0 0 20px rgba(245,200,66,0.08); }
+
+  .week-header {
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .week-number {
+    font-family: var(--font-h);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-bg);
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+  .capstone .week-number { color: var(--gold); background: var(--gold-bg); }
+  .week-theme {
+    font-family: var(--font-h);
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+  }
+  .week-narrative {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.45;
+    margin-top: 3px;
+  }
+  .week-xp {
+    font-family: var(--font-h);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-bg);
+    border: 1px solid rgba(245,200,66,0.2);
+    padding: 5px 12px;
+    border-radius: 100px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .badge-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: var(--accent-bg);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-h);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+  }
+  .badge-pill.gold-pill { color: var(--gold); background: rgba(245,200,66,0.06); }
+
+  .week-body {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .col-block {
+    background: var(--card);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .col-header {
+    font-family: var(--font-h);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .col-header.concept { color: var(--accent-light); }
+  .col-header.do      { color: var(--green); }
+  .col-header.reflect { color: var(--gold); }
+  .col-title {
+    font-family: var(--font-h);
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 5px;
+    color: var(--text);
+  }
+  .col-text { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
+  .col-text ul { padding-left: 14px; margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+  .col-text li { color: var(--text); }
+  .col-text strong { color: var(--text); }
+
+  /* ── XP TABLE ────────────────────────────────────── */
+  .xp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  .xp-table th {
+    font-family: var(--font-h);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 6px 6px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .xp-table td {
+    padding: 8px 6px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .xp-table .badge-row { background: var(--accent-bg); }
+  .xp-table tr:last-child td {
+    border-bottom: none;
+    font-family: var(--font-h);
+    font-size: 15px;
+    color: var(--text);
+    padding-top: 12px;
+  }
+  .xp-val {
+    font-family: var(--font-h);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: right;
+  }
+  .badge-tag { font-family: var(--font-h); font-size: 11px; font-weight: 700; color: var(--accent-light); }
+  .no-badge  { color: var(--text-muted); }
+  .xp-table tr:last-child .xp-val { color: var(--green); font-size: 17px; }
+
+  /* ── QUEST II TEASER ─────────────────────────────── */
+  .teaser-card {
+    background: linear-gradient(135deg, #1f0a00 0%, #0a0a0a 100%);
+    border: 1px solid rgba(242,101,34,0.3);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(242,101,34,0.06);
+  }
+  .teaser-label {
+    font-family: var(--font-h);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .teaser-sep { width: 40px; height: 2px; background: rgba(242,101,34,0.4); margin: 0 auto 16px; border-radius: 2px; }
+  .teaser-narrative {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+  .teaser-title {
+    font-family: var(--font-h);
+    font-size: 40px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #f5844a;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .teaser-sub {
+    font-family: var(--font-h);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ── TABLET TWO-COL ─────────────────────────────── */
+  @media (min-width: 480px) {
+    .week-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .week-body .col-block:nth-child(3) { grid-column: span 2; }
+    .pillar-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+
+  /* ── PRINT ──────────────────────────────────────── */
+  @media print {
+    @page { size: A4; margin: 14mm 16mm; }
+    body { background: var(--bg); color: var(--text); }
+    .app-nav { display: none; }
+    .hero-banner, .panel-card, .week-card, .teaser-card {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .panel-card, .week-card { page-break-inside: avoid; }
+    .weeks-title { page-break-before: always; }
+    .teaser-card { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="app-nav">
+  <div class="nav-inner">
+    <div class="nav-brand">My Athletic Journey</div>
+    <div class="nav-badge">Quest I</div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero-banner">
+    <div class="hero-eyebrow">My Athletic Journey · Power2ADAPT</div>
+    <div class="quest-tag">🔥 Quest I · Module 1</div>
+    <h1>IGNITE YOUR <span class="accent">ENGINE</span></h1>
+    <div class="hero-sub">Realm of Discovery · The Explorer</div>
+    <p class="hero-intro"><em>Athletic ability is not something you are born with -- it is built. This is where your journey begins. Discover your starting point, train every physical quality, and ignite the engine that will carry you through every Quest ahead.</em></p>
+  </section>
+
+  <!-- WHAT THIS MODULE IS ABOUT -->
+  <div class="panel-card" id="intro">
+    <h2>What This <span class="accent">Module Is About</span></h2>
+    <p>Module 1 builds the <strong>physical foundation</strong> -- speed, power, coordination, endurance, and movement quality. Every elite athlete started exactly where you are now.</p>
+    <p>You will discover your starting point at Week 1, train across all five physical qualities over 8 weeks, and complete a coach-assessed capstone at Week 8. This is not a test -- it is a starting point. Everything measured here becomes the baseline you prove growth against.</p>
+    <p><strong>The lesson of the Explorer:</strong> You cannot improve what you cannot measure. Know your engine first -- then build it.</p>
+    <div class="pillar-grid">
+      <div class="pillar-chip"><div class="pillar-icon">⚡</div><div class="pillar-name">Speed</div></div>
+      <div class="pillar-chip"><div class="pillar-icon">💪</div><div class="pillar-name">Power</div></div>
+      <div class="pillar-chip"><div class="pillar-icon">🎯</div><div class="pillar-name">Coordination</div></div>
+      <div class="pillar-chip"><div class="pillar-icon">🫁</div><div class="pillar-name">Endurance</div></div>
+      <div class="pillar-chip"><div class="pillar-icon">🏃</div><div class="pillar-name">Movement Quality</div></div>
+    </div>
+  </div>
+
+  <!-- ARC MAP -->
+  <div class="panel-card" id="timeline">
+    <h2>The 8-Week Arc</h2>
+    <div class="scroll-wrapper">
+      <div class="arc-map">
+        <div class="map-node">
+          <div class="node-dot">W1</div>
+          <div class="node-label">Know Your Engine</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W2</div>
+          <div class="node-label">Move Well</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W3</div>
+          <div class="node-label">Speed</div>
+        </div>
+        <div class="map-node badge-week">
+          <div class="node-dot">W4</div>
+          <div class="node-label">Power ⚡</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W5</div>
+          <div class="node-label">Hurdles &amp; Relay</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W6</div>
+          <div class="node-label">Endurance</div>
+        </div>
+        <div class="map-node">
+          <div class="node-dot">W7</div>
+          <div class="node-label">Putting it Together</div>
+        </div>
+        <div class="map-node capstone">
+          <div class="node-dot">W8</div>
+          <div class="node-label">Highlight Reel 🏆</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK CARDS -->
+  <div id="weeks-section">
+    <div class="weeks-title">Week by Week</div>
+
+    <!-- W1 -->
+    <div class="week-card" id="week-1">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q1 · Week 1</div>
+          <div class="week-theme">Know Your Engine</div>
+          <div class="week-narrative">The Explorer's journey begins. Not a test -- a starting point. Everything from here is measured against today.</div>
+        </div>
+        <div class="week-xp">30 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">What is Athletic Ability -- and Why Does it Matter?</div>
+          <div class="col-text">Athletic ability is not something you are born with -- it is built. Key parts: Speed, Power, Coordination, Endurance, Movement Quality. Every elite athlete started exactly where you are now.</div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Baseline Movement Assessment</div>
+          <div class="col-text">
+            Coach observes run, jump, throw, and change of direction.
+            <ul>
+              <li>Not a test -- a starting point</li>
+              <li>Ask coach: "What is one thing I do well, and one to improve?"</li>
+              <li>Keep notes to compare at Week 8</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Your Starting Point</div>
+          <div class="col-text">"What does being an athlete mean to me?" Think about what kind of athlete you want to become -- not just what you can do now, but who you want to be.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W2 -->
+    <div class="week-card" id="week-2">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q1 · Week 2</div>
+          <div class="week-theme">Move Well</div>
+          <div class="week-narrative">The Explorer discovers that quality of movement is the foundation everything else is built on.</div>
+        </div>
+        <div class="week-xp">25 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Quality First, Speed Second</div>
+          <div class="col-text">Good movement is the foundation everything else is built on. Skipping, jumping, and running require coordinated patterns. <strong>"Slow is smooth. Smooth is fast. Quality first, speed second."</strong> -- P2A coaching principle.</div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Agility Circuit + Out-and-Back Run</div>
+          <div class="col-text">
+            5-station agility circuit (ladder, weaving cones, hurdles, dodge and weave, skater hops), then steady out-and-back run matching pace each way.
+            <ul>
+              <li>Pick ONE cue to apply across every station</li>
+              <li>Focus on quality movement, not speed</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">What Was Hardest</div>
+          <div class="col-text">"Which movement felt hardest today -- and why do you think that is?" Was it coordination? Did fatigue break your technique? Did a specific station catch you off guard?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W3 -->
+    <div class="week-card" id="week-3">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q1 · Week 3</div>
+          <div class="week-theme">Speed</div>
+          <div class="week-narrative">The Explorer learns that speed is not just natural gift -- it is technique, applied fast.</div>
+        </div>
+        <div class="week-xp">25 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Fast Starts, Arms, and Reaction</div>
+          <div class="col-text">Speed comes from: powerful push-off, fast arm drive, forward lean from ankles. Arms control legs. First 10m is where races are won. Cue: <strong>"Head still, short fast arms, fast feet."</strong></div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Fast Starts + Partner Chase</div>
+          <div class="col-text">
+            Practise fast starts from different positions (standing, crouching, 3-point). Then Partner Chase -- one person starts 1m ahead, other must tag them before 10m mark.
+            <ul>
+              <li>Focus on the first 3 steps -- explosion, not stride</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">When You Felt Fastest</div>
+          <div class="col-text">"When did you feel fastest today -- and what were you doing differently in that moment?" Arm drive? More relaxed? Different start position? One rep where everything clicked?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W4 BADGE -->
+    <div class="week-card badge-week" id="week-4">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q1 · Week 4</div>
+          <div class="week-theme">Power</div>
+          <div class="week-narrative">The Explorer discovers the difference between being strong and being explosive.</div>
+        </div>
+        <div class="week-xp">50 XP</div>
+      </div>
+      <div class="badge-pill">⚡ Power Up · +25 XP · Coach Required</div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Jump, Bound, and Throw -- Explosive Power</div>
+          <div class="col-text">Power = strength applied quickly. Two types trained: lower body (jumping/bounding) and upper body (throwing). Cues: <strong>"Jet wings on take-off. Reach for the sky. Motorbike landing."</strong></div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Bounding Hoops + Hop-Step-Jump</div>
+          <div class="col-text">
+            Bounding hoops -- bound through a line of hoops for distance. Hop-step-jump -- hop over hurdle, bound to dot, land in hoop.
+            <ul>
+              <li>Drive arms hard from push-off</li>
+              <li>Soft landings = skilled, not weak</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Where You Felt Power</div>
+          <div class="col-text">"Where in your body did you feel the most power today -- and what helped you generate it?" Arms, legs, core? Did arm drive change your jump height? Did knee lift change bounding distance?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W5 -->
+    <div class="week-card" id="week-5">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q1 · Week 5</div>
+          <div class="week-theme">Hurdles &amp; Relay</div>
+          <div class="week-narrative">The Explorer learns that sport is more than solo performance -- it is timing, trust, and team.</div>
+        </div>
+        <div class="week-xp">25 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Rhythm, Baton Changes, and Running as a Team</div>
+          <div class="col-text">Hurdle = attack at speed with controlled step-over; lead leg clears, trail leg whips through. Relay won or lost in the changeover zone. Cues: <strong>"Toes up, knees up, use arms. Arm straight back, call to run, go!"</strong></div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Hurdle Relay -- Team Best Time</div>
+          <div class="col-text">
+            Race over two hurdle lines, then full relay with baton changes. Goal: improve team time by running better technique, not just harder.
+            <ul>
+              <li>Incoming runner calls "hand"</li>
+              <li>Outgoing extends arm straight back and accelerates immediately</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Hurdles or Relay</div>
+          <div class="col-text">"What was harder -- the hurdles or the relay exchange -- and what did you do to get better at it?" Identify one specific moment you improved. What changed -- a cue, a focus shift, or something a teammate said?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W6 -->
+    <div class="week-card" id="week-6">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q1 · Week 6</div>
+          <div class="week-theme">Endurance</div>
+          <div class="week-narrative">The Explorer discovers that mental toughness is as much a physical quality as speed or power.</div>
+        </div>
+        <div class="week-xp">25 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Running at Your Own Pace</div>
+          <div class="col-text">Aerobic base is built by sustained moderate effort -- not flat out. If you can't hold a short conversation, you're too fast. When it gets hard, focus on the next 30 seconds, not the whole remaining time. Cue: <strong>"Relaxed shoulders, steady breathing, head still."</strong></div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Age Endurance Challenge + Curve Running</div>
+          <div class="col-text">
+            Run continuously for half your age in minutes without stopping (e.g. age 12 = 6 minutes). Every complete minute without walking = 10 points.
+            <ul>
+              <li>Then curve running -- practise hugging the inside of a 50m curve</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Keep Going</div>
+          <div class="col-text">"What was hardest about the endurance challenge -- and what strategy did you use to keep going?" Boredom, pain, or urge to walk? What did you tell yourself? Did early pacing help at the end?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W7 -->
+    <div class="week-card" id="week-7">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q1 · Week 7</div>
+          <div class="week-theme">Putting it Together</div>
+          <div class="week-narrative">The Explorer realises how much more capable they are than at Week 1 -- all physical qualities working as one.</div>
+        </div>
+        <div class="week-xp">25 XP</div>
+      </div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Speed + Power + Coordination + Endurance in One Session</div>
+          <div class="col-text">Skipping = coordination + power. Plyometrics (pogos, squat jumps) = explosive power. Strength exercises = foundation. Circular relay = speed while tired. Throw accuracy = brain-body skill under fatigue. Notice how much more capable you are than Week 1.</div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Fitness Circuit + Circular Relay + Throw for Accuracy</div>
+          <div class="col-text">
+            Four areas: skipping/plyometrics, strength exercises (push-ups, lunges, squats, planks), circular relay, overarm throw for accuracy.
+            <ul>
+              <li>Set one personal target before starting</li>
+              <li>Coach high-5 at changeover</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">How Far You've Come</div>
+          <div class="col-text">"What has improved most since Week 1 -- and how do you know?" Identify a specific moment today where you were better than when you started. What was different -- in your body, technique, or mindset?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W8 CAPSTONE -->
+    <div class="week-card capstone" id="week-8">
+      <div class="week-header">
+        <div>
+          <div class="week-number">Q1 · Week 8 · Capstone</div>
+          <div class="week-theme">My Athletic Highlight Reel</div>
+          <div class="week-narrative">The Explorer's journey is complete. Week 1 was the starting point. Week 8 is proof of progress.</div>
+        </div>
+        <div class="week-xp">85 XP</div>
+      </div>
+      <div class="badge-pill gold-pill">🏆 Module 1 Master · +50 XP · Coach Required</div>
+      <div class="week-body">
+        <div class="col-block">
+          <div class="col-header concept">Concept</div>
+          <div class="col-title">Looking Back to See How Far You Have Come</div>
+          <div class="col-text">
+            Week 1 = starting point. Week 8 = measure of progress. Athletic development is not a straight line -- some weeks were harder. Every session, every reflection, every challenge counts. After today, Module 2 -- Skill -- begins.
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header do">Do</div>
+          <div class="col-title">Coach Assessment + Personal Best Attempt</div>
+          <div class="col-text">
+            Coach compares movement quality to Week 1 baseline. Athlete chooses personal best challenge:
+            <ul>
+              <li>Sprint relay, OR</li>
+              <li>Squat jump, OR</li>
+              <li>Tennis Ball Target</li>
+              <li>Coach awards Module 1 Master badge upon completion</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-header reflect">Reflect</div>
+          <div class="col-title">Who You Became</div>
+          <div class="col-text">"What am I most proud of from Module 1 -- and what will I do differently in Module 2?" Not about what you achieved. About who you became. What habits will you carry forward? What will you do better?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XP TABLE -->
+  <div class="panel-card" id="xp-table">
+    <h2>XP &amp; Badges</h2>
+    <table class="xp-table">
+      <thead>
+        <tr>
+          <th>Wk</th>
+          <th>Theme</th>
+          <th style="text-align:right">XP</th>
+          <th>Badge</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Know Your Engine</td><td class="xp-val">30</td><td class="no-badge">--</td></tr>
+        <tr><td>2</td><td>Move Well</td><td class="xp-val">25</td><td class="no-badge">--</td></tr>
+        <tr><td>3</td><td>Speed</td><td class="xp-val">25</td><td class="no-badge">--</td></tr>
+        <tr class="badge-row"><td>4</td><td>Power</td><td class="xp-val">50</td><td class="badge-tag">⚡ Power Up (+25)</td></tr>
+        <tr><td>5</td><td>Hurdles &amp; Relay</td><td class="xp-val">25</td><td class="no-badge">--</td></tr>
+        <tr><td>6</td><td>Endurance</td><td class="xp-val">25</td><td class="no-badge">--</td></tr>
+        <tr><td>7</td><td>Putting it Together</td><td class="xp-val">25</td><td class="no-badge">--</td></tr>
+        <tr class="badge-row"><td>8</td><td>My Athletic Highlight Reel</td><td class="xp-val">85</td><td class="badge-tag">🏆 Module 1 Master (+50)</td></tr>
+        <tr>
+          <td colspan="2"><strong>Quest I Total</strong></td>
+          <td class="xp-val"><strong>290 XP</strong></td>
+          <td class="badge-tag">2 Badges</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- QUEST II TEASER -->
+  <div class="teaser-card" id="next">
+    <div class="teaser-label">The Journey Continues</div>
+    <div class="teaser-sep"></div>
+    <p class="teaser-narrative">The Explorer has discovered their engine. Now it is time to forge the tools. Quest II is where the Apprentice takes one skill and builds it deliberately -- week by week, rep by rep, until it is proven.</p>
+    <div class="teaser-title">Quest II: Sharpen the Tools</div>
+    <div class="teaser-sub">The Apprentice · Realm of Practice · Coming next.</div>
+  </div>
+
+</div>
+</body>
+</html>
