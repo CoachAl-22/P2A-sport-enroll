@@ -166,7 +166,12 @@ export default function Enrollment() {
                   <div className="flex items-center text-gray-600">
                     <Clock className="w-4 h-4 mr-2" />
                     <span className="text-sm">
-                      9 weeks ({new Date(classDetails.class?.startDate).toLocaleDateString()} - {new Date(classDetails.class?.endDate).toLocaleDateString()})
+                      {(() => {
+                        const s = classDetails.class?.startDate ? new Date(classDetails.class.startDate) : null;
+                        const e = classDetails.class?.endDate ? new Date(classDetails.class.endDate) : null;
+                        const weeks = s && e ? Math.max(1, Math.round((e.getTime() - s.getTime()) / (7 * 24 * 3600 * 1000)) + 1) : null;
+                        return `${weeks ? `${weeks} weeks ` : ""}(${s ? s.toLocaleDateString() : "?"} - ${e ? e.toLocaleDateString() : "?"})`;
+                      })()}
                     </span>
                   </div>
                   

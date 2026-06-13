@@ -47,6 +47,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
   const [autoRenew, setAutoRenew] = useState(true);
   const [notes, setNotes] = useState("");
   const [policyAgreed, setPolicyAgreed] = useState(false);
+  const [selectedWeeks, setSelectedWeeks] = useState<Set<number>>(new Set());
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginContext, setLoginContext] = useState("");
 
@@ -86,18 +87,67 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
     defaultValues: { firstName: "", lastName: "", dateOfBirth: "", grade: "", medicalInfo: "", emergencyContact: "" },
   });
 
+  // ── Per-week enrolment: the dated term weeks for this class ──
+  const { data: termWeeksData } = useQuery<{
+    pricePerWeek: string;
+    gstRate: string;
+    weeks: { weekNumber: number; sessionDate: string; isHoliday: boolean; holidayName?: string }[];
+    payableWeeksCount: number;
+    minWeeksSelectable: number;
+  }>({
+    queryKey: ["/api/classes", classId, "term-weeks"],
+    queryFn: async () => {
+      const r = await fetch(`/api/classes/${classId}/term-weeks`);
+      if (!r.ok) throw new Error("no term weeks");
+      return r.json();
+    },
+    enabled: !!classId,
+    retry: false,
+  });
+
+  const payableWeekList = (termWeeksData?.weeks ?? []).filter((w) => !w.isHoliday);
+
+  // Default to the full term (all payable weeks ticked) once weeks load
+  useEffect(() => {
+    if (payableWeekList.length > 0 && selectedWeeks.size === 0) {
+      setSelectedWeeks(new Set(payableWeekList.map((w) => w.weekNumber)));
+    }
+  }, [termWeeksData]);
+
+  const toggleWeek = (weekNumber: number) => {
+    setSelectedWeeks((prev) => {
+      const next = new Set(prev);
+      if (next.has(weekNumber)) next.delete(weekNumber);
+      else next.add(weekNumber);
+      return next;
+    });
+  };
+  const selectFullTerm = () => setSelectedWeeks(new Set(payableWeekList.map((w) => w.weekNumber)));
+  const selectFortnightly = () => setSelectedWeeks(new Set(payableWeekList.filter((_, i) => i % 2 === 0).map((w) => w.weekNumber)));
+
+  const minWeeks = termWeeksData?.minWeeksSelectable ?? 0;
+  const pricePerWeek = parseFloat(termWeeksData?.pricePerWeek ?? "0");
+  const belowMinimum = termWeeksData ? selectedWeeks.size < minWeeks : false;
+  const isPartialTerm = !!termWeeksData && selectedWeeks.size < payableWeekList.length;
+  const weekPrice = (pricePerWeek * selectedWeeks.size).toFixed(0);
+  const formatWeekDate = (d: string) =>
+    new Date(`${d}T00:00:00`).toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+
   const enrollmentMutation = useMutation({
     mutationFn: async () => {
+      // Only send selected weeks when the parent dropped some; a full-term
+      // selection omits them and keeps the original flat term price.
+      const weekField = isPartialTerm ? { selectedWeekNumbers: Array.from(selectedWeeks).sort((a, b) => a - b) } : {};
       if (isAddingNewChild) {
         const v = newChildForm.getValues();
-        const payload = { classId, autoRenew, notes, childInfo: { firstName: v.firstName, lastName: v.lastName, dateOfBirth: v.dateOfBirth, grade: v.grade, medicalInfo: v.medicalInfo, emergencyContact: v.emergencyContact } };
+        const payload = { classId, autoRenew, notes, ...weekField, childInfo: { firstName: v.firstName, lastName: v.lastName, dateOfBirth: v.dateOfBirth, grade: v.grade, medicalInfo: v.medicalInfo, emergencyContact: v.emergencyContact } };
         const response = await apiRequest("POST", "/api/enrollments", payload);
         return [await response.json()];
       }
-      // Submit one enrollment per selected child
+      // Submit one enrollment per selected child (shared week selection)
       const results = await Promise.all(
         Array.from(selectedChildIds).map(async (childId) => {
-          const response = await apiRequest("POST", "/api/enrollments", { classId, autoRenew, notes, childId });
+          const response = await apiRequest("POST", "/api/enrollments", { classId, autoRenew, notes, ...weekField, childId });
           return response.json();
         })
       );
@@ -175,6 +225,10 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
   const handleConfirm = () => {
     if (!policyAgreed) {
       toast({ title: "Please accept the policies", description: "Tick the box to continue.", variant: "destructive" });
+      return;
+    }
+    if (belowMinimum) {
+      toast({ title: "Select more weeks", description: `Please choose at least ${minWeeks} weeks to enrol.`, variant: "destructive" });
       return;
     }
     enrollmentMutation.mutate();
@@ -415,21 +469,75 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
                       <span>{classDetails.venue.name}</span>
                     </div>
                   )}
-                  <div className="border-t pt-3">
-                    {cls.pricePerSession && cls.sessionCount ? (
-                      <p className="text-xs text-gray-500 mb-1 text-right">
-                        ${parseFloat(cls.pricePerSession).toFixed(0)}/session × {cls.sessionCount} sessions
-                      </p>
-                    ) : null}
-                    <div className="flex justify-between font-semibold text-base">
-                      <span>Term fee</span>
-                      <span className="text-primary-600">${parseFloat(cls.pricePerTerm).toFixed(0)} + GST</span>
+                  {!termWeeksData && (
+                    <div className="border-t pt-3">
+                      {cls.pricePerSession && cls.sessionCount ? (
+                        <p className="text-xs text-gray-500 mb-1 text-right">
+                          ${parseFloat(cls.pricePerSession).toFixed(0)}/session × {cls.sessionCount} sessions
+                        </p>
+                      ) : null}
+                      <div className="flex justify-between font-semibold text-base">
+                        <span>Term fee</span>
+                        <span className="text-primary-600">${parseFloat(cls.pricePerTerm).toFixed(0)} + GST</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </>
               )}
             </CardContent>
           </Card>
+
+          {/* ── Per-week selection (when this class runs on a term) ── */}
+          {termWeeksData && payableWeekList.length > 0 && !isWaitlist && (
+            <Card className="border-gray-200">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  Choose your weeks
+                  <span className="ml-auto text-xs font-normal text-gray-500">{selectedWeeks.size} of {payableWeekList.length} weeks</span>
+                </CardTitle>
+                <p className="text-xs text-gray-500">Pay only for the weeks your athlete attends. Minimum {minWeeks} weeks.</p>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex gap-2">
+                  <Button type="button" size="sm" variant="outline" onClick={selectFullTerm} className="text-xs">Full term</Button>
+                  <Button type="button" size="sm" variant="outline" onClick={selectFortnightly} className="text-xs">Fortnightly</Button>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {termWeeksData.weeks.map((w) => {
+                    const checked = selectedWeeks.has(w.weekNumber);
+                    if (w.isHoliday) {
+                      return (
+                        <div key={w.weekNumber} className="flex items-center gap-2 p-2 rounded-lg border border-dashed border-gray-200 text-gray-400 text-xs">
+                          <Calendar className="w-3.5 h-3.5 shrink-0" />
+                          <span>Wk {w.weekNumber} · {formatWeekDate(w.sessionDate)}<br /><span className="text-[10px]">{w.holidayName ?? "No class"}</span></span>
+                        </div>
+                      );
+                    }
+                    return (
+                      <button
+                        key={w.weekNumber}
+                        type="button"
+                        onClick={() => toggleWeek(w.weekNumber)}
+                        className={`flex items-center gap-2 p-2 rounded-lg border-2 text-left text-xs transition-colors ${checked ? "border-primary-500 bg-primary-50" : "border-gray-200 hover:border-primary-300"}`}
+                      >
+                        <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${checked ? "bg-primary-500 border-primary-500" : "border-gray-300"}`}>
+                          {checked && <Check className="w-3 h-3 text-white" />}
+                        </div>
+                        <span className="font-medium text-gray-900">Wk {w.weekNumber} · {formatWeekDate(w.sessionDate)}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {belowMinimum && (
+                  <p className="text-xs text-red-500">Please select at least {minWeeks} weeks to enrol.</p>
+                )}
+                <div className="border-t pt-3 flex justify-between font-semibold text-base">
+                  <span>{isPartialTerm ? `${selectedWeeks.size} weeks` : "Full term"}</span>
+                  <span className="text-primary-600">${weekPrice} + GST</span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <div className="space-y-4">
             <div className="flex items-start gap-3">
@@ -455,7 +563,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
             <Button
               type="button"
               onClick={handleConfirm}
-              disabled={enrollmentMutation.isPending}
+              disabled={enrollmentMutation.isPending || belowMinimum}
               className="flex-1 bg-primary-500 hover:bg-primary-600 text-white"
             >
               {enrollmentMutation.isPending ? (

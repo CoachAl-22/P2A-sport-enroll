@@ -12,6 +12,7 @@ import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children } from "@shared/schema";
+import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } from "./googleSheets";
 import { db } from "./db";
@@ -170,6 +171,9 @@ function majWeekComplete(athlete: any): boolean {
 
 const enrollmentFormSchema = insertEnrollmentSchema.extend({
   parentId: z.string().optional(), // set server-side from session
+  // Per-week enrolment: optional. When present, parent pays only for these weeks.
+  // Omitted = full term (all payable weeks), preserving the original flat behaviour.
+  selectedWeekNumbers: z.array(z.number().int().positive()).optional(),
   childInfo: z.object({
     firstName: z.string().min(1),
     lastName: z.string().min(1),
@@ -1096,6 +1100,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Per-week enrolment: dated session weeks for a class's term, with holiday
+  // flags, price-per-week and the minimum selectable weeks (half the term).
+  app.get("/api/classes/:id/term-weeks", async (req, res) => {
+    try {
+      const cls = await storage.getClass(req.params.id);
+      if (!cls) {
+        return res.status(404).json({ message: "Class not found" });
+      }
+      if (!cls.termConfigId) {
+        return res.status(400).json({ message: "Class has no term configuration" });
+      }
+      const termConfig = await storage.getTermConfigurationById(cls.termConfigId);
+      if (!termConfig) {
+        return res.status(404).json({ message: "Term configuration not found" });
+      }
+      const holidays = await storage.getTermHolidays(cls.termConfigId);
+      const weeks = computeTermWeeks({
+        termStartDate: termConfig.startDate,
+        weeksCount: termConfig.weeksCount,
+        classDayOfWeek: cls.dayOfWeek,
+        holidays: holidays.map((h: any) => ({ holidayDate: h.holidayDate, name: h.name })),
+      });
+      const payable = payableWeeks(weeks);
+      res.json({
+        classId: cls.id,
+        termConfigId: termConfig.id,
+        termName: termConfig.name,
+        pricePerWeek: termConfig.pricePerWeek,
+        gstRate: termConfig.gstRate,
+        weeks,
+        payableWeeksCount: payable.length,
+        minWeeksSelectable: minimumSelectableWeeks(payable.length),
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Admin class management routes
   app.post("/api/classes", async (req, res) => {
     const userId = (req.session as any)?.userId;
@@ -1627,7 +1669,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const enrollmentStatus = (classData.currentEnrollment || 0) >= classData.maxCapacity ? "waitlist" : "pending_payment";
       const waitlistPosition = enrollmentStatus === "waitlist" ? await storage.getWaitlistPosition(enrollmentData.classId) : undefined;
-      
+
+      // ── Per-week enrolment: resolve the term weeks and the amount to charge ──
+      // Default (no selectedWeekNumbers) = full term at the flat pricePerTerm.
+      // When weeks are selected, the price is recomputed server-side (never trust
+      // the client) at pricePerWeek × selected weeks. GST is always applied on top
+      // of the ex-GST base price for both paths.
+      const GST_DEFAULT = 0.1; // Australian GST, used when a class has no term config
+      const selectedWeekNumbers = (enrollmentData as any).selectedWeekNumbers as number[] | undefined;
+      let termWeeks: ReturnType<typeof computeTermWeeks> | null = null;
+      let gstRate = GST_DEFAULT;
+      let baseExGst = parseFloat(classData.pricePerTerm);
+
+      if (selectedWeekNumbers && selectedWeekNumbers.length > 0) {
+        if (!classData.termConfigId) {
+          return res.status(400).json({ message: "This class has no term configuration, so weeks cannot be selected." });
+        }
+        const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
+        if (!termConfig) {
+          return res.status(400).json({ message: "Term configuration not found for this class." });
+        }
+        const holidays = await storage.getTermHolidays(classData.termConfigId);
+        termWeeks = computeTermWeeks({
+          termStartDate: termConfig.startDate,
+          weeksCount: termConfig.weeksCount,
+          classDayOfWeek: classData.dayOfWeek,
+          holidays: holidays.map((h: any) => ({ holidayDate: h.holidayDate, name: h.name })),
+        });
+        const payable = payableWeeks(termWeeks);
+        const payableNumbers = new Set(payable.map((w) => w.weekNumber));
+        const uniqueSelected = Array.from(new Set(selectedWeekNumbers));
+
+        const invalid = uniqueSelected.filter((n) => !payableNumbers.has(n));
+        if (invalid.length > 0) {
+          return res.status(400).json({ message: `Selected weeks are not valid sessions: ${invalid.join(", ")}` });
+        }
+        const minWeeks = minimumSelectableWeeks(payable.length);
+        if (uniqueSelected.length < minWeeks) {
+          return res.status(400).json({ message: `Please select at least ${minWeeks} of the ${payable.length} weeks.` });
+        }
+
+        gstRate = termConfig.gstRate != null ? parseFloat(termConfig.gstRate) : GST_DEFAULT;
+        baseExGst = parseFloat(termConfig.pricePerWeek) * uniqueSelected.length;
+      } else if (classData.termConfigId) {
+        // Full-term path: pick up the class's configured GST rate if present.
+        const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
+        if (termConfig?.gstRate != null) gstRate = parseFloat(termConfig.gstRate);
+      }
+
+      // GST always applied on top of the ex-GST base price.
+      const amountToCharge = (baseExGst * (1 + gstRate)).toFixed(2);
+
       const enrollment = await storage.createEnrollment({
         childId,
         classId: enrollmentData.classId,
@@ -1637,15 +1729,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         waitlistPosition,
         notes: enrollmentData.notes,
       });
-      
+
+      // Write one enrollment_weeks row per term week (selected / skipped / holiday)
+      if (termWeeks && enrollmentStatus !== "waitlist") {
+        const selectedSet = new Set(Array.from(new Set(selectedWeekNumbers)));
+        await storage.createEnrollmentWeeks(
+          termWeeks.map((w) => ({
+            enrollmentId: enrollment.id,
+            weekNumber: w.weekNumber,
+            sessionDate: w.sessionDate,
+            status: w.isHoliday ? "holiday" : selectedSet.has(w.weekNumber) ? "selected" : "skipped",
+          })),
+        );
+      }
+
       // Create payment record if not waitlisted
       if (enrollmentStatus === "pending_payment") {
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + 7); // Payment due in 7 days
-        
+
         await storage.createPayment({
           enrollmentId: enrollment.id,
-          amount: classData.pricePerTerm.toString(),
+          amount: amountToCharge,
           dueDate,
         });
       }
@@ -1713,8 +1818,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Class not found" });
       }
       
-      const amount = Math.round(parseFloat(classData.pricePerTerm) * 100); // Convert to cents
-      
+      // Charge the amount recorded on the enrolment's payment (per-week aware),
+      // falling back to the flat term price only if no payment record exists.
+      const [pendingPayment] = await storage.getPaymentsByEnrollment(enrollmentId);
+      const chargeBase = pendingPayment?.amount ?? classData.pricePerTerm;
+      const amount = Math.round(parseFloat(chargeBase) * 100); // Convert to cents
+
       if (!stripe) {
         return res.status(500).json({ message: "Payment processing not configured" });
       }
@@ -1750,10 +1859,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (matched.length !== enrollmentIds.length)
         return res.status(403).json({ message: "One or more enrollments not found or not yours" });
 
-      const totalCents = matched.reduce((sum, r) => {
-        const price = parseFloat(r.class?.pricePerTerm ?? "0");
-        return sum + Math.round(price * 100);
-      }, 0);
+      // Sum each enrolment's recorded payment amount (per-week aware), falling
+      // back to the flat term price only where no payment record exists.
+      const perEnrollmentCents = await Promise.all(
+        matched.map(async (r) => {
+          const [pmt] = await storage.getPaymentsByEnrollment(r.enrollment.id);
+          const price = parseFloat(pmt?.amount ?? r.class?.pricePerTerm ?? "0");
+          return Math.round(price * 100);
+        }),
+      );
+      const totalCents = perEnrollmentCents.reduce((sum, c) => sum + c, 0);
 
       if (!stripe) return res.status(500).json({ message: "Payment processing not configured" });
 
