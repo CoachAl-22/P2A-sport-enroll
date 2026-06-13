@@ -4,9 +4,9 @@
 // Version: update this string whenever you deploy a new version
 // ═══════════════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'maj-v2.9';
-const STATIC_CACHE = 'maj-static-v2.9';
-const API_CACHE = 'maj-api-v2.9';
+const CACHE_NAME = 'maj-v2.10';
+const STATIC_CACHE = 'maj-static-v2.10';
+const API_CACHE = 'maj-api-v2.10';
 
 // Files to cache immediately on install
 const STATIC_ASSETS = [
@@ -100,9 +100,10 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       fetch(event.request)
         .then(response => {
-          // Cache the fresh version
+          // Cache the fresh version — clone BEFORE the body is consumed by the return
+          const copy = response.clone();
           caches.open(STATIC_CACHE).then(cache => {
-            cache.put(event.request, response.clone());
+            cache.put(event.request, copy);
           });
           return response;
         })
@@ -154,8 +155,10 @@ self.addEventListener('fetch', event => {
       if (cached) return cached;
       return fetch(event.request).then(response => {
         if (response && response.status === 200 && response.type !== 'opaque') {
+          // Clone BEFORE returning — the async cache write must not touch a consumed body
+          const copy = response.clone();
           caches.open(STATIC_CACHE).then(cache => {
-            cache.put(event.request, response.clone());
+            cache.put(event.request, copy);
           });
         }
         return response;

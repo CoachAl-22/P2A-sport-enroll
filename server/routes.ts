@@ -3581,12 +3581,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/term-configurations", isAdmin, async (req, res) => {
     try {
-      const createData = { ...req.body };
+      const b = req.body ?? {};
+      // Drizzle numeric/decimal columns expect strings; integer columns expect numbers.
+      // Clients (the setup-term wizard and the term-config admin form) send these as JS
+      // numbers, which fails the insert silently — coerce them here so both callers work.
+      const createData = {
+        ...b,
+        year: b.year != null ? Number(b.year) : b.year,
+        weeksCount: b.weeksCount != null ? Number(b.weeksCount) : b.weeksCount,
+        pricePerWeek: b.pricePerWeek != null ? String(b.pricePerWeek) : b.pricePerWeek,
+        gstRate: b.gstRate != null ? String(b.gstRate) : b.gstRate,
+      };
       const termConfig = await storage.createTermConfiguration(createData);
       res.status(201).json(termConfig);
     } catch (error: any) {
       console.error('Error creating term configuration:', error);
-      res.status(500).json({ message: "Failed to create term configuration" });
+      res.status(500).json({ message: error?.message || "Failed to create term configuration" });
     }
   });
 
