@@ -220,6 +220,27 @@ export const enrollments = pgTable("enrollments", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Per-week enrolment: one row per term week of an enrolment
+export const enrollmentWeekStatusEnum = pgEnum("enrollment_week_status", [
+  "selected", // attending and paid
+  "skipped", // unticked at enrolment, not paid
+  "holiday", // no class this week (term holiday)
+  "credited", // dropped after payment, makeup credit issued
+  "makeup", // attending using a makeup credit
+]);
+
+export const enrollmentWeeks = pgTable("enrollment_weeks", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  enrollmentId: uuid("enrollment_id").references(() => enrollments.id, { onDelete: "cascade" }).notNull(),
+  weekNumber: integer("week_number").notNull(), // 1..termConfig.weeksCount
+  sessionDate: date("session_date", { mode: "string" }).notNull(),
+  status: enrollmentWeekStatusEnum("status").default("selected").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  uniqueEnrollmentWeek: unique().on(table.enrollmentId, table.weekNumber),
+}));
+
 // Payments table
 export const payments = pgTable("payments", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -584,6 +605,14 @@ export const enrollmentsRelations = relations(enrollments, ({ one, many }) => ({
     references: [users.id],
   }),
   payments: many(payments),
+  weeks: many(enrollmentWeeks),
+}));
+
+export const enrollmentWeeksRelations = relations(enrollmentWeeks, ({ one }) => ({
+  enrollment: one(enrollments, {
+    fields: [enrollmentWeeks.enrollmentId],
+    references: [enrollments.id],
+  }),
 }));
 
 export const paymentsRelations = relations(payments, ({ one }) => ({
@@ -756,6 +785,15 @@ export const insertEnrollmentSchema = createInsertSchema(enrollments).omit({
   updatedAt: true,
   enrolledAt: true,
 });
+
+export const insertEnrollmentWeekSchema = createInsertSchema(enrollmentWeeks).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type EnrollmentWeek = typeof enrollmentWeeks.$inferSelect;
+export type InsertEnrollmentWeek = z.infer<typeof insertEnrollmentWeekSchema>;
 
 export const insertPaymentSchema = createInsertSchema(payments).omit({
   id: true,

@@ -45,6 +45,9 @@ import {
   type InsertClass,
   type Enrollment,
   type InsertEnrollment,
+  enrollmentWeeks,
+  type EnrollmentWeek,
+  type InsertEnrollmentWeek,
   type Payment,
   type InsertPayment,
   type Notification,
@@ -138,6 +141,8 @@ export interface IStorage {
   createEnrollment(enrollment: InsertEnrollment): Promise<Enrollment>;
   updateEnrollment(id: string, updates: Partial<Enrollment>): Promise<Enrollment>;
   getWaitlistPosition(classId: string): Promise<number>;
+  createEnrollmentWeeks(rows: InsertEnrollmentWeek[]): Promise<EnrollmentWeek[]>;
+  getEnrollmentWeeks(enrollmentId: string): Promise<EnrollmentWeek[]>;
 
   // Payment operations
   getPayment(id: string): Promise<Payment | undefined>;
@@ -648,6 +653,20 @@ export class DatabaseStorage implements IStorage {
     const [created] = await db.insert(enrollments).values(enrollment).returning();
     await this.updateClassEnrollmentCount(enrollment.classId);
     return created;
+  }
+
+  // Per-week enrolment: bulk-insert the week rows for an enrolment.
+  async createEnrollmentWeeks(rows: InsertEnrollmentWeek[]): Promise<EnrollmentWeek[]> {
+    if (rows.length === 0) return [];
+    return await db.insert(enrollmentWeeks).values(rows).returning();
+  }
+
+  async getEnrollmentWeeks(enrollmentId: string): Promise<EnrollmentWeek[]> {
+    return await db
+      .select()
+      .from(enrollmentWeeks)
+      .where(eq(enrollmentWeeks.enrollmentId, enrollmentId))
+      .orderBy(enrollmentWeeks.weekNumber);
   }
 
   async updateEnrollment(id: string, updates: Partial<Enrollment>): Promise<Enrollment> {
