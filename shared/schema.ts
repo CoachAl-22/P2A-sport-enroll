@@ -198,6 +198,7 @@ export const classes = pgTable("classes", {
   isEnrollmentOpen: boolean("is_enrollment_open").default(false).notNull(),
   isHolidayProgram: boolean("is_holiday_program").default(false).notNull(),
   isMakeupEligible: boolean("is_makeup_eligible").default(false).notNull(),
+  perWeekEnabled: boolean("per_week_enabled").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
