@@ -1155,6 +1155,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const body = { ...req.body };
+      // The form sends dates as strings and the price as a number, but the insert
+      // schema expects Date objects (timestamp columns) and strings (decimal columns).
+      // Coerce before validation so the Add Class form can create classes.
+      if (body.startDate) body.startDate = new Date(body.startDate);
+      if (body.endDate) body.endDate = new Date(body.endDate);
+      if (body.pricePerSession != null && body.pricePerSession !== "") {
+        body.pricePerSession = String(body.pricePerSession);
+      }
       // Compute pricePerTerm from pricePerSession × session count
       if (body.pricePerSession && body.startDate && body.endDate && body.dayOfWeek) {
         const sessions = storage.countSessions(new Date(body.startDate), new Date(body.endDate), parseInt(body.dayOfWeek));
