@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { CLASS_PRESETS } from "@shared/class-presets";
 import Navbar from "@/components/layout/navbar";
 import { PlusIcon, EditIcon, TrashIcon, CalendarIcon, List, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -89,6 +90,7 @@ const EMPTY_FORM = {
   term: "term_3", year: 2026, dayOfWeek: "", startTime: "", endTime: "",
   startDate: "", endDate: "",
   minAge: "", maxAge: "", maxCapacity: "", pricePerSession: "", isEnrollmentOpen: true,
+  perWeekEnabled: false,
 };
 
 export default function AdminClasses() {
@@ -213,6 +215,7 @@ export default function AdminClasses() {
       maxAge: cls.maxAge?.toString() || "",
       maxCapacity: cls.maxCapacity?.toString() || "",
       pricePerSession: cls.pricePerSession?.toString() || "",
+      perWeekEnabled: !!cls.perWeekEnabled,
       isEnrollmentOpen: cls.isEnrollmentOpen !== false,
     });
     setIsDialogOpen(true);
@@ -559,6 +562,35 @@ export default function AdminClasses() {
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+            {!editingClass && (
+              <div className="rounded-lg border border-dashed p-3 bg-gray-50">
+                <label className="text-sm font-medium">Choose a class template <span className="text-gray-400 font-normal">(optional — fills the fields below, all editable)</span></label>
+                <Select
+                  value=""
+                  onValueChange={(key) => {
+                    const preset = CLASS_PRESETS.find((p) => p.key === key);
+                    if (!preset) return;
+                    setFormData((prev) => ({
+                      ...prev,
+                      name: preset.name,
+                      description: preset.description,
+                      sportType: preset.sportType,
+                      minAge: String(preset.minAge),
+                      maxAge: String(preset.maxAge),
+                      pricePerSession: preset.pricePerSession,
+                      perWeekEnabled: preset.perWeekEnabled,
+                    }));
+                  }}
+                >
+                  <SelectTrigger className="mt-1"><SelectValue placeholder="Select a program template…" /></SelectTrigger>
+                  <SelectContent>
+                    {CLASS_PRESETS.map((p) => (
+                      <SelectItem key={p.key} value={p.key}>{p.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div>
               <Label>Class Name *</Label>
               <Input
@@ -717,6 +749,14 @@ export default function AdminClasses() {
                   return <p className="text-xs text-gray-500 mt-1">→ {sessions} sessions · ${total}/term</p>;
                 })()}
               </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={!!formData.perWeekEnabled}
+                onCheckedChange={v => setFormData(p => ({ ...p, perWeekEnabled: v }))}
+              />
+              <label className="text-sm">Offer per-week (fortnightly) enrolment</label>
             </div>
 
             <div className="grid grid-cols-2 gap-4 items-end">
