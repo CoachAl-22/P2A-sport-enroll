@@ -83,7 +83,9 @@ function Router() {
         </>
       ) : (
         <>
-          <Route path="/" component={Dashboard} />
+          {/* Logged-in users still land on the public homepage; their dashboard lives at /dashboard (admins use /admin) */}
+          <Route path="/" component={Landing} />
+          <Route path="/dashboard" component={Dashboard} />
           <Route path="/athlete-portal" component={AthletePortal} />
           <Route path="/classes" component={Classes} />
           <Route path="/coaches" component={Coaches} />

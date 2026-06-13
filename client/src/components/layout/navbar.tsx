@@ -118,9 +118,9 @@ export default function Navbar() {
                     Programs
                   </Button>
                 </Link>
-                <Link href="/">
+                <Link href="/dashboard">
                   <Button
-                    variant={location === "/" ? "default" : "ghost"}
+                    variant={location === "/dashboard" ? "default" : "ghost"}
                     className="text-gray-700 hover:text-primary-500"
                   >
                     My Family
@@ -370,9 +370,9 @@ export default function Navbar() {
                       Programs
                     </Button>
                   </Link>
-                  <Link href="/">
+                  <Link href="/dashboard">
                     <Button
-                      variant={location === "/" ? "default" : "ghost"}
+                      variant={location === "/dashboard" ? "default" : "ghost"}
                       className="w-full justify-start"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
