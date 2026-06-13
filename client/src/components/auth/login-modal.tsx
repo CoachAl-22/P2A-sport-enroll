@@ -68,21 +68,25 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const handleLogin = async (data: LoginForm) => {
     try {
       const response = await apiRequest("POST", "/api/auth/login", data);
-      
+      const result = await response.json();
+
       // Clear cache and refetch auth state
       queryClient.clear();
       await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       await queryClient.refetchQueries({ queryKey: ["/api/auth/me"] });
-      
+
       toast({
         title: "Success",
         description: "Welcome back to Power2ADAPT!",
       });
       onClose();
-      
-      // Force page refresh to ensure proper session state
+
+      // Send the user to their dashboard: admins/coaches to the admin backend,
+      // everyone else to their dashboard. (Full navigation also reloads session state.)
+      const role = result?.user?.role;
+      const destination = role === "admin" || role === "coach" ? "/admin" : "/dashboard";
       setTimeout(() => {
-        window.location.reload();
+        window.location.href = destination;
       }, 500);
     } catch (error: any) {
       toast({
@@ -108,9 +112,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       });
       onClose();
       
-      // Force a page reload to ensure proper session handling
+      // New accounts are parents — send them to their dashboard.
       setTimeout(() => {
-        window.location.href = '/';
+        window.location.href = '/dashboard';
       }, 500);
     } catch (error: any) {
       toast({
