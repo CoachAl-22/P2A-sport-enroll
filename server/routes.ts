@@ -1192,6 +1192,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const updates = { ...req.body };
+      // The edit form sends dates as strings and the price as a number, but the
+      // timestamp columns need Date objects and the decimal columns need strings.
+      // Coerce before the update so saving an edited class doesn't fail at the DB.
+      if (typeof updates.startDate === "string") updates.startDate = new Date(updates.startDate);
+      if (typeof updates.endDate === "string") updates.endDate = new Date(updates.endDate);
+      if (updates.pricePerSession != null && updates.pricePerSession !== "") {
+        updates.pricePerSession = String(updates.pricePerSession);
+      }
       // Recompute pricePerTerm if pricePerSession changes
       if (updates.pricePerSession) {
         const existing = await storage.getClass(req.params.id);
