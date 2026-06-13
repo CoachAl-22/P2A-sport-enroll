@@ -1111,6 +1111,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!cls.termConfigId) {
         return res.status(400).json({ message: "Class has no term configuration" });
       }
+      if (!(cls as any).perWeekEnabled) {
+        return res.status(404).json({ message: "Per-week enrolment is not enabled for this class" });
+      }
       const termConfig = await storage.getTermConfigurationById(cls.termConfigId);
       if (!termConfig) {
         return res.status(404).json({ message: "Term configuration not found" });
@@ -1682,6 +1685,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let baseExGst = parseFloat(classData.pricePerTerm);
 
       if (selectedWeekNumbers && selectedWeekNumbers.length > 0) {
+        if (!(classData as any).perWeekEnabled) {
+          return res.status(400).json({ message: "Per-week enrolment is not enabled for this class." });
+        }
         if (!classData.termConfigId) {
           return res.status(400).json({ message: "This class has no term configuration, so weeks cannot be selected." });
         }
@@ -3605,6 +3611,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Error updating term configuration:', error);
       res.status(500).json({ message: "Failed to update term configuration" });
+    }
+  });
+
+  // List the classes linked to a term config (for the setup-term wizard).
+  app.get("/api/term-configurations/:id/classes", isAdmin, async (req, res) => {
+    try {
+      const list = await storage.getClassesByTermConfigId(req.params.id);
+      res.json(list);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Clone all classes from a source term config into a target term config.
+  app.post("/api/admin/clone-term", isAdmin, async (req, res) => {
+    try {
+      const { sourceTermConfigId, targetTermConfigId } = req.body as {
+        sourceTermConfigId?: string;
+        targetTermConfigId?: string;
+      };
+      if (!sourceTermConfigId || !targetTermConfigId) {
+        return res.status(400).json({ message: "sourceTermConfigId and targetTermConfigId are required" });
+      }
+      if (sourceTermConfigId === targetTermConfigId) {
+        return res.status(400).json({ message: "Source and target terms must be different" });
+      }
+      const created = await storage.cloneTermClasses(sourceTermConfigId, targetTermConfigId);
+      res.status(201).json({ created: created.length, classes: created });
+    } catch (error: any) {
+      const status = /already has classes/.test(error.message) ? 409 : 400;
+      res.status(status).json({ message: error.message });
     }
   });
 
