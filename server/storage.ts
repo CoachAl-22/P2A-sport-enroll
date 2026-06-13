@@ -81,6 +81,7 @@ import {
   type SurveyResponse,
   type InsertSurveyResponse,
 } from "@shared/schema";
+import { cloneClassForTerm, type CloneableClass } from "@shared/term-setup";
 import { db } from "./db";
 import { eq, and, desc, asc, count, sql, gte, lte } from "drizzle-orm";
 
@@ -130,6 +131,8 @@ export interface IStorage {
   getActiveEnrolmentCountForParent(parentId: string, term: string, year: number): Promise<number>;
   createWaitlistWithHolidayReservation(childId: string, classId: string, parentId: string): Promise<{ waitlistEntry: any; holidayReservation: any | null }>;
   createClass(classData: InsertClass): Promise<Class>;
+  getClassesByTermConfigId(termConfigId: string): Promise<Class[]>;
+  cloneTermClasses(sourceTermConfigId: string, targetTermConfigId: string): Promise<Class[]>;
   updateClass(id: string, updates: Partial<Class>): Promise<Class>;
   deleteClass(id: string): Promise<void>;
   updateClassEnrollmentCount(classId: string): Promise<void>;
@@ -566,6 +569,43 @@ export class DatabaseStorage implements IStorage {
 
   async createClass(classData: InsertClass): Promise<Class> {
     const [created] = await db.insert(classes).values(classData).returning();
+    return created;
+  }
+
+  async getClassesByTermConfigId(termConfigId: string): Promise<Class[]> {
+    return await db
+      .select()
+      .from(classes)
+      .where(eq(classes.termConfigId, termConfigId))
+      .orderBy(classes.dayOfWeek, classes.startTime);
+  }
+
+  async cloneTermClasses(sourceTermConfigId: string, targetTermConfigId: string): Promise<Class[]> {
+    const target = await this.getTermConfigurationById(targetTermConfigId);
+    if (!target) throw new Error("Target term configuration not found");
+
+    // Guard: never clone into a term that already has classes (prevents duplicates).
+    const existing = await this.getClassesByTermConfigId(targetTermConfigId);
+    if (existing.length > 0) {
+      throw new Error("Target term already has classes. Clone aborted to avoid duplicates.");
+    }
+
+    const sources = await this.getClassesByTermConfigId(sourceTermConfigId);
+    if (sources.length === 0) throw new Error("Source term has no classes to clone");
+
+    const created: Class[] = [];
+    for (const src of sources) {
+      const insert = cloneClassForTerm(src as unknown as CloneableClass, {
+        id: target.id,
+        term: target.term,
+        year: target.year,
+        startDate: target.startDate,
+        endDate: target.endDate,
+        weeksCount: target.weeksCount,
+        pricePerWeek: target.pricePerWeek,
+      });
+      created.push(await this.createClass(insert));
+    }
     return created;
   }
 
