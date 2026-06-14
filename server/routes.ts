@@ -18,6 +18,7 @@ import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } fro
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
+import { provisionMajAccess } from "./maj-provisioning";
 
 let stripe: Stripe | null = null;
 if (process.env.TESTING_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY) {
@@ -2019,6 +2020,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Activate enrollment
       await storage.updateEnrollment(enrollmentId, { status: "active" });
+      try {
+        const enr = await storage.getEnrollment(enrollmentId);
+        if (enr?.childId) await provisionMajAccess(enr.childId, enr.classId);
+      } catch (e) {
+        console.error("MAJ provisioning failed for enrollment", enrollmentId, e);
+      }
       await storage.updateClassEnrollmentCount((await storage.getEnrollment(enrollmentId))!.classId);
 
       res.json({ subscriptionId: subscription.id, status: subscription.status });
@@ -2047,6 +2054,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Update all enrollments and their payments
           for (const enrollmentId of enrollmentIdList) {
             await storage.updateEnrollment(enrollmentId, { status: "active" });
+            try {
+              const enr = await storage.getEnrollment(enrollmentId);
+              if (enr?.childId) await provisionMajAccess(enr.childId, enr.classId);
+            } catch (e) {
+              console.error("MAJ provisioning failed for enrollment", enrollmentId, e);
+            }
             const pmts = await storage.getPaymentsByEnrollment(enrollmentId);
             if (pmts.length > 0) {
               await storage.updatePayment(pmts[0].id, {
@@ -2112,6 +2125,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Mark enrollment active on first payment
         if (currentCount === 1) {
           await storage.updateEnrollment(enrollmentId, { status: "active" });
+          try {
+            const enr = await storage.getEnrollment(enrollmentId);
+            if (enr?.childId) await provisionMajAccess(enr.childId, enr.classId);
+          } catch (e) {
+            console.error("MAJ provisioning failed for enrollment", enrollmentId, e);
+          }
           const enrollment = await storage.getEnrollment(enrollmentId);
           if (enrollment) await storage.updateClassEnrollmentCount(enrollment.classId);
         }
