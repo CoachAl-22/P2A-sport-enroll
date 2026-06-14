@@ -64,7 +64,7 @@ export default function HighPerformance() {
               Elite coaching services for serious athletes, coaches, and sporting organizations seeking competitive advantage
             </p>
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-5 py-2 text-sm font-semibold text-white">
-              ⚡ High Performance athletes train 3+ sessions per week
+              ⚡ High Performance athletes train 5+ sessions per week (including AM/PM & recovery days)
             </div>
           </div>
 
