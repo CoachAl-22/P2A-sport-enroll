@@ -270,7 +270,7 @@ export interface IStorage {
   getAllSurveyResponses(): Promise<SurveyResponse[]>;
 
   // MAJ operations
-  updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; password: string; school: string; schoolCode: string; fullName: string }>): Promise<MajAthlete>;
+  updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; password: string; school: string; schoolCode: string; fullName: string; displayPassword: string }>): Promise<MajAthlete>;
   getAllMajUsernames(): Promise<string[]>;
   getChildrenNeedingMaj(): Promise<{ childId: string; classId: string }[]>;
 }
@@ -1754,12 +1754,13 @@ export class DatabaseStorage implements IStorage {
     school?: string;
     schoolCode?: string;
     enabled?: boolean;
+    displayPassword?: string;
   }): Promise<MajAthlete> {
     const [athlete] = await db.insert(majAthletes).values(data).returning();
     return athlete;
   }
 
-  async updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; password: string; school: string; schoolCode: string; fullName: string }>): Promise<MajAthlete> {
+  async updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; password: string; school: string; schoolCode: string; fullName: string; displayPassword: string }>): Promise<MajAthlete> {
     const [updated] = await db
       .update(majAthletes)
       .set({ ...updates, updatedAt: new Date() })

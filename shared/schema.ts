@@ -1048,6 +1048,7 @@ export const majAthletes = pgTable("maj_athletes", {
   avatar: varchar("avatar", { length: 16 }),
   enabled: boolean("enabled").notNull().default(true),
   schoolCode: varchar("school_code", { length: 20 }),
+  displayPassword: varchar("display_password", { length: 50 }),
   currentModule: integer("current_module").notNull().default(1),
   currentWeek: integer("current_week").notNull().default(1),
   xp: integer("xp").notNull().default(0),

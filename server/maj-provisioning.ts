@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { storage } from "./storage";
 import { schoolCodeForVenue, majUsernameBase, resolveUsername, majPassword } from "@shared/maj-provisioning";
 import type { MajAthlete } from "@shared/schema";
@@ -15,14 +16,19 @@ export async function provisionMajAccess(childId: string, classId: string): Prom
   const venue = cls?.venueId ? await storage.getVenue(cls.venueId) : undefined;
   const schoolCode = schoolCodeForVenue(venue?.name);
   const year = cls?.year ?? new Date().getFullYear();
-  const password = majPassword(schoolCode, year);
+  // The shared school+year password (e.g. PG2026). Stored hashed for login
+  // (MAJ login uses bcrypt.compare); the plaintext is kept in displayPassword
+  // so admins can still read it.
+  const plainPassword = majPassword(schoolCode, year);
+  const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
   const taken = new Set(await storage.getAllMajUsernames());
   const username = resolveUsername(majUsernameBase(child.firstName, child.lastName), (u) => taken.has(u));
 
   const athlete = await storage.createMajAthlete({
     username,
-    password,
+    password: hashedPassword,
+    displayPassword: plainPassword,
     fullName: `${child.firstName} ${child.lastName}`,
     school: venue?.name ?? undefined,
     schoolCode,

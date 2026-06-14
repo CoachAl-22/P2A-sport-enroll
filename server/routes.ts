@@ -361,6 +361,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (athlete) {
         const valid = await bcrypt.compare(password, athlete.password);
         if (!valid) return res.status(401).json({ message: "Invalid credentials" });
+        if ((athlete as any).enabled === false) {
+          return res.status(403).json({ message: "Your MAJ access is currently inactive — speak to your coach to re-enrol." });
+        }
         const s = req.session as any;
         s.majRole = "athlete";
         s.majAthleteId = athlete.id;
