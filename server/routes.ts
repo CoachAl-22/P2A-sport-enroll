@@ -528,6 +528,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Toggle / reset a MAJ athlete (admin). Password is hashed; plaintext kept in displayPassword.
+  app.patch("/api/maj/athletes/:id", isAdmin, async (req, res) => {
+    try {
+      const { enabled, password } = req.body as { enabled?: boolean; password?: string };
+      const updates: { enabled?: boolean; password?: string; displayPassword?: string } = {};
+      if (typeof enabled === "boolean") updates.enabled = enabled;
+      if (typeof password === "string" && password.length > 0) {
+        updates.password = await bcrypt.hash(password, 10);
+        updates.displayPassword = password;
+      }
+      const athlete = await storage.updateMajAthlete(req.params.id, updates);
+      const { password: _pw, ...safe } = athlete as any;
+      res.json(safe);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Provision MAJ access for a specific child (admin)
+  app.post("/api/admin/children/:id/maj-access", isAdmin, async (req, res) => {
+    try {
+      const child = await storage.getChild(req.params.id);
+      if (!child) return res.status(404).json({ message: "Child not found" });
+      const enrolments = await storage.getEnrollmentsByParent(child.parentId);
+      const match = enrolments.find((e: any) => e.enrollment?.childId === child.id);
+      const classId = match?.class?.id ?? match?.enrollment?.classId;
+      if (!classId) return res.status(400).json({ message: "No enrolment found for this child to derive their school." });
+      const athlete = await provisionMajAccess(child.id, classId);
+      const safe = athlete ? (({ password, ...rest }: any) => rest)(athlete) : null;
+      res.json(safe);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // MAJ status per child for the admin students list
+  app.get("/api/admin/children-maj", isAdmin, async (_req, res) => {
+    try {
+      const rows = await storage.getChildrenMajStatus();
+      res.json(rows);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/maj/athlete/:id", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const athlete = await storage.getMajAthleteById(req.params.id);

@@ -273,6 +273,7 @@ export interface IStorage {
   updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; password: string; school: string; schoolCode: string; fullName: string; displayPassword: string }>): Promise<MajAthlete>;
   getAllMajUsernames(): Promise<string[]>;
   getChildrenNeedingMaj(): Promise<{ childId: string; classId: string }[]>;
+  getChildrenMajStatus(): Promise<{ childId: string; majAthleteId: string | null; username: string | null; enabled: boolean | null; displayPassword: string | null }[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1789,6 +1790,20 @@ export class DatabaseStorage implements IStorage {
       out.push({ childId: r.childId, classId: r.classId });
     }
     return out;
+  }
+
+  async getChildrenMajStatus(): Promise<{ childId: string; majAthleteId: string | null; username: string | null; enabled: boolean | null; displayPassword: string | null }[]> {
+    const rows = await db
+      .select({
+        childId: children.id,
+        majAthleteId: children.majAthleteId,
+        username: majAthletes.username,
+        enabled: majAthletes.enabled,
+        displayPassword: majAthletes.displayPassword,
+      })
+      .from(children)
+      .leftJoin(majAthletes, eq(children.majAthleteId, majAthletes.id));
+    return rows as any;
   }
 
   async createMajReflection(data: {

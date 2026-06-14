@@ -52,6 +52,9 @@ export default function AdminCustomers() {
     enabled: user?.role === "admin",
   });
 
+  const { data: childrenMaj = [] } = useQuery<any[]>({ queryKey: ["/api/admin/children-maj"] });
+  const majByChild = new Map((childrenMaj as any[]).map((r) => [r.childId, r]));
+
   if (!authLoading && user?.role !== "admin") return <Redirect to="/" />;
 
   if (authLoading) {
@@ -159,6 +162,31 @@ export default function AdminCustomers() {
     onError: (error: any) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     },
+  });
+
+  const toggleMaj = useMutation({
+    mutationFn: async ({ majAthleteId, enabled }: { majAthleteId: string; enabled: boolean }) => {
+      const res = await apiRequest("PATCH", `/api/maj/athletes/${majAthleteId}`, { enabled });
+      return res.json();
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["/api/admin/children-maj"] }),
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+  const createMaj = useMutation({
+    mutationFn: async (childId: string) => {
+      const res = await apiRequest("POST", `/api/admin/children/${childId}/maj-access`, {});
+      return res.json();
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["/api/admin/children-maj"] }),
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+  const resetMajPassword = useMutation({
+    mutationFn: async ({ majAthleteId, password }: { majAthleteId: string; password: string }) => {
+      const res = await apiRequest("PATCH", `/api/maj/athletes/${majAthleteId}`, { password });
+      return res.json();
+    },
+    onSuccess: () => { toast({ title: "Password updated" }); queryClient.invalidateQueries({ queryKey: ["/api/admin/children-maj"] }); },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
   const handleAddChild = (data: AddChildForm) => {
@@ -479,6 +507,28 @@ export default function AdminCustomers() {
                                 >
                                   {isActive ? "Deactivate" : "Activate"}
                                 </Button>
+                              </TableCell>
+                              <TableCell onClick={e => e.stopPropagation()}>
+                                {(() => {
+                                  const maj = majByChild.get(student.id);
+                                  if (!maj || !maj.majAthleteId) {
+                                    return (
+                                      <Button size="sm" variant="outline" onClick={() => createMaj.mutate(student.id)} disabled={createMaj.isPending}>
+                                        Create MAJ access
+                                      </Button>
+                                    );
+                                  }
+                                  return (
+                                    <div className="flex items-center gap-2 text-xs">
+                                      <Switch checked={!!maj.enabled} onCheckedChange={(v) => toggleMaj.mutate({ majAthleteId: maj.majAthleteId, enabled: v })} />
+                                      <span className="text-gray-600">{maj.username}</span>
+                                      <span className="text-gray-400">· {maj.displayPassword}</span>
+                                      <Button size="sm" variant="ghost" onClick={() => { const p = window.prompt("New password", maj.displayPassword ?? ""); if (p) resetMajPassword.mutate({ majAthleteId: maj.majAthleteId, password: p }); }}>
+                                        Reset
+                                      </Button>
+                                    </div>
+                                  );
+                                })()}
                               </TableCell>
                             </TableRow>
 
