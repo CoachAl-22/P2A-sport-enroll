@@ -90,6 +90,9 @@ function Router() {
           <Route path="/athlete-portal" component={AthletePortal} />
           <Route path="/classes" component={Classes} />
           <Route path="/coaches" component={Coaches} />
+          <Route path="/high-performance" component={HighPerformance} />
+          <Route path="/senior-squad" component={SeniorSquad} />
+          <Route path="/junior-academy" component={JuniorAcademy} />
           <Route path="/questionnaire" component={Questionnaire} />
           <Route path="/questionnaire.html" component={Questionnaire} />
           <Route path="/enrollment/:classId" component={Enrollment} />
