@@ -140,6 +140,7 @@ export const children = pgTable("children", {
   medicalInfo: text("medical_info"),
   emergencyContact: varchar("emergency_contact", { length: 20 }),
   active: boolean("active").default(true).notNull(),
+  majAthleteId: uuid("maj_athlete_id"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -1045,6 +1046,9 @@ export const majAthletes = pgTable("maj_athletes", {
   coach: varchar("coach", { length: 100 }),
   school: varchar("school", { length: 150 }),
   avatar: varchar("avatar", { length: 16 }),
+  enabled: boolean("enabled").notNull().default(true),
+  schoolCode: varchar("school_code", { length: 20 }),
+  displayPassword: varchar("display_password", { length: 50 }),
   currentModule: integer("current_module").notNull().default(1),
   currentWeek: integer("current_week").notNull().default(1),
   xp: integer("xp").notNull().default(0),

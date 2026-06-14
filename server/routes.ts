@@ -18,6 +18,7 @@ import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } fro
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
+import { provisionMajAccess } from "./maj-provisioning";
 
 let stripe: Stripe | null = null;
 if (process.env.TESTING_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY) {
@@ -360,6 +361,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (athlete) {
         const valid = await bcrypt.compare(password, athlete.password);
         if (!valid) return res.status(401).json({ message: "Invalid credentials" });
+        if ((athlete as any).enabled === false) {
+          return res.status(403).json({ message: "Your MAJ access is currently inactive — speak to your coach to re-enrol." });
+        }
         const s = req.session as any;
         s.majRole = "athlete";
         s.majAthleteId = athlete.id;
@@ -521,6 +525,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(safe);
     } catch (e: any) {
       res.status(500).json({ message: e.message });
+    }
+  });
+
+  // Toggle / reset a MAJ athlete (admin). Password is hashed; plaintext kept in displayPassword.
+  app.patch("/api/maj/athletes/:id", isAdmin, async (req, res) => {
+    try {
+      const { enabled, password } = req.body as { enabled?: boolean; password?: string };
+      const updates: { enabled?: boolean; password?: string; displayPassword?: string } = {};
+      if (typeof enabled === "boolean") updates.enabled = enabled;
+      if (typeof password === "string" && password.length > 0) {
+        updates.password = await bcrypt.hash(password, 10);
+        updates.displayPassword = password;
+      }
+      const athlete = await storage.updateMajAthlete(req.params.id, updates);
+      const { password: _pw, ...safe } = athlete as any;
+      res.json(safe);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Provision MAJ access for a specific child (admin)
+  app.post("/api/admin/children/:id/maj-access", isAdmin, async (req, res) => {
+    try {
+      const child = await storage.getChild(req.params.id);
+      if (!child) return res.status(404).json({ message: "Child not found" });
+      const enrolments = await storage.getEnrollmentsByParent(child.parentId);
+      const match = enrolments.find((e: any) => e.enrollment?.childId === child.id);
+      const classId = match?.class?.id ?? match?.enrollment?.classId;
+      if (!classId) return res.status(400).json({ message: "No enrolment found for this child to derive their school." });
+      const athlete = await provisionMajAccess(child.id, classId);
+      const safe = athlete ? (({ password, ...rest }: any) => rest)(athlete) : null;
+      res.json(safe);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // MAJ status per child for the admin students list
+  app.get("/api/admin/children-maj", isAdmin, async (_req, res) => {
+    try {
+      const rows = await storage.getChildrenMajStatus();
+      res.json(rows);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
   });
 
@@ -2019,6 +2068,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Activate enrollment
       await storage.updateEnrollment(enrollmentId, { status: "active" });
+      try {
+        const enr = await storage.getEnrollment(enrollmentId);
+        if (enr?.childId) await provisionMajAccess(enr.childId, enr.classId);
+      } catch (e) {
+        console.error("MAJ provisioning failed for enrollment", enrollmentId, e);
+      }
       await storage.updateClassEnrollmentCount((await storage.getEnrollment(enrollmentId))!.classId);
 
       res.json({ subscriptionId: subscription.id, status: subscription.status });
@@ -2047,6 +2102,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Update all enrollments and their payments
           for (const enrollmentId of enrollmentIdList) {
             await storage.updateEnrollment(enrollmentId, { status: "active" });
+            try {
+              const enr = await storage.getEnrollment(enrollmentId);
+              if (enr?.childId) await provisionMajAccess(enr.childId, enr.classId);
+            } catch (e) {
+              console.error("MAJ provisioning failed for enrollment", enrollmentId, e);
+            }
             const pmts = await storage.getPaymentsByEnrollment(enrollmentId);
             if (pmts.length > 0) {
               await storage.updatePayment(pmts[0].id, {
@@ -2112,6 +2173,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Mark enrollment active on first payment
         if (currentCount === 1) {
           await storage.updateEnrollment(enrollmentId, { status: "active" });
+          try {
+            const enr = await storage.getEnrollment(enrollmentId);
+            if (enr?.childId) await provisionMajAccess(enr.childId, enr.classId);
+          } catch (e) {
+            console.error("MAJ provisioning failed for enrollment", enrollmentId, e);
+          }
           const enrollment = await storage.getEnrollment(enrollmentId);
           if (enrollment) await storage.updateClassEnrollmentCount(enrollment.classId);
         }
