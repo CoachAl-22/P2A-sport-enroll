@@ -38,6 +38,7 @@ import AthletePortal from "@/pages/athlete-portal";
 import Coaches from "@/pages/coaches";
 import Questionnaire from "@/pages/questionnaire";
 import AdminAthletes from "@/pages/admin-athletes";
+import AdminMajAthletes from "@/pages/admin-maj-athletes";
 import AdminApplications from "@/pages/admin-applications";
 import AdminSurveys from "@/pages/admin-surveys";
 import Onboarding from "@/pages/onboarding";
@@ -125,6 +126,7 @@ function Router() {
           <Route path="/admin/applications" component={AdminApplications} />
           <Route path="/admin/surveys" component={AdminSurveys} />
           <Route path="/admin/athletes" component={AdminAthletes} />
+          <Route path="/admin/maj-athletes" component={AdminMajAthletes} />
         </>
       )}
       <Route component={NotFound} />

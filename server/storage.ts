@@ -274,6 +274,7 @@ export interface IStorage {
   getAllMajUsernames(): Promise<string[]>;
   getChildrenNeedingMaj(): Promise<{ childId: string; classId: string }[]>;
   getChildrenMajStatus(): Promise<{ childId: string; majAthleteId: string | null; username: string | null; enabled: boolean | null; displayPassword: string | null }[]>;
+  setMajEnabledBySchool(school: string, enabled: boolean): Promise<number>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1717,6 +1718,15 @@ export class DatabaseStorage implements IStorage {
 
   async getAllMajAthletes(): Promise<MajAthlete[]> {
     return await db.select().from(majAthletes).orderBy(majAthletes.fullName);
+  }
+
+  async setMajEnabledBySchool(school: string, enabled: boolean): Promise<number> {
+    const rows = await db
+      .update(majAthletes)
+      .set({ enabled, updatedAt: new Date() })
+      .where(eq(majAthletes.school, school))
+      .returning({ id: majAthletes.id });
+    return rows.length;
   }
 
   async updateMajAthleteProgress(id: string, data: {
