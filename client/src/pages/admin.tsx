@@ -132,8 +132,7 @@ export default function Admin() {
           </div>
           <Button
             onClick={handleLogout}
-            variant="outline"
-            className="text-white border-gray-500 hover:bg-gray-700 hover:text-white flex-shrink-0 ml-4"
+            className="bg-red-600 hover:bg-red-700 text-white flex-shrink-0 ml-4"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout
