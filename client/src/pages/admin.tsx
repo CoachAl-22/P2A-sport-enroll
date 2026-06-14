@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/layout/navbar";
 import AnalyticsCard from "@/components/admin/analytics-card";
-import { Plus, Users, Settings, BarChart3, MessageSquare, CreditCard, TrendingUp, AlertCircle, FileText, CalendarIcon, Upload, Database, Trophy, ClipboardList } from "lucide-react";
-import { Redirect } from "wouter";
+import { Plus, Users, Settings, BarChart3, MessageSquare, CreditCard, TrendingUp, AlertCircle, FileText, CalendarIcon, Upload, Database, Trophy, ClipboardList, LogOut } from "lucide-react";
+import { Redirect, useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { useState } from "react";
 
@@ -15,6 +15,17 @@ export default function Admin() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isImporting, setIsImporting] = useState(false);
+  const [, setLocation] = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      await apiRequest("POST", "/api/auth/logout");
+      queryClient.clear();
+      setLocation("/");
+    } catch {
+      toast({ title: "Logout failed", variant: "destructive" });
+    }
+  };
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["/api/admin/analytics"],
@@ -110,13 +121,23 @@ export default function Admin() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-heading font-bold mb-4">
-            Admin Command Center
-          </h1>
-          <p className="text-xl text-gray-300">
-            Powerful tools for managing your athletic programs
-          </p>
+        <div className="flex items-start justify-between mb-12">
+          <div className="text-center flex-1">
+            <h1 className="text-3xl md:text-4xl font-heading font-bold mb-4">
+              Admin Command Center
+            </h1>
+            <p className="text-xl text-gray-300">
+              Powerful tools for managing your athletic programs
+            </p>
+          </div>
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="text-white border-gray-500 hover:bg-gray-700 hover:text-white flex-shrink-0 ml-4"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
         </div>
 
         {/* Analytics Cards */}
