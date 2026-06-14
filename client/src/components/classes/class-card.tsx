@@ -175,10 +175,8 @@ export default function ClassCard({ classData }: ClassCardProps) {
           {isApplicationOnly ? (
             <Button
               onClick={() => {
-                if (classData.sportType === "senior_squad") {
-                  window.open("/senior-squad-application.html", "_blank");
-                } else if (classData.sportType === "empowered_athlete_program") {
-                  setLocation("/high-performance#application-form");
+                if (classData.sportType === "empowered_athlete_program") {
+                  setLocation("/high-performance");
                 } else {
                   setLocation("/senior-squad");
                 }

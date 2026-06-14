@@ -60,9 +60,12 @@ export default function SeniorSquad() {
               Back to Main Programs
             </Link>
             <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4">Senior Squad - Competition Preparation</h1>
-            <p className="text-xl text-primary-100 max-w-3xl mx-auto">
+            <p className="text-xl text-primary-100 max-w-3xl mx-auto mb-4">
               Goal-driven programs designed to prepare athletes for competition success at senior level
             </p>
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-5 py-2 text-sm font-semibold text-white">
+              ⚡ Senior Squad athletes train 3+ sessions per week
+            </div>
           </div>
 
           {/* Hero Image */}

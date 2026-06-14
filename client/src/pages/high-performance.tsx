@@ -60,9 +60,12 @@ export default function HighPerformance() {
               Back to Main Programs
             </Link>
             <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4">High Performance Coaching & Consulting</h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-4">
               Elite coaching services for serious athletes, coaches, and sporting organizations seeking competitive advantage
             </p>
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-5 py-2 text-sm font-semibold text-white">
+              ⚡ High Performance athletes train 3+ sessions per week
+            </div>
           </div>
 
           {/* Coach Photo */}
