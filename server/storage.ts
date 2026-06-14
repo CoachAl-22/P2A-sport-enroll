@@ -14,6 +14,7 @@ import {
   waitlists,
   blogArticles,
   attendanceRecords,
+  coachMessages,
   termConfigurations,
   termHolidays,
   performanceRecords,
@@ -207,6 +208,7 @@ export interface IStorage {
 
   // Waitlist operations
   addToWaitlist(waitlistData: InsertWaitlist): Promise<Waitlist>;
+  getWaitlist(id: string): Promise<Waitlist | undefined>;
   getWaitlistByClass(classId: string): Promise<Waitlist[]>;
   getWaitlistByParent(parentId: string): Promise<Waitlist[]>;
   getWaitlistPosition(classId: string, childId: string): Promise<number | null>;
@@ -267,6 +269,11 @@ export interface IStorage {
   createTrainingGoal(goal: InsertTrainingGoal): Promise<TrainingGoal>;
   updateTrainingGoal(id: string, updates: Partial<TrainingGoal>): Promise<TrainingGoal>;
   deleteTrainingGoal(id: string): Promise<void>;
+
+  // Athlete portal read models
+  getAttendanceRecordsByChild(childId: string): Promise<any[]>;
+  getCoachMessagesByChild(childId: string): Promise<any[]>;
+  getUpcomingClassesByChild(childId: string): Promise<any[]>;
 
   // All children (for admin)
   getAllChildren(): Promise<Child[]>;
@@ -1122,6 +1129,11 @@ export class DatabaseStorage implements IStorage {
       .orderBy(asc(waitlists.position));
   }
 
+  async getWaitlist(id: string): Promise<Waitlist | undefined> {
+    const [entry] = await db.select().from(waitlists).where(eq(waitlists.id, id));
+    return entry;
+  }
+
   async getWaitlistByParent(parentId: string): Promise<Waitlist[]> {
     return await db
       .select({
@@ -1689,6 +1701,84 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTrainingGoal(id: string): Promise<void> {
     await db.delete(trainingGoals).where(eq(trainingGoals.id, id));
+  }
+
+  async getAttendanceRecordsByChild(childId: string): Promise<any[]> {
+    return await db
+      .select({
+        id: attendanceRecords.id,
+        childId: attendanceRecords.childId,
+        classId: attendanceRecords.classId,
+        sessionDate: attendanceRecords.sessionDate,
+        status: attendanceRecords.status,
+        arrivalTime: attendanceRecords.arrivalTime,
+        departureTime: attendanceRecords.departureTime,
+        coachNotes: attendanceRecords.coachNotes,
+        skillsFocused: attendanceRecords.skillsFocused,
+        performanceRating: attendanceRecords.performanceRating,
+        className: classes.name,
+      })
+      .from(attendanceRecords)
+      .leftJoin(classes, eq(attendanceRecords.classId, classes.id))
+      .where(eq(attendanceRecords.childId, childId))
+      .orderBy(desc(attendanceRecords.sessionDate));
+  }
+
+  async getCoachMessagesByChild(childId: string): Promise<any[]> {
+    return await db
+      .select({
+        id: coachMessages.id,
+        childId: coachMessages.childId,
+        subject: coachMessages.subject,
+        message: coachMessages.message,
+        messageType: coachMessages.messageType,
+        priority: coachMessages.priority,
+        isRead: coachMessages.isRead,
+        parentReply: coachMessages.parentReply,
+        repliedAt: coachMessages.repliedAt,
+        createdAt: coachMessages.createdAt,
+        fromCoach: {
+          firstName: coaches.firstName,
+          lastName: coaches.lastName,
+        },
+      })
+      .from(coachMessages)
+      .innerJoin(coaches, eq(coachMessages.fromCoachId, coaches.id))
+      .where(eq(coachMessages.childId, childId))
+      .orderBy(desc(coachMessages.createdAt));
+  }
+
+  async getUpcomingClassesByChild(childId: string): Promise<any[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return await db
+      .select({
+        id: classes.id,
+        name: classes.name,
+        date: classes.startDate,
+        startDate: classes.startDate,
+        endDate: classes.endDate,
+        startTime: classes.startTime,
+        endTime: classes.endTime,
+        venue: {
+          name: venues.name,
+        },
+        coach: {
+          firstName: coaches.firstName,
+          lastName: coaches.lastName,
+        },
+      })
+      .from(enrollments)
+      .innerJoin(classes, eq(enrollments.classId, classes.id))
+      .innerJoin(venues, eq(classes.venueId, venues.id))
+      .innerJoin(coaches, eq(classes.coachId, coaches.id))
+      .where(and(
+        eq(enrollments.childId, childId),
+        eq(enrollments.status, "active"),
+        gte(classes.endDate, today),
+      ))
+      .orderBy(asc(classes.startDate));
   }
 
   // Athlete Assessment operations

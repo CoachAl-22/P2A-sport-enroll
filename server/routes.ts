@@ -56,6 +56,21 @@ const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+const publicRegisterSchema = insertUserSchema.pick({
+  email: true,
+  mobile: true,
+  userId: true,
+  password: true,
+  firstName: true,
+  lastName: true,
+  autoReenrollment: true,
+}).partial({
+  email: true,
+  mobile: true,
+  userId: true,
+  autoReenrollment: true,
+});
+
 // Simple authentication middleware
 const isAuthenticated = (req: any, res: any, next: any) => {
   const sessionUserId = req.session?.userId;
@@ -80,6 +95,35 @@ const isAdmin = async (req: any, res: any, next: any) => {
   const user = await storage.getUser(userId);
   if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
   return next();
+};
+
+const getSessionUserId = (req: any): string | undefined => req.session?.userId;
+
+const canManageChildData = (user: any): boolean => !!user && ["admin", "coach"].includes(user.role);
+
+const requireChildAccess = async (req: any, res: any, childId: string) => {
+  const userId = getSessionUserId(req);
+  if (!userId) {
+    res.status(401).json({ message: "Not authenticated" });
+    return null;
+  }
+
+  const [user, child] = await Promise.all([
+    storage.getUser(userId),
+    storage.getChild(childId),
+  ]);
+
+  if (!child) {
+    res.status(404).json({ message: "Child not found" });
+    return null;
+  }
+
+  if (!canManageChildData(user) && child.parentId !== userId) {
+    res.status(403).json({ message: "You can only access your own child's records" });
+    return null;
+  }
+
+  return { user, child, userId };
 };
 
 // ── MAJ (My Athletic Journey) session middleware ──────────────────────────
@@ -1089,7 +1133,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         req.body.userId = `${prefix}${suffix}`;
       }
 
-      const userData = insertUserSchema.parse(req.body);
+      const userData = publicRegisterSchema.parse(req.body);
       
       // Hash password
       const hashedPassword = await bcrypt.hash(userData.password, 10);
@@ -1097,6 +1141,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.createUser({
         ...userData,
         password: hashedPassword,
+        role: "parent",
+        active: true,
       });
       
       // Set session
@@ -1715,6 +1761,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      if (access.child.parentId !== userId) {
+        return res.status(403).json({ error: 'You can only waitlist your own child' });
+      }
+
       const result = await storage.createWaitlistWithHolidayReservation(childId, classId, userId);
       const child = await storage.getChild(childId);
       const cls = await storage.getClass(classId);
@@ -1759,6 +1811,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!childId) {
         return res.status(400).json({ message: "Child ID is required" });
+      }
+
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      if (access.child.parentId !== userId) {
+        return res.status(403).json({ message: "You can only enrol your own child" });
       }
       
       // Check class availability
@@ -3290,6 +3348,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         parentId: userId,
       });
 
+      const access = await requireChildAccess(req, res, waitlistData.childId);
+      if (!access) return;
+      if (access.child.parentId !== userId) {
+        return res.status(403).json({ message: "You can only waitlist your own child" });
+      }
+
       // Check if child is already on waitlist for this class
       const existingPosition = await storage.getWaitlistPositionByChild(waitlistData.classId, waitlistData.childId);
       if (existingPosition) {
@@ -3374,10 +3438,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const { id } = req.params;
-      
+
       // Check if user owns this waitlist entry or is admin
       const user = await storage.getUser(userId);
-      const waitlistEntry = await storage.getWaitlistByClass(''); // We'll need to modify this
+      const waitlistEntry = await storage.getWaitlist(id);
+      if (!waitlistEntry) {
+        return res.status(404).json({ message: "Waitlist entry not found" });
+      }
+      if (waitlistEntry.parentId !== userId && user?.role !== "admin") {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
       
       await storage.removeFromWaitlist(id);
       res.json({ message: "Removed from waitlist successfully" });
@@ -4128,10 +4198,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Athlete Portal API Routes - Performance Records
   app.get("/api/performance-records/:childId", async (req, res) => {
-    const userId = (req.session as any)?.userId;
-    if (!userId) return res.status(401).json({ message: "Not authenticated" });
-
     try {
+      const access = await requireChildAccess(req, res, req.params.childId);
+      if (!access) return;
       const records = await storage.getPerformanceRecordsByChild(req.params.childId);
       res.json(records);
     } catch (error: any) {
@@ -4192,10 +4261,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Training Goals
   app.get("/api/training-goals/:childId", async (req, res) => {
-    const userId = (req.session as any)?.userId;
-    if (!userId) return res.status(401).json({ message: "Not authenticated" });
-
     try {
+      const access = await requireChildAccess(req, res, req.params.childId);
+      if (!access) return;
       const goals = await storage.getTrainingGoalsByChild(req.params.childId);
       res.json(goals);
     } catch (error: any) {
@@ -4273,25 +4341,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/attendance-records/:childId", authMiddleware, async (req, res) => {
     try {
       const { childId } = req.params;
-      const mockAttendance = [
-        {
-          id: "1",
-          childId,
-          sessionDate: new Date("2024-12-10"),
-          status: "present",
-          performanceRating: 8,
-          skillsFocused: ["sprint_starts", "acceleration"]
-        },
-        {
-          id: "2", 
-          childId,
-          sessionDate: new Date("2024-12-03"),
-          status: "present",
-          performanceRating: 7,
-          skillsFocused: ["long_jump", "take_off"]
-        }
-      ];
-      res.json(mockAttendance);
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      const records = await storage.getAttendanceRecordsByChild(childId);
+      res.json(records);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -4300,39 +4353,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/coach-messages/:childId", authMiddleware, async (req, res) => {
     try {
       const { childId } = req.params;
-      const mockMessages = [
-        {
-          id: "1",
-          childId,
-          fromCoach: {
-            firstName: "Alistair",
-            lastName: "Tait"
-          },
-          subject: "Great progress this week!",
-          message: "I've noticed significant improvement in your sprint starts. Keep focusing on the explosive first step and you'll see even better times.",
-          messageType: "performance",
-          priority: "normal",
-          isRead: false,
-          createdAt: new Date("2024-12-08")
-        },
-        {
-          id: "2",
-          childId,
-          fromCoach: {
-            firstName: "Georgia",
-            lastName: "Middleton"
-          },
-          subject: "Training Focus for Next Week",
-          message: "Next session we'll work on long jump approach. Practice your rhythm counting at home if you can.",
-          messageType: "technique_tip",
-          priority: "normal", 
-          isRead: true,
-          createdAt: new Date("2024-12-05"),
-          parentReply: "Thanks for the tip! We'll practice the counting at home.",
-          repliedAt: new Date("2024-12-06")
-        }
-      ];
-      res.json(mockMessages);
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      const messages = await storage.getCoachMessagesByChild(childId);
+      res.json(messages);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -4341,27 +4365,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/upcoming-classes/:childId", authMiddleware, async (req, res) => {
     try {
       const { childId } = req.params;
-      const mockClasses = [
-        {
-          id: "1",
-          name: "Emerging Athletes",
-          date: new Date("2024-12-17"),
-          startTime: "15:30",
-          endTime: "16:45",
-          venue: { name: "Toorak College" },
-          coach: { firstName: "Georgia", lastName: "Middleton" }
-        },
-        {
-          id: "2",
-          name: "Emerging Athletes", 
-          date: new Date("2024-12-19"),
-          startTime: "15:30",
-          endTime: "16:45",
-          venue: { name: "Toorak College" },
-          coach: { firstName: "Georgia", lastName: "Middleton" }
-        }
-      ];
-      res.json(mockClasses);
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      const upcoming = await storage.getUpcomingClassesByChild(childId);
+      res.json(upcoming);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -4503,6 +4510,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/files/*", async (req, res) => {
     const userId = (req.session as any)?.userId;
     if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || !["admin", "coach"].includes(user.role)) return res.status(403).json({ message: "Access denied" });
     try {
       const { ObjectStorageService, ObjectNotFoundError } = await import("./replit_integrations/object_storage/objectStorage.js");
       const objService = new ObjectStorageService();
