@@ -85,10 +85,11 @@ export default function AdminMajAthletes() {
               {list.map((a) => (
                 <div key={a.id} className="flex items-center gap-3 py-1.5 border-b last:border-0 text-sm">
                   <Switch checked={a.enabled} onCheckedChange={(v) => toggleOne.mutate({ id: a.id, enabled: v })} />
+                  <span className={`w-16 text-xs font-semibold ${a.enabled ? "text-green-600" : "text-red-500"}`}>{a.enabled ? "Active" : "Disabled"}</span>
                   <span className="font-medium w-48 truncate">{a.fullName}</span>
                   <span className="text-gray-600 w-32 truncate">{a.username}</span>
                   <span className="text-gray-400 w-24">{a.displayPassword ?? "—"}</span>
-                  <Button size="sm" variant="ghost" onClick={() => { const p = window.prompt("New password", a.displayPassword ?? ""); if (p) resetOne.mutate({ id: a.id, password: p }); }}>Reset</Button>
+                  <Button size="sm" variant="ghost" onClick={() => { const p = window.prompt("New password", a.displayPassword ?? ""); if (p) resetOne.mutate({ id: a.id, password: p }); }}>Reset PW</Button>
                 </div>
               ))}
             </CardContent>
