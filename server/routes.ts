@@ -573,6 +573,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // All MAJ athletes for the admin management view (no password hash exposed).
+  app.get("/api/admin/maj-athletes", isAdmin, async (_req, res) => {
+    try {
+      const all = await storage.getAllMajAthletes();
+      const safe = all.map((a: any) => ({
+        id: a.id,
+        fullName: a.fullName,
+        username: a.username,
+        school: a.school ?? null,
+        schoolCode: a.schoolCode ?? null,
+        enabled: a.enabled,
+        displayPassword: a.displayPassword ?? null,
+      }));
+      res.json(safe);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Enable/disable every athlete at a school (white-label licence control).
+  app.post("/api/admin/maj-athletes/bulk-set-enabled", isAdmin, async (req, res) => {
+    try {
+      const { school, enabled } = req.body as { school?: string; enabled?: boolean };
+      if (typeof school !== "string" || typeof enabled !== "boolean") {
+        return res.status(400).json({ message: "school (string) and enabled (boolean) are required" });
+      }
+      const count = await storage.setMajEnabledBySchool(school, enabled);
+      res.json({ updated: count });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
   app.get("/api/maj/athlete/:id", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const athlete = await storage.getMajAthleteById(req.params.id);
