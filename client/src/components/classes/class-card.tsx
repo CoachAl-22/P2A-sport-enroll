@@ -174,7 +174,15 @@ export default function ClassCard({ classData }: ClassCardProps) {
         <div className="mt-auto space-y-2">
           {isApplicationOnly ? (
             <Button
-              onClick={() => setLocation(`/questionnaire?classId=${classData.id}&className=${encodeURIComponent(classData.name)}`)}
+              onClick={() => {
+                if (classData.sportType === "senior_squad") {
+                  window.open("/senior-squad-application.html", "_blank");
+                } else if (classData.sportType === "empowered_athlete_program") {
+                  setLocation("/high-performance#application-form");
+                } else {
+                  setLocation("/senior-squad");
+                }
+              }}
               className="w-full bg-purple-600 hover:bg-purple-700 text-white"
             >
               Apply now →
