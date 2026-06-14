@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { useLocation } from 'wouter';
 import Navbar from '@/components/layout/navbar';
 
 const WHAT_TO_BRING = [
@@ -50,8 +49,10 @@ const getDayName = (dayOfWeek: number) => {
 };
 
 export default function ConfirmationPage() {
-  const [location] = useLocation();
-  const params = new URLSearchParams(location.split('?')[1] || '');
+  // Read query params from the real URL search string — wouter's location omits
+  // the "?..." part, which left enrollmentId empty and the page spinning forever
+  // after the Stripe redirect.
+  const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const enrollmentId = params.get('enrollmentId');
 
   const { data: fullEnrollment, isLoading } = useQuery({
