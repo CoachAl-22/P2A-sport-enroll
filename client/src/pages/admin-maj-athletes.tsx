@@ -84,7 +84,7 @@ export default function AdminMajAthletes() {
             <CardContent className="space-y-1">
               {list.map((a) => (
                 <div key={a.id} className="flex items-center gap-3 py-1.5 border-b last:border-0 text-sm">
-                  <Switch checked={a.enabled} onCheckedChange={(v) => toggleOne.mutate({ id: a.id, enabled: v })} />
+                  <Switch checked={a.enabled} onCheckedChange={(v) => toggleOne.mutate({ id: a.id, enabled: v })} className="border border-gray-400 data-[state=unchecked]:bg-gray-300" />
                   <span className={`w-16 text-xs font-semibold ${a.enabled ? "text-green-600" : "text-red-500"}`}>{a.enabled ? "Active" : "Disabled"}</span>
                   <span className="font-medium w-48 truncate">{a.fullName}</span>
                   <span className="text-gray-600 w-32 truncate">{a.username}</span>
