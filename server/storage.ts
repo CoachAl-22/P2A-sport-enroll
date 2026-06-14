@@ -268,6 +268,11 @@ export interface IStorage {
   // Survey operations
   createSurveyResponse(response: InsertSurveyResponse): Promise<SurveyResponse>;
   getAllSurveyResponses(): Promise<SurveyResponse[]>;
+
+  // MAJ operations
+  updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; password: string; school: string; schoolCode: string; fullName: string }>): Promise<MajAthlete>;
+  getAllMajUsernames(): Promise<string[]>;
+  getChildrenNeedingMaj(): Promise<{ childId: string; classId: string }[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1746,9 +1751,43 @@ export class DatabaseStorage implements IStorage {
     grade?: string;
     program?: string;
     coach?: string;
+    school?: string;
+    schoolCode?: string;
+    enabled?: boolean;
   }): Promise<MajAthlete> {
     const [athlete] = await db.insert(majAthletes).values(data).returning();
     return athlete;
+  }
+
+  async updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; password: string; school: string; schoolCode: string; fullName: string }>): Promise<MajAthlete> {
+    const [updated] = await db
+      .update(majAthletes)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(majAthletes.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getAllMajUsernames(): Promise<string[]> {
+    const rows = await db.select({ username: majAthletes.username }).from(majAthletes);
+    return rows.map((r) => r.username);
+  }
+
+  // Children with at least one active enrolment and no MAJ athlete linked yet.
+  async getChildrenNeedingMaj(): Promise<{ childId: string; classId: string }[]> {
+    const rows = await db
+      .select({ childId: children.id, classId: enrollments.classId })
+      .from(enrollments)
+      .innerJoin(children, eq(enrollments.childId, children.id))
+      .where(and(eq(enrollments.status, "active"), sql`${children.majAthleteId} is null`));
+    const seen = new Set<string>();
+    const out: { childId: string; classId: string }[] = [];
+    for (const r of rows) {
+      if (seen.has(r.childId)) continue;
+      seen.add(r.childId);
+      out.push({ childId: r.childId, classId: r.classId });
+    }
+    return out;
   }
 
   async createMajReflection(data: {
