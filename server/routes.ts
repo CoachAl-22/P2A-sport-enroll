@@ -1931,17 +1931,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!stripe) {
         return res.status(500).json({ message: "Payment processing not configured" });
       }
-      
+
+      // Send the Stripe payment receipt to the parent's email (Stripe emails it
+      // automatically on success when "successful payment" receipts are enabled).
+      const receiptParent = await storage.getUser(userId);
+
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: "aud",
         payment_method_types: ["card"],
+        receipt_email: receiptParent?.email || undefined,
         metadata: {
           enrollmentId: enrollment.id,
           userId,
         },
       });
-      
+
       res.json({ clientSecret: paymentIntent.client_secret });
     } catch (error: any) {
       res.status(500).json({ message: "Error creating payment intent: " + error.message });
@@ -1976,10 +1981,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (!stripe) return res.status(500).json({ message: "Payment processing not configured" });
 
+      const receiptParent = await storage.getUser(userId);
+
       const paymentIntent = await stripe.paymentIntents.create({
         amount: totalCents,
         currency: "aud",
         payment_method_types: ["card"],
+        receipt_email: receiptParent?.email || undefined,
         metadata: {
           enrollmentIds: enrollmentIds.join(","),
           userId,
