@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { UserPlus } from "lucide-react";
 
 type Athlete = {
   id: string; fullName: string; username: string;
@@ -17,6 +20,22 @@ export default function AdminMajAthletes() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [addForm, setAddForm] = useState({ fullName: "", username: "", password: "", grade: "", program: "" });
+
+  const addAthleteMutation = useMutation({
+    mutationFn: async (data: typeof addForm) => {
+      const res = await apiRequest("POST", "/api/maj/athletes", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Athlete created!", description: `${addForm.fullName} has been added to MAJ.` });
+      setIsAddDialogOpen(false);
+      setAddForm({ fullName: "", username: "", password: "", grade: "", program: "" });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/maj-athletes"] });
+    },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
 
   const { data: athletes = [], isLoading } = useQuery<Athlete[]>({ queryKey: ["/api/admin/maj-athletes"] });
 
@@ -59,9 +78,15 @@ export default function AdminMajAthletes() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">MAJ Athletes</h1>
-        <p className="text-gray-600 text-sm">Manage My Athletic Journey access. Disable a school to revoke a lapsed white-label licence.</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">MAJ Athletes</h1>
+          <p className="text-gray-600 text-sm">Manage My Athletic Journey access. Disable a school to revoke a lapsed white-label licence.</p>
+        </div>
+        <Button onClick={() => setIsAddDialogOpen(true)} className="bg-green-600 hover:bg-green-700 text-white">
+          <UserPlus className="w-4 h-4 mr-2" />
+          Add athlete
+        </Button>
       </div>
       <Input placeholder="Search by name or username…" value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-sm" />
 
@@ -97,6 +122,51 @@ export default function AdminMajAthletes() {
         );
       })}
       {!isLoading && filtered.length === 0 && <p className="text-gray-500">No athletes found.</p>}
+
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-green-600" />
+              Add athlete to MAJ
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Full Name</Label>
+              <Input value={addForm.fullName} onChange={e => setAddForm(f => ({ ...f, fullName: e.target.value }))} placeholder="e.g. Jordan Smith" />
+            </div>
+            <div>
+              <Label>Username (login name)</Label>
+              <Input value={addForm.username} onChange={e => setAddForm(f => ({ ...f, username: e.target.value.toLowerCase().replace(/\s/g, "") }))} placeholder="e.g. jordan" />
+              <p className="text-xs text-gray-400 mt-1">Lowercase, no spaces. Athlete uses this to log in.</p>
+            </div>
+            <div>
+              <Label>Login Code (password)</Label>
+              <Input value={addForm.password} onChange={e => setAddForm(f => ({ ...f, password: e.target.value }))} placeholder="e.g. athlete123" />
+              <p className="text-xs text-gray-400 mt-1">Share this code with the athlete/parent after creation.</p>
+            </div>
+            <div>
+              <Label>Grade / Year (optional)</Label>
+              <Input value={addForm.grade} onChange={e => setAddForm(f => ({ ...f, grade: e.target.value }))} placeholder="e.g. Year 9" />
+            </div>
+            <div>
+              <Label>Program (optional)</Label>
+              <Input value={addForm.program} onChange={e => setAddForm(f => ({ ...f, program: e.target.value }))} placeholder="e.g. Senior Squad" />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={() => addAthleteMutation.mutate(addForm)}
+                disabled={addAthleteMutation.isPending || !addForm.fullName || !addForm.username || !addForm.password}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              >
+                {addAthleteMutation.isPending ? "Creating…" : "Create athlete"}
+              </Button>
+              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="flex-1">Cancel</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/layout/navbar";
-import { Eye, Mail, Phone, MessageSquare, Calendar, User } from "lucide-react";
+import { Eye, Mail, Phone, MessageSquare, Calendar, User, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient as globalQueryClient } from "@/lib/queryClient";
 import { Redirect } from "wouter";
@@ -27,6 +27,34 @@ export default function AdminEnquiries() {
   const [adminNotes, setAdminNotes] = useState("");
   const [enquiryStatus, setEnquiryStatus] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [isMajDialogOpen, setIsMajDialogOpen] = useState(false);
+  const [majForm, setMajForm] = useState({ fullName: "", username: "", password: "", grade: "", program: "" });
+
+  const addToMajMutation = useMutation({
+    mutationFn: async (data: typeof majForm) => {
+      const res = await apiRequest("POST", "/api/maj/athletes", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Athlete added to MAJ!", description: `${majForm.fullName} has been created as a pending sign-up.` });
+      setIsMajDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/maj-athletes"] });
+    },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  function openMajDialog(enquiry: ContactEnquiry) {
+    const firstName = enquiry.name.split(" ")[0].toLowerCase();
+    setMajForm({
+      fullName: enquiry.name,
+      username: firstName,
+      password: "",
+      grade: "",
+      program: "",
+    });
+    setIsMajDialogOpen(true);
+  }
 
   // Redirect if not admin
   if (!authLoading && user?.role !== "admin") {
@@ -381,12 +409,69 @@ export default function AdminEnquiries() {
                       Cancel
                     </Button>
                   </div>
+                  <div className="pt-2 border-t">
+                    <Button
+                      variant="outline"
+                      className="w-full border-green-500 text-green-700 hover:bg-green-50"
+                      onClick={() => { setIsViewDialogOpen(false); openMajDialog(selectedEnquiry); }}
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Add to MAJ as pending sign-up →
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Add to MAJ Dialog */}
+      <Dialog open={isMajDialogOpen} onOpenChange={setIsMajDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-green-600" />
+              Add to My Athletic Journey
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-500">Fill in the details below. The athlete will be created as a pending sign-up and can log in to MAJ straight away.</p>
+            <div>
+              <Label>Full Name</Label>
+              <Input value={majForm.fullName} onChange={e => setMajForm(f => ({ ...f, fullName: e.target.value }))} placeholder="e.g. Jordan Smith" />
+            </div>
+            <div>
+              <Label>Username (login name)</Label>
+              <Input value={majForm.username} onChange={e => setMajForm(f => ({ ...f, username: e.target.value.toLowerCase().replace(/\s/g, "") }))} placeholder="e.g. jordan" />
+              <p className="text-xs text-gray-400 mt-1">Lowercase, no spaces. Athlete uses this to log in.</p>
+            </div>
+            <div>
+              <Label>Login Code (password)</Label>
+              <Input value={majForm.password} onChange={e => setMajForm(f => ({ ...f, password: e.target.value }))} placeholder="e.g. athlete123" />
+              <p className="text-xs text-gray-400 mt-1">Share this code with the athlete/parent after creation.</p>
+            </div>
+            <div>
+              <Label>Grade / Year (optional)</Label>
+              <Input value={majForm.grade} onChange={e => setMajForm(f => ({ ...f, grade: e.target.value }))} placeholder="e.g. Year 9" />
+            </div>
+            <div>
+              <Label>Program (optional)</Label>
+              <Input value={majForm.program} onChange={e => setMajForm(f => ({ ...f, program: e.target.value }))} placeholder="e.g. Senior Squad" />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={() => addToMajMutation.mutate(majForm)}
+                disabled={addToMajMutation.isPending || !majForm.fullName || !majForm.username || !majForm.password}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              >
+                {addToMajMutation.isPending ? "Creating…" : "Create athlete"}
+              </Button>
+              <Button variant="outline" onClick={() => setIsMajDialogOpen(false)} className="flex-1">Cancel</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
