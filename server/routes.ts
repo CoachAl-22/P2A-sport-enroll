@@ -4721,6 +4721,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       { username: "clay",        fullName: "Clay England",         program: "Team Sport Speed" },
       { username: "ry",          fullName: "Ry Webb",              program: "Team Sport Speed" },
       { username: "leohand",     fullName: "Leo Hand",             program: "Team Sport Speed" },
+      { username: "essie",       fullName: "Essie Whitwam",        program: "Emerging Athletes" },
     ];
     for (const athlete of mpAthletes) {
       try {
