@@ -4703,6 +4703,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Seed Mornington athletes ──────────────────────────────────────
+  (async () => {
+    const mpAthletes = [
+      { username: "constantine", fullName: "Constantine Taxakis", program: "Foundation" },
+      { username: "jos",         fullName: "Jos Carmody",          program: "Foundation" },
+      { username: "markella",    fullName: "Markella Taxakis",     program: "Foundation" },
+      { username: "aisha",       fullName: "Aisha Centofanti",     program: "Emerging Athletes" },
+      { username: "eadie",       fullName: "Eadie Bland",          program: "Emerging Athletes" },
+      { username: "indianna",    fullName: "Indianna Murphy",      program: "Emerging Athletes" },
+      { username: "lily",        fullName: "Lily Underwood",       program: "Emerging Athletes" },
+      { username: "ryder",       fullName: "Ryder Liddell",        program: "Emerging Athletes" },
+      { username: "tom",         fullName: "Tom Bland",            program: "Junior Academy" },
+      { username: "zac",         fullName: "Zac McPherson",        program: "Junior Academy" },
+      { username: "ava",         fullName: "Ava Ogilivy",          program: "Team Sport Speed" },
+      { username: "caleb",       fullName: "Caleb Millman",        program: "Team Sport Speed" },
+      { username: "clay",        fullName: "Clay England",         program: "Team Sport Speed" },
+      { username: "ry",          fullName: "Ry Webb",              program: "Team Sport Speed" },
+      { username: "leohand",     fullName: "Leo Hand",             program: "Team Sport Speed" },
+    ];
+    for (const athlete of mpAthletes) {
+      try {
+        const existing = await db.select().from(majAthletes).where(eq(majAthletes.username, athlete.username));
+        if (existing.length === 0) {
+          const hash = await bcrypt.hash("MP2026", 10);
+          await db.insert(majAthletes).values({
+            username: athlete.username,
+            fullName: athlete.fullName,
+            password: hash,
+            displayPassword: "MP2026",
+            program: athlete.program,
+            school: "Mornington",
+          });
+          console.log(`[seed] MP athlete '${athlete.username}' created`);
+        }
+      } catch (e) {
+        console.error(`[seed] Failed to seed MP athlete '${athlete.username}':`, e);
+      }
+    }
+  })();
+
   const httpServer = createServer(app);
   return httpServer;
 }
