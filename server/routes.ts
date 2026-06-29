@@ -852,6 +852,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/maj/analytics", async (req, res) => {
+    try {
+      const { athleteId, event, page, meta } = req.body;
+      if (!event) return res.status(400).json({ message: "event required" });
+      const { db } = await import("./db.js");
+      const { majAnalyticsEvents } = await import("../shared/schema.js");
+      await db.insert(majAnalyticsEvents).values({ athleteId: athleteId || null, event, page: page || null, meta: meta || null });
+      res.status(201).json({ ok: true });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/maj/athlete/:id/wellness", canAccessMajAthlete(req => req.params.id), async (req, res) => {
     try {
       const records = await storage.getWellnessForAthlete(req.params.id);
@@ -4607,6 +4620,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("[migration] school column and tags applied");
     } catch(e: any) {
       console.error("[migration] school column:", e.message);
+    }
+  })();
+
+  // ── Migrate: create maj_analytics_events table ────────────────────
+  (async () => {
+    try {
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS maj_analytics_events (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          athlete_id UUID REFERENCES maj_athletes(id) ON DELETE CASCADE,
+          event VARCHAR(100) NOT NULL,
+          page VARCHAR(100),
+          meta JSONB,
+          created_at TIMESTAMP DEFAULT NOW()
+        )
+      `);
+      console.log("[migration] maj_analytics_events table ready");
+    } catch(e: any) {
+      console.error("[migration] maj_analytics_events:", e.message);
     }
   })();
 

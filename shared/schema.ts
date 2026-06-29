@@ -1112,6 +1112,15 @@ export const majPushSubscriptions = pgTable("maj_push_subscriptions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const majAnalyticsEvents = pgTable("maj_analytics_events", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  athleteId: uuid("athlete_id").references(() => majAthletes.id, { onDelete: "cascade" }),
+  event: varchar("event", { length: 100 }).notNull(),
+  page: varchar("page", { length: 100 }),
+  meta: jsonb("meta"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertMajAthleteSchema = createInsertSchema(majAthletes).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertMajReflectionSchema = createInsertSchema(majReflections).omit({ id: true, submittedAt: true });
 export const insertMajBadgeSchema = createInsertSchema(majBadges).omit({ id: true, awardedAt: true });

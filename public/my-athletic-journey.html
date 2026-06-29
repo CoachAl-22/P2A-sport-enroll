@@ -3687,6 +3687,16 @@ const MAJ_CONTENT = {
     return res.json();
   }
 
+  function trackEvent(event, page, meta) {
+    const athleteId = state.athlete && !state.athlete.isCoach ? state.athlete.id : null;
+    fetch(`${API}/analytics`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ athleteId, event, page: page || null, meta: meta || null })
+    }).catch(() => {});
+  }
+
   async function apiPatch(path, body) {
     const res = await fetch(`${API}${path}`, {
       method: 'PATCH',
@@ -3876,6 +3886,7 @@ const MAJ_CONTENT = {
       document.getElementById('bottom-nav').style.display = 'flex';
       initApp();
       navTo('home');
+      trackEvent('login', 'home', { program: data.program, school: data.school });
       fetchCoachBanner();
       fetchNotifications();
       checkStreakStatus();
@@ -4727,6 +4738,7 @@ const MAJ_CONTENT = {
       const today = new Date().toISOString().slice(0,10);
       localStorage.setItem(`wellness_${state.athlete.id}_${today}`, '1');
       document.getElementById('wellness-overlay').classList.add('hidden');
+      trackEvent('wellness_submitted', 'home', { energy: wellnessState.energy, sleep: wellnessState.sleep, mood: wellnessState.mood });
     } catch(e) {
       btn.disabled = false; btn.textContent = 'Start this week →';
       toast('Could not save check-in — continuing anyway');
@@ -4738,6 +4750,7 @@ const MAJ_CONTENT = {
     const today = new Date().toISOString().slice(0,10);
     localStorage.setItem(`wellness_${state.athlete.id}_${today}`, 'skipped');
     document.getElementById('wellness-overlay').classList.add('hidden');
+    trackEvent('wellness_skipped', 'home');
   }
 
   // ── FMS TRACKER ──────────────────────────────────────────────────────
@@ -5831,6 +5844,7 @@ const MAJ_CONTENT = {
     btn.classList.add('active');
     document.getElementById('tab-' + tabId).classList.add('active');
     state.activeTab = tabId;
+    trackEvent('tab_view', 'week', { tab: tabId, module: state.athlete.currentModule, week: state.athlete.currentWeek });
   }
 
   function updateTabLockState() {
@@ -5944,6 +5958,7 @@ const MAJ_CONTENT = {
     showOverlay(icon, `+${xpEarned} XP!`, sub, "What's next → Reflect");
     document.querySelectorAll('.stat-val')[0].textContent = a.sessionsCompleted;
 
+    trackEvent('challenge_completed', 'week', { module: a.currentModule, week: a.currentWeek, xpEarned });
     await saveState();
   }
 
@@ -5987,6 +6002,7 @@ const MAJ_CONTENT = {
       toast('Saved locally — will sync when connection restores');
     }
 
+    trackEvent('reflection_submitted', 'week', { module: a.currentModule, week: a.currentWeek, wordCount: responseText.split(/\s+/).filter(Boolean).length });
     markWeekProgress(a.currentModule, a.currentWeek, 'reflect');
     const _reflectKey = weekKey(a.currentModule, a.currentWeek);
     if (state.athlete.completedWeeks[_reflectKey]) state.athlete.completedWeeks[_reflectKey].reflectionText = responseText;
