@@ -237,6 +237,7 @@ export const enrollmentWeeks = pgTable("enrollment_weeks", {
   weekNumber: integer("week_number").notNull(), // 1..termConfig.weeksCount
   sessionDate: date("session_date", { mode: "string" }).notNull(),
   status: enrollmentWeekStatusEnum("status").default("selected").notNull(),
+  reason: varchar("reason", { length: 200 }), // admin note when a week is skipped/credited (e.g. "school camp")
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
@@ -508,6 +509,7 @@ export const attendanceRecords = pgTable("attendance_records", {
   classId: uuid("class_id").references(() => classes.id, { onDelete: "cascade" }).notNull(),
   sessionDate: timestamp("session_date").notNull(),
   status: varchar("status", { length: 20 }).notNull().default("present"), // "present", "absent", "late", "partial"
+  absenceReason: varchar("absence_reason", { length: 20 }), // "school_camp", "illness", "personal", "no_show", "other" — set when status is "absent"
   arrivalTime: timestamp("arrival_time"),
   departureTime: timestamp("departure_time"),
   coachNotes: text("coach_notes"),
@@ -518,6 +520,24 @@ export const attendanceRecords = pgTable("attendance_records", {
 }, (table) => ({
   uniqueChildSession: unique().on(table.childId, table.classId, table.sessionDate),
 }));
+
+// Canonical absence reasons for attendance marking (POW-12).
+// creditsEligible drives make-up credit issuance when a student is marked absent.
+export const ABSENCE_REASONS = [
+  { value: "school_camp", label: "School Camp", creditsEligible: false },
+  { value: "illness", label: "Illness", creditsEligible: true },
+  { value: "personal", label: "Personal", creditsEligible: false },
+  { value: "no_show", label: "No Show", creditsEligible: false },
+  { value: "other", label: "Other", creditsEligible: false },
+] as const;
+
+export type AbsenceReason = (typeof ABSENCE_REASONS)[number]["value"];
+
+export const ABSENCE_REASON_VALUES = ABSENCE_REASONS.map((r) => r.value) as AbsenceReason[];
+
+export const CREDIT_ELIGIBLE_ABSENCE_REASONS = ABSENCE_REASONS
+  .filter((r) => r.creditsEligible)
+  .map((r) => r.value) as AbsenceReason[];
 
 // Coach Messages - communication between coaches and athletes/parents
 export const coachMessages = pgTable("coach_messages", {

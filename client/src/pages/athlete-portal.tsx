@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
+import { ABSENCE_REASONS } from "@shared/schema";
 import { 
   Trophy, 
   Target, 
@@ -52,7 +53,7 @@ export default function AthletePortal() {
     enabled: !!selectedChild,
   });
 
-  const { data: attendanceRecords } = useQuery({
+  const { data: attendanceRecords } = useQuery<any[]>({
     queryKey: ["/api/attendance-records", selectedChild],
     enabled: !!selectedChild,
   });
@@ -98,6 +99,11 @@ export default function AthletePortal() {
       case "paused": return "bg-yellow-100 text-yellow-800";
       default: return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const getAbsenceReasonLabel = (reason?: string | null) => {
+    if (!reason) return null;
+    return ABSENCE_REASONS.find((r) => r.value === reason)?.label ?? reason;
   };
 
   const getPriorityIcon = (priority: string) => {
@@ -307,6 +313,37 @@ export default function AthletePortal() {
                     </CardContent>
                   </Card>
                 </div>
+
+                {/* Recent Attendance */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm font-medium">Recent Attendance</CardTitle>
+                    <CardDescription>Sessions and reasons for any absences</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {attendanceRecords?.slice(0, 10).map((record: any) => (
+                        <div key={record.id} className="flex items-center justify-between border-b pb-2 last:border-b-0">
+                          <div>
+                            <p className="text-sm font-medium">{record.className || "Session"}</p>
+                            <p className="text-xs text-gray-500">{formatDate(record.sessionDate)}</p>
+                          </div>
+                          <div className="text-right">
+                            <Badge className={record.status === "present" ? "bg-green-100 text-green-800" : record.status === "late" ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800"}>
+                              {record.status}
+                            </Badge>
+                            {record.status === "absent" && getAbsenceReasonLabel(record.absenceReason) && (
+                              <p className="text-xs text-gray-500 mt-1">{getAbsenceReasonLabel(record.absenceReason)}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                      {(!attendanceRecords || attendanceRecords.length === 0) && (
+                        <p className="text-sm text-gray-500 text-center py-4">No attendance records yet</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               {/* Performance Tab */}

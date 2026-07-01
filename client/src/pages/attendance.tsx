@@ -9,6 +9,7 @@ import Navbar from "@/components/layout/navbar";
 import { Calendar, CheckCircle, XCircle, Clock, Users } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { ABSENCE_REASONS } from "@shared/schema";
 
 export default function Attendance() {
   const [selectedClass, setSelectedClass] = useState<string>("");
@@ -81,14 +82,7 @@ export default function Attendance() {
     return days[dayOfWeek === 7 ? 0 : dayOfWeek];
   };
 
-  const absenceReasons = [
-    { value: "illness", label: "Illness", creditsEligible: true },
-    { value: "injury", label: "Injury", creditsEligible: true },
-    { value: "family_emergency", label: "Family Emergency", creditsEligible: true },
-    { value: "school_event", label: "School Event", creditsEligible: false },
-    { value: "vacation", label: "Vacation", creditsEligible: false },
-    { value: "other", label: "Other", creditsEligible: false },
-  ];
+  const absenceReasons = ABSENCE_REASONS;
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -1274,6 +1274,126 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ── Admin per-student session override ────────────────────────────────────
+  // Recompute an enrolment's pending payment from its selected weeks.
+  // Only touches unpaid ("pending") payments — paid weeks convert to credits,
+  // never a refund (see PER-WEEK-ENROLMENT-SCOPE.md).
+  async function recomputeEnrollmentPayment(enrollmentId: string): Promise<{
+    selectedWeeks: number;
+    payableWeeks: number;
+    pricePerWeek: string | null;
+    amount: string | null;
+  }> {
+    const enrollment = await storage.getEnrollment(enrollmentId);
+    if (!enrollment) throw new Error("Enrollment not found");
+    const cls = await storage.getClass(enrollment.classId);
+    const weeks = await storage.getEnrollmentWeeks(enrollmentId);
+    const selectedWeeks = weeks.filter((w) => w.status === "selected" || w.status === "makeup").length;
+    const payable = weeks.filter((w) => w.status !== "holiday").length;
+
+    let pricePerWeek: string | null = null;
+    let amount: string | null = null;
+    if (cls?.termConfigId) {
+      const termConfig = await storage.getTermConfigurationById(cls.termConfigId);
+      if (termConfig?.pricePerWeek != null) {
+        pricePerWeek = String(termConfig.pricePerWeek);
+        const gstRate = termConfig.gstRate != null ? parseFloat(termConfig.gstRate) : 0.1;
+        const baseExGst = parseFloat(termConfig.pricePerWeek) * selectedWeeks;
+        amount = (baseExGst * (1 + gstRate)).toFixed(2);
+
+        // Update any still-pending payment so the invoice reflects the new count.
+        const payments = await storage.getPaymentsByEnrollment(enrollmentId);
+        for (const p of payments) {
+          if (p.status === "pending") {
+            await storage.updatePayment(p.id, { amount });
+          }
+        }
+      }
+    }
+    return { selectedWeeks, payableWeeks: payable, pricePerWeek, amount };
+  }
+
+  // GET the week grid for one enrolment (admin). Materialises the rows on first
+  // open for full-term enrolments that predate per-week tracking.
+  app.get("/api/enrollments/:id/weeks", isAdmin, async (req, res) => {
+    try {
+      const enrollment = await storage.getEnrollment(req.params.id);
+      if (!enrollment) return res.status(404).json({ message: "Enrollment not found" });
+
+      let weeks = await storage.getEnrollmentWeeks(req.params.id);
+      const cls = await storage.getClass(enrollment.classId);
+
+      if (weeks.length === 0 && cls?.termConfigId) {
+        const termConfig = await storage.getTermConfigurationById(cls.termConfigId);
+        if (termConfig) {
+          const holidays = await storage.getTermHolidays(cls.termConfigId);
+          const computed = computeTermWeeks({
+            termStartDate: termConfig.startDate,
+            weeksCount: termConfig.weeksCount,
+            classDayOfWeek: cls.dayOfWeek,
+            holidays: holidays.map((h: any) => ({ holidayDate: h.holidayDate, name: h.name })),
+          });
+          await storage.createEnrollmentWeeks(
+            computed.map((w) => ({
+              enrollmentId: req.params.id,
+              weekNumber: w.weekNumber,
+              sessionDate: w.sessionDate,
+              status: w.isHoliday ? "holiday" : "selected",
+            })),
+          );
+          weeks = await storage.getEnrollmentWeeks(req.params.id);
+        }
+      }
+
+      const selectedWeeks = weeks.filter((w) => w.status === "selected" || w.status === "makeup").length;
+      const payable = weeks.filter((w) => w.status !== "holiday").length;
+      let pricePerWeek: string | null = null;
+      if (cls?.termConfigId) {
+        const termConfig = await storage.getTermConfigurationById(cls.termConfigId);
+        if (termConfig?.pricePerWeek != null) pricePerWeek = String(termConfig.pricePerWeek);
+      }
+      res.json({ enrollmentId: req.params.id, weeks, selectedWeeks, payableWeeks: payable, pricePerWeek });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Toggle a single week selected/skipped (admin) and recompute the invoice.
+  app.patch("/api/enrollments/:id/weeks/:weekNumber", isAdmin, async (req, res) => {
+    try {
+      const weekNumber = parseInt(req.params.weekNumber, 10);
+      if (!Number.isInteger(weekNumber) || weekNumber < 1) {
+        return res.status(400).json({ message: "Invalid week number" });
+      }
+      const { status, reason } = req.body ?? {};
+      const allowed = ["selected", "skipped", "credited", "makeup"];
+      if (!allowed.includes(status)) {
+        return res.status(400).json({ message: `status must be one of: ${allowed.join(", ")}` });
+      }
+
+      const enrollment = await storage.getEnrollment(req.params.id);
+      if (!enrollment) return res.status(404).json({ message: "Enrollment not found" });
+
+      const existing = await storage.getEnrollmentWeeks(req.params.id);
+      const target = existing.find((w) => w.weekNumber === weekNumber);
+      if (!target) return res.status(404).json({ message: "Week not found for this enrolment" });
+      if (target.status === "holiday") {
+        return res.status(400).json({ message: "Holiday weeks cannot be toggled" });
+      }
+
+      const updated = await storage.setEnrollmentWeekStatus(
+        req.params.id,
+        weekNumber,
+        status,
+        typeof reason === "string" ? reason.slice(0, 200) : null,
+      );
+      const pricing = await recomputeEnrollmentPayment(req.params.id);
+      res.json({ week: updated, ...pricing });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Admin class management routes
   app.post("/api/classes", async (req, res) => {
     const userId = (req.session as any)?.userId;

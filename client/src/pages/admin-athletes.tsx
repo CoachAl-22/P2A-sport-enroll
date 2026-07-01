@@ -11,7 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/layout/navbar";
-import { PlusIcon, EditIcon, TrashIcon, Trophy, Target, TrendingUp, Search, ChevronDown, UserPlus, FileText, Upload, X, Download, Paperclip, ClipboardList } from "lucide-react";
+import { PlusIcon, EditIcon, TrashIcon, Trophy, Target, TrendingUp, Search, ChevronDown, UserPlus, FileText, Upload, X, Download, Paperclip, ClipboardList, CalendarCheck } from "lucide-react";
+import { ABSENCE_REASONS } from "@shared/schema";
 import { useUpload } from "@/hooks/use-upload";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -143,6 +144,12 @@ export default function AdminAthletes() {
   const { data: assessments = [], isLoading: assessmentsLoading } = useQuery<any[]>({
     queryKey: ["/api/athletes", selectedChildId, "assessments"],
     queryFn: () => fetch(`/api/athletes/${selectedChildId}/assessments`).then(r => r.json()),
+    enabled: !!selectedChildId,
+  });
+
+  const { data: attendance = [], isLoading: attendanceLoading } = useQuery<any[]>({
+    queryKey: ["/api/attendance-records", selectedChildId],
+    queryFn: () => fetch(`/api/attendance-records/${selectedChildId}`).then(r => r.json()),
     enabled: !!selectedChildId,
   });
 
@@ -396,6 +403,7 @@ export default function AdminAthletes() {
                     <TabsTrigger value="records" className="gap-1"><TrendingUp className="w-4 h-4" /> Performance Records</TabsTrigger>
                     <TabsTrigger value="goals" className="gap-1"><Target className="w-4 h-4" /> Training Goals</TabsTrigger>
                     <TabsTrigger value="assessments" className="gap-1"><ClipboardList className="w-4 h-4" /> Assessments & Feedback</TabsTrigger>
+                    <TabsTrigger value="attendance" className="gap-1"><CalendarCheck className="w-4 h-4" /> Attendance</TabsTrigger>
                   </TabsList>
 
                   {/* PERFORMANCE RECORDS TAB */}
@@ -637,6 +645,43 @@ export default function AdminAthletes() {
                                   >
                                     <TrashIcon className="w-4 h-4" />
                                   </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  {/* ATTENDANCE TAB */}
+                  <TabsContent value="attendance">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Attendance History</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {attendanceLoading ? (
+                          <p className="text-sm text-gray-500">Loading...</p>
+                        ) : attendance.length === 0 ? (
+                          <p className="text-sm text-gray-500 text-center py-4">No attendance records yet</p>
+                        ) : (
+                          <div className="space-y-2">
+                            {attendance.map((record: any) => (
+                              <div key={record.id} className="flex items-center justify-between border-b pb-2 last:border-b-0">
+                                <div>
+                                  <p className="text-sm font-medium">{record.className || "Session"}</p>
+                                  <p className="text-xs text-gray-500">{record.sessionDate ? new Date(record.sessionDate).toLocaleDateString() : ""}</p>
+                                </div>
+                                <div className="text-right">
+                                  <Badge variant={record.status === "present" ? "default" : record.status === "late" ? "secondary" : "destructive"}>
+                                    {record.status}
+                                  </Badge>
+                                  {record.status === "absent" && record.absenceReason && (
+                                    <p className="text-xs text-gray-500 mt-1">
+                                      {ABSENCE_REASONS.find((r) => r.value === record.absenceReason)?.label ?? record.absenceReason}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                             ))}
