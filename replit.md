@@ -55,6 +55,23 @@ Preferred communication style: Simple, everyday language.
 - **Athlete Performance Tracking**: Admin interface (`/admin/athletes`) for managing individual athlete performance records (sprint times, jump distances, etc.) and training goals with progress tracking, personal best markers, and priority/category management. Full CRUD with auth-protected API routes.
 - **UI/UX Refinements**: Parent-friendly messaging, simplified navigation, enhanced enrollment flows, and improved error handling.
 
+## Required Replit Secrets (Live Credentials)
+
+These secrets must be set in Replit Secrets for payments, SMS, and email to run in live mode. Alistair holds the live credentials.
+
+### Stripe (payments)
+- `STRIPE_SECRET_KEY` — live secret key (server). Read in `server/routes.ts`. Note: code falls back to `TESTING_STRIPE_SECRET_KEY` if present, so ensure the TESTING key is unset/removed in production to avoid running test mode.
+- `VITE_STRIPE_PUBLIC_KEY` — live publishable key (frontend). Read in `client/src/pages/checkout.tsx`. NOTE: the ticket refers to this as `STRIPE_PUBLISHABLE_KEY`, but the actual env var the code reads is `VITE_STRIPE_PUBLIC_KEY`. Falls back to `TESTING_VITE_STRIPE_PUBLIC_KEY` — unset the TESTING key in production.
+- `STRIPE_WEBHOOK_SECRET` — webhook signing secret. Read in `server/routes.ts` webhook handler.
+
+### Twilio (SMS)
+- `TWILIO_ACCOUNT_SID` — account SID. Read in `server/sms.ts`.
+- `TWILIO_AUTH_TOKEN` — auth token. Read in `server/sms.ts`.
+- `TWILIO_PHONE_NUMBER` — sending number (AU). Read in `server/sms.ts`. SMS service disables itself if any of the three are missing.
+
+### Resend (email)
+- `RESEND_API_KEY` — API key. Read in `server/email.ts`. Email sends are skipped if unset.
+
 ## External Dependencies
 
 ### Payment Processing
