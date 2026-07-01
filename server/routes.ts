@@ -11,7 +11,7 @@ import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, ABSENCE_REASON_VALUES, CREDIT_ELIGIBLE_ABSENCE_REASONS } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } from "./googleSheets";
@@ -51,6 +51,21 @@ const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+const publicRegisterSchema = insertUserSchema.pick({
+  email: true,
+  mobile: true,
+  userId: true,
+  password: true,
+  firstName: true,
+  lastName: true,
+  autoReenrollment: true,
+}).partial({
+  email: true,
+  mobile: true,
+  userId: true,
+  autoReenrollment: true,
+});
+
 // Simple authentication middleware
 const isAuthenticated = (req: any, res: any, next: any) => {
   const sessionUserId = req.session?.userId;
@@ -75,6 +90,35 @@ const isAdmin = async (req: any, res: any, next: any) => {
   const user = await storage.getUser(userId);
   if (!user || user.role !== "admin") return res.status(403).json({ message: "Admin access required" });
   return next();
+};
+
+const getSessionUserId = (req: any): string | undefined => req.session?.userId;
+
+const canManageChildData = (user: any): boolean => !!user && ["admin", "coach"].includes(user.role);
+
+const requireChildAccess = async (req: any, res: any, childId: string) => {
+  const userId = getSessionUserId(req);
+  if (!userId) {
+    res.status(401).json({ message: "Not authenticated" });
+    return null;
+  }
+
+  const [user, child] = await Promise.all([
+    storage.getUser(userId),
+    storage.getChild(childId),
+  ]);
+
+  if (!child) {
+    res.status(404).json({ message: "Child not found" });
+    return null;
+  }
+
+  if (!canManageChildData(user) && child.parentId !== userId) {
+    res.status(403).json({ message: "You can only access your own child's records" });
+    return null;
+  }
+
+  return { user, child, userId };
 };
 
 // ── MAJ (My Athletic Journey) session middleware ──────────────────────────
@@ -198,6 +242,11 @@ function authMiddleware(req: any, res: any, next: any) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Liveness probe for Fly.io health checks — no DB dependency, fast response.
+  app.get("/api/health", (_req, res) => {
+    res.status(200).json({ status: "ok", uptime: process.uptime() });
+  });
+
   // Proxy /__mockup/ to the mockup sandbox dev server (port 23636) — dev only
   if (process.env.NODE_ENV !== 'production') {
     app.use('/__mockup', (req: any, res: any) => {
@@ -1084,7 +1133,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         req.body.userId = `${prefix}${suffix}`;
       }
 
-      const userData = insertUserSchema.parse(req.body);
+      const userData = publicRegisterSchema.parse(req.body);
       
       // Hash password
       const hashedPassword = await bcrypt.hash(userData.password, 10);
@@ -1092,6 +1141,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.createUser({
         ...userData,
         password: hashedPassword,
+        role: "parent",
+        active: true,
       });
       
       // Set session
@@ -1710,6 +1761,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      if (access.child.parentId !== userId) {
+        return res.status(403).json({ error: 'You can only waitlist your own child' });
+      }
+
       const result = await storage.createWaitlistWithHolidayReservation(childId, classId, userId);
       const child = await storage.getChild(childId);
       const cls = await storage.getClass(classId);
@@ -1754,6 +1811,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!childId) {
         return res.status(400).json({ message: "Child ID is required" });
+      }
+
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      if (access.child.parentId !== userId) {
+        return res.status(403).json({ message: "You can only enrol your own child" });
       }
       
       // Check class availability
@@ -2162,11 +2225,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
 
           // Generate one combined invoice for the first payment (covers all children)
+          // and email it to the parent with the PDF attached.
           try {
             const firstPayments = await storage.getPaymentsByEnrollment(enrollmentIdList[0]);
             if (firstPayments.length > 0) {
-              const { invoiceNumber } = await invoiceService.generateInvoiceForPayment(firstPayments[0].id);
+              const { invoiceNumber, pdfBuffer } = await invoiceService.generateInvoiceForPayment(firstPayments[0].id);
               console.log(`Invoice ${invoiceNumber} generated (covers ${enrollmentIdList.length} enrolment(s))`);
+
+              try {
+                const invoiceDetails = await storage.getPaymentWithDetails(firstPayments[0].id);
+                const parentEmail = invoiceDetails?.parent?.email;
+
+                const childNamesList: string[] = [];
+                for (const eid of enrollmentIdList) {
+                  const enr = await storage.getEnrollment(eid);
+                  const child = enr ? await storage.getChild(enr.childId) : null;
+                  if (child) childNamesList.push(child.firstName);
+                }
+
+                if (parentEmail) {
+                  await emailService.sendInvoiceEmail({
+                    to: parentEmail,
+                    parentName: invoiceDetails?.parent?.firstName || 'there',
+                    childNames: childNamesList.length ? childNamesList.join(', ') : 'your athlete',
+                    termName: invoiceDetails?.termConfig?.name || invoiceDetails?.class?.name || 'Term 2026',
+                    amount: (paymentIntent.amount / 100).toFixed(2),
+                    invoiceNumber,
+                    pdfBuffer,
+                  });
+                } else {
+                  console.log('Invoice email skipped: parent has no email on file');
+                }
+              } catch (invoiceEmailError) {
+                console.log('Invoice email failed:', invoiceEmailError);
+              }
             }
           } catch (invoiceError) {
             console.log('Invoice generation failed:', invoiceError);
@@ -3283,6 +3375,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         parentId: userId,
       });
 
+      const access = await requireChildAccess(req, res, waitlistData.childId);
+      if (!access) return;
+      if (access.child.parentId !== userId) {
+        return res.status(403).json({ message: "You can only waitlist your own child" });
+      }
+
       // Check if child is already on waitlist for this class
       const existingPosition = await storage.getWaitlistPositionByChild(waitlistData.classId, waitlistData.childId);
       if (existingPosition) {
@@ -3367,10 +3465,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const { id } = req.params;
-      
+
       // Check if user owns this waitlist entry or is admin
       const user = await storage.getUser(userId);
-      const waitlistEntry = await storage.getWaitlistByClass(''); // We'll need to modify this
+      const waitlistEntry = await storage.getWaitlist(id);
+      if (!waitlistEntry) {
+        return res.status(404).json({ message: "Waitlist entry not found" });
+      }
+      if (waitlistEntry.parentId !== userId && user?.role !== "admin") {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
       
       await storage.removeFromWaitlist(id);
       res.json({ message: "Removed from waitlist successfully" });
@@ -3634,13 +3738,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const attendanceData = req.body;
-      
-      // Validate and determine credit eligibility
-      const creditEligibleReasons = ['illness', 'injured', 'prior_notice', 'travel', 'exception', 'cancelled'];
-      
-      if (attendanceData.status === 'absent' && attendanceData.absenceReason) {
-        attendanceData.creditsEligible = creditEligibleReasons.includes(attendanceData.absenceReason);
+
+      // Absence reason only applies when the student is absent.
+      if (attendanceData.status === 'absent') {
+        if (!attendanceData.absenceReason || !ABSENCE_REASON_VALUES.includes(attendanceData.absenceReason)) {
+          return res.status(400).json({
+            message: `Invalid or missing absenceReason. Expected one of: ${ABSENCE_REASON_VALUES.join(', ')}`,
+          });
+        }
+        attendanceData.creditsEligible = CREDIT_ELIGIBLE_ABSENCE_REASONS.includes(attendanceData.absenceReason);
       } else {
+        attendanceData.absenceReason = null;
         attendanceData.creditsEligible = false;
       }
       
@@ -4121,10 +4229,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Athlete Portal API Routes - Performance Records
   app.get("/api/performance-records/:childId", async (req, res) => {
-    const userId = (req.session as any)?.userId;
-    if (!userId) return res.status(401).json({ message: "Not authenticated" });
-
     try {
+      const access = await requireChildAccess(req, res, req.params.childId);
+      if (!access) return;
       const records = await storage.getPerformanceRecordsByChild(req.params.childId);
       res.json(records);
     } catch (error: any) {
@@ -4185,10 +4292,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Training Goals
   app.get("/api/training-goals/:childId", async (req, res) => {
-    const userId = (req.session as any)?.userId;
-    if (!userId) return res.status(401).json({ message: "Not authenticated" });
-
     try {
+      const access = await requireChildAccess(req, res, req.params.childId);
+      if (!access) return;
       const goals = await storage.getTrainingGoalsByChild(req.params.childId);
       res.json(goals);
     } catch (error: any) {
@@ -4266,25 +4372,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/attendance-records/:childId", authMiddleware, async (req, res) => {
     try {
       const { childId } = req.params;
-      const mockAttendance = [
-        {
-          id: "1",
-          childId,
-          sessionDate: new Date("2024-12-10"),
-          status: "present",
-          performanceRating: 8,
-          skillsFocused: ["sprint_starts", "acceleration"]
-        },
-        {
-          id: "2", 
-          childId,
-          sessionDate: new Date("2024-12-03"),
-          status: "present",
-          performanceRating: 7,
-          skillsFocused: ["long_jump", "take_off"]
-        }
-      ];
-      res.json(mockAttendance);
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      const records = await storage.getAttendanceRecordsByChild(childId);
+      res.json(records);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -4293,39 +4384,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/coach-messages/:childId", authMiddleware, async (req, res) => {
     try {
       const { childId } = req.params;
-      const mockMessages = [
-        {
-          id: "1",
-          childId,
-          fromCoach: {
-            firstName: "Alistair",
-            lastName: "Tait"
-          },
-          subject: "Great progress this week!",
-          message: "I've noticed significant improvement in your sprint starts. Keep focusing on the explosive first step and you'll see even better times.",
-          messageType: "performance",
-          priority: "normal",
-          isRead: false,
-          createdAt: new Date("2024-12-08")
-        },
-        {
-          id: "2",
-          childId,
-          fromCoach: {
-            firstName: "Georgia",
-            lastName: "Middleton"
-          },
-          subject: "Training Focus for Next Week",
-          message: "Next session we'll work on long jump approach. Practice your rhythm counting at home if you can.",
-          messageType: "technique_tip",
-          priority: "normal", 
-          isRead: true,
-          createdAt: new Date("2024-12-05"),
-          parentReply: "Thanks for the tip! We'll practice the counting at home.",
-          repliedAt: new Date("2024-12-06")
-        }
-      ];
-      res.json(mockMessages);
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      const messages = await storage.getCoachMessagesByChild(childId);
+      res.json(messages);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -4334,27 +4396,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/upcoming-classes/:childId", authMiddleware, async (req, res) => {
     try {
       const { childId } = req.params;
-      const mockClasses = [
-        {
-          id: "1",
-          name: "Emerging Athletes",
-          date: new Date("2024-12-17"),
-          startTime: "15:30",
-          endTime: "16:45",
-          venue: { name: "Toorak College" },
-          coach: { firstName: "Georgia", lastName: "Middleton" }
-        },
-        {
-          id: "2",
-          name: "Emerging Athletes", 
-          date: new Date("2024-12-19"),
-          startTime: "15:30",
-          endTime: "16:45",
-          venue: { name: "Toorak College" },
-          coach: { firstName: "Georgia", lastName: "Middleton" }
-        }
-      ];
-      res.json(mockClasses);
+      const access = await requireChildAccess(req, res, childId);
+      if (!access) return;
+      const upcoming = await storage.getUpcomingClassesByChild(childId);
+      res.json(upcoming);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -4489,6 +4534,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/files/*", async (req, res) => {
     const userId = (req.session as any)?.userId;
     if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const user = await storage.getUser(userId);
+    if (!user || !["admin", "coach"].includes(user.role)) return res.status(403).json({ message: "Access denied" });
     try {
       const { ObjectStorageService, ObjectNotFoundError } = await import("./replit_integrations/object_storage/objectStorage.js");
       const objService = new ObjectStorageService();

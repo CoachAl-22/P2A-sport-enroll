@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.gitignore
+.DS_Store
+**/.DS_Store
+attached_assets
+mobile
+docs
+cookies.txt
+*.tar.gz
+.replit
+npm-debug.log
+# NOTE: attached_assets/ is intentionally NOT ignored — client imports it via @assets alias at build time.
