@@ -10,7 +10,7 @@ export class InvoiceService {
     this.invoiceGenerator = new InvoiceGenerator();
   }
 
-  async generateInvoiceForPayment(paymentId: string): Promise<{ invoiceNumber: string; pdfPath: string }> {
+  async generateInvoiceForPayment(paymentId: string): Promise<{ invoiceNumber: string; pdfPath: string; pdfBuffer: Buffer }> {
     // Get payment details with all related information
     const paymentData = await storage.getPaymentWithDetails(paymentId);
     
@@ -83,6 +83,7 @@ export class InvoiceService {
     return {
       invoiceNumber,
       pdfPath,
+      pdfBuffer,
     };
   }
 

@@ -40,6 +40,65 @@ export class EmailService {
     }
   }
 
+  async sendInvoiceEmail(params: {
+    to: string;
+    parentName: string;
+    childNames: string;
+    termName: string;
+    amount: string;
+    invoiceNumber: string;
+    pdfBuffer: Buffer;
+  }): Promise<boolean> {
+    const { to, parentName, childNames, termName, amount, invoiceNumber, pdfBuffer } = params;
+    const subject = `Power2ADAPT — Payment confirmation [${termName}]`;
+    const html = `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f4f4f5;margin:0;padding:20px">
+      <div style="max-width:580px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
+        <div style="background:#0a0a0a;padding:28px;text-align:center;border-bottom:3px solid #F26522">
+          <h1 style="margin:0;color:#fff;font-size:1.5rem;text-transform:uppercase;letter-spacing:.05em">POWER2<span style="color:#F26522">ADAPT</span></h1>
+          <p style="margin:6px 0 0;color:#9ca3af;font-size:0.85rem">Payment Confirmation</p>
+        </div>
+        <div style="padding:32px">
+          <h2 style="margin:0 0 8px;color:#0a0a0a">Thanks ${parentName}! 🎉</h2>
+          <p style="color:#374151;line-height:1.7">We've received your payment for <strong>${childNames}</strong>. Your enrolment for <strong>${termName}</strong> is now confirmed.</p>
+          <div style="background:#fff5f0;border:1.5px solid rgba(242,101,34,0.2);border-radius:10px;padding:20px;margin:24px 0">
+            <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+              <tr><td style="padding:6px 0;color:#6b7280">Invoice</td><td style="padding:6px 0;text-align:right;font-weight:600;color:#0a0a0a">${invoiceNumber}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280">Term</td><td style="padding:6px 0;text-align:right;font-weight:600;color:#0a0a0a">${termName}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280">Amount paid</td><td style="padding:6px 0;text-align:right;font-weight:700;color:#F26522">$${amount} AUD</td></tr>
+            </table>
+          </div>
+          <p style="color:#374151;line-height:1.7">Your tax invoice is attached to this email as a PDF for your records.</p>
+          <p style="color:#6b7280;font-size:0.88rem">Questions? Just reply to this email and Alistair will get back to you.</p>
+        </div>
+        <div style="text-align:center;padding:16px;background:#f9fafb;color:#9ca3af;font-size:0.75rem">© 2026 Power2ADAPT Athletic Programs · <a href="https://power2adapt.online" style="color:#9ca3af">www.power2adapt.online</a></div>
+      </div>
+    </body></html>`;
+
+    try {
+      if (!process.env.RESEND_API_KEY) {
+        console.log('Email Service not configured - would send invoice email:', { to, subject });
+        return false;
+      }
+      const { data, error } = await resend.emails.send({
+        from: this.fromEmail,
+        to: [to],
+        replyTo: 'alistair@power2adapt.com',
+        subject,
+        html,
+        attachments: [{
+          filename: `invoice-${invoiceNumber}.pdf`,
+          content: pdfBuffer,
+        }],
+      });
+      if (error) { console.error('Failed to send invoice email:', error); return false; }
+      console.log(`Invoice email sent successfully: ${data?.id}`);
+      return true;
+    } catch (error) {
+      console.error('Failed to send invoice email:', error);
+      return false;
+    }
+  }
+
   async sendAdminEnquiryNotification(
     enquiryData: { name: string; email: string; phone?: string | null; contactMethod: string; subject: string; message: string },
     adminEmail: string
