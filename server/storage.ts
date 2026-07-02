@@ -242,7 +242,7 @@ export interface IStorage {
   // Performance Video Highlights operations
   createPerformanceVideoHighlight(videoData: InsertPerformanceVideoHighlight): Promise<PerformanceVideoHighlight>;
   getPerformanceVideoHighlight(id: string): Promise<PerformanceVideoHighlight | undefined>;
-  getAllPerformanceVideoHighlights(): Promise<PerformanceVideoHighlight[]>;
+  getAllPerformanceVideoHighlights(): Promise<any[]>;
   getPerformanceVideoHighlightsByChild(childId: string): Promise<PerformanceVideoHighlight[]>;
   getPerformanceVideoHighlightsByCoach(coachId: string): Promise<PerformanceVideoHighlight[]>;
   getPerformanceVideoHighlightsByClass(classId: string): Promise<PerformanceVideoHighlight[]>;
@@ -251,7 +251,7 @@ export interface IStorage {
   
   // Video Share operations
   createVideoShare(shareData: InsertVideoShare): Promise<VideoShare>;
-  getVideoSharesByVideo(videoId: string): Promise<VideoShare[]>;
+  getVideoSharesByVideo(videoId: string): Promise<any[]>;
   getVideoSharesByParent(parentId: string): Promise<VideoShare[]>;
   updateVideoShare(id: string, updates: Partial<VideoShare>): Promise<VideoShare>;
   deleteVideoShare(id: string): Promise<void>;
@@ -1535,7 +1535,7 @@ export class DatabaseStorage implements IStorage {
     return video;
   }
 
-  async getAllPerformanceVideoHighlights(): Promise<PerformanceVideoHighlight[]> {
+  async getAllPerformanceVideoHighlights(): Promise<any[]> {
     return await db
       .select({
         id: performanceVideoHighlights.id,
@@ -1559,7 +1559,7 @@ export class DatabaseStorage implements IStorage {
         tags: performanceVideoHighlights.tags,
         createdAt: performanceVideoHighlights.createdAt,
         updatedAt: performanceVideoHighlights.updatedAt,
-        childName: children.firstName ? sql<string>`${children.firstName} || ' ' || ${children.lastName}` : null,
+        childName: sql<string | null>`case when ${children.id} is null then null else ${children.firstName} || ' ' || ${children.lastName} end`,
         coachName: sql<string>`${coaches.firstName} || ' ' || ${coaches.lastName}`,
         className: classes.name,
       })
@@ -1613,7 +1613,7 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async getVideoSharesByVideo(videoId: string): Promise<VideoShare[]> {
+  async getVideoSharesByVideo(videoId: string): Promise<any[]> {
     return await db
       .select({
         id: videoShares.id,
@@ -1623,7 +1623,7 @@ export class DatabaseStorage implements IStorage {
         sharedAt: videoShares.sharedAt,
         viewedAt: videoShares.viewedAt,
         message: videoShares.message,
-        parentName: users.firstName ? sql<string>`${users.firstName} || ' ' || ${users.lastName}` : null,
+        parentName: sql<string | null>`case when ${users.id} is null then null else ${users.firstName} || ' ' || ${users.lastName} end`,
         parentEmail: users.email,
       })
       .from(videoShares)

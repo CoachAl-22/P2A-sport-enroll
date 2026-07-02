@@ -128,7 +128,7 @@ export default function AdminBlog() {
       excerpt: article.excerpt || "",
       content: article.content,
       featuredImage: article.featuredImage || "",
-      published: article.published,
+      published: article.published ?? false,
     });
     setIsEditModalOpen(true);
   };

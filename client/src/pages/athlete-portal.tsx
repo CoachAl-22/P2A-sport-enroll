@@ -37,37 +37,37 @@ export default function AthletePortal() {
   const [replyMessage, setReplyMessage] = useState("");
 
   // Fetch athlete data
-  const { data: children } = useQuery({
+  const { data: children = [] } = useQuery<any[]>({
     queryKey: ["/api/children"],
     enabled: !!user,
   });
 
-  const { data: performanceRecords } = useQuery({
+  const { data: performanceRecords = [] } = useQuery<any[]>({
     queryKey: ["/api/performance-records", selectedChild],
     enabled: !!selectedChild,
   });
 
-  const { data: trainingGoals } = useQuery({
+  const { data: trainingGoals = [] } = useQuery<any[]>({
     queryKey: ["/api/training-goals", selectedChild],
     enabled: !!selectedChild,
   });
 
-  const { data: attendanceRecords } = useQuery({
+  const { data: attendanceRecords = [] } = useQuery<any[]>({
     queryKey: ["/api/attendance-records", selectedChild],
     enabled: !!selectedChild,
   });
 
-  const { data: coachMessages } = useQuery({
+  const { data: coachMessages = [] } = useQuery<any[]>({
     queryKey: ["/api/coach-messages", selectedChild],
     enabled: !!selectedChild,
   });
 
-  const { data: upcomingClasses } = useQuery({
+  const { data: upcomingClasses = [] } = useQuery<any[]>({
     queryKey: ["/api/upcoming-classes", selectedChild],
     enabled: !!selectedChild,
   });
 
-  const { data: videoHighlights } = useQuery({
+  const { data: videoHighlights = [] } = useQuery<any[]>({
     queryKey: ["/api/video-highlights", selectedChild],
     enabled: !!selectedChild,
   });
@@ -594,7 +594,7 @@ export default function AthletePortal() {
                             </div>
                             {video.skillsHighlighted && video.skillsHighlighted.length > 0 && (
                               <div className="mt-3 flex flex-wrap gap-1">
-                                {video.skillsHighlighted.map((skill, index) => (
+                                {video.skillsHighlighted.map((skill: string, index: number) => (
                                   <Badge key={index} variant="secondary" className="text-xs">
                                     {skill}
                                   </Badge>

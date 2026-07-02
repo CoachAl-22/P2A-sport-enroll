@@ -11,7 +11,7 @@ import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, performanceVideoHighlights } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } from "./googleSheets";
@@ -1359,7 +1359,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activeCoaches = coaches.filter(c => c.active);
       
       // Combine user and coach data for staff members
-      const staff = staffUsers.map(user => {
+      const staff: any[] = staffUsers.map(user => {
         const coachData = activeCoaches.find(c => c.userId === user.id);
         return {
           ...toSafeUser(user),
@@ -1375,8 +1375,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: coach.id,
           firstName: coach.firstName,
           lastName: coach.lastName,
-          email: coach.email || '',
-          mobile: coach.mobile || '',
+          email: '',
+          mobile: '',
           role: 'coach',
           specializations: coach.specializations,
           qualifications: coach.qualifications,
@@ -2079,7 +2079,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!setupIntent.payment_method) return res.status(400).json({ message: "No payment method found" });
 
       const customerId = setupIntent.customer as string;
-      const instalmentAmountCents = parseInt(setupIntent.metadata.instalmentAmountCents || "12100");
+      const instalmentAmountCents = parseInt(setupIntent.metadata?.instalmentAmountCents || "12100");
 
       // Create a one-off price for $121 AUD monthly
       const price = await stripe.prices.create({
@@ -2721,7 +2721,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           viewCount: performanceVideoHighlights.viewCount,
           tags: performanceVideoHighlights.tags,
           createdAt: performanceVideoHighlights.createdAt,
-          childName: children.firstName ? sql<string>`${children.firstName} || ' ' || ${children.lastName}` : null,
+          childName: sql<string | null>`case when ${children.id} is null then null else ${children.firstName} || ' ' || ${children.lastName} end`,
           coachName: sql<string>`${coaches.firstName} || ' ' || ${coaches.lastName}`,
           className: classes.name,
         })
@@ -2735,18 +2735,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Video not found" });
       }
 
+      const viewCount = video.viewCount ?? 0;
+
       // Increment view count
       await db
         .update(performanceVideoHighlights)
         .set({ 
-          viewCount: video.viewCount + 1,
+          viewCount: viewCount + 1,
           updatedAt: new Date()
         })
         .where(eq(performanceVideoHighlights.shareableLink, shareableLink));
 
       res.json({
         ...video,
-        viewCount: video.viewCount + 1
+        viewCount: viewCount + 1
       });
     } catch (error: any) {
       console.error("Error fetching shareable video:", error);
@@ -4375,7 +4377,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const newResponse = await storage.createSurveyResponse(responseData);
 
       try {
-        await appendSurveyToSheet(responseData);
+        await appendSurveyToSheet({
+          ...responseData,
+          studentName: responseData.studentName ?? null,
+          otherSports: responseData.otherSports ?? null,
+          specificEvent: responseData.specificEvent ?? null,
+          awesomeFactor: responseData.awesomeFactor ?? null,
+          injuryInfo: responseData.injuryInfo ?? null,
+        });
         console.log("Survey response appended to Google Sheet");
       } catch (sheetError) {
         console.error("Failed to append to Google Sheet (DB save succeeded):", sheetError);

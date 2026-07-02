@@ -920,7 +920,6 @@ export const insertAttendanceRecordSchema = createInsertSchema(attendanceRecords
   id: true,
   createdAt: true,
   updatedAt: true,
-  markedAt: true,
 });
 
 export const insertTermConfigurationSchema = createInsertSchema(termConfigurations).omit({

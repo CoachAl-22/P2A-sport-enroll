@@ -19,7 +19,7 @@ export default function Attendance() {
   const { toast } = useToast();
 
   // Get today's classes for the coach
-  const { data: coachClasses, isLoading: classesLoading } = useQuery({
+  const { data: coachClasses = [], isLoading: classesLoading } = useQuery<any[]>({
     queryKey: ["/api/coach/classes"],
   });
 

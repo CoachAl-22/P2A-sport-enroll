@@ -43,7 +43,7 @@ export default function AdminTermConfig() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: termConfigs, isLoading } = useQuery({
+  const { data: termConfigs = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/term-configurations"],
   });
 
@@ -51,7 +51,7 @@ export default function AdminTermConfig() {
     queryKey: ["/api/admin/term-stats"],
   });
 
-  const { data: selectedConfigHolidays } = useQuery({
+  const { data: selectedConfigHolidays = [] } = useQuery<any[]>({
     queryKey: ["/api/term-configurations", selectedConfigForHolidays?.id, "holidays"],
     enabled: !!selectedConfigForHolidays?.id,
   });

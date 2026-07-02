@@ -20,7 +20,7 @@ export default function AdminSMS() {
   const queryClient = useQueryClient();
 
   // Fetch classes for reminder selection
-  const { data: classes } = useQuery({
+  const { data: classes = [] } = useQuery<any[]>({
     queryKey: ["/api/classes"],
   });
 

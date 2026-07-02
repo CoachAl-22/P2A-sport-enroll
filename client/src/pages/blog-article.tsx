@@ -63,7 +63,7 @@ export default function BlogArticle() {
             {/* Article Meta */}
             <div className="flex items-center text-sm text-gray-500 mb-4">
               <Calendar className="w-4 h-4 mr-2" />
-              <time dateTime={article.publishedAt || article.createdAt || undefined}>
+              <time dateTime={new Date(article.publishedAt || article.createdAt || Date.now()).toISOString()}>
                 {format(new Date(article.publishedAt || article.createdAt || Date.now()), 'MMMM d, yyyy')}
               </time>
             </div>

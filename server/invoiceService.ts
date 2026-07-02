@@ -20,6 +20,10 @@ export class InvoiceService {
 
     const { payment, enrollment, child, parent, class: classInfo, venue, termConfig } = paymentData;
 
+    if (!parent || !child) {
+      throw new Error('Payment is missing parent or child details required for invoice generation');
+    }
+
     // Generate invoice number if not exists
     const invoiceNumber = payment.invoiceNumber || generateInvoiceNumber();
 
@@ -60,7 +64,7 @@ export class InvoiceService {
       totalAmount: basePrice,
       paymentStatus: payment.status === 'completed' ? 'paid' as const : 'pending' as const,
       paymentMethod: payment.stripePaymentIntentId ? 'Credit Card (Stripe)' : undefined,
-      transactionId: payment.stripePaymentIntentId,
+      transactionId: payment.stripePaymentIntentId || undefined,
     };
 
     // Generate PDF

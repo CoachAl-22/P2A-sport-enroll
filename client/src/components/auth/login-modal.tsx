@@ -57,7 +57,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     defaultValues: {
       email: "",
       mobile: "",
-      userId: "",
       firstName: "",
       lastName: "",
       password: "",

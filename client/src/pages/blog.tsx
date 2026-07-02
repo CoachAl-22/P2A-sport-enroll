@@ -146,7 +146,7 @@ export default function Blog() {
                 <div className="p-6">
                   <div className="flex items-center text-sm text-gray-500 mb-3">
                     <Calendar className="w-4 h-4 mr-2" />
-                    <time dateTime={article.publishedAt || article.createdAt || undefined}>
+                    <time dateTime={new Date(article.publishedAt || article.createdAt || Date.now()).toISOString()}>
                       {format(new Date(article.publishedAt || article.createdAt || Date.now()), 'MMM d, yyyy')}
                     </time>
                   </div>

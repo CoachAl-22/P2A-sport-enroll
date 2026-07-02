@@ -71,22 +71,22 @@ export default function VideoHighlights() {
   const queryClient = useQueryClient();
 
   // Fetch video highlights
-  const { data: videos = [], isLoading } = useQuery({
+  const { data: videos = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/video-highlights"],
     enabled: !!user && ["coach", "admin"].includes(user.role),
   });
 
   // Fetch children and classes for forms
-  const { data: children = [] } = useQuery({
+  const { data: children = [] } = useQuery<any[]>({
     queryKey: ["/api/admin/students"],
     enabled: !!user && user.role === "admin",
   });
 
-  const { data: classes = [] } = useQuery({
+  const { data: classes = [] } = useQuery<any[]>({
     queryKey: ["/api/classes"],
   });
 
-  const { data: customers = [] } = useQuery({
+  const { data: customers = [] } = useQuery<any[]>({
     queryKey: ["/api/admin/customers"],
     enabled: !!user && ["coach", "admin"].includes(user.role),
   });

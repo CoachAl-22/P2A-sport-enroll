@@ -145,7 +145,7 @@ export default function AdminClasses() {
   // Time slots: merge defaults with any actual times in the data
   const timeSlots = useMemo(() => {
     const actual = scheduleClasses.map(c => c.startTime).filter(Boolean);
-    return [...new Set([...DEFAULT_TIME_SLOTS, ...actual])].sort();
+    return Array.from(new Set([...DEFAULT_TIME_SLOTS, ...actual])).sort();
   }, [scheduleClasses]);
 
   // Table classes (with search)

@@ -24,19 +24,19 @@ export default function VideoHighlightsParent() {
   const [selectedChild, setSelectedChild] = useState<string>("");
 
   // Fetch children for parent
-  const { data: children = [] } = useQuery({
+  const { data: children = [] } = useQuery<any[]>({
     queryKey: ["/api/children"],
     enabled: !!user && user.role === "parent",
   });
 
   // Fetch shared videos for parent
-  const { data: sharedVideos = [], isLoading: sharedLoading } = useQuery({
+  const { data: sharedVideos = [], isLoading: sharedLoading } = useQuery<any[]>({
     queryKey: ["/api/video-highlights/shared"],
     enabled: !!user && user.role === "parent",
   });
 
   // Fetch videos for selected child
-  const { data: childVideos = [], isLoading: childLoading } = useQuery({
+  const { data: childVideos = [], isLoading: childLoading } = useQuery<any[]>({
     queryKey: ["/api/video-highlights/child", selectedChild],
     enabled: !!selectedChild && !!user,
   });
