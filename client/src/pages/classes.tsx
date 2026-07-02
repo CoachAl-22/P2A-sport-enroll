@@ -107,6 +107,27 @@ function getTermLabel(term?: { name?: string; term?: string; year?: number }) {
   return `${term.term.replace("term_", "Term ")} ${term.year}`;
 }
 
+function dateOnlyValue(value?: string | Date | null) {
+  if (!value) return null;
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function isCurrentTerm(term: { startDate?: string; endDate?: string }, today = dateOnlyValue(new Date())) {
+  const start = dateOnlyValue(term.startDate);
+  const end = dateOnlyValue(term.endDate);
+  return !!today && !!start && !!end && start <= today && today <= end;
+}
+
 export default function Classes() {
   const { user, isAuthenticated } = useAuth();
   const urlParams = new URLSearchParams(window.location.search);
@@ -138,6 +159,7 @@ export default function Classes() {
         }),
     [termConfigs],
   );
+  const defaultTerm = availableTerms.find((term) => isCurrentTerm(term)) || availableTerms[0];
   const selectedTerm = availableTerms.find((term) => term.id === selectedTermId) || availableTerms[0];
   const selectedTermLabel = getTermLabel(selectedTerm);
 
@@ -183,11 +205,11 @@ export default function Classes() {
   }, [classes, sel.sportType, termClasses]);
 
   useEffect(() => {
-    const latestTermId = availableTerms[0]?.id;
-    if (!termManuallySelected && latestTermId && selectedTermId !== latestTermId) {
-      setSelectedTermId(latestTermId);
+    const defaultTermId = defaultTerm?.id;
+    if (!termManuallySelected && defaultTermId && selectedTermId !== defaultTermId) {
+      setSelectedTermId(defaultTermId);
     }
-  }, [availableTerms, selectedTermId, termManuallySelected]);
+  }, [defaultTerm, selectedTermId, termManuallySelected]);
 
   useEffect(() => {
     if (step === "results") {
