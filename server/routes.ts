@@ -4676,6 +4676,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Migrate: Archive all 2025 terms ───────────────────────────────
+  (async () => {
+    try {
+      await db.execute(sql`
+        UPDATE term_configurations SET active = false WHERE year = 2025
+      `);
+      console.log("[migration] 2025 terms archived");
+    } catch(e: any) {
+      console.error("[migration] 2025 archive:", e.message);
+    }
+  })();
+
   // ── Seed Toorak College athletes ──────────────────────────────────
   (async () => {
     const tcAthletes = [
