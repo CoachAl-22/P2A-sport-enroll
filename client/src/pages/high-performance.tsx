@@ -401,16 +401,6 @@ export default function HighPerformance() {
             </div>
             
             <div>
-              <h4 className="font-heading font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li><a href="#" className="hover:text-white">Performance Assessment</a></li>
-                <li><a href="#" className="hover:text-white">Coaching Resources</a></li>
-                <li><a href="#" className="hover:text-white">Contact Coach</a></li>
-                <li><a href="#" className="hover:text-white">Athlete Portal</a></li>
-              </ul>
-            </div>
-            
-            <div>
               <h4 className="font-heading font-semibold mb-4">Contact Info</h4>
               <div className="space-y-2 text-gray-300">
                 <p>Elite Performance Coaching</p>

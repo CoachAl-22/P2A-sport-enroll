@@ -1838,10 +1838,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Class not found" });
       }
 
-      // Term 3 enrollment lock — enrolments open 5 June 2026 AEST
-      const TERM3_OPENS = new Date("2026-06-05T00:00:00+10:00");
-      if (new Date() < TERM3_OPENS) {
-        return res.status(403).json({ message: "Term 3 enrolments open on 5 June 2026. Check back then to secure your spot!" });
+      // Enrolment gate: controlled per-class by the admin "Enrolment Open" toggle.
+      // Waitlist joins are still allowed when a class is full, so only block when
+      // the class is explicitly closed for enrolment.
+      if (!classData.isEnrollmentOpen) {
+        return res.status(403).json({ message: "Enrolments for this class aren't open yet. Check back soon to secure your spot!" });
       }
       
       const enrollmentStatus = (classData.currentEnrollment || 0) >= classData.maxCapacity ? "waitlist" : "pending_payment";
