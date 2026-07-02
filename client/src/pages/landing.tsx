@@ -302,8 +302,8 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block bg-primary-100 text-primary-700 text-sm font-semibold px-4 py-1 rounded-full mb-4">Enrolments now open</span>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Available Classes — Term 3, 2026</h2>
-            <p className="text-xl text-gray-600">Professional athletic training starting Term 3</p>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Available Classes</h2>
+            <p className="text-xl text-gray-600">Professional athletic training for all ages</p>
             <p className="text-lg text-gray-500 mt-2">Senior and High Performance squads by application</p>
           </div>
 
@@ -433,7 +433,7 @@ export default function Landing() {
 
           <div className="text-center mt-10">
             <a href="/classes" className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-md hover:shadow-lg transition-all">
-              View all Term 3 classes
+              View all classes
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </a>
           </div>

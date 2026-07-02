@@ -1,0 +1,41 @@
+~/workspace$ git checkout origin/main -- client/src/pages/classes.tsx
+git status
+npm run check
+npm run build
+On branch main
+Your branch is ahead of 'origin/main' by 20 commits.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+    modified:   client/src/pages/classes.tsx
+
+
+> rest-express@1.0.0 check
+> tsc
+
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 21 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 3562 modules transformed.
+../dist/public/index.html                                                                  2.83 kB │ gzip:   1.00 kB
+../dist/public/assets/Miah Noble trail runner_1759299110875-O9Bb2iOn.jpg                 758.97 kB
+../dist/public/assets/IMG_3038_1759146359558-BGdmi3Kr.jpg                              2,239.23 kB
+../dist/public/assets/4F77B27D-B978-4B9A-982D-C5BD2350E00E_1759300730112-CveL1Lt7.jpg  2,898.52 kB
+../dist/public/assets/63271D0E-3E21-490C-B81E-18BEF5CCB270_1759298878111-4zXklpHW.jpg  4,029.19 kB
+../dist/public/assets/IMG_1536_1759300077064-BCQ7ApCS.jpg                              7,598.43 kB
+../dist/public/assets/index-qRMuf-nz.css                                                 183.83 kB │ gzip:  28.91 kB
+../dist/public/assets/index-Cw66Z03J.js                                                1,974.89 kB │ gzip: 522.27 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 12.91s
+
+  dist/index.js  333.2kb
