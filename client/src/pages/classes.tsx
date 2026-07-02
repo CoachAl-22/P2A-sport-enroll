@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/layout/navbar";
@@ -94,10 +93,22 @@ const DEFAULT_SELECTION: Selection = {
   venueLabel: "",
 };
 
+const TERM_ORDER: Record<string, number> = {
+  term_1: 1,
+  term_2: 2,
+  term_3: 3,
+  term_4: 4,
+};
+
+function getTermLabel(term?: { name?: string; term?: string; year?: number }) {
+  if (term?.name) return term.name;
+  if (!term?.term || !term?.year) return "Current term";
+  return `${term.term.replace("term_", "Term ")} ${term.year}`;
+}
+
 export default function Classes() {
-  const [location] = useLocation();
   const { user, isAuthenticated } = useAuth();
-  const urlParams = new URLSearchParams(location.split("?")[1] || "");
+  const urlParams = new URLSearchParams(window.location.search);
   const preSelected = urlParams.get("sportType");
 
   const [step, setStep] = useState<QuizStep>(preSelected ? "results" : "program");
@@ -110,12 +121,22 @@ export default function Classes() {
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const { data: venues = [] } = useQuery<any[]>({ queryKey: ["/api/venues"] });
+  const { data: termConfigs = [] } = useQuery<any[]>({ queryKey: ["/api/term-configurations"] });
 
-  const { data: classes, isLoading } = useQuery({
-    queryKey: ["/api/classes", sel],
-    enabled: step === "results",
+  const selectedTerm = [...termConfigs]
+    .filter((term) => term.active !== false)
+    .sort((a, b) => {
+      const yearDiff = Number(b.year) - Number(a.year);
+      if (yearDiff !== 0) return yearDiff;
+      return (TERM_ORDER[b.term] ?? 0) - (TERM_ORDER[a.term] ?? 0);
+    })[0];
+  const selectedTermLabel = getTermLabel(selectedTerm);
+
+  const { data: classes = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/classes", sel, selectedTerm?.term, selectedTerm?.year],
+    enabled: step === "results" && !!selectedTerm,
     queryFn: async () => {
-      const params = new URLSearchParams({ term: "term_3", year: "2026" });
+      const params = new URLSearchParams({ term: selectedTerm.term, year: String(selectedTerm.year) });
       if (sel.sportType !== "all") params.append("sportType", sel.sportType);
       if (sel.dayOfWeek !== "all") params.append("dayOfWeek", sel.dayOfWeek);
       if (sel.venueId !== "all") params.append("venueId", sel.venueId);
@@ -327,7 +348,7 @@ export default function Classes() {
                     </Badge>
                   )}
                   <Badge className="bg-gray-100 text-gray-500 border border-gray-200 font-normal">
-                    Term 3, 2026
+                    {selectedTermLabel}
                   </Badge>
                 </div>
               </div>
@@ -344,13 +365,13 @@ export default function Classes() {
               <div className="flex items-center justify-center py-20">
                 <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
               </div>
-            ) : (classes || []).length > 0 ? (
+            ) : classes.length > 0 ? (
               <>
                 <p className="text-sm text-gray-400 mb-4">
-                  {classes!.length} class{classes!.length !== 1 ? "es" : ""} available
+                  {classes.length} class{classes.length !== 1 ? "es" : ""} available
                 </p>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {classes!.map((c: any) => (
+                  {classes.map((c: any) => (
                     <ClassCard key={c.id} classData={c} />
                   ))}
                 </div>
