@@ -6,6 +6,7 @@ import { WaitlistButton } from "@/components/waitlist-button";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { APPLICATION_ONLY_PROGRAMS } from "@/lib/constants";
+import { formatAustralianDate } from "@/lib/date-format";
 
 // ── Sport-type → hero image ────────────────────────────────────────────────
 const SPORT_IMAGES: Record<string, string> = {
@@ -143,7 +144,7 @@ export default function ClassCard({ classData }: ClassCardProps) {
           <div className="flex items-center text-gray-600">
             <Clock className="w-4 h-4 mr-2 flex-shrink-0" />
             <span className="text-sm">
-              {new Date(classData.startDate).toLocaleDateString()} – {new Date(classData.endDate).toLocaleDateString()}
+              {formatAustralianDate(classData.startDate)} – {formatAustralianDate(classData.endDate)}
             </span>
           </div>
         </div>

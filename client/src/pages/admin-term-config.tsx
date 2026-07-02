@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CalendarIcon, PlusIcon, EditIcon, TrashIcon, DollarSignIcon, XIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { formatAustralianDate, toDateInputValue } from "@/lib/date-format";
 
 const termConfigSchema = z.object({
   term: z.enum(["term_1", "term_2", "term_3", "term_4"]),
@@ -191,14 +191,14 @@ export default function AdminTermConfig() {
       term: config.term,
       year: config.year,
       name: config.name,
-      startDate: format(new Date(config.startDate), "yyyy-MM-dd"),
-      endDate: format(new Date(config.endDate), "yyyy-MM-dd"),
+      startDate: toDateInputValue(config.startDate),
+      endDate: toDateInputValue(config.endDate),
       weeksCount: config.weeksCount,
       enrollmentOpenDate: config.enrollmentOpenDate 
-        ? format(new Date(config.enrollmentOpenDate), "yyyy-MM-dd") 
+        ? toDateInputValue(config.enrollmentOpenDate)
         : "",
       enrollmentCloseDate: config.enrollmentCloseDate 
-        ? format(new Date(config.enrollmentCloseDate), "yyyy-MM-dd") 
+        ? toDateInputValue(config.enrollmentCloseDate)
         : "",
       pricePerWeek: Number(config.pricePerWeek),
       gstRate: Number(config.gstRate),
@@ -506,11 +506,11 @@ export default function AdminTermConfig() {
                     <TableCell>{config.weeksCount} weeks</TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <div>{format(new Date(config.startDate), "MMM dd")} - {format(new Date(config.endDate), "MMM dd, yyyy")}</div>
+                        <div>{formatAustralianDate(config.startDate)} - {formatAustralianDate(config.endDate)}</div>
                         {config.enrollmentOpenDate && (
                           <div className="text-gray-500 text-xs">
-                            Enrollment: {format(new Date(config.enrollmentOpenDate), "MMM dd")}
-                            {config.enrollmentCloseDate && ` - ${format(new Date(config.enrollmentCloseDate), "MMM dd")}`}
+                            Enrollment: {formatAustralianDate(config.enrollmentOpenDate)}
+                            {config.enrollmentCloseDate && ` - ${formatAustralianDate(config.enrollmentCloseDate)}`}
                           </div>
                         )}
                       </div>
@@ -680,7 +680,7 @@ export default function AdminTermConfig() {
                       <div key={holiday.id} className="flex items-center justify-between p-3 bg-white border rounded-lg">
                         <div className="flex items-center space-x-4">
                           <div className="text-sm font-medium">
-                            {format(new Date(holiday.holidayDate), "MMM dd, yyyy")}
+                            {formatAustralianDate(holiday.holidayDate)}
                           </div>
                           <div className="text-sm text-gray-600">
                             {holiday.name}
