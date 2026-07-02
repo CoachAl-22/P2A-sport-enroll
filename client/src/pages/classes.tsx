@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navbar from "@/components/layout/navbar";
 import ClassCard from "@/components/classes/class-card";
 import { ChevronRight, X, ArrowRight } from "lucide-react";
@@ -117,23 +118,29 @@ export default function Classes() {
     sportType: preSelected || "all",
     programLabel: PROGRAMS.find((p) => p.sportType === preSelected)?.label || "",
   });
+  const [selectedTermId, setSelectedTermId] = useState("");
 
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const { data: venues = [] } = useQuery<any[]>({ queryKey: ["/api/venues"] });
   const { data: termConfigs = [] } = useQuery<any[]>({ queryKey: ["/api/term-configurations"] });
 
-  const selectedTerm = [...termConfigs]
-    .filter((term) => term.active !== false)
-    .sort((a, b) => {
-      const yearDiff = Number(b.year) - Number(a.year);
-      if (yearDiff !== 0) return yearDiff;
-      return (TERM_ORDER[b.term] ?? 0) - (TERM_ORDER[a.term] ?? 0);
-    })[0];
+  const availableTerms = useMemo(
+    () =>
+      [...termConfigs]
+        .filter((term) => term.active !== false)
+        .sort((a, b) => {
+          const yearDiff = Number(b.year) - Number(a.year);
+          if (yearDiff !== 0) return yearDiff;
+          return (TERM_ORDER[b.term] ?? 0) - (TERM_ORDER[a.term] ?? 0);
+        }),
+    [termConfigs],
+  );
+  const selectedTerm = availableTerms.find((term) => term.id === selectedTermId) || availableTerms[0];
   const selectedTermLabel = getTermLabel(selectedTerm);
 
   const { data: classes = [], isLoading } = useQuery<any[]>({
-    queryKey: ["/api/classes", sel, selectedTerm?.term, selectedTerm?.year],
+    queryKey: ["/api/classes", sel, selectedTerm?.id, selectedTerm?.term, selectedTerm?.year],
     enabled: step === "results" && !!selectedTerm,
     queryFn: async () => {
       const params = new URLSearchParams({ term: selectedTerm.term, year: String(selectedTerm.year) });
@@ -145,6 +152,12 @@ export default function Classes() {
       return res.json();
     },
   });
+
+  useEffect(() => {
+    if (!selectedTermId && availableTerms[0]?.id) {
+      setSelectedTermId(availableTerms[0].id);
+    }
+  }, [availableTerms, selectedTermId]);
 
   useEffect(() => {
     if (step === "results") {
@@ -176,21 +189,37 @@ export default function Classes() {
   const steps: QuizStep[] = ["program", "day", "venue", "results"];
   const stepIdx = steps.indexOf(step);
 
-  const TERM3_OPENS = new Date("2026-06-05T00:00:00+10:00");
-  const enrollmentLocked = new Date() < TERM3_OPENS;
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      {/* Term 3 enrolment banner */}
-      {enrollmentLocked && (
-        <div className="bg-amber-500 text-white text-center py-3 px-4 text-sm font-medium">
-          🗓️ Term 3 enrolments open <strong>15 June 2026</strong> — browse classes now and come back to lock in your spot!
-        </div>
-      )}
-
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="mb-6 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-gray-900">Select your term</p>
+              <p className="text-xs text-gray-500">
+                Choose the term you want to browse before selecting a class.
+              </p>
+            </div>
+            <Select
+              value={selectedTerm?.id || ""}
+              onValueChange={setSelectedTermId}
+              disabled={availableTerms.length === 0}
+            >
+              <SelectTrigger className="w-full sm:w-56">
+                <SelectValue placeholder="Select term" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableTerms.map((term) => (
+                  <SelectItem key={term.id} value={term.id}>
+                    {getTermLabel(term)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
         {/* ── Step 1: Program ─────────────────────────────────────────────── */}
         {step === "program" && (
@@ -204,7 +233,7 @@ export default function Classes() {
                     Welcome back, {user.firstName || user.email?.split("@")[0]}! 👋
                   </p>
                   <p className="text-xs text-primary-700 mt-0.5">
-                    Returning family? Skip the quiz and see all Term 3 classes now.
+                    Returning family? Skip the quiz and see all {selectedTermLabel} classes now.
                   </p>
                 </div>
                 <button
