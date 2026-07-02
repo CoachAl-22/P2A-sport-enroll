@@ -1951,7 +1951,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Term 3 enrolments open on 5 June 2026. Check back then to secure your spot!" });
       }
       
-      const enrollmentStatus = (classData.currentEnrollment || 0) >= classData.maxCapacity ? "waitlist" : "pending_payment";
+      // Casual (drop-in) bookings don't hold a term seat, so they're never
+      // waitlisted even when the class is at capacity for full-term enrolments.
+      const isCasual = (enrollmentData as any).enrollmentType === "casual";
+      const enrollmentStatus = (!isCasual && (classData.currentEnrollment || 0) >= classData.maxCapacity) ? "waitlist" : "pending_payment";
       const waitlistPosition = enrollmentStatus === "waitlist" ? await storage.getWaitlistPosition(enrollmentData.classId) : undefined;
 
       // ── Per-week enrolment: resolve the term weeks and the amount to charge ──
@@ -1965,7 +1968,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let gstRate = GST_DEFAULT;
       let baseExGst = parseFloat(classData.pricePerTerm);
 
-      if (selectedWeekNumbers && selectedWeekNumbers.length > 0) {
+      if (isCasual) {
+        // Single-session drop-in: charge the flat per-session rate, no term
+        // discount, no per-week rows. Requires the class to have a session price.
+        if (!classData.pricePerSession || parseFloat(classData.pricePerSession) <= 0) {
+          return res.status(400).json({ message: "This class does not offer casual (drop-in) bookings." });
+        }
+        baseExGst = parseFloat(classData.pricePerSession);
+        if (classData.termConfigId) {
+          const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
+          if (termConfig?.gstRate != null) gstRate = parseFloat(termConfig.gstRate);
+        }
+      } else if (selectedWeekNumbers && selectedWeekNumbers.length > 0) {
         if (!(classData as any).perWeekEnabled) {
           return res.status(400).json({ message: "Per-week enrolment is not enabled for this class." });
         }
@@ -2012,7 +2026,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         classId: enrollmentData.classId,
         parentId: userId,
         status: enrollmentStatus as any,
-        autoRenew: enrollmentData.autoRenew ?? true,
+        enrollmentType: isCasual ? "casual" : "full",
+        autoRenew: isCasual ? false : (enrollmentData.autoRenew ?? true),
         waitlistPosition,
         notes: enrollmentData.notes,
       });
@@ -2345,9 +2360,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
 
           // Generate one combined invoice for the first payment (covers all children)
-          // and email it to the parent with the PDF attached.
+          // and email it to the parent with the PDF attached. Casual (drop-in)
+          // bookings get only the Stripe receipt — no branded invoice PDF.
           try {
-            const firstPayments = await storage.getPaymentsByEnrollment(enrollmentIdList[0]);
+            const firstEnrollmentForInvoice = await storage.getEnrollment(enrollmentIdList[0]);
+            const skipInvoice = (firstEnrollmentForInvoice as any)?.enrollmentType === "casual";
+            const firstPayments = skipInvoice ? [] : await storage.getPaymentsByEnrollment(enrollmentIdList[0]);
             if (firstPayments.length > 0) {
               const { invoiceNumber, pdfBuffer } = await invoiceService.generateInvoiceForPayment(firstPayments[0].id);
               console.log(`Invoice ${invoiceNumber} generated (covers ${enrollmentIdList.length} enrolment(s))`);

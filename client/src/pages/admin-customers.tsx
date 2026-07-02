@@ -20,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { EnrollmentWeeksDialog } from "@/components/admin/enrollment-weeks-dialog";
 
 const addChildSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -39,6 +40,7 @@ export default function AdminCustomers() {
   const [selectedParent, setSelectedParent] = useState<any>(null);
   const [isAddChildOpen, setIsAddChildOpen] = useState(false);
   const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
+  const [weeksDialog, setWeeksDialog] = useState<{ enrollmentId: string; studentName: string; className: string } | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -555,12 +557,31 @@ export default function AdminCustomers() {
                                               {activeEnrs.map((e: any) => (
                                                 <div key={e.enrollment?.id} className="flex items-center gap-3 bg-white rounded-lg px-3 py-2 border border-gray-200 text-sm">
                                                   <span className="font-medium flex-1">{e.class?.name || '—'}</span>
+                                                  {e.enrollment?.enrollmentType === 'casual' ? (
+                                                    <span className="text-xs px-2 py-0.5 rounded font-medium bg-orange-100 text-orange-800">Casual</span>
+                                                  ) : (
+                                                    <span className="text-xs px-2 py-0.5 rounded font-medium bg-indigo-100 text-indigo-800">Full term</span>
+                                                  )}
                                                   <span className="text-xs text-gray-400">{termStr(e)}</span>
                                                   {dayStr(e) && <span className="text-xs text-gray-400">{dayStr(e)} {e.class?.startTime}</span>}
                                                   {e.venue && <span className="text-xs text-gray-400 hidden md:inline">{e.venue.name}</span>}
                                                   <span className={`text-xs px-2 py-0.5 rounded font-medium ${statusColor(e.enrollment?.status)}`}>
                                                     {e.enrollment?.status?.replace('_', ' ')}
                                                   </span>
+                                                  {e.enrollment?.id && e.enrollment?.status !== 'waitlist' && (
+                                                    <Button
+                                                      size="sm"
+                                                      variant="outline"
+                                                      className="text-xs h-7"
+                                                      onClick={() => setWeeksDialog({
+                                                        enrollmentId: e.enrollment.id,
+                                                        studentName: `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim(),
+                                                        className: e.class?.name ?? 'Enrolment',
+                                                      })}
+                                                    >
+                                                      Manage weeks
+                                                    </Button>
+                                                  )}
                                                 </div>
                                               ))}
                                             </div>
@@ -608,6 +629,16 @@ export default function AdminCustomers() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {weeksDialog && (
+        <EnrollmentWeeksDialog
+          enrollmentId={weeksDialog.enrollmentId}
+          studentName={weeksDialog.studentName}
+          className={weeksDialog.className}
+          open={!!weeksDialog}
+          onOpenChange={(v) => { if (!v) setWeeksDialog(null); }}
+        />
+      )}
 
       {/* Add Child Dialog */}
       <Dialog open={isAddChildOpen} onOpenChange={setIsAddChildOpen}>

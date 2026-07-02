@@ -643,7 +643,9 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(enrollments.classId, classId),
-          eq(enrollments.status, "active")
+          eq(enrollments.status, "active"),
+          // Casual (drop-in) bookings don't hold a term seat.
+          eq(enrollments.enrollmentType, "full")
         )
       );
 

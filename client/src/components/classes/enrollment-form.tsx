@@ -45,6 +45,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
   const [selectedChildIds, setSelectedChildIds] = useState<Set<string>>(new Set());
   const [isAddingNewChild, setIsAddingNewChild] = useState(false);
   const [autoRenew, setAutoRenew] = useState(true);
+  const [enrollmentType, setEnrollmentType] = useState<"full" | "casual">("full");
   const [notes, setNotes] = useState("");
   const [policyAgreed, setPolicyAgreed] = useState(false);
   const [selectedWeeks, setSelectedWeeks] = useState<Set<number>>(new Set());
@@ -127,7 +128,8 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
 
   const minWeeks = termWeeksData?.minWeeksSelectable ?? 0;
   const pricePerWeek = parseFloat(termWeeksData?.pricePerWeek ?? "0");
-  const belowMinimum = termWeeksData ? selectedWeeks.size < minWeeks : false;
+  const isCasual = enrollmentType === "casual";
+  const belowMinimum = !isCasual && termWeeksData ? selectedWeeks.size < minWeeks : false;
   const isPartialTerm = !!termWeeksData && selectedWeeks.size < payableWeekList.length;
   const weekPrice = (pricePerWeek * selectedWeeks.size).toFixed(0);
   const formatWeekDate = (d: string) =>
@@ -135,19 +137,22 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
 
   const enrollmentMutation = useMutation({
     mutationFn: async () => {
+      const isCasual = enrollmentType === "casual";
       // Only send selected weeks when the parent dropped some; a full-term
-      // selection omits them and keeps the original flat term price.
-      const weekField = isPartialTerm ? { selectedWeekNumbers: Array.from(selectedWeeks).sort((a, b) => a - b) } : {};
+      // selection omits them and keeps the original flat term price. Casual
+      // (drop-in) is a single session, so it never carries week selections.
+      const weekField = !isCasual && isPartialTerm ? { selectedWeekNumbers: Array.from(selectedWeeks).sort((a, b) => a - b) } : {};
+      const base = { classId, autoRenew: isCasual ? false : autoRenew, notes, enrollmentType, ...weekField };
       if (isAddingNewChild) {
         const v = newChildForm.getValues();
-        const payload = { classId, autoRenew, notes, ...weekField, childInfo: { firstName: v.firstName, lastName: v.lastName, dateOfBirth: v.dateOfBirth, grade: v.grade, medicalInfo: v.medicalInfo, emergencyContact: v.emergencyContact } };
+        const payload = { ...base, childInfo: { firstName: v.firstName, lastName: v.lastName, dateOfBirth: v.dateOfBirth, grade: v.grade, medicalInfo: v.medicalInfo, emergencyContact: v.emergencyContact } };
         const response = await apiRequest("POST", "/api/enrollments", payload);
         return [await response.json()];
       }
       // Submit one enrollment per selected child (shared week selection)
       const results = await Promise.all(
         Array.from(selectedChildIds).map(async (childId) => {
-          const response = await apiRequest("POST", "/api/enrollments", { classId, autoRenew, notes, ...weekField, childId });
+          const response = await apiRequest("POST", "/api/enrollments", { ...base, childId });
           return response.json();
         })
       );
@@ -249,6 +254,10 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
 
   const cls = classDetails?.class;
   const selectedChildren = isAuthenticated ? myChildren.filter((c: any) => selectedChildIds.has(c.id)) : [];
+  // Casual (drop-in) is only offered when the class has a per-session price and
+  // isn't in waitlist mode. Casual bookings never take a term seat.
+  const casualPrice = cls?.pricePerSession ? parseFloat(cls.pricePerSession) : 0;
+  const casualAvailable = !isWaitlist && casualPrice > 0;
 
   return (
     <div className="space-y-6">
@@ -433,6 +442,43 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
       {/* ── Step 2: Review & confirm ── */}
       {step === 2 && (
         <div className="space-y-5">
+          {/* ── Enrolment type: full term vs casual drop-in ── */}
+          {casualAvailable && (
+            <Card className="border-gray-200">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">How would you like to book?</CardTitle>
+              </CardHeader>
+              <CardContent className="grid sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEnrollmentType("full")}
+                  className={`text-left p-3 rounded-xl border-2 transition-colors ${enrollmentType === "full" ? "border-primary-500 bg-primary-50" : "border-gray-200 hover:border-primary-300"}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${enrollmentType === "full" ? "border-primary-500" : "border-gray-300"}`}>
+                      {enrollmentType === "full" && <div className="w-2 h-2 rounded-full bg-primary-500" />}
+                    </div>
+                    <span className="font-semibold text-sm text-gray-900">Full term</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Whole-term spot{cls?.pricePerTerm ? ` — $${parseFloat(cls.pricePerTerm).toFixed(0)} + GST` : ""}. Holds your place all term.</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEnrollmentType("casual")}
+                  className={`text-left p-3 rounded-xl border-2 transition-colors ${enrollmentType === "casual" ? "border-primary-500 bg-primary-50" : "border-gray-200 hover:border-primary-300"}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${enrollmentType === "casual" ? "border-primary-500" : "border-gray-300"}`}>
+                      {enrollmentType === "casual" && <div className="w-2 h-2 rounded-full bg-primary-500" />}
+                    </div>
+                    <span className="font-semibold text-sm text-gray-900">Casual drop-in</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Single session — ${casualPrice.toFixed(0)} + GST. Pay per visit, no term commitment.</p>
+                </button>
+              </CardContent>
+            </Card>
+          )}
+
           <Card className="border-gray-200">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
@@ -469,7 +515,12 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
                       <span>{classDetails.venue.name}</span>
                     </div>
                   )}
-                  {!termWeeksData && (
+                  {isCasual ? (
+                    <div className="border-t pt-3 flex justify-between font-semibold text-base">
+                      <span>Casual session</span>
+                      <span className="text-primary-600">${casualPrice.toFixed(0)} + GST</span>
+                    </div>
+                  ) : !termWeeksData && (
                     <div className="border-t pt-3">
                       {cls.pricePerSession && cls.sessionCount ? (
                         <p className="text-xs text-gray-500 mb-1 text-right">
@@ -488,7 +539,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
           </Card>
 
           {/* ── Per-week selection (when this class runs on a term) ── */}
-          {termWeeksData && payableWeekList.length > 0 && !isWaitlist && (
+          {termWeeksData && payableWeekList.length > 0 && !isWaitlist && !isCasual && (
             <Card className="border-gray-200">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
@@ -540,12 +591,14 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
           )}
 
           <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <Checkbox id="autoRenew" checked={autoRenew} onCheckedChange={(v) => setAutoRenew(!!v)} className="mt-0.5" />
-              <Label htmlFor="autoRenew" className="text-sm leading-snug cursor-pointer">
-                Re-enrol automatically each term — I'll get a reminder 4 weeks before and can cancel anytime
-              </Label>
-            </div>
+            {!isCasual && (
+              <div className="flex items-start gap-3">
+                <Checkbox id="autoRenew" checked={autoRenew} onCheckedChange={(v) => setAutoRenew(!!v)} className="mt-0.5" />
+                <Label htmlFor="autoRenew" className="text-sm leading-snug cursor-pointer">
+                  Re-enrol automatically each term — I'll get a reminder 4 weeks before and can cancel anytime
+                </Label>
+              </div>
+            )}
             <div>
               <Label className="text-sm">Notes for the coach <span className="text-gray-400 font-normal">(optional)</span></Label>
               <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Anything special we should know about this athlete?" rows={2} className="mt-1" />

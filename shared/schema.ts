@@ -103,6 +103,9 @@ export const enrollmentStatusEnum = pgEnum("enrollment_status", [
   "waitlist",
 ]);
 
+// full = whole-term enrolment (holds a seat); casual = single-session drop-in
+export const enrollmentTypeEnum = pgEnum("enrollment_type", ["full", "casual"]);
+
 export const paymentStatusEnum = pgEnum("payment_status", [
   "pending",
   "completed",
@@ -211,6 +214,7 @@ export const enrollments = pgTable("enrollments", {
   classId: uuid("class_id").references(() => classes.id).notNull(),
   parentId: uuid("parent_id").references(() => users.id).notNull(),
   status: enrollmentStatusEnum("status").default("pending_payment"),
+  enrollmentType: enrollmentTypeEnum("enrollment_type").default("full").notNull(),
   enrolledAt: timestamp("enrolled_at").defaultNow(),
   autoRenew: boolean("auto_renew").default(true),
   waitlistPosition: integer("waitlist_position"),
