@@ -119,6 +119,11 @@ export default function Enrollment() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
+          <Link href="/classes">
+            <Button variant="ghost" className="mb-4 -ml-2 text-gray-500 hover:text-gray-700">
+              ← Back to classes
+            </Button>
+          </Link>
           <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
             Class Enrolment
           </h1>

@@ -384,7 +384,7 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
-                  <a href="/classes?sportType=foundation_prep_year2" className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Join Waitlist</a>
+                  <a href="/enrollment/02d3daec-f523-4a86-aefd-55e6a3b9a8fb" className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Join Waitlist</a>
                 </div>
               </div>
             </div>
