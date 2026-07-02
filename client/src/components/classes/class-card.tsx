@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Users, Clock } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, ExternalLink, Target } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { WaitlistButton } from "@/components/waitlist-button";
 import { useAuth } from "@/hooks/use-auth";
@@ -41,6 +41,15 @@ const PROGRAM_LABELS: Record<string, string> = {
   cricket:                  "Cricket",
   volleyball:               "Volleyball",
   multi_sport:              "Multi-Sport",
+};
+
+const PROGRAM_BEST_FOR: Record<string, string> = {
+  foundation_prep_year2: "Prep-Year 2 movement confidence",
+  emerging_year3_6: "Year 3-6 athletic foundations",
+  academy_year7_above: "Year 7+ structured development",
+  senior_squad: "Committed senior athletes",
+  empowered_athlete_program: "High performance athletes",
+  team_sport_speed: "Team sport speed and agility",
 };
 
 // Setmore booking link for Team Sport Speed casual sessions
@@ -97,6 +106,12 @@ export default function ClassCard({ classData }: ClassCardProps) {
 
   const heroImage = classData.imageUrl || SPORT_IMAGES[classData.sportType];
   const programLabel = PROGRAM_LABELS[classData.sportType] || classData.sportType?.toUpperCase();
+  const bestFor = PROGRAM_BEST_FOR[classData.sportType];
+  const sessionCount = classData.sessionCount || null;
+  const pricePerSession = classData.pricePerSession || (sessionCount ? (parseFloat(classData.pricePerTerm) / sessionCount).toFixed(2) : null);
+  const mapHref = classData.venue?.address
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${classData.venue.name} ${classData.venue.address}`)}`
+    : null;
 
   return (
     <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg flex flex-col">
@@ -116,9 +131,19 @@ export default function ClassCard({ classData }: ClassCardProps) {
       <div className="p-6 flex flex-col flex-1">
         {/* Title + status */}
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xl font-heading font-bold text-gray-900">{classData.name}</h3>
+          <div className="min-w-0 pr-3">
+            <h3 className="text-xl font-heading font-bold text-gray-900">{classData.name}</h3>
+            <p className="text-xs font-medium text-gray-500">{programLabel}</p>
+          </div>
           <Badge className={statusInfo.color}>{statusInfo.status}</Badge>
         </div>
+
+        {bestFor && (
+          <div className="mb-4 flex items-start gap-2 rounded-lg border border-primary-100 bg-primary-50 px-3 py-2 text-primary-800">
+            <Target className="mt-0.5 h-4 w-4 shrink-0" />
+            <span className="text-xs font-medium">Best for {bestFor}</span>
+          </div>
+        )}
 
         {/* Details */}
         <div className="space-y-2 mb-4">
@@ -132,6 +157,16 @@ export default function ClassCard({ classData }: ClassCardProps) {
               {classData.venue?.name || "Venue TBA"}
               {classData.venue?.address && (
                 <span className="block text-xs text-gray-400">{classData.venue.address}</span>
+              )}
+              {mapHref && (
+                <a
+                  href={mapHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-800"
+                >
+                  Open map <ExternalLink className="h-3 w-3" />
+                </a>
               )}
             </span>
           </div>
@@ -147,6 +182,12 @@ export default function ClassCard({ classData }: ClassCardProps) {
               {formatAustralianDate(classData.startDate)} – {formatAustralianDate(classData.endDate)}
             </span>
           </div>
+          {sessionCount && (
+            <div className="flex items-center text-gray-600">
+              <Calendar className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span className="text-sm">{sessionCount} sessions this term</span>
+            </div>
+          )}
         </div>
 
         {classData.description && (
@@ -162,6 +203,10 @@ export default function ClassCard({ classData }: ClassCardProps) {
           {classData.pricePerSession && classData.sessionCount ? (
             <p className="text-xs text-gray-500 mt-0.5">
               ${parseFloat(classData.pricePerSession).toFixed(0)}/session · {classData.sessionCount} sessions
+            </p>
+          ) : pricePerSession && sessionCount ? (
+            <p className="text-xs text-gray-500 mt-0.5">
+              About ${parseFloat(pricePerSession).toFixed(0)}/session · {sessionCount} sessions
             </p>
           ) : null}
           {isTermOnly && (

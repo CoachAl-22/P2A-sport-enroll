@@ -488,6 +488,7 @@ export default function AdminClasses() {
                     const enrolled = cls.currentEnrollment || 0;
                     const cap = cls.maxCapacity || 1;
                     const pct = enrolled / cap;
+                    const spotsLeft = Math.max(0, cap - enrolled);
                     return (
                       <TableRow key={cls.id}>
                         <TableCell>
@@ -506,13 +507,18 @@ export default function AdminClasses() {
                         <TableCell className="text-sm">{getVenueName(cls.venueId)}</TableCell>
                         <TableCell className="text-sm">{getCoachName(cls.coachId)}</TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">{enrolled}/{cap}</span>
-                            <div className="w-16 bg-gray-200 rounded-full h-1.5">
-                              <div
-                                className={`h-1.5 rounded-full ${pct >= 1 ? "bg-red-500" : pct >= 0.75 ? "bg-amber-500" : "bg-green-500"}`}
-                                style={{ width: `${Math.min(100, pct * 100)}%` }}
-                              />
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium">{enrolled}/{cap}</span>
+                              <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                                <div
+                                  className={`h-1.5 rounded-full ${pct >= 1 ? "bg-red-500" : pct >= 0.75 ? "bg-amber-500" : "bg-green-500"}`}
+                                  style={{ width: `${Math.min(100, pct * 100)}%` }}
+                                />
+                              </div>
+                            </div>
+                            <div className={`text-[11px] font-medium ${spotsLeft === 0 ? "text-red-600" : spotsLeft <= 2 ? "text-amber-600" : "text-gray-400"}`}>
+                              {spotsLeft === 0 ? "Waitlist demand" : `${spotsLeft} spots left`}
                             </div>
                           </div>
                         </TableCell>

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navbar from "@/components/layout/navbar";
 import ClassCard from "@/components/classes/class-card";
-import { ChevronRight, X, ArrowRight } from "lucide-react";
+import { ChevronRight, X, ArrowRight, Filter, RotateCcw } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 // ─── Program options (the 6 official programs) ─────────────────────────────
@@ -119,6 +119,7 @@ export default function Classes() {
     programLabel: PROGRAMS.find((p) => p.sportType === preSelected)?.label || "",
   });
   const [selectedTermId, setSelectedTermId] = useState("");
+  const [availabilityFilter, setAvailabilityFilter] = useState("all");
 
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -153,6 +154,33 @@ export default function Classes() {
     },
   });
 
+  const { data: termClasses = [] } = useQuery<any[]>({
+    queryKey: ["/api/classes", selectedTerm?.id, selectedTerm?.term, selectedTerm?.year, "alternatives"],
+    enabled: step === "results" && !!selectedTerm,
+    queryFn: async () => {
+      const params = new URLSearchParams({ term: selectedTerm.term, year: String(selectedTerm.year) });
+      const res = await fetch(`/api/classes?${params}`);
+      if (!res.ok) throw new Error("Failed to fetch classes");
+      return res.json();
+    },
+  });
+
+  const displayedClasses = useMemo(
+    () =>
+      availabilityFilter === "available"
+        ? classes.filter((c: any) => (c.spotsRemaining ?? c.maxCapacity - c.currentEnrollment) > 0)
+        : classes,
+    [classes, availabilityFilter],
+  );
+
+  const alternativeClasses = useMemo(() => {
+    const seen = new Set(classes.map((c: any) => c.id));
+    return termClasses
+      .filter((c: any) => !seen.has(c.id))
+      .filter((c: any) => sel.sportType === "all" || c.sportType === sel.sportType)
+      .slice(0, 3);
+  }, [classes, sel.sportType, termClasses]);
+
   useEffect(() => {
     if (!selectedTermId && availableTerms[0]?.id) {
       setSelectedTermId(availableTerms[0].id);
@@ -182,7 +210,19 @@ export default function Classes() {
 
   function reset() {
     setSel(DEFAULT_SELECTION);
+    setAvailabilityFilter("all");
     setStep("program");
+  }
+
+  function updateFinder(next: Partial<Selection>) {
+    setSel((current) => ({ ...current, ...next }));
+    setStep("results");
+  }
+
+  function clearFilters() {
+    setSel(DEFAULT_SELECTION);
+    setAvailabilityFilter("all");
+    setStep("results");
   }
 
   // ── Step progress bar ───────────────────────────────────────────────────
@@ -216,6 +256,90 @@ export default function Classes() {
                     {getTermLabel(term)}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="mb-6 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-primary-500" />
+              <p className="text-sm font-semibold text-gray-900">Find a class</p>
+            </div>
+            <Button type="button" variant="ghost" size="sm" onClick={clearFilters} className="h-8 px-2 text-xs text-gray-500">
+              <RotateCcw className="mr-1 h-3.5 w-3.5" />
+              Reset
+            </Button>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Select
+              value={sel.sportType}
+              onValueChange={(sportType) => {
+                const program = PROGRAMS.find((p) => p.sportType === sportType);
+                updateFinder({ sportType, programLabel: program?.label || "" });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Program" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All programs</SelectItem>
+                {PROGRAMS.map((program) => (
+                  <SelectItem key={program.sportType} value={program.sportType}>
+                    {program.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={sel.dayOfWeek}
+              onValueChange={(dayOfWeek) => {
+                const day = DAYS.find((d) => d.value === dayOfWeek);
+                updateFinder({ dayOfWeek, dayLabel: day?.label || "" });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Day" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Any day</SelectItem>
+                {DAYS.map((day) => (
+                  <SelectItem key={day.value} value={day.value}>
+                    {day.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={sel.venueId}
+              onValueChange={(venueId) => {
+                const venue = venues.find((v: any) => v.id === venueId);
+                updateFinder({ venueId, venueLabel: venue?.name || "" });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Any location</SelectItem>
+                {venues.map((venue: any) => (
+                  <SelectItem key={venue.id} value={venue.id}>
+                    {venue.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={availabilityFilter} onValueChange={(value) => { setAvailabilityFilter(value); setStep("results"); }}>
+              <SelectTrigger>
+                <SelectValue placeholder="Availability" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All availability</SelectItem>
+                <SelectItem value="available">Spots available</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -394,13 +518,13 @@ export default function Classes() {
               <div className="flex items-center justify-center py-20">
                 <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
               </div>
-            ) : classes.length > 0 ? (
+            ) : displayedClasses.length > 0 ? (
               <>
                 <p className="text-sm text-gray-400 mb-4">
-                  {classes.length} class{classes.length !== 1 ? "es" : ""} available
+                  {displayedClasses.length} class{displayedClasses.length !== 1 ? "es" : ""} available
                 </p>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {classes.map((c: any) => (
+                  {displayedClasses.map((c: any) => (
                     <ClassCard key={c.id} classData={c} />
                   ))}
                 </div>
@@ -408,13 +532,13 @@ export default function Classes() {
                 <div className="mt-12 rounded-2xl bg-amber-50 border border-amber-100 p-6">
                   <h3 className="font-heading font-bold text-gray-900 mb-1">None of these times work?</h3>
                   <p className="text-sm text-gray-600 mb-4">
-                    Try a different day or venue, or we can add you to a waitlist.
+                    Try a different day, venue, or availability filter.
                   </p>
                   <button
-                    onClick={() => setStep("day")}
+                    onClick={clearFilters}
                     className="text-sm font-medium text-amber-700 underline underline-offset-2 hover:text-amber-900"
                   >
-                    Change day or location →
+                    Show all classes for this term →
                   </button>
                 </div>
               </>
@@ -524,28 +648,45 @@ export default function Classes() {
                           </button>
                         </div>
                       </div>
+                      {alternativeClasses.length > 0 && (
+                        <div className="mt-6 text-left">
+                          <h4 className="mb-3 text-sm font-semibold text-gray-900">Other options this term</h4>
+                          <div className="grid gap-3 sm:grid-cols-3">
+                            {alternativeClasses.map((option: any) => (
+                              <button
+                                key={option.id}
+                                type="button"
+                                onClick={() => {
+                                  updateFinder({
+                                    sportType: option.sportType,
+                                    programLabel: PROGRAMS.find((p) => p.sportType === option.sportType)?.label || option.name,
+                                    dayOfWeek: "all",
+                                    dayLabel: "",
+                                    venueId: "all",
+                                    venueLabel: "",
+                                  });
+                                }}
+                                className="rounded-xl border border-gray-200 bg-white p-3 text-left text-sm hover:border-primary-300 hover:bg-primary-50"
+                              >
+                                <span className="block font-semibold text-gray-900">{option.name}</span>
+                                <span className="text-xs text-gray-500">{option.venue?.name || "Venue TBA"}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
 
                 {/* Secondary actions */}
                 <div className="px-8 pb-8 flex flex-wrap gap-3 justify-center">
-                  <Button variant="outline" size="sm" onClick={() => setStep("day")}>
-                    Try a different day or venue
+                  <Button variant="outline" size="sm" onClick={clearFilters}>
+                    Show all classes
                   </Button>
                   <Button variant="ghost" size="sm" onClick={reset} className="text-gray-400">
                     Start over
                   </Button>
-
-                  {/* Secondary actions */}
-                  <div className="flex flex-wrap gap-3 justify-center">
-                    <Button variant="outline" size="sm" onClick={() => setStep("day")}>
-                      Try a different day or venue
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={reset} className="text-gray-400">
-                      Start over
-                    </Button>
-                  </div>
                 </div>
               </div>
             )}

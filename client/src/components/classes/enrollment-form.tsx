@@ -16,6 +16,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { AlertCircle, Plus, ChevronRight, Check, Search, Calendar, MapPin, UserPlus } from "lucide-react";
 import { useLocation } from "wouter";
 import LoginModal from "@/components/auth/login-modal";
+import { formatAustralianDate } from "@/lib/date-format";
 
 const newChildSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -131,7 +132,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
   const isPartialTerm = !!termWeeksData && selectedWeeks.size < payableWeekList.length;
   const weekPrice = (pricePerWeek * selectedWeeks.size).toFixed(0);
   const formatWeekDate = (d: string) =>
-    new Date(`${d}T00:00:00`).toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+    formatAustralianDate(d);
 
   const enrollmentMutation = useMutation({
     mutationFn: async () => {
@@ -265,6 +266,21 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
           2
         </div>
         <span className={`text-sm font-medium ${step === 2 ? "text-gray-900" : "text-gray-400"}`}>Review & confirm</span>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-3">
+        <div className="rounded-lg border border-gray-100 bg-white px-3 py-2">
+          <p className="text-xs font-semibold text-gray-900">1. Athlete details</p>
+          <p className="text-[11px] text-gray-500">Choose or add your child.</p>
+        </div>
+        <div className="rounded-lg border border-gray-100 bg-white px-3 py-2">
+          <p className="text-xs font-semibold text-gray-900">2. Review class</p>
+          <p className="text-[11px] text-gray-500">Check weeks, notes, and policies.</p>
+        </div>
+        <div className="rounded-lg border border-gray-100 bg-white px-3 py-2">
+          <p className="text-xs font-semibold text-gray-900">3. Secure payment</p>
+          <p className="text-[11px] text-gray-500">Complete checkout after confirmation.</p>
+        </div>
       </div>
 
       {isWaitlist && (
@@ -421,6 +437,9 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
               <div>
                 <Label>Medical info</Label>
                 <Textarea {...newChildForm.register("medicalInfo")} placeholder="Allergies, conditions, or anything coaches should know" rows={2} />
+                <p className="mt-1 text-xs text-gray-500">
+                  This is only used by Power2Adapt coaches and admin for safe session planning.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -540,6 +559,16 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
           )}
 
           <div className="space-y-4">
+            <Card className="border-primary-100 bg-primary-50">
+              <CardContent className="pt-4">
+                <h3 className="mb-2 text-sm font-semibold text-primary-900">What happens next</h3>
+                <ul className="space-y-1 text-xs leading-relaxed text-primary-800">
+                  <li>Payment checkout opens after you confirm this enrolment.</li>
+                  <li>You will receive confirmation details for the class and venue.</li>
+                  <li>Coach notes and medical details are kept with your enrolment record.</li>
+                </ul>
+              </CardContent>
+            </Card>
             <div className="flex items-start gap-3">
               <Checkbox id="autoRenew" checked={autoRenew} onCheckedChange={(v) => setAutoRenew(!!v)} className="mt-0.5" />
               <Label htmlFor="autoRenew" className="text-sm leading-snug cursor-pointer">

@@ -5,8 +5,9 @@ import EnrollmentForm from "@/components/classes/enrollment-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, Clock, DollarSign } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, DollarSign, ShieldCheck, ClipboardCheck } from "lucide-react";
 import { APPLICATION_ONLY_PROGRAMS } from "@/lib/constants";
+import { formatAustralianDate } from "@/lib/date-format";
 
 export default function Enrollment() {
   const { classId } = useParams();
@@ -24,6 +25,14 @@ export default function Enrollment() {
   const getDayName = (dayOfWeek: number) => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     return days[dayOfWeek];
+  };
+
+  const formatTime = (time?: string) => {
+    if (!time) return "";
+    const [hourValue, minuteValue] = time.split(":").map(Number);
+    const suffix = hourValue >= 12 ? "pm" : "am";
+    const hour = hourValue > 12 ? hourValue - 12 : hourValue === 0 ? 12 : hourValue;
+    return `${hour}:${minuteValue.toString().padStart(2, "0")}${suffix}`;
   };
 
   const getStatusInfo = (classData: any) => {
@@ -111,11 +120,24 @@ export default function Enrollment() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
-            Class Enrollment
+            Class Enrolment
           </h1>
           <p className="text-gray-600">
-            Complete your enrollment for this athletic program
+            Confirm the class, athlete details, and payment information.
           </p>
+        </div>
+
+        <div className="mb-8 grid gap-3 sm:grid-cols-4">
+          {["Class", "Athlete", "Review", "Payment"].map((label, index) => (
+            <div key={label} className="rounded-xl border border-primary-100 bg-white px-3 py-3">
+              <div className="flex items-center gap-2">
+                <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${index === 0 ? "bg-primary-500 text-white" : "bg-primary-50 text-primary-700"}`}>
+                  {index + 1}
+                </div>
+                <span className="text-sm font-semibold text-gray-900">{label}</span>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -145,7 +167,7 @@ export default function Enrollment() {
                   <div className="flex items-center text-gray-600">
                     <Calendar className="w-4 h-4 mr-2" />
                     <span className="text-sm">
-                      {classDetails.class && `${getDayName(classDetails.class.dayOfWeek)}s ${classDetails.class.startTime} - ${classDetails.class.endTime}`}
+                      {classDetails.class && `${getDayName(classDetails.class.dayOfWeek)}s ${formatTime(classDetails.class.startTime)} - ${formatTime(classDetails.class.endTime)}`}
                     </span>
                   </div>
                   
@@ -170,7 +192,7 @@ export default function Enrollment() {
                         const s = classDetails.class?.startDate ? new Date(classDetails.class.startDate) : null;
                         const e = classDetails.class?.endDate ? new Date(classDetails.class.endDate) : null;
                         const weeks = s && e ? Math.max(1, Math.round((e.getTime() - s.getTime()) / (7 * 24 * 3600 * 1000)) + 1) : null;
-                        return `${weeks ? `${weeks} weeks ` : ""}(${s ? s.toLocaleDateString() : "?"} - ${e ? e.toLocaleDateString() : "?"})`;
+                        return `${weeks ? `${weeks} weeks ` : ""}(${formatAustralianDate(classDetails.class?.startDate)} - ${formatAustralianDate(classDetails.class?.endDate)})`;
                       })()}
                     </span>
                   </div>
@@ -191,6 +213,16 @@ export default function Enrollment() {
                     </p>
                   </div>
                 )}
+
+                <div className="rounded-xl border border-green-100 bg-green-50 p-3">
+                  <div className="mb-2 flex items-center gap-2 text-green-800">
+                    <ShieldCheck className="h-4 w-4" />
+                    <h4 className="text-sm font-semibold">Secure family details</h4>
+                  </div>
+                  <p className="text-xs leading-relaxed text-green-700">
+                    Medical and emergency information is only used to support safe coaching and class administration.
+                  </p>
+                </div>
 
                 {classDetails.coach && (
                   <div>
@@ -214,11 +246,18 @@ export default function Enrollment() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-heading font-bold">
-                  Enrollment Information
+                  Enrolment Information
                 </CardTitle>
-                <p className="text-gray-600">
-                  Please provide the required information to complete your enrollment
-                </p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <div className="flex items-start gap-2 rounded-lg bg-gray-50 p-3">
+                    <ClipboardCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary-500" />
+                    <p className="text-xs leading-relaxed text-gray-600">You can review every detail before payment.</p>
+                  </div>
+                  <div className="flex items-start gap-2 rounded-lg bg-gray-50 p-3">
+                    <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary-500" />
+                    <p className="text-xs leading-relaxed text-gray-600">Payments are handled through the secure checkout flow.</p>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <EnrollmentForm 
