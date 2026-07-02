@@ -343,7 +343,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        setLocation('/classes');
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -398,7 +398,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        setLocation('/classes');
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -563,7 +563,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        setLocation('/classes');
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -618,7 +618,7 @@ export default function Landing() {
                     </div>
                     <Button 
                       onClick={() => {
-                        window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                        setLocation('/classes');
                       }}
                       className="bg-primary-500 hover:bg-primary-600 text-white"
                     >
@@ -690,7 +690,7 @@ export default function Landing() {
                       </div>
                       <Button 
                         onClick={() => {
-                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                          setLocation('/classes');
                         }}
                         className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                       >
@@ -755,7 +755,7 @@ export default function Landing() {
                       </div>
                       <Button 
                         onClick={() => {
-                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                          setLocation('/classes');
                         }}
                         className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                       >
@@ -812,7 +812,7 @@ export default function Landing() {
                       <p className="text-xs font-bold text-gray-800 uppercase tracking-wide text-right mb-1">⬇ Existing clients</p>
                       <Button 
                         onClick={() => {
-                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                          setLocation('/classes');
                         }}
                         className="bg-primary-500 hover:bg-primary-600 text-white w-full"
                       >
@@ -869,7 +869,7 @@ export default function Landing() {
                       <p className="text-xs font-bold text-gray-800 uppercase tracking-wide text-right mb-1">⬇ Existing clients</p>
                       <Button 
                         onClick={() => {
-                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
+                          setLocation('/classes');
                         }}
                         className="bg-primary-500 hover:bg-primary-600 text-white w-full"
                       >
@@ -1046,18 +1046,6 @@ export default function Landing() {
             <div>
               <h3 className="text-2xl font-heading font-bold mb-4">Power2Perform</h3>
               <p className="text-gray-300 mb-4">Empowering athletic excellence through innovative school-based sports programs.</p>
-            </div>
-            
-            <div>
-              <h4 className="font-heading font-semibold mb-4">Programs</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li><a href="#" className="hover:text-white">Athletics</a></li>
-                <li><a href="#" className="hover:text-white">AFL</a></li>
-                <li><a href="#" className="hover:text-white">Soccer</a></li>
-                <li><a href="#" className="hover:text-white">Basketball</a></li>
-                <li><a href="#" className="hover:text-white">Netball</a></li>
-                <li><a href="#" className="hover:text-white">Multi-sports</a></li>
-              </ul>
             </div>
             
             <div>

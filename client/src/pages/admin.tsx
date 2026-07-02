@@ -62,41 +62,9 @@ export default function Admin() {
     },
   });
 
-  const createSampleChildrenMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch("/api/admin/create-sample-children", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to create sample children");
-      }
-      return response.json();
-    },
-    onSuccess: (data: any) => {
-      toast({
-        title: "Sample Children Created",
-        description: `Created ${data.results.created} sample children for parents`,
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/analytics"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/students"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Failed to Create Children",
-        description: error.message || "Failed to create sample children",
-        variant: "destructive",
-      });
-    },
-  });
-
   const handleImportCsv = () => {
     setIsImporting(true);
     importCsvMutation.mutate();
-  };
-
-  const handleCreateSampleChildren = () => {
-    createSampleChildrenMutation.mutate();
   };
 
   // Redirect if not admin
@@ -258,38 +226,6 @@ export default function Admin() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center">
-                <Database className="w-5 h-5 mr-2" />
-                Generate Sample Data
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <p className="text-gray-300 text-sm">
-                  Create sample children for imported parents
-                </p>
-                <Button 
-                  onClick={handleCreateSampleChildren}
-                  disabled={createSampleChildrenMutation.isPending}
-                  className="w-full bg-green-600 hover:bg-green-700"
-                >
-                  {createSampleChildrenMutation.isPending ? (
-                    <>
-                      <div className="animate-spin w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      <Database className="w-4 h-4 mr-2" />
-                      Create Sample Children
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Quick Actions */}
