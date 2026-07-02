@@ -31,6 +31,7 @@ import ParentHelpCenter from "@/pages/parent-help-center";
 import EnrollmentGuide from "@/pages/enrollment-guide";
 import PaymentSupport from "@/pages/payment-support";
 import NotFound from "@/pages/not-found";
+import ResetPassword from "@/pages/reset-password";
 import VideoHighlights from "@/pages/video-highlights";
 import SharedVideo from "@/pages/shared-video";
 import VideoHighlightsParent from "@/components/video-highlights-parent";
@@ -79,6 +80,7 @@ function Router() {
           <Route path="/checkout" component={Checkout} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
           <Route path="/confirmation" component={ConfirmationPage} />
+          <Route path="/reset-password" component={ResetPassword} />
           <Route path="/re-enrol" component={ReEnrol} />
           <Route path="/video-highlights/:shareableLink" component={SharedVideo} />
         </>
@@ -99,6 +101,7 @@ function Router() {
           <Route path="/checkout" component={Checkout} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
           <Route path="/confirmation" component={ConfirmationPage} />
+          <Route path="/reset-password" component={ResetPassword} />
           <Route path="/re-enrol" component={ReEnrol} />
           <Route path="/waitlist" component={Waitlist} />
           <Route path="/blog" component={Blog} />
