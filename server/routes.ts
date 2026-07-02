@@ -4642,6 +4642,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Migrate: Term 2 → archive, Term 3 → go live ──────────────────
+  (async () => {
+    try {
+      // Archive Term 2 2026 active classes
+      await db.execute(sql`
+        UPDATE classes
+        SET status = 'completed', is_enrollment_open = false
+        WHERE term = 'term_2' AND year = 2026 AND status = 'active'
+      `);
+      // Close enrollment on any remaining Term 2 2026 cancelled classes that still have it open
+      await db.execute(sql`
+        UPDATE classes
+        SET is_enrollment_open = false
+        WHERE term = 'term_2' AND year = 2026 AND is_enrollment_open = true
+      `);
+      // Open enrollment on Term 3 2026 active classes
+      await db.execute(sql`
+        UPDATE classes
+        SET is_enrollment_open = true
+        WHERE term = 'term_3' AND year = 2026 AND status = 'active'
+      `);
+      // Set term configurations: Term 2 inactive, Term 3 active
+      await db.execute(sql`
+        UPDATE term_configurations SET active = false WHERE term = 'term_2' AND year = 2026
+      `);
+      await db.execute(sql`
+        UPDATE term_configurations SET active = true WHERE term = 'term_3' AND year = 2026
+      `);
+      console.log("[migration] Term 2 archived, Term 3 live");
+    } catch(e: any) {
+      console.error("[migration] term switch:", e.message);
+    }
+  })();
+
   // ── Seed Toorak College athletes ──────────────────────────────────
   (async () => {
     const tcAthletes = [
