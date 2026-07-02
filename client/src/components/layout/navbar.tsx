@@ -110,6 +110,14 @@ export default function Navbar() {
           {isAuthenticated && (
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
+                <Link href="/">
+                  <Button
+                    variant={location === "/" ? "default" : "ghost"}
+                    className="text-gray-700 hover:text-primary-500"
+                  >
+                    Home
+                  </Button>
+                </Link>
                 <Link href="/classes">
                   <Button
                     variant={location === "/classes" ? "default" : "ghost"}
@@ -361,6 +369,15 @@ export default function Navbar() {
               {/* Authenticated user navigation items */}
               {isAuthenticated && (
                 <>
+                  <Link href="/">
+                    <Button
+                      variant={location === "/" ? "default" : "ghost"}
+                      className="w-full justify-start text-gray-700"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Home
+                    </Button>
+                  </Link>
                   <Link href="/classes">
                     <Button
                       variant={location === "/classes" ? "default" : "ghost"}
