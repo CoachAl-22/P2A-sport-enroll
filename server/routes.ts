@@ -4688,6 +4688,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Migrate: Reactivate Foundation Monday (Peninsula Grammar) T3 ──
+  (async () => {
+    try {
+      await db.execute(sql`
+        UPDATE classes
+        SET status = 'active', is_enrollment_open = true
+        WHERE name = 'Foundation Class — Monday (Peninsula Grammar)'
+          AND term = 'term_3' AND year = 2026
+          AND status = 'cancelled'
+      `);
+      console.log("[migration] Foundation Mon PG reactivated");
+    } catch(e: any) {
+      console.error("[migration] Foundation Mon PG:", e.message);
+    }
+  })();
+
   // ── Seed Toorak College athletes ──────────────────────────────────
   (async () => {
     const tcAthletes = [
