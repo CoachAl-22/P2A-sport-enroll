@@ -74,7 +74,7 @@ const DAYS = [
   { value: "7", label: "Sunday" },
 ];
 
-type QuizStep = "venue" | "program" | "results";
+type QuizStep = "program" | "day" | "venue" | "results";
 
 interface Selection {
   sportType: string;
@@ -133,7 +133,7 @@ export default function Classes() {
   const urlParams = new URLSearchParams(window.location.search);
   const preSelected = urlParams.get("sportType");
 
-  const [step, setStep] = useState<QuizStep>(preSelected ? "results" : "venue");
+  const [step, setStep] = useState<QuizStep>(preSelected ? "results" : "program");
   const [sel, setSel] = useState<Selection>({
     ...DEFAULT_SELECTION,
     sportType: preSelected || "all",
@@ -217,20 +217,25 @@ export default function Classes() {
     }
   }, [step]);
 
-  function pickVenue(venueId: string, venueLabel: string) {
-    setSel((s) => ({ ...s, venueId, venueLabel }));
-    setStep("program");
-  }
-
   function pickProgram(sportType: string, label: string) {
     setSel((s) => ({ ...s, sportType, programLabel: label }));
+    setStep("day");
+  }
+
+  function pickDay(dayOfWeek: string, dayLabel: string) {
+    setSel((s) => ({ ...s, dayOfWeek, dayLabel }));
+    setStep("venue");
+  }
+
+  function pickVenue(venueId: string, venueLabel: string) {
+    setSel((s) => ({ ...s, venueId, venueLabel }));
     setStep("results");
   }
 
   function reset() {
     setSel(DEFAULT_SELECTION);
     setAvailabilityFilter("all");
-    setStep("venue");
+    setStep("program");
   }
 
   function updateFinder(next: Partial<Selection>) {
@@ -245,7 +250,7 @@ export default function Classes() {
   }
 
   // ── Step progress bar ───────────────────────────────────────────────────
-  const steps: QuizStep[] = ["venue", "program", "results"];
+  const steps: QuizStep[] = ["program", "day", "venue", "results"];
   const stepIdx = steps.indexOf(step);
 
   return (
@@ -367,8 +372,8 @@ export default function Classes() {
           </div>
         </div>
 
-        {/* ── Step 1: Venue ───────────────────────────────────────────────── */}
-        {step === "venue" && (
+        {/* ── Step 1: Program ─────────────────────────────────────────────── */}
+        {step === "program" && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
 
             {/* Returning family shortcut */}
@@ -379,7 +384,7 @@ export default function Classes() {
                     Welcome back, {user.firstName || user.email?.split("@")[0]}! 👋
                   </p>
                   <p className="text-xs text-primary-700 mt-0.5">
-                    Returning family? Skip ahead and see all {selectedTermLabel} classes now.
+                    Returning family? Skip the quiz and see all {selectedTermLabel} classes now.
                   </p>
                 </div>
                 <button
@@ -391,77 +396,110 @@ export default function Classes() {
               </div>
             )}
 
-            <StepHeader current={1} total={2} />
+            <StepHeader current={1} total={3} />
             <h1 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 mb-2 text-center">
-              Where would you like to train?
+              Which program are you interested in?
             </h1>
             <p className="text-gray-500 text-sm text-center mb-8">
-              Choose the location that works best for your family.
+              Choose the one that best matches your child.
             </p>
-            <div className="flex flex-col gap-3 mb-4">
-              {venues.map((v: any) => (
+            <div className="grid sm:grid-cols-2 gap-3">
+              {PROGRAMS.map((p) => (
                 <button
-                  key={v.id}
-                  onClick={() => pickVenue(v.id, v.name)}
-                  className="text-left h-14 rounded-xl border-2 border-gray-200 px-5 font-medium text-gray-700 hover:border-primary-500 hover:text-primary-600 active:bg-primary-50 transition-all flex items-center justify-between group"
+                  key={p.sportType}
+                  onClick={() => pickProgram(p.sportType, p.label)}
+                  className="text-left rounded-xl border-2 border-gray-100 hover:border-primary-400 hover:shadow-md transition-all p-4 group flex items-start gap-4"
                 >
-                  <span>{v.name}</span>
-                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-primary-500 transition-colors" />
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${p.color} flex-shrink-0 mt-0.5`} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-heading font-bold text-gray-900 text-base">{p.label}</span>
+                      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-primary-500 flex-shrink-0 transition-colors" />
+                    </div>
+                    <span className="text-xs text-gray-400 block mb-1">{p.ages}</span>
+                    <span className="text-sm text-gray-600 line-clamp-2">{p.description}</span>
+                  </div>
                 </button>
               ))}
             </div>
             <button
-              onClick={() => pickVenue("all", "Any location")}
-              className="w-full h-14 rounded-xl border-2 border-dashed border-gray-200 text-sm text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all"
+              onClick={() => { setSel(DEFAULT_SELECTION); setStep("day"); }}
+              className="block text-center text-sm text-gray-400 underline underline-offset-2 mt-6 hover:text-gray-600 mx-auto"
             >
-              Any location — show all
+              Not sure — show all programs
             </button>
           </div>
         )}
 
-        {/* ── Step 2: Program ─────────────────────────────────────────────── */}
-        {step === "program" && (
+        {/* ── Step 2: Day ─────────────────────────────────────────────────── */}
+        {step === "day" && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <StepHeader current={2} total={2} onBack={() => setStep("venue")} />
+            <StepHeader current={2} total={3} onBack={() => setStep("program")} />
             <h2 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 mb-2 text-center">
-              Which program suits your child?
+              Which day suits you?
             </h2>
-            {sel.venueLabel && sel.venueLabel !== "Any location" && (
+            {sel.programLabel && (
               <p className="text-gray-500 text-sm text-center mb-8">
-                Location: <span className="font-semibold text-gray-700">{sel.venueLabel}</span>
+                Program: <span className="font-semibold text-gray-700">{sel.programLabel}</span>
+              </p>
+            )}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              {DAYS.map((d) => (
+                <button
+                  key={d.value}
+                  onClick={() => pickDay(d.value, d.label)}
+                  className="h-12 rounded-xl border-2 border-gray-200 font-medium text-gray-700 hover:border-primary-500 hover:text-primary-600 active:bg-primary-50 transition-all text-sm"
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => pickDay("all", "Any day")}
+              className="w-full h-12 rounded-xl border-2 border-dashed border-gray-200 text-sm text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all"
+            >
+              Any day — show all
+            </button>
+          </div>
+        )}
+
+        {/* ── Step 3: Venue ───────────────────────────────────────────────── */}
+        {step === "venue" && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <StepHeader current={3} total={3} onBack={() => setStep("day")} />
+            <h2 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 mb-2 text-center">
+              Which location works for you?
+            </h2>
+            {(sel.programLabel || sel.dayLabel) && (
+              <p className="text-gray-500 text-sm text-center mb-8">
+                {[sel.programLabel, sel.dayLabel !== "Any day" ? sel.dayLabel : ""].filter(Boolean).join(" · ")}
               </p>
             )}
             {(() => {
-              const isPrimaryVenue = PRIMARY_SCHOOL_VENUES.includes(sel.venueLabel);
-              const availablePrograms = isPrimaryVenue
-                ? PROGRAMS.filter((p) => !p.primarySchoolVenuesOnly)
-                : PROGRAMS;
+              const selectedProgram = PROGRAMS.find((p) => p.sportType === sel.sportType);
+              const excludePrimary = selectedProgram?.primarySchoolVenuesOnly === true;
+              const filteredVenues = excludePrimary
+                ? venues.filter((v: any) => !PRIMARY_SCHOOL_VENUES.includes(v.name))
+                : venues;
               return (
                 <>
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    {availablePrograms.map((p) => (
+                  <div className="flex flex-col gap-3 mb-4">
+                    {filteredVenues.map((v: any) => (
                       <button
-                        key={p.sportType}
-                        onClick={() => pickProgram(p.sportType, p.label)}
-                        className="text-left rounded-xl border-2 border-gray-100 hover:border-primary-400 hover:shadow-md transition-all p-4 group flex items-start gap-4"
+                        key={v.id}
+                        onClick={() => pickVenue(v.id, v.name)}
+                        className="text-left h-14 rounded-xl border-2 border-gray-200 px-5 font-medium text-gray-700 hover:border-primary-500 hover:text-primary-600 active:bg-primary-50 transition-all flex items-center justify-between group"
                       >
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${p.color} flex-shrink-0 mt-0.5`} />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="font-heading font-bold text-gray-900 text-base">{p.label}</span>
-                            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-primary-500 flex-shrink-0 transition-colors" />
-                          </div>
-                          <span className="text-xs text-gray-400 block mb-1">{p.ages}</span>
-                          <span className="text-sm text-gray-600 line-clamp-2">{p.description}</span>
-                        </div>
+                        <span>{v.name}</span>
+                        <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-primary-500 transition-colors" />
                       </button>
                     ))}
                   </div>
                   <button
-                    onClick={() => pickProgram("all", "")}
-                    className="block text-center text-sm text-gray-400 underline underline-offset-2 mt-6 hover:text-gray-600 mx-auto"
+                    onClick={() => pickVenue("all", "Any location")}
+                    className="w-full h-14 rounded-xl border-2 border-dashed border-gray-200 text-sm text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all"
                   >
-                    Not sure — show all programs
+                    Any location — show all
                   </button>
                 </>
               );
