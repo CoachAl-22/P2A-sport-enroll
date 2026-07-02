@@ -3,10 +3,19 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Navbar from "@/components/layout/navbar";
 import ClassCard from "@/components/classes/class-card";
 import { ChevronRight, X, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import type { TermConfiguration } from "@shared/schema";
+import { selectableTerms, defaultTerm } from "@/lib/term-selection";
 
 // ─── Program options (the 6 official programs) ─────────────────────────────
 
@@ -95,10 +104,11 @@ const DEFAULT_SELECTION: Selection = {
 };
 
 export default function Classes() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, isAuthenticated } = useAuth();
   const urlParams = new URLSearchParams(location.split("?")[1] || "");
   const preSelected = urlParams.get("sportType");
+  const urlTermId = urlParams.get("term");
 
   const [step, setStep] = useState<QuizStep>(preSelected ? "results" : "program");
   const [sel, setSel] = useState<Selection>({
@@ -107,15 +117,42 @@ export default function Classes() {
     programLabel: PROGRAMS.find((p) => p.sportType === preSelected)?.label || "",
   });
 
+  // Selected term id — resolved from the URL param, else the current/next term
+  // once term configurations load.
+  const [selectedTermId, setSelectedTermId] = useState<string | null>(urlTermId);
+
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const { data: venues = [] } = useQuery<any[]>({ queryKey: ["/api/venues"] });
 
+  const { data: allTerms = [] } = useQuery<TermConfiguration[]>({
+    queryKey: ["/api/term-configurations"],
+  });
+
+  const termOptions = selectableTerms(allTerms);
+  const resolvedTerm =
+    termOptions.find((t) => t.id === selectedTermId) ?? defaultTerm(allTerms);
+
+  // Seed the selection once terms load if none came from the URL.
+  useEffect(() => {
+    if (!selectedTermId && resolvedTerm) setSelectedTermId(resolvedTerm.id);
+  }, [selectedTermId, resolvedTerm]);
+
+  function changeTerm(termId: string) {
+    setSelectedTermId(termId);
+    const next = new URLSearchParams(location.split("?")[1] || "");
+    next.set("term", termId);
+    setLocation(`/classes?${next.toString()}`, { replace: true });
+  }
+
   const { data: classes, isLoading } = useQuery({
-    queryKey: ["/api/classes", sel],
-    enabled: step === "results",
+    queryKey: ["/api/classes", sel, resolvedTerm?.id],
+    enabled: step === "results" && !!resolvedTerm,
     queryFn: async () => {
-      const params = new URLSearchParams({ term: "term_3", year: "2026" });
+      const params = new URLSearchParams({
+        term: resolvedTerm!.term,
+        year: String(resolvedTerm!.year),
+      });
       if (sel.sportType !== "all") params.append("sportType", sel.sportType);
       if (sel.dayOfWeek !== "all") params.append("dayOfWeek", sel.dayOfWeek);
       if (sel.venueId !== "all") params.append("venueId", sel.venueId);
@@ -326,18 +363,36 @@ export default function Classes() {
                       {sel.venueLabel}
                     </Badge>
                   )}
-                  <Badge className="bg-gray-100 text-gray-500 border border-gray-200 font-normal">
-                    Term 3, 2026
-                  </Badge>
+                  {resolvedTerm && (
+                    <Badge className="bg-gray-100 text-gray-500 border border-gray-200 font-normal">
+                      {resolvedTerm.name}
+                    </Badge>
+                  )}
                 </div>
               </div>
-              <button
-                onClick={reset}
-                className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-800 font-medium whitespace-nowrap"
-              >
-                <X className="w-4 h-4" />
-                Start over
-              </button>
+              <div className="flex items-center gap-3">
+                {termOptions.length > 1 && resolvedTerm && (
+                  <Select value={resolvedTerm.id} onValueChange={changeTerm}>
+                    <SelectTrigger className="w-[180px]" aria-label="Select term">
+                      <SelectValue placeholder="Select term" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {termOptions.map((t) => (
+                        <SelectItem key={t.id} value={t.id}>
+                          {t.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                <button
+                  onClick={reset}
+                  className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-800 font-medium whitespace-nowrap"
+                >
+                  <X className="w-4 h-4" />
+                  Start over
+                </button>
+              </div>
             </div>
 
             {isLoading ? (
