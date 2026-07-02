@@ -297,33 +297,146 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Term 3 Classes CTA */}
-      <section id="classes" className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="inline-block bg-primary-100 text-primary-700 text-sm font-semibold px-4 py-1 rounded-full mb-4">Enrolments open — Term 3, 2026</span>
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Find the right class for your child</h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">Choose your location, pick a program, and see live availability — all in one place.</p>
-          <div className="grid sm:grid-cols-3 gap-4 mb-10 text-left">
-            <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
-              <div className="text-2xl mb-2">📍</div>
-              <div className="font-semibold text-gray-900 mb-1">3 locations</div>
-              <div className="text-sm text-gray-500">Ballam Park · Mornington · Toorak College · Peninsula Grammar</div>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
-              <div className="text-2xl mb-2">🏃</div>
-              <div className="font-semibold text-gray-900 mb-1">4 programs</div>
-              <div className="text-sm text-gray-500">Foundation · Emerging Athletes · Junior Academy · Team Sport Speed</div>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
-              <div className="text-2xl mb-2">✅</div>
-              <div className="font-semibold text-gray-900 mb-1">Live spots</div>
-              <div className="text-sm text-gray-500">Real-time availability and instant online enrolment.</div>
-            </div>
+      {/* Term 3 Class Tiles */}
+      <section id="classes" className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-block bg-primary-100 text-primary-700 text-sm font-semibold px-4 py-1 rounded-full mb-4">Enrolments now open</span>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4">Available Classes — Term 3, 2026</h2>
+            <p className="text-xl text-gray-600">Professional athletic training starting Term 3</p>
+            <p className="text-lg text-gray-500 mt-2">Senior and High Performance squads by application</p>
           </div>
-          <a href="/classes" className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-md hover:shadow-lg transition-all">
-            Browse Term 3 Classes
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-          </a>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {/* Foundation — Peninsula Grammar Monday */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img src="/images/coach-georgia-crew.jpg" alt="Young children learning fundamental movement skills" className="w-full h-48 object-cover" />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Foundation Class</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Available</span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Monday 3:30 – 4:45pm</span></div>
+                  <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Peninsula Grammar</span></div>
+                  <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2 • 15 spots</span></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <a href="/classes?sportType=foundation_prep_year2" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Emerging Athletes — Peninsula Grammar Monday */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img src="/images/ashton-xcr.jpg" alt="Young athletes developing skills in team sports" className="w-full h-48 object-contain bg-gray-100" />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Emerging Athletes</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Available</span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Monday 3:30 – 4:45pm</span></div>
+                  <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Peninsula Grammar</span></div>
+                  <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Year 3–6 • 12 spots</span></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <a href="/classes?sportType=emerging_year3_6" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Foundation — Toorak College Thursday */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img src="/images/coach-georgia-crew.jpg" alt="Young children learning fundamental movement skills" className="w-full h-48 object-cover" />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Foundation Class</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Available</span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Thursday 3:30 – 4:45pm</span></div>
+                  <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Toorak College</span></div>
+                  <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2 • 15 spots</span></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <a href="/classes?sportType=foundation_prep_year2" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Foundation — Toorak College Tuesday (Waitlist) */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img src="/images/coach-georgia-crew.jpg" alt="Young children learning fundamental movement skills" className="w-full h-48 object-cover" />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Foundation Class</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Waitlist Open</span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Tuesday 3:30 – 4:45pm</span></div>
+                  <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Toorak College</span></div>
+                  <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2 • 30 spots</span></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <a href="/classes?sportType=foundation_prep_year2" className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Join Waitlist</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Team Sport Speed — Friday 4:30pm */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img src="/images/team-sport-running.jpg" alt="Athletes training for speed and agility" className="w-full h-48 object-cover" />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Team Sport Speed</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Available</span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Friday 4:30pm</span></div>
+                  <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Mornington Athletic Track</span></div>
+                  <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Ages 13+ • 15 spots</span></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <a href="/classes?sportType=team_sport_speed" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Team Sport Speed — Friday 5:30pm */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+              <img src="/images/team-sport-running.jpg" alt="Athletes training for speed and agility" className="w-full h-48 object-cover" />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-heading font-bold text-gray-900">Team Sport Speed</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Available</span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Friday 5:30pm</span></div>
+                  <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Mornington Athletic Track</span></div>
+                  <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Ages 13+ • 15 spots</span></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <a href="/classes?sportType=team_sport_speed" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="text-center mt-10">
+            <a href="/classes" className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-md hover:shadow-lg transition-all">
+              View all Term 3 classes
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </a>
+          </div>
         </div>
       </section>
 
