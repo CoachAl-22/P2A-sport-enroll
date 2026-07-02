@@ -85,6 +85,12 @@ import { cloneClassForTerm, type CloneableClass } from "@shared/term-setup";
 import { db } from "./db";
 import { eq, and, desc, asc, count, sql, gte, lte } from "drizzle-orm";
 
+function toSafeUser(user: User | null): Omit<User, "password"> | null {
+  if (!user) return null;
+  const { password: _password, ...safeUser } = user;
+  return safeUser;
+}
+
 export interface IStorage {
   // User operations
   getUser(id: string): Promise<User | undefined>;
@@ -683,7 +689,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getEnrollmentsByClass(classId: string): Promise<any[]> {
-    return await db
+    const rows = await db
       .select({
         enrollment: enrollments,
         child: children,
@@ -694,6 +700,11 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(users, eq(enrollments.parentId, users.id))
       .where(eq(enrollments.classId, classId))
       .orderBy(asc(enrollments.createdAt));
+
+    return rows.map((row) => ({
+      ...row,
+      parent: toSafeUser(row.parent),
+    }));
   }
 
   async createEnrollment(enrollment: InsertEnrollment): Promise<Enrollment> {
@@ -739,7 +750,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllEnrollmentsWithDetails(): Promise<any[]> {
-    return await db
+    const rows = await db
       .select({
         enrollment: enrollments,
         child: children,
@@ -755,6 +766,11 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(venues, eq(classes.venueId, venues.id))
       .leftJoin(coaches, eq(classes.coachId, coaches.id))
       .orderBy(desc(enrollments.createdAt));
+
+    return rows.map((row) => ({
+      ...row,
+      parent: toSafeUser(row.parent),
+    }));
   }
 
   // Payment operations
@@ -817,7 +833,13 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(termConfigurations, eq(classes.termConfigId, termConfigurations.id))
       .where(eq(payments.id, paymentId));
 
-    return result[0] || null;
+    const paymentDetails = result[0] || null;
+    if (!paymentDetails) return null;
+
+    return {
+      ...paymentDetails,
+      parent: toSafeUser(paymentDetails.parent),
+    };
   }
 
   // Notification operations

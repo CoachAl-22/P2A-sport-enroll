@@ -1,6 +1,14 @@
 // API helper endpoints for admin data access
 
 import { storage } from "./storage";
+import type { User } from "@shared/schema";
+
+export type SafeUser = Omit<User, "password">;
+
+export function toSafeUser(user: User): SafeUser {
+  const { password: _password, ...safeUser } = user;
+  return safeUser;
+}
 
 export async function getAllCustomersWithChildren() {
   try {
@@ -16,7 +24,7 @@ export async function getAllCustomersWithChildren() {
           const enrollments = await storage.getEnrollmentsByParent(customer.id);
           
           return {
-            ...customer,
+            ...toSafeUser(customer),
             children,
             totalEnrollments: enrollments.length,
             activeEnrollments: enrollments.filter((e: any) => e.enrollment?.status === 'active').length
@@ -24,7 +32,7 @@ export async function getAllCustomersWithChildren() {
         } catch (error) {
           console.error(`Error fetching data for customer ${customer.id}:`, error);
           return {
-            ...customer,
+            ...toSafeUser(customer),
             children: [],
             totalEnrollments: 0,
             activeEnrollments: 0
@@ -55,7 +63,7 @@ export async function getAllStudentsWithParents() {
           
           return {
             ...child,
-            parent,
+            parent: parent ? toSafeUser(parent) : null,
             totalEnrollments: childEnrollments.length,
             activeEnrollments: childEnrollments.filter((e: any) => e.enrollment?.status === 'active').length,
             enrollments: childEnrollments

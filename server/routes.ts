@@ -10,7 +10,7 @@ import { smsService } from "./sms";
 import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
-import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
+import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
@@ -27,6 +27,11 @@ if (process.env.TESTING_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY) {
   });
 }
 
+const sessionSecret = process.env.SESSION_SECRET;
+if (process.env.NODE_ENV === 'production' && !sessionSecret) {
+  throw new Error("SESSION_SECRET is required in production.");
+}
+
 // Session configuration
 const PgSession = connectPgSimple(session);
 const sessionConfig = session({
@@ -35,7 +40,7 @@ const sessionConfig = session({
     tableName: 'session',
     createTableIfMissing: true,
   }),
-  secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
+  secret: sessionSecret || 'dev-secret-change-in-production',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -1357,7 +1362,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const staff = staffUsers.map(user => {
         const coachData = activeCoaches.find(c => c.userId === user.id);
         return {
-          ...user,
+          ...toSafeUser(user),
           ...coachData,
           id: user.id, // Ensure we use the user ID
         };
@@ -1435,7 +1440,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.createCoach(coachData);
       }
       
-      res.json({ ...newUser, message: "Staff member created successfully" });
+      res.json({ ...toSafeUser(newUser), message: "Staff member created successfully" });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
@@ -1496,7 +1501,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
         
-        res.json({ ...updatedUser, message: "Staff member updated successfully" });
+        res.json({ ...toSafeUser(updatedUser), message: "Staff member updated successfully" });
         
       } else if (existingCoach) {
         // This is a standalone coach record - update coach table only
@@ -2410,7 +2415,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { active } = req.body;
       if (typeof active !== "boolean") return res.status(400).json({ message: "active must be a boolean" });
       const updated = await storage.updateUser(id, { active });
-      res.json(updated);
+      res.json(toSafeUser(updated));
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
