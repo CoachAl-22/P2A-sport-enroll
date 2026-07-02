@@ -10,6 +10,7 @@ import { smsService } from "./sms";
 import { emailService } from "./email";
 import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
+import crypto from "crypto";
 import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, performanceVideoHighlights } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
@@ -1179,6 +1180,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     req.session.destroy(() => {
       res.json({ message: "Logged out successfully" });
     });
+  });
+
+  // ── Password reset (stateless HMAC token, no schema change) ──────────────
+  const resetTokenSecret = () => sessionSecret || "dev-secret-change-in-production";
+
+  const makeResetToken = (userId: string): string => {
+    const expires = Date.now() + 60 * 60 * 1000; // 1 hour
+    const payload = `${userId}.${expires}`;
+    const sig = crypto.createHmac("sha256", resetTokenSecret()).update(payload).digest("hex");
+    return Buffer.from(`${payload}.${sig}`).toString("base64url");
+  };
+
+  const verifyResetToken = (token: string): string | null => {
+    try {
+      const decoded = Buffer.from(token, "base64url").toString("utf8");
+      const [userId, expiresStr, sig] = decoded.split(".");
+      if (!userId || !expiresStr || !sig) return null;
+      const payload = `${userId}.${expiresStr}`;
+      const expected = crypto.createHmac("sha256", resetTokenSecret()).update(payload).digest("hex");
+      if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
+      if (Date.now() > parseInt(expiresStr, 10)) return null;
+      return userId;
+    } catch {
+      return null;
+    }
+  };
+
+  app.post("/api/auth/forgot-password", async (req, res) => {
+    // Always respond identically so the endpoint can't be used to probe accounts
+    const genericResponse = { message: "If an account exists for that email, mobile or user ID, a reset link has been sent to the email on file." };
+    try {
+      const identifier = String(req.body?.identifier || "").trim();
+      if (!identifier) return res.json(genericResponse);
+
+      let user = await storage.getUserByEmail(identifier);
+      if (!user) user = await storage.getUserByMobile(identifier);
+      if (!user) user = await storage.getUserByUserId(identifier);
+
+      if (user?.email) {
+        const token = makeResetToken(user.id);
+        const resetUrl = `${process.env.PUBLIC_BASE_URL || "https://www.power2adapt.online"}/reset-password?token=${token}`;
+        await emailService.sendEmail(
+          user.email,
+          "Reset your Power2ADAPT password",
+          `<p>Hi ${user.firstName || "there"},</p>
+           <p>We received a request to reset your Power2ADAPT password.</p>
+           <p><a href="${resetUrl}" style="background:#2563eb;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;">Reset password</a></p>
+           <p>This link expires in 1 hour. If you didn't request this, you can safely ignore this email and your password will stay the same.</p>
+           <p>Power2ADAPT</p>`
+        );
+      }
+      res.json(genericResponse);
+    } catch (error) {
+      console.error("forgot-password error:", error);
+      res.json(genericResponse);
+    }
+  });
+
+  app.post("/api/auth/reset-password", async (req, res) => {
+    try {
+      const token = String(req.body?.token || "");
+      const password = String(req.body?.password || "");
+      if (password.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters" });
+      }
+      const userId = verifyResetToken(token);
+      if (!userId) {
+        return res.status(400).json({ message: "This reset link is invalid or has expired. Please request a new one." });
+      }
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(400).json({ message: "This reset link is invalid or has expired. Please request a new one." });
+      }
+      const hashed = await bcrypt.hash(password, 10);
+      await storage.updateUser(userId, { password: hashed });
+      res.json({ message: "Password updated. You can now log in with your new password." });
+    } catch (error: any) {
+      console.error("reset-password error:", error);
+      res.status(500).json({ message: "Something went wrong. Please request a new reset link." });
+    }
   });
 
   app.get("/api/auth/me", async (req, res) => {
@@ -3505,12 +3586,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (parent?.mobile && child && classInfo) {
         try {
+          const bookingUrl = `${process.env.PUBLIC_BASE_URL || "https://www.power2adapt.online"}/enrollment/${classId}`;
           await smsService.sendSMS(
             parent.mobile,
-            `Great news! A spot is now available for ${child.firstName} in ${classInfo.name}. Please reply within 48 hours to secure the spot! 🎉`
+            `Great news! A spot has opened for ${child.firstName} in ${classInfo.name}. Book it here: ${bookingUrl} - Offer expires in 48 hours. Power2ADAPT`
           );
         } catch (smsError) {
           console.error("Failed to send waitlist notification SMS:", smsError);
+        }
+      }
+
+      // Email the parent the same offer (best effort)
+      if (parent?.email && child && classInfo) {
+        try {
+          const bookingUrl = `${process.env.PUBLIC_BASE_URL || "https://www.power2adapt.online"}/enrollment/${classId}`;
+          await emailService.sendEmail(
+            parent.email,
+            `A spot has opened in ${classInfo.name}!`,
+            `<p>Hi ${parent.firstName || "there"},</p>
+             <p>Great news! A spot has opened for <strong>${child.firstName}</strong> in <strong>${classInfo.name}</strong>.</p>
+             <p><a href="${bookingUrl}" style="background:#2563eb;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;">Book the spot</a></p>
+             <p>This offer expires in 48 hours, after which the spot is released to the next family on the waitlist.</p>
+             <p>Power2ADAPT</p>`
+          );
+        } catch (emailError) {
+          console.error("Failed to send waitlist notification email:", emailError);
         }
       }
 

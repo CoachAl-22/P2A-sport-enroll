@@ -41,7 +41,36 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [activeTab, setActiveTab] = useState("login");
+  const [isSendingReset, setIsSendingReset] = useState(false);
   const { toast } = useToast();
+
+  const handleForgotPassword = async () => {
+    const identifier = loginForm.getValues("identifier")?.trim();
+    if (!identifier) {
+      toast({
+        title: "Enter your email first",
+        description: "Type your email, mobile or user ID in the field above, then tap Forgot password.",
+      });
+      return;
+    }
+    setIsSendingReset(true);
+    try {
+      await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ identifier }),
+      });
+      toast({
+        title: "Check your email",
+        description: "If an account exists, we've sent a password reset link. It expires in 1 hour.",
+      });
+    } catch {
+      toast({ title: "Something went wrong", description: "Please try again.", variant: "destructive" });
+    } finally {
+      setIsSendingReset(false);
+    }
+  };
 
   const loginForm = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -198,8 +227,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   <Checkbox {...loginForm.register("rememberMe")} />
                   <span className="ml-2 text-sm text-gray-600">Remember me</span>
                 </label>
-                <Button variant="link" className="text-sm text-primary-500 hover:text-primary-700">
-                  Forgot password?
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={handleForgotPassword}
+                  disabled={isSendingReset}
+                  className="text-sm text-primary-500 hover:text-primary-700"
+                >
+                  {isSendingReset ? "Sending..." : "Forgot password?"}
                 </Button>
               </div>
 
