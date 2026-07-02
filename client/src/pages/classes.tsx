@@ -575,8 +575,76 @@ export default function Classes() {
                 <div className="h-1.5 bg-gradient-to-r from-primary-400 to-secondary-400" />
 
                 {(() => {
-                  const isAdvanced = ["academy_year7_above", "senior_squad", "empowered_athlete_program"].includes(sel.sportType ?? "");
+                  const isJuniorAcademy = sel.sportType === "academy_year7_above";
+                  const isAdvanced = ["senior_squad", "empowered_athlete_program"].includes(sel.sportType ?? "");
                   const DISCOVERY_URL = "https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0";
+
+                  if (isJuniorAcademy) {
+                    return (
+                      <div className="p-8 sm:p-10">
+                        {/* Hero banner */}
+                        <div className="rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 p-8 text-white text-center mb-8">
+                          <div className="text-5xl mb-4">🏃‍♂️</div>
+                          <h3 className="text-2xl font-heading font-bold mb-2">Junior Academy</h3>
+                          <p className="text-indigo-100 text-sm max-w-sm mx-auto">
+                            Year 7+ · Ages 12–16 · Structured athletics & competition preparation
+                          </p>
+                        </div>
+
+                        <div className="text-center mb-8">
+                          <h4 className="text-lg font-heading font-bold text-gray-900 mb-2">Applications are now open</h4>
+                          <p className="text-gray-500 text-sm leading-relaxed max-w-md mx-auto">
+                            Junior Academy is a structured, coach-led program for athletes ready to take their training seriously. 
+                            Spots are limited — we review each application to make sure it's the right fit.
+                          </p>
+                        </div>
+
+                        {/* What's included */}
+                        <div className="grid sm:grid-cols-3 gap-3 mb-8">
+                          {[
+                            { icon: "🎯", title: "Tailored training", desc: "Periodised programs built around each athlete's development stage" },
+                            { icon: "🏆", title: "Competition prep", desc: "Track & field, cross country and inter-school event preparation" },
+                            { icon: "👟", title: "Expert coaching", desc: "Led by accredited coaches with elite athletics backgrounds" },
+                          ].map(({ icon, title, desc }) => (
+                            <div key={title} className="rounded-xl bg-indigo-50 border border-indigo-100 p-4 text-center">
+                              <div className="text-2xl mb-2">{icon}</div>
+                              <h5 className="font-semibold text-gray-900 text-xs mb-1">{title}</h5>
+                              <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="grid sm:grid-cols-2 gap-4 text-left">
+                          <div className="rounded-xl border-2 border-indigo-200 bg-indigo-50 p-5">
+                            <div className="text-2xl mb-2">📋</div>
+                            <h4 className="font-semibold text-gray-900 text-sm mb-1">Apply now</h4>
+                            <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+                              Fill in our short application form and we'll be in touch within 48 hours to discuss next steps.
+                            </p>
+                            <button
+                              onClick={() => window.location.href = "/junior-academy"}
+                              className="w-full inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-semibold text-xs rounded-lg px-4 py-2.5 hover:opacity-90 transition-opacity"
+                            >
+                              Start your application →
+                            </button>
+                          </div>
+                          <div className="rounded-xl border-2 border-primary-100 bg-primary-50 p-5">
+                            <div className="text-2xl mb-2">📞</div>
+                            <h4 className="font-semibold text-gray-900 text-sm mb-1">Book a Discovery Call</h4>
+                            <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+                              Free 15-minute call with Alistair to discuss the program, training schedule, and whether it's the right fit.
+                            </p>
+                            <button
+                              onClick={() => window.open(DISCOVERY_URL, "_blank", "noopener noreferrer")}
+                              className="w-full inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs rounded-lg px-4 py-2.5 hover:opacity-90 transition-opacity"
+                            >
+                              📞 Book now — it's free
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
 
                   if (isAdvanced) {
                     return (
