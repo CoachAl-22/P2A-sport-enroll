@@ -119,6 +119,7 @@ export default function Classes() {
     programLabel: PROGRAMS.find((p) => p.sportType === preSelected)?.label || "",
   });
   const [selectedTermId, setSelectedTermId] = useState("");
+  const [termManuallySelected, setTermManuallySelected] = useState(false);
   const [availabilityFilter, setAvailabilityFilter] = useState("all");
 
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -182,10 +183,11 @@ export default function Classes() {
   }, [classes, sel.sportType, termClasses]);
 
   useEffect(() => {
-    if (!selectedTermId && availableTerms[0]?.id) {
-      setSelectedTermId(availableTerms[0].id);
+    const latestTermId = availableTerms[0]?.id;
+    if (!termManuallySelected && latestTermId && selectedTermId !== latestTermId) {
+      setSelectedTermId(latestTermId);
     }
-  }, [availableTerms, selectedTermId]);
+  }, [availableTerms, selectedTermId, termManuallySelected]);
 
   useEffect(() => {
     if (step === "results") {
@@ -244,7 +246,10 @@ export default function Classes() {
             </div>
             <Select
               value={selectedTerm?.id || ""}
-              onValueChange={setSelectedTermId}
+              onValueChange={(termId) => {
+                setTermManuallySelected(true);
+                setSelectedTermId(termId);
+              }}
               disabled={availableTerms.length === 0}
             >
               <SelectTrigger className="w-full sm:w-56">
