@@ -49,6 +49,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
   const [notes, setNotes] = useState("");
   const [policyAgreed, setPolicyAgreed] = useState(false);
   const [selectedWeeks, setSelectedWeeks] = useState<Set<number>>(new Set());
+  const [enrollmentMode, setEnrollmentMode] = useState<"term" | "casual" | "trial">("term");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginContext, setLoginContext] = useState("");
 
@@ -116,6 +117,10 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
   }, [termWeeksData]);
 
   const toggleWeek = (weekNumber: number) => {
+    if (enrollmentMode === "casual") {
+      setSelectedWeeks(new Set([weekNumber]));
+      return;
+    }
     setSelectedWeeks((prev) => {
       const next = new Set(prev);
       if (next.has(weekNumber)) next.delete(weekNumber);
@@ -128,9 +133,12 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
 
   const minWeeks = termWeeksData?.minWeeksSelectable ?? 0;
   const pricePerWeek = parseFloat(termWeeksData?.pricePerWeek ?? "0");
-  const belowMinimum = termWeeksData ? selectedWeeks.size < minWeeks : false;
+  const pricePerCasual = parseFloat((termWeeksData as any)?.pricePerCasual ?? "0");
+  const belowMinimum = enrollmentMode === "term" && termWeeksData ? selectedWeeks.size < minWeeks : false;
   const isPartialTerm = !!termWeeksData && selectedWeeks.size < payableWeekList.length;
-  const weekPrice = (pricePerWeek * selectedWeeks.size).toFixed(0);
+  const weekPrice = enrollmentMode === "casual"
+    ? pricePerCasual.toFixed(0)
+    : (pricePerWeek * selectedWeeks.size).toFixed(0);
   const formatWeekDate = (d: string) =>
     formatAustralianDate(d);
 
@@ -138,17 +146,19 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
     mutationFn: async () => {
       // Always send selectedWeekNumbers when per-week is enabled so the
       // backend uses pricePerWeek × weeks (not the flat pricePerTerm).
-      const weekField = termWeeksData ? { selectedWeekNumbers: Array.from(selectedWeeks).sort((a, b) => a - b) } : {};
+      const weekField = termWeeksData && enrollmentMode !== "trial"
+        ? { selectedWeekNumbers: Array.from(selectedWeeks).sort((a, b) => a - b) }
+        : {};
       if (isAddingNewChild) {
         const v = newChildForm.getValues();
-        const payload = { classId, autoRenew, notes, ...weekField, childInfo: { firstName: v.firstName, lastName: v.lastName, dateOfBirth: v.dateOfBirth, grade: v.grade, medicalInfo: v.medicalInfo, emergencyContact: v.emergencyContact } };
+        const payload = { classId, autoRenew, notes, ...weekField, enrollmentType: enrollmentMode, childInfo: { firstName: v.firstName, lastName: v.lastName, dateOfBirth: v.dateOfBirth, grade: v.grade, medicalInfo: v.medicalInfo, emergencyContact: v.emergencyContact } };
         const response = await apiRequest("POST", "/api/enrollments", payload);
         return [await response.json()];
       }
       // Submit one enrollment per selected child (shared week selection)
       const results = await Promise.all(
         Array.from(selectedChildIds).map(async (childId) => {
-          const response = await apiRequest("POST", "/api/enrollments", { classId, autoRenew, notes, ...weekField, childId });
+          const response = await apiRequest("POST", "/api/enrollments", { classId, autoRenew, notes, ...weekField, enrollmentType: enrollmentMode, childId });
           return response.json();
         })
       );
@@ -157,9 +167,13 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
     onSuccess: (enrollments: any[]) => {
       queryClient.invalidateQueries({ queryKey: ["/api/enrollments"] });
       const first = enrollments[0];
-      const count = enrollments.length;
       if (isWaitlist) {
         toast({ title: "Added to waitlist!", description: "We'll SMS you when a spot opens." });
+        setLocation("/classes");
+        return;
+      }
+      if (first?.status === "trial_pending") {
+        toast({ title: "Trial request submitted!", description: "We'll be in touch once your free trial is confirmed." });
         setLocation("/classes");
         return;
       }
@@ -506,21 +520,80 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
             </CardContent>
           </Card>
 
-          {/* ── Per-week selection (when this class runs on a term) ── */}
-          {termWeeksData && payableWeekList.length > 0 && !isWaitlist && (
+          {/* ── Enrollment type picker ── */}
+          {termWeeksData && !isWaitlist && (
+            <Card className="border-gray-200">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">How would you like to join?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Term */}
+                  <button
+                    type="button"
+                    onClick={() => { setEnrollmentMode("term"); setSelectedWeeks(new Set(payableWeekList.map((w) => w.weekNumber))); }}
+                    className={`flex flex-col items-start gap-1 p-3 rounded-xl border-2 text-left transition-colors ${enrollmentMode === "term" ? "border-primary-500 bg-primary-50" : "border-gray-200 hover:border-primary-300"}`}
+                  >
+                    <span className="font-semibold text-sm text-gray-900">Term Enrolment</span>
+                    <span className="text-xs text-gray-500">Choose your weeks, min {minWeeks}. ${pricePerWeek.toFixed(0)} + GST/wk.</span>
+                  </button>
+                  {/* Casual */}
+                  {pricePerCasual > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => { setEnrollmentMode("casual"); setSelectedWeeks(new Set()); }}
+                      className={`flex flex-col items-start gap-1 p-3 rounded-xl border-2 text-left transition-colors ${enrollmentMode === "casual" ? "border-secondary-500 bg-secondary-50" : "border-gray-200 hover:border-secondary-300"}`}
+                    >
+                      <span className="font-semibold text-sm text-gray-900">Casual Session</span>
+                      <span className="text-xs text-gray-500">Pick one session. ${pricePerCasual.toFixed(0)} + GST.</span>
+                    </button>
+                  )}
+                  {/* Free trial */}
+                  <button
+                    type="button"
+                    onClick={() => { setEnrollmentMode("trial"); setSelectedWeeks(new Set()); }}
+                    className={`flex flex-col items-start gap-1 p-3 rounded-xl border-2 text-left transition-colors ${enrollmentMode === "trial" ? "border-green-500 bg-green-50" : "border-gray-200 hover:border-green-300"}`}
+                  >
+                    <span className="font-semibold text-sm text-gray-900">Free Trial</span>
+                    <span className="text-xs text-gray-500">One complimentary session. Requires admin approval.</span>
+                  </button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ── Trial info banner ── */}
+          {enrollmentMode === "trial" && !isWaitlist && (
+            <Card className="border-green-200 bg-green-50">
+              <CardContent className="pt-4">
+                <p className="text-sm text-green-800">
+                  <strong>Free Trial</strong> — Submit your request and our team will be in touch to confirm availability and session details. No payment required.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ── Per-week / casual session picker ── */}
+          {termWeeksData && payableWeekList.length > 0 && !isWaitlist && enrollmentMode !== "trial" && (
             <Card className="border-gray-200">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  Choose your weeks
-                  <span className="ml-auto text-xs font-normal text-gray-500">{selectedWeeks.size} of {payableWeekList.length} weeks</span>
+                  {enrollmentMode === "casual" ? "Choose your session" : "Choose your weeks"}
+                  <span className="ml-auto text-xs font-normal text-gray-500">{selectedWeeks.size} of {payableWeekList.length} {enrollmentMode === "casual" ? "sessions" : "weeks"}</span>
                 </CardTitle>
-                <p className="text-xs text-gray-500">Pay only for the weeks your athlete attends. Minimum {minWeeks} weeks.</p>
+                <p className="text-xs text-gray-500">
+                  {enrollmentMode === "casual"
+                    ? "Select one session to attend as a casual."
+                    : `Pay only for the weeks your athlete attends. Minimum ${minWeeks} weeks.`}
+                </p>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex gap-2">
-                  <Button type="button" size="sm" variant="outline" onClick={selectFullTerm} className="text-xs">Full term</Button>
-                  <Button type="button" size="sm" variant="outline" onClick={selectFortnightly} className="text-xs">Fortnightly</Button>
-                </div>
+                {enrollmentMode === "term" && (
+                  <div className="flex gap-2">
+                    <Button type="button" size="sm" variant="outline" onClick={selectFullTerm} className="text-xs">Full term</Button>
+                    <Button type="button" size="sm" variant="outline" onClick={selectFortnightly} className="text-xs">Fortnightly</Button>
+                  </div>
+                )}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {termWeeksData.weeks.map((w) => {
                     const checked = selectedWeeks.has(w.weekNumber);
@@ -550,14 +623,26 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
                 {belowMinimum && (
                   <p className="text-xs text-red-500">Please select at least {minWeeks} weeks to enrol.</p>
                 )}
+                {enrollmentMode === "casual" && selectedWeeks.size === 0 && (
+                  <p className="text-xs text-amber-600">Please select one session to continue.</p>
+                )}
                 <div className="border-t pt-3">
-                  <p className="text-xs text-gray-500 text-right mb-1">
-                    ${pricePerWeek.toFixed(0)} + GST/wk × {selectedWeeks.size} {selectedWeeks.size === 1 ? "week" : "weeks"}
-                  </p>
-                  <div className="flex justify-between font-semibold text-base">
-                    <span>Term fee</span>
-                    <span className="text-primary-600">${weekPrice} + GST</span>
-                  </div>
+                  {enrollmentMode === "casual" ? (
+                    <div className="flex justify-between font-semibold text-base">
+                      <span>Session fee</span>
+                      <span className="text-secondary-600">${weekPrice} + GST</span>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-xs text-gray-500 text-right mb-1">
+                        ${pricePerWeek.toFixed(0)} + GST/wk × {selectedWeeks.size} {selectedWeeks.size === 1 ? "week" : "weeks"}
+                      </p>
+                      <div className="flex justify-between font-semibold text-base">
+                        <span>Term fee</span>
+                        <span className="text-primary-600">${weekPrice} + GST</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>

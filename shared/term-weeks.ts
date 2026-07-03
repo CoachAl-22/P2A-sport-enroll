@@ -14,10 +14,9 @@ export interface TermWeek {
   holidayName?: string;
 }
 
-// Business rule: parents must keep at least half the payable weeks
-// (full term is the default; fortnightly is the main flexible pattern).
-export function minimumSelectableWeeks(payableWeeksCount: number): number {
-  return Math.max(1, Math.ceil(payableWeeksCount / 2));
+// Business rule: minimum 4 weeks per term enrolment.
+export function minimumSelectableWeeks(_payableWeeksCount: number): number {
+  return 4;
 }
 
 function toUtcDate(dateStr: string): Date {

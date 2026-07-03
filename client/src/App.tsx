@@ -42,6 +42,7 @@ import AdminAthletes from "@/pages/admin-athletes";
 import AdminMajAthletes from "@/pages/admin-maj-athletes";
 import AdminApplications from "@/pages/admin-applications";
 import AdminSurveys from "@/pages/admin-surveys";
+import AdminTrials from "@/pages/admin-trials";
 import Onboarding from "@/pages/onboarding";
 import ConfirmationPage from "@/pages/confirmation";
 import ReEnrol from "@/pages/re-enrol";
@@ -131,6 +132,7 @@ function Router() {
           <Route path="/admin/enquiries" component={AdminEnquiries} />
           <Route path="/admin/applications" component={AdminApplications} />
           <Route path="/admin/surveys" component={AdminSurveys} />
+          <Route path="/admin/trials" component={AdminTrials} />
           <Route path="/admin/athletes" component={AdminAthletes} />
           <Route path="/admin/maj-athletes" component={AdminMajAthletes} />
         </>

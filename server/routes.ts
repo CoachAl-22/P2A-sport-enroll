@@ -231,9 +231,8 @@ function majWeekComplete(athlete: any): boolean {
 
 const enrollmentFormSchema = insertEnrollmentSchema.extend({
   parentId: z.string().optional(), // set server-side from session
-  // Per-week enrolment: optional. When present, parent pays only for these weeks.
-  // Omitted = full term (all payable weeks), preserving the original flat behaviour.
   selectedWeekNumbers: z.array(z.number().int().positive()).optional(),
+  enrollmentType: z.enum(["term", "casual", "trial"]).optional().default("term"),
   childInfo: z.object({
     firstName: z.string().min(1),
     lastName: z.string().min(1),
@@ -1354,6 +1353,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         termConfigId: termConfig.id,
         termName: termConfig.name,
         pricePerWeek: termConfig.pricePerWeek,
+        pricePerCasual: (cls as any).pricePerCasual ?? null,
         gstRate: termConfig.gstRate,
         weeks,
         payableWeeksCount: payable.length,
@@ -1926,53 +1926,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const waitlistPosition = enrollmentStatus === "waitlist" ? await storage.getWaitlistPosition(enrollmentData.classId) : undefined;
 
       // ── Per-week enrolment: resolve the term weeks and the amount to charge ──
-      // Default (no selectedWeekNumbers) = full term at the flat pricePerTerm.
-      // When weeks are selected, the price is recomputed server-side (never trust
-      // the client) at pricePerWeek × selected weeks. GST is always applied on top
-      // of the ex-GST base price for both paths.
-      const GST_DEFAULT = 0.1; // Australian GST, used when a class has no term config
+      const enrollmentType: string = (enrollmentData as any).enrollmentType ?? "term";
+      const GST_DEFAULT = 0.1;
       const selectedWeekNumbers = (enrollmentData as any).selectedWeekNumbers as number[] | undefined;
       let termWeeks: ReturnType<typeof computeTermWeeks> | null = null;
       let gstRate = GST_DEFAULT;
       let baseExGst = parseFloat(classData.pricePerTerm);
+      let finalEnrollmentStatus = enrollmentStatus;
 
-      if (selectedWeekNumbers && selectedWeekNumbers.length > 0) {
-        if (!(classData as any).perWeekEnabled) {
-          return res.status(400).json({ message: "Per-week enrolment is not enabled for this class." });
+      if (enrollmentType === "trial") {
+        // ── Free trial: no payment, pending admin approval ──
+        finalEnrollmentStatus = "trial_pending" as any;
+        baseExGst = 0;
+      } else if (enrollmentType === "casual") {
+        // ── Casual: single session at casual rate ──
+        const casualPrice = (classData as any).pricePerCasual;
+        if (!casualPrice) {
+          return res.status(400).json({ message: "Casual pricing is not available for this class." });
         }
-        if (!classData.termConfigId) {
-          return res.status(400).json({ message: "This class has no term configuration, so weeks cannot be selected." });
+        if (!selectedWeekNumbers || selectedWeekNumbers.length !== 1) {
+          return res.status(400).json({ message: "Please select exactly one session for a casual booking." });
         }
-        const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
-        if (!termConfig) {
-          return res.status(400).json({ message: "Term configuration not found for this class." });
+        if (classData.termConfigId) {
+          const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
+          if (termConfig?.gstRate != null) gstRate = parseFloat(termConfig.gstRate);
         }
-        const holidays = await storage.getTermHolidays(classData.termConfigId);
-        termWeeks = computeTermWeeks({
-          termStartDate: termConfig.startDate,
-          weeksCount: termConfig.weeksCount,
-          classDayOfWeek: classData.dayOfWeek,
-          holidays: holidays.map((h: any) => ({ holidayDate: h.holidayDate, name: h.name })),
-        });
-        const payable = payableWeeks(termWeeks);
-        const payableNumbers = new Set(payable.map((w) => w.weekNumber));
-        const uniqueSelected = Array.from(new Set(selectedWeekNumbers));
-
-        const invalid = uniqueSelected.filter((n) => !payableNumbers.has(n));
-        if (invalid.length > 0) {
-          return res.status(400).json({ message: `Selected weeks are not valid sessions: ${invalid.join(", ")}` });
+        baseExGst = parseFloat(casualPrice);
+      } else {
+        // ── Term enrolment: per-week pricing ──
+        if (selectedWeekNumbers && selectedWeekNumbers.length > 0) {
+          if (!(classData as any).perWeekEnabled) {
+            return res.status(400).json({ message: "Per-week enrolment is not enabled for this class." });
+          }
+          if (!classData.termConfigId) {
+            return res.status(400).json({ message: "This class has no term configuration, so weeks cannot be selected." });
+          }
+          const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
+          if (!termConfig) {
+            return res.status(400).json({ message: "Term configuration not found for this class." });
+          }
+          const holidays = await storage.getTermHolidays(classData.termConfigId);
+          termWeeks = computeTermWeeks({
+            termStartDate: termConfig.startDate,
+            weeksCount: termConfig.weeksCount,
+            classDayOfWeek: classData.dayOfWeek,
+            holidays: holidays.map((h: any) => ({ holidayDate: h.holidayDate, name: h.name })),
+          });
+          const payable = payableWeeks(termWeeks);
+          const payableNumbers = new Set(payable.map((w) => w.weekNumber));
+          const uniqueSelected = Array.from(new Set(selectedWeekNumbers));
+          const invalid = uniqueSelected.filter((n) => !payableNumbers.has(n));
+          if (invalid.length > 0) {
+            return res.status(400).json({ message: `Selected weeks are not valid sessions: ${invalid.join(", ")}` });
+          }
+          const minWeeks = minimumSelectableWeeks(payable.length);
+          if (uniqueSelected.length < minWeeks) {
+            return res.status(400).json({ message: `Please select at least ${minWeeks} of the ${payable.length} weeks.` });
+          }
+          gstRate = termConfig.gstRate != null ? parseFloat(termConfig.gstRate) : GST_DEFAULT;
+          baseExGst = parseFloat(termConfig.pricePerWeek) * uniqueSelected.length;
+        } else if (classData.termConfigId) {
+          const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
+          if (termConfig?.gstRate != null) gstRate = parseFloat(termConfig.gstRate);
         }
-        const minWeeks = minimumSelectableWeeks(payable.length);
-        if (uniqueSelected.length < minWeeks) {
-          return res.status(400).json({ message: `Please select at least ${minWeeks} of the ${payable.length} weeks.` });
-        }
-
-        gstRate = termConfig.gstRate != null ? parseFloat(termConfig.gstRate) : GST_DEFAULT;
-        baseExGst = parseFloat(termConfig.pricePerWeek) * uniqueSelected.length;
-      } else if (classData.termConfigId) {
-        // Full-term path: pick up the class's configured GST rate if present.
-        const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
-        if (termConfig?.gstRate != null) gstRate = parseFloat(termConfig.gstRate);
       }
 
       // GST always applied on top of the ex-GST base price.
@@ -1982,11 +1998,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         childId,
         classId: enrollmentData.classId,
         parentId: userId,
-        status: enrollmentStatus as any,
+        status: finalEnrollmentStatus as any,
         autoRenew: enrollmentData.autoRenew ?? true,
         waitlistPosition,
         notes: enrollmentData.notes,
-      });
+        enrollmentType,
+      } as any);
 
       // Write one enrollment_weeks row per term week (selected / skipped / holiday)
       if (termWeeks && enrollmentStatus !== "waitlist") {
@@ -2001,8 +2018,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
       }
 
-      // Create payment record if not waitlisted
-      if (enrollmentStatus === "pending_payment") {
+      // Create payment record if not a trial or waitlist
+      if (finalEnrollmentStatus === "pending_payment") {
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + 7); // Payment due in 7 days
 
@@ -2050,6 +2067,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
+  });
+
+  // ── Admin: trial request management ─────────────────────────────────────
+  app.get("/api/admin/trial-requests", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const adminUser = await storage.getUser(userId);
+    if (!adminUser || adminUser.role !== "admin") return res.status(403).json({ message: "Forbidden" });
+    try {
+      const rows = await db
+        .select({ enrollment: enrollments, class: classes, child: children, parent: users })
+        .from(enrollments)
+        .leftJoin(classes, eq(enrollments.classId, classes.id))
+        .leftJoin(children, eq(enrollments.childId, children.id))
+        .leftJoin(users, eq(enrollments.parentId, users.id))
+        .where(eq(enrollments.status, "trial_pending" as any))
+        .orderBy(enrollments.enrolledAt);
+      res.json(rows);
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.post("/api/admin/trial-requests/:id/approve", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const adminUser = await storage.getUser(userId);
+    if (!adminUser || adminUser.role !== "admin") return res.status(403).json({ message: "Forbidden" });
+    try {
+      await storage.updateEnrollment(req.params.id, { status: "active" as any });
+      // Notify parent via SMS
+      const enr = await storage.getEnrollment(req.params.id);
+      if (enr) {
+        const parent = await storage.getUser(enr.parentId);
+        const child = await storage.getChild(enr.childId);
+        const cls = await storage.getClass(enr.classId);
+        if (parent?.mobile && child && cls) {
+          await smsService.sendSMS(parent.mobile, `Great news! ${child.firstName}'s free trial for ${cls.name} has been approved. We look forward to seeing you! — Power2ADAPT`).catch(() => {});
+        }
+      }
+      res.json({ success: true });
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
+  });
+
+  app.post("/api/admin/trial-requests/:id/reject", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const adminUser = await storage.getUser(userId);
+    if (!adminUser || adminUser.role !== "admin") return res.status(403).json({ message: "Forbidden" });
+    try {
+      await storage.updateEnrollment(req.params.id, { status: "cancelled" as any });
+      const enr = await storage.getEnrollment(req.params.id);
+      if (enr) {
+        const parent = await storage.getUser(enr.parentId);
+        const child = await storage.getChild(enr.childId);
+        const cls = await storage.getClass(enr.classId);
+        if (parent?.mobile && child && cls) {
+          await smsService.sendSMS(parent.mobile, `Unfortunately we're unable to accommodate a free trial for ${child.firstName} in ${cls.name} at this time. Please contact us if you'd like to discuss other options. — Power2ADAPT`).catch(() => {});
+        }
+      }
+      res.json({ success: true });
+    } catch (e: any) { res.status(500).json({ message: e.message }); }
   });
 
   // Payment routes
@@ -5016,6 +5093,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("[migration] Foundation Mon PG reactivated");
     } catch(e: any) {
       console.error("[migration] Foundation Mon PG:", e.message);
+    }
+  })();
+
+  // ── Migrate: New columns for casual/trial enrolment ─────────────────
+  (async () => {
+    try {
+      await db.execute(sql`ALTER TABLE classes ADD COLUMN IF NOT EXISTS price_per_casual numeric(8,2)`);
+      await db.execute(sql`ALTER TABLE enrollments ADD COLUMN IF NOT EXISTS enrollment_type varchar(20) NOT NULL DEFAULT 'term'`);
+      await db.execute(sql`ALTER TYPE enrollment_status ADD VALUE IF NOT EXISTS 'trial_pending'`);
+      // Default casual price for all active Term 3 classes that don't have one
+      await db.execute(sql`UPDATE classes SET price_per_casual = 45.00 WHERE price_per_casual IS NULL AND term = 'term_3' AND year = 2026 AND status = 'active'`);
+      console.log("[migration] casual/trial columns ready");
+    } catch(e: any) {
+      console.error("[migration] casual/trial columns:", e.message);
     }
   })();
 

@@ -101,6 +101,7 @@ export const enrollmentStatusEnum = pgEnum("enrollment_status", [
   "cancelled",
   "completed",
   "waitlist",
+  "trial_pending",
 ]);
 
 export const paymentStatusEnum = pgEnum("payment_status", [
@@ -200,6 +201,7 @@ export const classes = pgTable("classes", {
   isHolidayProgram: boolean("is_holiday_program").default(false).notNull(),
   isMakeupEligible: boolean("is_makeup_eligible").default(false).notNull(),
   perWeekEnabled: boolean("per_week_enabled").default(false).notNull(),
+  pricePerCasual: decimal("price_per_casual", { precision: 8, scale: 2 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -215,6 +217,7 @@ export const enrollments = pgTable("enrollments", {
   autoRenew: boolean("auto_renew").default(true),
   waitlistPosition: integer("waitlist_position"),
   notes: text("notes"),
+  enrollmentType: varchar("enrollment_type", { length: 20 }).default("term").notNull(),
   waitlistHolidayReservation: boolean("waitlist_holiday_reservation").default(false).notNull(),
   priorityReenrolmentExpiry: timestamp("priority_reenrolment_expiry"),
   makeupCredits: integer("makeup_credits").default(0).notNull(),
