@@ -5019,6 +5019,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Migrate: Enable per-week enrolment on Term 3 2026 classes ─────
+  (async () => {
+    try {
+      await db.execute(sql`
+        UPDATE classes
+        SET per_week_enabled = true
+        WHERE term = 'term_3' AND year = 2026
+          AND status = 'active'
+          AND sport_type NOT IN ('senior_squad', 'empowered_athlete_program', 'academy_year7_above')
+      `);
+      console.log("[migration] per-week enrolment enabled on Term 3 classes");
+    } catch(e: any) {
+      console.error("[migration] per-week enable:", e.message);
+    }
+  })();
+
   // ── Migrate: Update admin password ────────────────────────────────
   (async () => {
     try {
