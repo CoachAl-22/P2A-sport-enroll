@@ -2043,7 +2043,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
             month: 'short'
           });
           
-          if (enrollmentStatus === "waitlist") {
+          if (finalEnrollmentStatus === "trial_pending") {
+            // Parent confirmation SMS
+            await smsService.sendSMS(
+              parent.mobile,
+              `Hi ${parent.firstName || "there"}! We've received your free trial request for ${child.firstName} in ${classData.name}. Our team will review it and get back to you shortly. — Power2ADAPT`
+            );
+            // Admin alert SMS
+            const adminPhone = "+61434679395";
+            await smsService.sendSMS(
+              adminPhone,
+              `New FREE TRIAL request: ${child.firstName} ${child.lastName} for ${classData.name} (${classData.dayOfWeek}). Parent: ${parent.firstName} ${parent.lastName} ${parent.mobile}. Review at power2adapt.online/admin/trials`
+            );
+            // Admin alert email
+            if (process.env.RESEND_API_KEY) {
+              const adminEmail = "info@power2adapt.com";
+              await emailService.sendEmail(
+                adminEmail,
+                `New Free Trial Request — ${child.firstName} ${child.lastName}`,
+                `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+                  <h2 style="color:#1e40af;">New Free Trial Request</h2>
+                  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+                    <tr><td style="padding:8px;color:#6b7280;width:140px;">Athlete</td><td style="padding:8px;font-weight:600;">${child.firstName} ${child.lastName}</td></tr>
+                    <tr style="background:#f9fafb;"><td style="padding:8px;color:#6b7280;">Class</td><td style="padding:8px;font-weight:600;">${classData.name}</td></tr>
+                    <tr><td style="padding:8px;color:#6b7280;">Day & Time</td><td style="padding:8px;">${classData.dayOfWeek} at ${classData.startTime}</td></tr>
+                    <tr style="background:#f9fafb;"><td style="padding:8px;color:#6b7280;">Parent</td><td style="padding:8px;">${parent.firstName} ${parent.lastName}</td></tr>
+                    <tr><td style="padding:8px;color:#6b7280;">Mobile</td><td style="padding:8px;">${parent.mobile}</td></tr>
+                    <tr style="background:#f9fafb;"><td style="padding:8px;color:#6b7280;">Email</td><td style="padding:8px;">${parent.email || "—"}</td></tr>
+                  </table>
+                  <a href="https://www.power2adapt.online/admin/trials" style="background:#16a34a;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;display:inline-block;font-weight:600;">Review &amp; Approve Trial</a>
+                  <p style="color:#9ca3af;font-size:12px;margin-top:24px;">Power2ADAPT Admin</p>
+                </div>`
+              ).catch((e: any) => console.error("Trial admin email failed:", e));
+            }
+          } else if (enrollmentStatus === "waitlist") {
             await smsService.sendSMS(
               parent.mobile,
               `${child.firstName} is on the waitlist for ${classData.name} at ${venue.name}. We'll contact you as soon as a spot opens up! 📋`
