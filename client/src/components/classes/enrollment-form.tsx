@@ -520,25 +520,27 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
             </CardContent>
           </Card>
 
-          {/* ── Enrollment type picker ── */}
-          {termWeeksData && !isWaitlist && (
+          {/* ── Enrollment type picker — always visible when not on waitlist ── */}
+          {!isWaitlist && (
             <Card className="border-gray-200">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base">How would you like to join?</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {/* Term */}
-                  <button
-                    type="button"
-                    onClick={() => { setEnrollmentMode("term"); setSelectedWeeks(new Set(payableWeekList.map((w) => w.weekNumber))); }}
-                    className={`flex flex-col items-start gap-1 p-3 rounded-xl border-2 text-left transition-colors ${enrollmentMode === "term" ? "border-primary-500 bg-primary-50" : "border-gray-200 hover:border-primary-300"}`}
-                  >
-                    <span className="font-semibold text-sm text-gray-900">Term Enrolment</span>
-                    <span className="text-xs text-gray-500">Choose your weeks, min {minWeeks}. ${pricePerWeek.toFixed(0)} + GST/wk.</span>
-                  </button>
-                  {/* Casual */}
-                  {pricePerCasual > 0 && (
+                  {/* Term — only when term data is loaded */}
+                  {termWeeksData && (
+                    <button
+                      type="button"
+                      onClick={() => { setEnrollmentMode("term"); setSelectedWeeks(new Set(payableWeekList.map((w) => w.weekNumber))); }}
+                      className={`flex flex-col items-start gap-1 p-3 rounded-xl border-2 text-left transition-colors ${enrollmentMode === "term" ? "border-primary-500 bg-primary-50" : "border-gray-200 hover:border-primary-300"}`}
+                    >
+                      <span className="font-semibold text-sm text-gray-900">Term Enrolment</span>
+                      <span className="text-xs text-gray-500">Choose your weeks, min {minWeeks}. ${pricePerWeek.toFixed(0)} + GST/wk.</span>
+                    </button>
+                  )}
+                  {/* Casual — only when term data has a casual price */}
+                  {termWeeksData && pricePerCasual > 0 && (
                     <button
                       type="button"
                       onClick={() => { setEnrollmentMode("casual"); setSelectedWeeks(new Set()); }}
@@ -548,7 +550,7 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
                       <span className="text-xs text-gray-500">Pick one session. ${pricePerCasual.toFixed(0)} + GST.</span>
                     </button>
                   )}
-                  {/* Free trial */}
+                  {/* Free trial — always available */}
                   <button
                     type="button"
                     onClick={() => { setEnrollmentMode("trial"); setSelectedWeeks(new Set()); }}
