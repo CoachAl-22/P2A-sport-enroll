@@ -5103,7 +5103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await db.execute(sql`ALTER TABLE enrollments ADD COLUMN IF NOT EXISTS enrollment_type varchar(20) NOT NULL DEFAULT 'term'`);
       await db.execute(sql`ALTER TYPE enrollment_status ADD VALUE IF NOT EXISTS 'trial_pending'`);
       // Default casual price for all active Term 3 classes that don't have one
-      await db.execute(sql`UPDATE classes SET price_per_casual = 45.00 WHERE price_per_casual IS NULL AND term = 'term_3' AND year = 2026 AND status = 'active'`);
+      await db.execute(sql`UPDATE classes SET price_per_casual = 40.00 WHERE price_per_casual IS NULL AND term = 'term_3' AND year = 2026 AND status = 'active'`);
       console.log("[migration] casual/trial columns ready");
     } catch(e: any) {
       console.error("[migration] casual/trial columns:", e.message);
