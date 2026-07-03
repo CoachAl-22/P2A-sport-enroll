@@ -2049,6 +2049,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
               parent.mobile,
               `Hi ${parent.firstName || "there"}! We've received your free trial request for ${child.firstName} in ${classData.name}. Our team will review it and get back to you shortly. — Power2ADAPT`
             );
+            // Parent confirmation email
+            if (process.env.RESEND_API_KEY && parent.email) {
+              await emailService.sendEmail(
+                parent.email,
+                `Free Trial Request Received — ${child.firstName}`,
+                `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;background:#f9fafb;border-radius:12px;">
+                  <div style="background:#fff;border-radius:10px;padding:28px;">
+                    <img src="https://www.power2adapt.online/logo.png" alt="Power2ADAPT" style="height:48px;margin-bottom:20px;" onerror="this.style.display='none'" />
+                    <h2 style="color:#1e40af;margin-top:0;">Trial Request Received!</h2>
+                    <p style="color:#374151;">Hi ${parent.firstName || "there"},</p>
+                    <p style="color:#374151;">Thanks for submitting a free trial request for <strong>${child.firstName}</strong>. We've received it and our team will be in touch shortly to confirm availability and session details.</p>
+                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:20px 0;">
+                      <p style="margin:0 0 8px;font-weight:600;color:#166534;">Trial details</p>
+                      <p style="margin:4px 0;color:#374151;font-size:14px;"><strong>Athlete:</strong> ${child.firstName} ${child.lastName}</p>
+                      <p style="margin:4px 0;color:#374151;font-size:14px;"><strong>Class:</strong> ${classData.name}</p>
+                      <p style="margin:4px 0;color:#374151;font-size:14px;"><strong>Day &amp; Time:</strong> ${classData.dayOfWeek} at ${classData.startTime}</p>
+                    </div>
+                    <p style="color:#374151;">No payment is required at this stage. Once approved, we'll send you confirmation details via SMS and email.</p>
+                    <p style="color:#374151;">If you have any questions, reply to this email or call us anytime.</p>
+                    <p style="color:#374151;margin-bottom:0;">See you on the track! 🏃</p>
+                    <p style="color:#374151;font-weight:600;">The Power2ADAPT Team</p>
+                    <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;" />
+                    <p style="color:#9ca3af;font-size:12px;margin:0;">Power2ADAPT · <a href="https://www.power2adapt.online" style="color:#9ca3af;">power2adapt.online</a></p>
+                  </div>
+                </div>`
+              ).catch((e: any) => console.error("Trial parent email failed:", e));
+            }
             // Admin alert SMS
             const adminPhone = "+61434679395";
             await smsService.sendSMS(
