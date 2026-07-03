@@ -136,9 +136,9 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
 
   const enrollmentMutation = useMutation({
     mutationFn: async () => {
-      // Only send selected weeks when the parent dropped some; a full-term
-      // selection omits them and keeps the original flat term price.
-      const weekField = isPartialTerm ? { selectedWeekNumbers: Array.from(selectedWeeks).sort((a, b) => a - b) } : {};
+      // Always send selectedWeekNumbers when per-week is enabled so the
+      // backend uses pricePerWeek × weeks (not the flat pricePerTerm).
+      const weekField = termWeeksData ? { selectedWeekNumbers: Array.from(selectedWeeks).sort((a, b) => a - b) } : {};
       if (isAddingNewChild) {
         const v = newChildForm.getValues();
         const payload = { classId, autoRenew, notes, ...weekField, childInfo: { firstName: v.firstName, lastName: v.lastName, dateOfBirth: v.dateOfBirth, grade: v.grade, medicalInfo: v.medicalInfo, emergencyContact: v.emergencyContact } };
@@ -550,9 +550,14 @@ export default function EnrollmentForm({ classId, classDetails, canEnroll, isWai
                 {belowMinimum && (
                   <p className="text-xs text-red-500">Please select at least {minWeeks} weeks to enrol.</p>
                 )}
-                <div className="border-t pt-3 flex justify-between font-semibold text-base">
-                  <span>{isPartialTerm ? `${selectedWeeks.size} weeks` : "Full term"}</span>
-                  <span className="text-primary-600">${weekPrice} + GST</span>
+                <div className="border-t pt-3">
+                  <p className="text-xs text-gray-500 text-right mb-1">
+                    ${pricePerWeek.toFixed(0)} + GST/wk × {selectedWeeks.size} {selectedWeeks.size === 1 ? "week" : "weeks"}
+                  </p>
+                  <div className="flex justify-between font-semibold text-base">
+                    <span>Term fee</span>
+                    <span className="text-primary-600">${weekPrice} + GST</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>

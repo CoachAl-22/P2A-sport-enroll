@@ -19,12 +19,16 @@ const stripePromise = validStripeKey ? loadStripe(validStripeKey) : null;
 const MONTHLY_ELIGIBLE = ["academy_year7_above", "senior_squad", "empowered_athlete_program"];
 
 // ── Term (lump sum) form ──────────────────────────────────────────────────────
+// totalAmount is always the GST-inclusive amount (from the payment record).
 const TermPaymentForm = ({ enrollment, confirmationId, totalAmount }: { enrollment: any; confirmationId?: string; totalAmount?: number }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
-  const price = totalAmount ?? parseFloat(enrollment?.class?.pricePerTerm || "0");
+  // totalAmount is GST-inclusive; derive ex-GST for the breakdown display.
+  const totalInclGst = totalAmount ?? 0;
+  const exGst = totalInclGst / 1.1;
+  const gstAmount = totalInclGst - exGst;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,11 +61,11 @@ const TermPaymentForm = ({ enrollment, confirmationId, totalAmount }: { enrollme
 
       <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
         <h4 className="font-semibold text-gray-900">Payment Summary</h4>
-        <div className="flex justify-between"><span>Term fee</span><span>${price.toFixed(2)}</span></div>
-        <div className="flex justify-between"><span>GST (10%)</span><span>${(price * 0.1).toFixed(2)}</span></div>
+        <div className="flex justify-between"><span>Term fee (ex. GST)</span><span>${exGst.toFixed(2)}</span></div>
+        <div className="flex justify-between"><span>GST (10%)</span><span>${gstAmount.toFixed(2)}</span></div>
         <div className="border-t pt-2 flex justify-between font-semibold">
           <span>Total charged today</span>
-          <span>${(price * 1.1).toFixed(2)} AUD</span>
+          <span>${totalInclGst.toFixed(2)} AUD</span>
         </div>
       </div>
 
@@ -69,7 +73,7 @@ const TermPaymentForm = ({ enrollment, confirmationId, totalAmount }: { enrollme
         {isProcessing ? (
           <span className="flex items-center gap-2"><div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />Processing...</span>
         ) : (
-          <span className="flex items-center justify-center gap-2"><CreditCard className="w-4 h-4" />Pay ${(price * 1.1).toFixed(2)} now</span>
+          <span className="flex items-center justify-center gap-2"><CreditCard className="w-4 h-4" />Pay ${totalInclGst.toFixed(2)} now</span>
         )}
       </Button>
       <p className="text-center text-xs text-gray-400 flex items-center justify-center gap-1"><Lock className="w-3 h-3" />Payments secured by Stripe</p>
@@ -197,11 +201,20 @@ const SummaryCard = ({ isBatch, batchEnrollments, batchTotal, enrollment }: {
                   </div>
                 </div>
               ))}
-              <div className="border-t pt-3 flex justify-between font-semibold">
-                <span>Total (ex. GST)</span>
-                <span className="text-primary-600">${batchTotal.toFixed(0)}</span>
+              <div className="border-t pt-3 space-y-1 text-sm">
+                <div className="flex justify-between text-gray-600">
+                  <span>Fee (ex. GST)</span>
+                  <span>${(batchTotal / 1.1).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-gray-600">
+                  <span>GST (10%)</span>
+                  <span>${(batchTotal - batchTotal / 1.1).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between font-semibold text-base pt-1 border-t">
+                  <span>Total (inc. GST)</span>
+                  <span className="text-primary-600">${batchTotal.toFixed(2)}</span>
+                </div>
               </div>
-              <p className="text-xs text-gray-400">GST of ${(batchTotal * 0.1).toFixed(2)} included at checkout</p>
             </>
           )}
         </CardContent>
@@ -254,6 +267,7 @@ export default function Checkout() {
   const [confirmed, setConfirmed] = useState(false);
   const [batchEnrollments, setBatchEnrollments] = useState<any[]>([]);
   const [batchTotal, setBatchTotal] = useState(0);
+  const [singleAmountInclGst, setSingleAmountInclGst] = useState(0);
   // Resolve stripe promise to actual instance — avoids "Illegal constructor" from Elements
   // receiving a pending Promise that gets interrupted by a re-render
   const [stripeInstance, setStripeInstance] = useState<any>(null);
@@ -289,7 +303,7 @@ export default function Checkout() {
     if (isBatch || paymentMode !== "term" || !enrollmentId || !enrollment || clientSecret) return;
     apiRequest("POST", "/api/create-payment-intent", { enrollmentId })
       .then(r => r.json())
-      .then(d => setClientSecret(d.clientSecret))
+      .then(d => { setClientSecret(d.clientSecret); if (d.amountInclGst) setSingleAmountInclGst(d.amountInclGst); })
       .catch(() => toast({ title: "Payment Error", description: "Failed to initialise payment.", variant: "destructive" }));
   }, [isBatch, paymentMode, enrollmentId, enrollment, clientSecret, toast]);
 
@@ -315,7 +329,6 @@ export default function Checkout() {
       .catch(() => toast({ title: "Payment Error", description: "Failed to initialise payment.", variant: "destructive" }));
   }, [isBatch, clientSecret]);
 
-  const price = isBatch ? batchTotal : parseFloat(enrollment?.class?.pricePerTerm || "0");
   const confirmationId = isBatch ? batchIds[0] : (enrollmentId ?? "");
   const stripeReady = !!stripeInstance;
 
@@ -414,7 +427,7 @@ export default function Checkout() {
                         <TermPaymentForm
                           enrollment={isBatch ? (batchEnrollments[0] ?? {}) : enrollment}
                           confirmationId={confirmationId}
-                          totalAmount={isBatch ? batchTotal : undefined}
+                          totalAmount={isBatch ? batchTotal : singleAmountInclGst}
                         />
                       </Elements>
                     </>

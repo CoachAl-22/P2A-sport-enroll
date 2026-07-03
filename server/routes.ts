@@ -2101,7 +2101,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
-      res.json({ clientSecret: paymentIntent.client_secret });
+      res.json({ clientSecret: paymentIntent.client_secret, amountInclGst: amount / 100 });
     } catch (error: any) {
       res.status(500).json({ message: "Error creating payment intent: " + error.message });
     }
@@ -5016,6 +5016,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("[migration] Foundation Mon PG reactivated");
     } catch(e: any) {
       console.error("[migration] Foundation Mon PG:", e.message);
+    }
+  })();
+
+  // ── Migrate: Fix Toorak College Foundation price_per_term ($30→$300) ─
+  (async () => {
+    try {
+      await db.execute(sql`
+        UPDATE classes
+        SET price_per_term = '300.00'
+        WHERE sport_type = 'foundation_prep_year2'
+          AND term = 'term_3' AND year = 2026
+          AND CAST(price_per_term AS numeric) < 100
+      `);
+      console.log("[migration] Toorak Foundation price_per_term corrected to $300");
+    } catch(e: any) {
+      console.error("[migration] Toorak Foundation price fix:", e.message);
     }
   })();
 

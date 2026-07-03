@@ -205,7 +205,9 @@ export default function Enrollment() {
                   <div className="flex items-center text-gray-600">
                     <DollarSign className="w-4 h-4 mr-2" />
                     <span className="text-sm">
-                      ${classDetails.class?.pricePerTerm} AUD per term
+                      {classDetails.class?.pricePerWeek
+                        ? `$${parseFloat(classDetails.class.pricePerWeek).toFixed(0)} + GST/wk × ${classDetails.class.weeksCount ?? classDetails.termConfig?.weeksCount ?? "N"} weeks`
+                        : `$${classDetails.class?.pricePerTerm} + GST per term`}
                     </span>
                   </div>
                 </div>
