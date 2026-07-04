@@ -587,7 +587,7 @@ export default function Classes() {
                           <img
                             src="/images/junior-academy.jpg"
                             alt="Junior Academy athletes"
-                            className="w-full h-48 object-cover object-[50%_60%]"
+                            className="w-full h-48 object-cover" style={{objectPosition: "50% 38%"}}
                           />
                         </div>
 
