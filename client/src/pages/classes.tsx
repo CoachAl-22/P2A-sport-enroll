@@ -587,7 +587,7 @@ export default function Classes() {
                           <img
                             src="/images/ashton-xcr.jpg"
                             alt="Junior Academy athlete competing"
-                            className="w-full h-auto"
+                            className="w-full max-h-80 object-cover object-top"
                           />
                         </div>
 
