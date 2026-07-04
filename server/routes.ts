@@ -5128,6 +5128,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Migrate: Create Wednesday Mornington classes (Foundation, Emerging, TSS) ─
+  (async () => {
+    try {
+      const venueId = '2cc8193c-e889-4a7a-9117-4c3d57ad3a61';
+      const coachId = '5ea656a7-743c-46d5-9e4c-3e0fa62989d8';
+      const termConfigId = '9a60c5de-fa13-4954-ad86-385cb7202fdf';
+      const classes = [
+        { name: 'Foundation Class — Wednesday (Mornington)', sportType: 'foundation_prep_year2', startTime: '16:30', endTime: '17:30', minAge: 5, maxAge: 8, capacity: 10 },
+        { name: 'Emerging Athletes — Wednesday (Mornington)', sportType: 'emerging_year3_6', startTime: '16:30', endTime: '17:30', minAge: 8, maxAge: 12, capacity: 10 },
+        { name: 'Team Sport Speed — Wednesday (Mornington)', sportType: 'team_sport_speed', startTime: '17:30', endTime: '18:30', minAge: 10, maxAge: 99, capacity: 15 },
+      ];
+      for (const cls of classes) {
+        await db.execute(sql`
+          INSERT INTO classes (name, description, sport_type, venue_id, coach_id, term, year,
+            day_of_week, start_time, end_time, start_date, end_date, min_age, max_age,
+            max_capacity, current_enrollment, price_per_term, status, term_config_id,
+            is_enrollment_open, is_holiday_program, is_makeup_eligible, price_per_session,
+            per_week_enabled, price_per_casual)
+          SELECT ${cls.name}, 'Athletic development class at Mornington Athletic Track.',
+            ${cls.sportType}, ${venueId}, ${coachId}, 'term_3', 2026, 3,
+            ${cls.startTime}, ${cls.endTime}, '2026-07-13', '2026-09-19',
+            ${cls.minAge}, ${cls.maxAge}, ${cls.capacity}, 0, 300.00, 'active', ${termConfigId},
+            true, false, false, 30.00, true, 30.00
+          WHERE NOT EXISTS (
+            SELECT 1 FROM classes WHERE name = ${cls.name} AND term = 'term_3' AND year = 2026
+          )
+        `);
+      }
+      console.log("[migration] Wednesday Mornington classes created");
+    } catch(e: any) {
+      console.error("[migration] Wednesday Mornington classes:", e.message);
+    }
+  })();
+
   // ── Migrate: Activate Toorak Thursday Emerging Athletes Term 3 ────────
   (async () => {
     try {
