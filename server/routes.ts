@@ -5128,6 +5128,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Migrate: Activate Toorak Thursday Emerging Athletes Term 3 ────────
+  (async () => {
+    try {
+      await db.execute(sql`
+        UPDATE classes
+        SET status = 'active', is_enrollment_open = true
+        WHERE name ILIKE '%emerging%' AND day_of_week = 4
+          AND term = 'term_3' AND year = 2026
+          AND venue_id = (SELECT id FROM venues WHERE name ILIKE '%toorak%' LIMIT 1)
+      `);
+      console.log("[migration] Toorak Thursday Emerging Athletes activated");
+    } catch(e: any) {
+      console.error("[migration] Toorak Thursday Emerging Athletes:", e.message);
+    }
+  })();
+
   // ── Migrate: Archive all 2025 terms ───────────────────────────────
   (async () => {
     try {
