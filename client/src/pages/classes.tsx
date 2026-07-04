@@ -587,7 +587,7 @@ export default function Classes() {
                           <img
                             src="/images/junior-academy.jpg"
                             alt="Junior Academy athletes"
-                            className="w-full h-56 object-cover"
+                            className="w-full h-72 object-cover object-top"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
                             <h3 className="text-2xl font-heading font-bold mb-1">Junior Academy</h3>
