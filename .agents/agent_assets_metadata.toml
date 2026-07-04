@@ -12,3 +12,9 @@ id = "3LBi63B34PsNJ-OjIS2Xl"
 uri = "file://attached_assets/my-athletic-journey.txt"
 type = "text"
 title = "My Athletic Journey — Full Source Code"
+
+[[outputs]]
+id = "4m2QxpgoTR69bpdwEB1Ay"
+uri = "file://screenshots/junior-academy.jpg"
+type = "image"
+title = "Junior Academy — hero photo"
