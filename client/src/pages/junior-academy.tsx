@@ -97,7 +97,7 @@ export default function JuniorAcademy() {
               <img
                 src="/images/ashton-xcr.jpg"
                 alt="Junior Academy athlete competing"
-                className="w-full max-w-2xl h-72 object-cover object-top rounded-xl shadow-2xl"
+                className="w-full max-w-2xl h-auto rounded-xl shadow-2xl"
               />
             </div>
           </div>
