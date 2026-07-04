@@ -24,3 +24,9 @@ id = "iPp1LKenSWFP-r-h0Cjfi"
 uri = "file://screenshots/junior-academy-final.jpg"
 type = "image"
 title = "Junior Academy page — current"
+
+[[outputs]]
+id = "PuenmnbRWgqi7WTq4rrsr"
+uri = "file://screenshots/junior-academy-sized.jpg"
+type = "image"
+title = "Junior Academy page — current size"
