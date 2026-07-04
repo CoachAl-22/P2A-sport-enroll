@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
 import bcrypt from "bcrypt";
+import rateLimit from "express-rate-limit";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { storage } from "./storage";
@@ -70,6 +71,14 @@ const publicRegisterSchema = insertUserSchema.pick({
   mobile: true,
   userId: true,
   autoReenrollment: true,
+});
+
+const authRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many authentication attempts. Please try again in 15 minutes." },
 });
 
 // Simple authentication middleware
@@ -235,18 +244,6 @@ const enrollmentFormSchema = insertEnrollmentSchema.extend({
   }).optional(),
 });
 
-// Middleware to handle both session and token-based auth for mobile
-function authMiddleware(req: any, res: any, next: any) {
-  // Check for Authorization header (mobile)
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const sessionId = authHeader.substring(7);
-    // Set up session from token for mobile compatibility
-    req.sessionID = sessionId;
-  }
-  next();
-}
-
 export async function registerRoutes(app: Express): Promise<Server> {
   // Proxy /__mockup/ to the mockup sandbox dev server (port 23636) — dev only
   if (process.env.NODE_ENV !== 'production') {
@@ -271,8 +268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Session middleware
   app.use(sessionConfig);
-  // Mobile auth middleware
-  app.use(authMiddleware);
+  app.use("/api/auth", authRateLimiter);
 
   // Serve PWA icons and assets from public folder
   const { default: express } = await import("express");
@@ -2281,6 +2277,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ── Confirmation helpers (used by the Stripe webhook) ─────────────────────
+  const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  const formatClassTime = (t?: string | null): string | null => {
+    if (!t) return null;
+    const [hStr, mStr] = t.split(":");
+    const h = parseInt(hStr, 10);
+    if (isNaN(h)) return null;
+    const suffix = h >= 12 ? "pm" : "am";
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${(mStr || "00").slice(0, 2)}${suffix}`;
+  };
+
+  // "Thursday 16 July, 3:30pm" for the enrolment's first session.
+  // Per-week enrolments use their first SELECTED week; full-term falls back to
+  // the first occurrence of the class day on/after the class start date.
+  const firstSessionInfo = async (enrollmentId: string, classData: any): Promise<string | null> => {
+    try {
+      let sessionDate: Date | null = null;
+      const weeks = await storage.getEnrollmentWeeks(enrollmentId).catch(() => []);
+      const selected = (weeks || [])
+        .filter((w: any) => w.status === "selected" && w.sessionDate)
+        .sort((a: any, b: any) => new Date(a.sessionDate).getTime() - new Date(b.sessionDate).getTime());
+      if (selected.length > 0) sessionDate = new Date(selected[0].sessionDate);
+
+      if (!sessionDate && classData?.startDate && classData?.dayOfWeek != null) {
+        const d = new Date(classData.startDate);
+        const targetDay = classData.dayOfWeek % 7; // schema: 1=Mon..7=Sun; JS getDay: 0=Sun
+        for (let i = 0; i < 7 && d.getDay() !== targetDay; i++) d.setDate(d.getDate() + 1);
+        if (d.getDay() === targetDay) sessionDate = d;
+      }
+      if (!sessionDate) return null;
+
+      const datePart = sessionDate.toLocaleDateString("en-AU", {
+        weekday: "long", day: "numeric", month: "long", timeZone: "Australia/Melbourne",
+      });
+      const timePart = formatClassTime(classData?.startTime);
+      return timePart ? `${datePart}, ${timePart}` : datePart;
+    } catch {
+      return null;
+    }
+  };
+
+  const classScheduleLine = (classData: any): string => {
+    const day = classData?.dayOfWeek != null ? `${DAY_NAMES[classData.dayOfWeek % 7]}s` : "";
+    const start = formatClassTime(classData?.startTime);
+    const end = formatClassTime(classData?.endTime);
+    const time = start && end ? `${start} to ${end}` : start || "";
+    return [day, time].filter(Boolean).join(" ") || "See class details";
+  };
+
   app.post("/api/webhook/stripe", async (req, res) => {
     const sig = req.headers['stripe-signature'] as string;
     
@@ -2340,16 +2387,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 const amount = (paymentIntent.amount / 100).toFixed(2);
                 if (enrollmentIdList.length === 1) {
                   const child = await storage.getChild(firstEnrollment.childId);
-                  await smsService.sendPaymentConfirmation(parent.mobile, child?.firstName ?? "your athlete", amount, classData.name);
+                  const firstSession = await firstSessionInfo(enrollmentIdList[0], classData);
+                  await smsService.sendPaymentConfirmation(parent.mobile, child?.firstName ?? "your athlete", amount, classData.name, firstSession ?? undefined);
                 } else {
                   await smsService.sendSMS(parent.mobile,
-                    `Payment of $${amount} AUD confirmed for ${enrollmentIdList.length} athletes in ${classData.name}. Thank you! 🎉`
+                    `Payment of $${amount} AUD confirmed for ${enrollmentIdList.length} athletes. See your email for each child's class details. Power2ADAPT 🎉`
                   );
                 }
               }
             }
           } catch (smsError) {
             console.log('Payment confirmation SMS failed:', smsError);
+          }
+
+          // Send a confirmation email per enrolment (child, class, first session, venue, amount)
+          for (const enrollmentId of enrollmentIdList) {
+            try {
+              const enrollment = await storage.getEnrollment(enrollmentId);
+              if (!enrollment) continue;
+              const parent = await storage.getUser(enrollment.parentId);
+              if (!parent?.email) continue;
+              const classData = await storage.getClass(enrollment.classId);
+              if (!classData) continue;
+              const child = await storage.getChild(enrollment.childId);
+              const venue = classData.venueId ? await storage.getVenue(classData.venueId).catch(() => undefined) : undefined;
+              const [payment] = await storage.getPaymentsByEnrollment(enrollmentId);
+              const firstSession = await firstSessionInfo(enrollmentId, classData);
+
+              await emailService.sendEnrollmentPaymentConfirmation({
+                parentEmail: parent.email,
+                parentFirstName: parent.firstName,
+                childName: child ? `${child.firstName} ${child.lastName ?? ""}`.trim() : "Your athlete",
+                className: classData.name,
+                dayAndTime: classScheduleLine(classData),
+                firstSession,
+                venueName: venue?.name,
+                venueAddress: [venue?.address, venue?.suburb].filter(Boolean).join(", "),
+                amountPaid: payment?.amount ?? (paymentIntent.amount / 100).toFixed(2),
+                invoiceNumber: payment?.invoiceNumber ?? null,
+              });
+            } catch (emailError) {
+              console.log('Payment confirmation email failed for enrollment', enrollmentId, emailError);
+            }
           }
         }
       }
@@ -4452,7 +4531,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/attendance-records/:childId", authMiddleware, async (req, res) => {
+  app.get("/api/attendance-records/:childId", async (req, res) => {
     try {
       const { childId } = req.params;
       const access = await requireChildAccess(req, res, childId);
@@ -4464,7 +4543,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/coach-messages/:childId", authMiddleware, async (req, res) => {
+  app.get("/api/coach-messages/:childId", async (req, res) => {
     try {
       const { childId } = req.params;
       const access = await requireChildAccess(req, res, childId);
@@ -4476,7 +4555,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/upcoming-classes/:childId", authMiddleware, async (req, res) => {
+  app.get("/api/upcoming-classes/:childId", async (req, res) => {
     try {
       const { childId } = req.params;
       const access = await requireChildAccess(req, res, childId);

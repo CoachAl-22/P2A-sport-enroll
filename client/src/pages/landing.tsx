@@ -380,7 +380,7 @@ export default function Landing() {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Tuesday 3:30 – 4:45pm</span></div>
                   <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Toorak College</span></div>
-                  <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2 • 30 spots</span></div>
+                  <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2 • Collecting interest - join the waitlist</span></div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>

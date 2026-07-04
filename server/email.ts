@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export interface EmailMessage {
   to: string;
@@ -20,7 +20,7 @@ export class EmailService {
 
   async sendEmail(to: string, subject: string, html: string): Promise<boolean> {
     try {
-      if (!process.env.RESEND_API_KEY) {
+      if (!resend) {
         console.log('Email Service not configured - would send:', { to, subject });
         return false;
       }
@@ -241,6 +241,60 @@ export class EmailService {
           </div>
         </div>
         <div style="text-align:center;padding:16px;background:#f9fafb;color:#9ca3af;font-size:0.75rem">© 2026 Power2ADAPT Athletic Programs · <a href="https://power2adapt.online" style="color:#9ca3af">www.power2adapt.online</a></div>
+      </div>
+    </body></html>`;
+    return this.sendEmail(data.parentEmail, subject, html);
+  }
+
+  // Enrolment + payment confirmation email (sent from the Stripe webhook)
+  async sendEnrollmentPaymentConfirmation(data: {
+    parentEmail: string;
+    parentFirstName?: string | null;
+    childName: string;
+    className: string;
+    dayAndTime: string;
+    firstSession?: string | null;
+    venueName?: string | null;
+    venueAddress?: string | null;
+    amountPaid: string;
+    invoiceNumber?: string | null;
+  }): Promise<boolean> {
+    const subject = `${data.childName} is enrolled in ${data.className}! 🎉`;
+    const row = (label: string, value: string) =>
+      `<tr><td style="padding:8px 12px;color:#6b7280;font-size:0.85rem;white-space:nowrap">${label}</td><td style="padding:8px 12px;color:#111827;font-weight:600">${value}</td></tr>`;
+
+    const venueLine = [data.venueName, data.venueAddress].filter(Boolean).join(", ");
+
+    const html = `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f3f4f6;font-family:Arial,Helvetica,sans-serif">
+      <div style="max-width:600px;margin:0 auto;padding:24px 16px">
+        <div style="background:#1e3a8a;border-radius:12px 12px 0 0;padding:28px;text-align:center">
+          <h1 style="color:#fff;margin:0;font-size:1.5rem">You're all set! 🎉</h1>
+          <p style="color:#bfdbfe;margin:8px 0 0">${data.childName} is enrolled in ${data.className}</p>
+        </div>
+        <div style="background:#fff;padding:28px;border-radius:0 0 12px 12px">
+          <p style="color:#374151">Hi ${data.parentFirstName || "there"},</p>
+          <p style="color:#374151">Thanks for enrolling with Power2ADAPT. Here are the details to keep handy:</p>
+          <table style="width:100%;border-collapse:collapse;background:#f9fafb;border-radius:8px;margin:16px 0">
+            ${row("Athlete", data.childName)}
+            ${row("Class", data.className)}
+            ${row("When", data.dayAndTime)}
+            ${data.firstSession ? row("First session", data.firstSession) : ""}
+            ${venueLine ? row("Venue", venueLine) : ""}
+            ${row("Paid", `$${data.amountPaid} AUD (incl. GST)`)}
+            ${data.invoiceNumber ? row("Invoice", data.invoiceNumber) : ""}
+          </table>
+          <p style="color:#374151;margin-bottom:6px;font-weight:600">What to bring:</p>
+          <ul style="color:#374151;margin-top:0">
+            <li>Athletic shoes (no spikes required)</li>
+            <li>Water bottle</li>
+            <li>Weather-appropriate clothing</li>
+          </ul>
+          <p style="color:#374151">Questions? Just reply to this email or SMS us on +61 434 679 395.</p>
+          <div style="text-align:center;margin-top:20px">
+            <a href="https://www.power2adapt.online/dashboard" style="background:#F26522;color:#fff;padding:12px 28px;text-decoration:none;border-radius:8px;font-weight:600;font-size:0.9rem">View your family dashboard</a>
+          </div>
+        </div>
+        <div style="text-align:center;padding:16px;color:#9ca3af;font-size:0.75rem">© 2026 Power2ADAPT Athletic Programs · <a href="https://www.power2adapt.online" style="color:#9ca3af">www.power2adapt.online</a></div>
       </div>
     </body></html>`;
     return this.sendEmail(data.parentEmail, subject, html);

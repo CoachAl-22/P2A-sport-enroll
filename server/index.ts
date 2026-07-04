@@ -1,9 +1,14 @@
 import express, { type Request, Response, NextFunction } from "express";
+import helmet from "helmet";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.set('trust proxy', 1); // trust reverse proxy for secure session cookies in production
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
 // Raw body needed for Stripe webhook signature verification — must come before express.json()
 app.use('/api/webhook/stripe', express.raw({ type: 'application/json' }));
 app.use(express.json());
@@ -64,11 +69,12 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  const host = process.env.HOST || (process.env.NODE_ENV === 'production' ? "0.0.0.0" : "127.0.0.1");
+  const listenOptions = process.env.NODE_ENV === 'production'
+    ? { port, host, reusePort: true }
+    : { port, host };
+
+  server.listen(listenOptions, () => {
+    log(`serving on ${host}:${port}`);
   });
 })();

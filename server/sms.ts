@@ -64,10 +64,12 @@ export class SMSService {
     parentPhone: string,
     childName: string,
     amount: string,
-    className: string
+    className: string,
+    firstSession?: string
   ): Promise<boolean> {
-    const message = `Payment confirmed! $${amount} received for ${childName}'s ${className}. Your child's spot is now fully secured. We're excited to see them in action! 🎯`;
-    
+    const sessionLine = firstSession ? ` First session: ${firstSession}.` : "";
+    const message = `Payment confirmed! $${amount} received for ${childName}'s ${className}.${sessionLine} See your email for full details. Power2ADAPT 🎯`;
+
     return this.sendSMS(parentPhone, message);
   }
 
