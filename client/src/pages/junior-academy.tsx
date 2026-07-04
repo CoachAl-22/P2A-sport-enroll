@@ -91,12 +91,15 @@ export default function JuniorAcademy() {
               Build the physical foundations that make young athletes better at every sport they play — not just one.
             </p>
           </div>
-          <div className="flex justify-center">
-            <img
-              src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&h=400"
-              alt="Junior Academy athletes developing skills at athletic track"
-              className="w-full max-w-3xl h-80 object-cover rounded-xl shadow-2xl"
-            />
+          {/* Hero Image */}
+          <div className="mb-8">
+            <div className="flex justify-center">
+              <img
+                src="/images/junior-academy.jpg"
+                alt="Junior Academy athletes developing athletic skills"
+                className="w-full max-w-2xl h-96 object-cover rounded-xl shadow-2xl"
+              />
+            </div>
           </div>
         </div>
       </section>
