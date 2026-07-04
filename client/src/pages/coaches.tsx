@@ -1,11 +1,11 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Users, Plus, BarChart3, ArrowLeft } from "lucide-react";
-import coachSamiImage from "@assets/IMG_3038_1759146359558.jpg";
-import coachAlistairImage from "@assets/63271D0E-3E21-490C-B81E-18BEF5CCB270_1759298878111.jpg";
-import coachMiahImage from "@assets/Miah Noble trail runner_1759299110875.jpg";
-import coachBlakeImage from "@assets/IMG_1536_1759300077064.jpg";
-import coachGeorgiaImage from "@assets/4F77B27D-B978-4B9A-982D-C5BD2350E00E_1759300730112.jpg";
+const coachSamiImage = "/images/coach-sami.jpg";
+const coachAlistairImage = "/images/coach-photo.jpg";
+const coachMiahImage = "/images/coach-miah.jpg";
+const coachBlakeImage = "/images/coach-blake.jpg";
+const coachGeorgiaImage = "/images/coach-georgia.jpg";
 
 export default function Coaches() {
   return (

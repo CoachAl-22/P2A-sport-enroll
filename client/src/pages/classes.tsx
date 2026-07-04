@@ -582,13 +582,22 @@ export default function Classes() {
                   if (isJuniorAcademy) {
                     return (
                       <div className="p-8 sm:p-10">
-                        {/* Hero image — matches class card style */}
-                        <div className="rounded-xl overflow-hidden mb-6 border-2 border-gray-200">
-                          <img
-                            src="/images/img-3476.jpg"
-                            alt="Junior Academy athletes racing on track"
-                            className="w-full h-48 object-cover object-top"
-                          />
+                        {/* Hero images */}
+                        <div className="grid grid-cols-2 gap-3 mb-6">
+                          <div className="rounded-xl overflow-hidden border-2 border-gray-200">
+                            <img
+                              src="/images/img-3476.jpg"
+                              alt="Junior Academy boys racing on track"
+                              className="w-full h-44 object-cover object-top"
+                            />
+                          </div>
+                          <div className="rounded-xl overflow-hidden border-2 border-gray-200">
+                            <img
+                              src="/images/img-5050.jpg"
+                              alt="Junior Academy girl hurdling at competition"
+                              className="w-full h-44 object-cover object-top"
+                            />
+                          </div>
                         </div>
 
                         <div className="text-center mb-8">
