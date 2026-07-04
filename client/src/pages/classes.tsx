@@ -583,12 +583,18 @@ export default function Classes() {
                     return (
                       <div className="p-8 sm:p-10">
                         {/* Hero banner */}
-                        <div className="rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 p-8 text-white text-center mb-8">
-                          <div className="text-5xl mb-4">🏃‍♂️</div>
-                          <h3 className="text-2xl font-heading font-bold mb-2">Junior Academy</h3>
-                          <p className="text-indigo-100 text-sm max-w-sm mx-auto">
-                            Year 7+ · Ages 12–16 · Structured athletics & competition preparation
-                          </p>
+                        <div className="rounded-2xl overflow-hidden relative mb-8">
+                          <img
+                            src="/images/junior-academy.jpg"
+                            alt="Junior Academy athletes"
+                            className="w-full h-56 object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                            <h3 className="text-2xl font-heading font-bold mb-1">Junior Academy</h3>
+                            <p className="text-white/80 text-sm">
+                              Year 7+ · Ages 12–16 · Structured athletics & competition preparation
+                            </p>
+                          </div>
                         </div>
 
                         <div className="text-center mb-8">
