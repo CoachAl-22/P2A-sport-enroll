@@ -585,9 +585,9 @@ export default function Classes() {
                         {/* Hero image — matches class card style */}
                         <div className="rounded-xl overflow-hidden mb-6 border-2 border-gray-200">
                           <img
-                            src="/images/junior-academy.jpg"
-                            alt="Junior Academy athletes"
-                            className="w-full h-48 object-cover" style={{objectPosition: "50% 28%"}}
+                            src="/images/ashton-xcr.jpg"
+                            alt="Junior Academy athlete competing"
+                            className="w-full h-48 object-cover object-top"
                           />
                         </div>
 

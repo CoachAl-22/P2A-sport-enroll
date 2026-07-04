@@ -95,9 +95,9 @@ export default function JuniorAcademy() {
           <div className="mb-8">
             <div className="flex justify-center">
               <img
-                src="/images/junior-academy.jpg"
-                alt="Junior Academy athletes developing athletic skills"
-                className="w-full max-w-2xl h-72 object-cover rounded-xl shadow-2xl" style={{objectPosition: "50% 38%"}}
+                src="/images/ashton-xcr.jpg"
+                alt="Junior Academy athlete competing"
+                className="w-full max-w-2xl h-72 object-cover object-top rounded-xl shadow-2xl"
               />
             </div>
           </div>
