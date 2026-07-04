@@ -95,9 +95,9 @@ export default function JuniorAcademy() {
           <div className="mb-8">
             <div className="flex justify-center">
               <img
-                src="/images/ashton-xcr.jpg"
-                alt="Junior Academy athlete competing"
-                className="w-auto max-w-xs h-auto rounded-xl shadow-2xl"
+                src="/images/img-3476.jpg"
+                alt="Junior Academy athletes racing on track"
+                className="w-full max-w-2xl h-72 object-cover object-top rounded-xl shadow-2xl"
               />
             </div>
           </div>
