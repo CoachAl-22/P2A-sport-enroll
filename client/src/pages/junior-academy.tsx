@@ -97,7 +97,7 @@ export default function JuniorAcademy() {
               <img
                 src="/images/junior-academy.jpg"
                 alt="Junior Academy athletes developing athletic skills"
-                className="w-full max-w-sm h-[480px] object-cover object-bottom rounded-xl shadow-2xl"
+                className="w-full max-w-2xl h-72 object-cover rounded-xl shadow-2xl" style={{objectPosition: "50% 38%"}}
               />
             </div>
           </div>

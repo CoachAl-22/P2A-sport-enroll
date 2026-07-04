@@ -582,19 +582,13 @@ export default function Classes() {
                   if (isJuniorAcademy) {
                     return (
                       <div className="p-8 sm:p-10">
-                        {/* Hero banner */}
-                        <div className="rounded-2xl overflow-hidden relative mb-8">
+                        {/* Hero image — matches class card style */}
+                        <div className="rounded-xl overflow-hidden mb-6 border-2 border-gray-200">
                           <img
                             src="/images/junior-academy.jpg"
                             alt="Junior Academy athletes"
-                            className="w-full h-72 object-cover object-bottom"
+                            className="w-full h-48 object-cover object-[50%_60%]"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-                            <h3 className="text-2xl font-heading font-bold mb-1">Junior Academy</h3>
-                            <p className="text-white/80 text-sm">
-                              Year 7+ · Ages 12–16 · Structured athletics & competition preparation
-                            </p>
-                          </div>
                         </div>
 
                         <div className="text-center mb-8">
