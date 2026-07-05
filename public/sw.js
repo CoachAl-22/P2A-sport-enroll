@@ -4,9 +4,9 @@
 // Version: update this string whenever you deploy a new version
 // ═══════════════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'maj-v2.10';
-const STATIC_CACHE = 'maj-static-v2.10';
-const API_CACHE = 'maj-api-v2.10';
+const CACHE_NAME = 'maj-v2.11';
+const STATIC_CACHE = 'maj-static-v2.11';
+const API_CACHE = 'maj-api-v2.11';
 
 // Files to cache immediately on install
 const STATIC_ASSETS = [

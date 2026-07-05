@@ -3844,11 +3844,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
       const user = await storage.getUser(userId);
       
-      if (!user || user.role !== 'coach') {
-        return res.status(403).json({ message: "Access denied - coaches only" });
+      if (!user || (user.role !== 'coach' && user.role !== 'admin')) {
+        return res.status(403).json({ message: "Access denied - coaches and admins only" });
       }
 
-      const coachClasses = await storage.getClassesByCoach(userId);
+      const coachClasses = await storage.getClassesByCoach(userId, user.role === 'admin');
       res.json(coachClasses);
     } catch (error) {
       console.error("Error fetching coach classes:", error);
@@ -3862,8 +3862,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
       const user = await storage.getUser(userId);
       
-      if (!user || user.role !== 'coach') {
-        return res.status(403).json({ message: "Access denied - coaches only" });
+      if (!user || (user.role !== 'coach' && user.role !== 'admin')) {
+        return res.status(403).json({ message: "Access denied - coaches and admins only" });
       }
 
       const todaysClasses = await storage.getTodaysClassesForCoach(userId);
@@ -3881,8 +3881,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUser(userId);
       const { classId } = req.params;
       
-      if (!user || user.role !== 'coach') {
-        return res.status(403).json({ message: "Access denied - coaches only" });
+      if (!user || (user.role !== 'coach' && user.role !== 'admin')) {
+        return res.status(403).json({ message: "Access denied - coaches and admins only" });
       }
 
       const students = await storage.getStudentsForClass(classId);
@@ -3899,8 +3899,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = ((req as any).user?.claims?.sub) || ((req as any).session?.userId);
       const user = await storage.getUser(userId);
       
-      if (!user || user.role !== 'coach') {
-        return res.status(403).json({ message: "Access denied - coaches only" });
+      if (!user || (user.role !== 'coach' && user.role !== 'admin')) {
+        return res.status(403).json({ message: "Access denied - coaches and admins only" });
       }
 
       const attendanceData = req.body;
@@ -3915,12 +3915,147 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       attendanceData.markedBy = userId;
-      
+
+      // Guard against double-crediting: check for an existing absent record
+      // for this child/class/date BEFORE inserting the new one.
+      let alreadyMarkedAbsent = false;
+      if (attendanceData.creditsEligible) {
+        try {
+          const existing = await storage.getAttendanceForClass(attendanceData.classId, attendanceData.attendanceDate);
+          alreadyMarkedAbsent = (existing || []).some(
+            (r: any) => (r.childId ?? r.child_id) === attendanceData.childId && r.status === 'absent'
+          );
+        } catch { /* if the check fails, err on the side of not crediting twice below */ }
+      }
+
       const result = await storage.markAttendance(attendanceData);
+
+      // Credit-eligible absence → add a makeup credit to the child's enrolment
+      // and let the parent know (SportsBiz parity: makeup class or credit).
+      if (attendanceData.creditsEligible && !alreadyMarkedAbsent) {
+        try {
+          const enrollment = await storage.getEnrollmentByChildAndClass(attendanceData.childId, attendanceData.classId);
+          if (enrollment) {
+            const newCredits = (enrollment.makeupCredits || 0) + 1;
+            await storage.updateEnrollment(enrollment.id, { makeupCredits: newCredits });
+
+            const parent = await storage.getUser(enrollment.parentId);
+            const child = await storage.getChild(attendanceData.childId);
+            const classData = await storage.getClass(attendanceData.classId);
+            if (parent?.mobile && child && classData) {
+              await smsService.sendSMS(
+                parent.mobile,
+                `${child.firstName} was marked absent from ${classData.name}. A makeup class credit has been added to your account - book it from your dashboard: https://www.power2adapt.online/dashboard - Power2ADAPT`
+              );
+            }
+          }
+        } catch (creditError) {
+          console.error("Makeup credit grant failed:", creditError);
+        }
+      }
+
       res.json(result);
     } catch (error) {
       console.error("Error marking attendance:", error);
       res.status(500).json({ message: "Failed to mark attendance" });
+    }
+  });
+
+  // ── Makeup credits: parent-facing summary + booking ───────────────────────
+  app.get("/api/makeup/summary", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    try {
+      const enrollmentRows = await storage.getEnrollmentsByParent(userId);
+
+      // Credits per child across all their enrolments
+      const childCredits: Record<string, { childId: string; childName: string; childAge: number | null; credits: number }> = {};
+      for (const row of enrollmentRows) {
+        const credits = row.enrollment?.makeupCredits || 0;
+        if (!row.child) continue;
+        const key = row.child.id;
+        if (!childCredits[key]) {
+          let age: number | null = null;
+          if (row.child.dateOfBirth) {
+            age = Math.floor((Date.now() - new Date(row.child.dateOfBirth).getTime()) / (365.25 * 24 * 3600 * 1000));
+          }
+          childCredits[key] = { childId: key, childName: `${row.child.firstName} ${row.child.lastName ?? ""}`.trim(), childAge: age, credits: 0 };
+        }
+        childCredits[key].credits += credits;
+      }
+
+      const childrenWithCredits = Object.values(childCredits).filter(c => c.credits > 0);
+      if (childrenWithCredits.length === 0) return res.json({ children: [], options: [] });
+
+      // Eligible makeup slots: makeup-eligible or holiday-program classes with space
+      const allClasses = await storage.getClassesWithSpots({});
+      const options = (allClasses || [])
+        .filter((c: any) => (c.isMakeupEligible || c.isHolidayProgram) && c.status === "active" && (c.spotsRemaining ?? 0) > 0)
+        .map((c: any) => ({
+          id: c.id, name: c.name, dayOfWeek: c.dayOfWeek, startTime: c.startTime, endTime: c.endTime,
+          venueName: c.venue?.name, suburb: c.venue?.suburb, minAge: c.minAge, maxAge: c.maxAge,
+          spotsRemaining: c.spotsRemaining, isHolidayProgram: c.isHolidayProgram,
+        }));
+
+      res.json({ children: childrenWithCredits, options });
+    } catch (error: any) {
+      console.error("makeup summary error:", error);
+      res.status(500).json({ message: "Failed to load makeup credits" });
+    }
+  });
+
+  app.post("/api/makeup/book", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    try {
+      const { childId, classId } = req.body as { childId: string; classId: string };
+      if (!childId || !classId) return res.status(400).json({ message: "childId and classId are required" });
+
+      // Ownership + credit check
+      const child = await storage.getChild(childId);
+      if (!child || child.parentId !== userId) return res.status(403).json({ message: "Not your child" });
+
+      const enrollmentRows = await storage.getEnrollmentsByParent(userId);
+      const creditSource = enrollmentRows.find(
+        (r: any) => r.child?.id === childId && (r.enrollment?.makeupCredits || 0) > 0
+      );
+      if (!creditSource) return res.status(400).json({ message: "No makeup credits available for this child" });
+
+      // Class eligibility
+      const classData = await storage.getClass(classId);
+      if (!classData || classData.status !== "active" || !(classData.isMakeupEligible || classData.isHolidayProgram)) {
+        return res.status(400).json({ message: "That class isn't available for makeup bookings" });
+      }
+      if ((classData.currentEnrollment || 0) >= classData.maxCapacity) {
+        return res.status(400).json({ message: "That class is full - please pick another" });
+      }
+
+      // Redeem: decrement credit, create a no-payment active enrolment
+      await storage.updateEnrollment(creditSource.enrollment.id, {
+        makeupCredits: (creditSource.enrollment.makeupCredits || 0) - 1,
+      });
+      const booking = await storage.createEnrollment({
+        childId, classId, parentId: userId,
+        status: "active",
+        notes: `Makeup class booking (credit redeemed from ${creditSource.class?.name ?? "enrolment"})`,
+      } as any);
+      await storage.updateClassEnrollmentCount(classId);
+
+      // Best-effort confirmation SMS
+      try {
+        const parent = await storage.getUser(userId);
+        if (parent?.mobile) {
+          await smsService.sendSMS(
+            parent.mobile,
+            `Makeup class booked! ${child.firstName} is in for ${classData.name}. No charge - one makeup credit used. Power2ADAPT 🎯`
+          );
+        }
+      } catch { /* non-fatal */ }
+
+      res.json({ booking, message: "Makeup class booked - no payment needed" });
+    } catch (error: any) {
+      console.error("makeup booking error:", error);
+      res.status(500).json({ message: "Failed to book makeup class" });
     }
   });
 
@@ -3931,8 +4066,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUser(userId);
       const { classId, date } = req.params;
       
-      if (!user || user.role !== 'coach') {
-        return res.status(403).json({ message: "Access denied - coaches only" });
+      if (!user || (user.role !== 'coach' && user.role !== 'admin')) {
+        return res.status(403).json({ message: "Access denied - coaches and admins only" });
       }
 
       const attendance = await storage.getAttendanceForClass(classId, date);

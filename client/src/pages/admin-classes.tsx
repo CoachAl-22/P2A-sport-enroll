@@ -91,6 +91,8 @@ const EMPTY_FORM = {
   startDate: "", endDate: "",
   minAge: "", maxAge: "", maxCapacity: "", pricePerSession: "", isEnrollmentOpen: true,
   perWeekEnabled: false,
+  isMakeupEligible: false,
+  isHolidayProgram: false,
 };
 
 export default function AdminClasses() {
@@ -217,6 +219,8 @@ export default function AdminClasses() {
       pricePerSession: cls.pricePerSession?.toString() || "",
       perWeekEnabled: !!cls.perWeekEnabled,
       isEnrollmentOpen: cls.isEnrollmentOpen !== false,
+      isMakeupEligible: !!cls.isMakeupEligible,
+      isHolidayProgram: !!cls.isHolidayProgram,
     });
     setIsDialogOpen(true);
   }
@@ -763,6 +767,22 @@ export default function AdminClasses() {
                 onCheckedChange={v => setFormData(p => ({ ...p, perWeekEnabled: v }))}
               />
               <label className="text-sm">Offer per-week (fortnightly) enrolment</label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={!!formData.isMakeupEligible}
+                onCheckedChange={v => setFormData(p => ({ ...p, isMakeupEligible: v }))}
+              />
+              <label className="text-sm">Accepts makeup-credit bookings</label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={!!formData.isHolidayProgram}
+                onCheckedChange={v => setFormData(p => ({ ...p, isHolidayProgram: v }))}
+              />
+              <label className="text-sm">Holiday program</label>
             </div>
 
             <div className="grid grid-cols-2 gap-4 items-end">

@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,6 +53,7 @@ const ACTIVE_STATUSES = ["active", "pending_payment", "waitlist"];
 export default function Dashboard() {
   const { user } = useAuth();
   const [expandedPast, setExpandedPast] = useState<Record<string, boolean>>({});
+  const [bookingClassId, setBookingClassId] = useState<string | null>(null);
 
   const { data: enrollments = [], isLoading: enrollmentsLoading } = useQuery<any[]>({
     queryKey: ["/api/enrollments"],
@@ -59,6 +61,32 @@ export default function Dashboard() {
   const { data: children = [] } = useQuery<any[]>({
     queryKey: ["/api/children"],
   });
+  const { data: makeup } = useQuery<{ children: any[]; options: any[] }>({
+    queryKey: ["/api/makeup/summary"],
+  });
+
+  const bookMakeup = async (childId: string, classId: string) => {
+    setBookingClassId(classId);
+    try {
+      const res = await fetch("/api/makeup/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ childId, classId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Booking failed - please try again");
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["/api/makeup/summary"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/enrollments"] });
+      }
+    } catch {
+      alert("Booking failed - please try again");
+    } finally {
+      setBookingClassId(null);
+    }
+  };
 
   // Group enrollments by child
   const byChild = useMemo(() => {
@@ -227,6 +255,62 @@ export default function Dashboard() {
             )}
           </CardContent>
         </Card>
+
+        {/* Makeup credits */}
+        {makeup && makeup.children.length > 0 && (
+          <Card className="mb-8 border-2 border-orange-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-orange-500" />
+                Makeup Credits
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {makeup.children.map((c) => {
+                const eligible = makeup.options.filter(
+                  (o) => c.childAge == null || (o.minAge <= c.childAge && c.childAge <= o.maxAge)
+                );
+                return (
+                  <div key={c.childId} className="mb-6 last:mb-0">
+                    <p className="font-semibold text-gray-900 mb-1">
+                      {c.childName} has {c.credits} makeup {c.credits === 1 ? "credit" : "credits"} available
+                    </p>
+                    <p className="text-sm text-gray-500 mb-3">
+                      Book a makeup session below - no payment needed. Credits expire at the end of term.
+                    </p>
+                    {eligible.length === 0 ? (
+                      <p className="text-sm text-gray-500 italic">
+                        No makeup sessions are open right now. We'll let you know when holiday program spots become available.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {eligible.map((o) => (
+                          <div key={o.id} className="flex items-center justify-between bg-orange-50 rounded-lg px-4 py-3">
+                            <div>
+                              <p className="font-medium text-gray-900">{o.name}</p>
+                              <p className="text-sm text-gray-500">
+                                {["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][o.dayOfWeek % 7]}s {o.startTime}
+                                {o.venueName ? ` · ${o.venueName}` : ""} · {o.spotsRemaining} spots left
+                              </p>
+                            </div>
+                            <Button
+                              size="sm"
+                              disabled={bookingClassId === o.id}
+                              onClick={() => bookMakeup(c.childId, o.id)}
+                              className="bg-orange-500 hover:bg-orange-600 text-white"
+                            >
+                              {bookingClassId === o.id ? "Booking..." : "Book makeup"}
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Per-child enrollment sections */}
         {enrollmentsLoading ? (

@@ -1390,33 +1390,60 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getClassesByCoach(userId: string): Promise<any[]> {
+  async getClassesByCoach(userId: string, allClasses = false): Promise<any[]> {
     try {
-      // Use raw SQL to avoid Drizzle ORM issues
-      const result = await db.execute(sql`
-        SELECT 
-          c.id,
-          c.name,
-          c.day_of_week as "dayOfWeek",
-          c.start_time as "startTime",
-          c.end_time as "endTime",
-          c.venue_id as "venueId",
-          v.name as "venueName",
-          c.current_enrollment as "currentEnrollments",
-          c.max_capacity as "maxCapacity"
-        FROM classes c
-        LEFT JOIN venues v ON c.venue_id = v.id
-        INNER JOIN coaches coach ON c.coach_id = coach.id
-        WHERE coach.user_id = ${userId}
-        ORDER BY c.day_of_week, c.start_time
-      `);
-      
+      // allClasses=true (admin view) returns every active class regardless of coach
+      const result = allClasses
+        ? await db.execute(sql`
+            SELECT
+              c.id,
+              c.name,
+              c.day_of_week as "dayOfWeek",
+              c.start_time as "startTime",
+              c.end_time as "endTime",
+              c.venue_id as "venueId",
+              v.name as "venueName",
+              c.current_enrollment as "currentEnrollments",
+              c.max_capacity as "maxCapacity"
+            FROM classes c
+            LEFT JOIN venues v ON c.venue_id = v.id
+            WHERE c.status = 'active'
+            ORDER BY c.day_of_week, c.start_time
+          `)
+        : await db.execute(sql`
+            SELECT
+              c.id,
+              c.name,
+              c.day_of_week as "dayOfWeek",
+              c.start_time as "startTime",
+              c.end_time as "endTime",
+              c.venue_id as "venueId",
+              v.name as "venueName",
+              c.current_enrollment as "currentEnrollments",
+              c.max_capacity as "maxCapacity"
+            FROM classes c
+            LEFT JOIN venues v ON c.venue_id = v.id
+            INNER JOIN coaches coach ON c.coach_id = coach.id
+            WHERE coach.user_id = ${userId}
+            ORDER BY c.day_of_week, c.start_time
+          `);
+
       return result.rows;
-      
+
     } catch (error) {
       console.error('Error in getClassesByCoach:', error);
       return [];
     }
+  }
+
+  async getEnrollmentByChildAndClass(childId: string, classId: string): Promise<Enrollment | undefined> {
+    const [row] = await db
+      .select()
+      .from(enrollments)
+      .where(and(eq(enrollments.childId, childId), eq(enrollments.classId, classId)))
+      .orderBy(desc(enrollments.createdAt))
+      .limit(1);
+    return row;
   }
 
   // Term Configuration operations
