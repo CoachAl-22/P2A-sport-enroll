@@ -20,7 +20,7 @@ const GOALS: Record<AgeGroup, { label: string; sportType: string }[]> = {
     { label: 'Get faster for my team sport (AFL, soccer, basketball…)', sportType: 'team_sport_speed' },
   ],
   academy: [
-    { label: 'Athletics & track training', sportType: 'academy_year7_above' },
+    { label: 'Athletics & track training', sportType: 'team_sport_speed' },
     { label: 'Get faster for my team sport (AFL, soccer, basketball…)', sportType: 'team_sport_speed' },
     { label: 'Train at a competitive / elite level', sportType: 'senior_squad' },
   ],
@@ -106,7 +106,7 @@ export function ProgramQuiz({ onClose }: Props) {
             <div className="flex flex-col gap-3">
               {goals.map((goal) => (
                 <button
-                  key={goal.sportType}
+                  key={goal.label}
                   onClick={() => handleGoalSelect(goal.sportType)}
                   className="w-full text-left px-4 py-3 rounded-xl border-2 border-gray-200 font-medium text-gray-700 hover:border-blue-600 hover:text-blue-600 active:bg-blue-50 transition-all"
                 >

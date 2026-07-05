@@ -79,14 +79,14 @@ export default function Navbar() {
                     Speed & Running
                   </Button>
                 </a>
-                <Link href="/education">
+                <a href="https://www.skool.com/power2adapt-speed-school-8929" target="_blank" rel="noopener noreferrer">
                   <Button
-                    variant={location === "/education" ? "default" : "ghost"}
+                    variant="ghost"
                     className="text-gray-700 hover:text-primary-500 font-medium"
                   >
                     Education Hub
                   </Button>
-                </Link>
+                </a>
                 <Link href="/questionnaire">
                   <Button
                     variant={location === "/questionnaire" ? "default" : "ghost"}
@@ -158,14 +158,14 @@ export default function Navbar() {
                     Waitlists
                   </Button>
                 </Link>
-                  <Link href="/education">
+                  <a href="https://www.skool.com/power2adapt-speed-school-8929" target="_blank" rel="noopener noreferrer">
                     <Button
-                      variant={location === "/education" ? "default" : "ghost"}
+                      variant="ghost"
                       className="text-gray-700 hover:text-primary-500 font-medium"
                     >
                       Education Hub
                     </Button>
-                  </Link>
+                  </a>
                   <Link href="/questionnaire">
                     <Button
                       variant={location === "/questionnaire" ? "default" : "ghost"}
@@ -336,15 +336,15 @@ export default function Navbar() {
                       Speed & Running
                     </Button>
                   </a>
-                  <Link href="/education">
+                  <a href="https://www.skool.com/power2adapt-speed-school-8929" target="_blank" rel="noopener noreferrer">
                     <Button
-                      variant={location === "/education" ? "default" : "ghost"}
+                      variant="ghost"
                       className="w-full justify-start text-gray-700"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Education Hub
                     </Button>
-                  </Link>
+                  </a>
                   <Link href="/questionnaire">
                     <Button
                       variant={location === "/questionnaire" ? "default" : "ghost"}
@@ -423,15 +423,15 @@ export default function Navbar() {
                       Waitlists
                     </Button>
                   </Link>
-                  <Link href="/education">
+                  <a href="https://www.skool.com/power2adapt-speed-school-8929" target="_blank" rel="noopener noreferrer">
                     <Button
-                      variant={location === "/education" ? "default" : "ghost"}
+                      variant="ghost"
                       className="w-full justify-start text-gray-700"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Education Hub
                     </Button>
-                  </Link>
+                  </a>
                   <Link href="/questionnaire">
                     <Button
                       variant={location === "/questionnaire" ? "default" : "ghost"}
