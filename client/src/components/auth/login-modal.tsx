@@ -11,7 +11,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X } from "lucide-react";
+import { X, Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
   identifier: z.string().min(1, "Email, mobile, or user ID is required"),
@@ -25,10 +25,6 @@ const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -42,6 +38,7 @@ interface LoginModalProps {
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [activeTab, setActiveTab] = useState("login");
   const [isSendingReset, setIsSendingReset] = useState(false);
+  const [showRegPassword, setShowRegPassword] = useState(false);
   const { toast } = useToast();
 
   const handleForgotPassword = async () => {
@@ -89,7 +86,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       firstName: "",
       lastName: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
@@ -127,8 +123,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   const handleRegister = async (data: RegisterForm) => {
     try {
-      const { confirmPassword, ...registerData } = data;
-      const response = await apiRequest("POST", "/api/auth/register", registerData);
+      const response = await apiRequest("POST", "/api/auth/register", data);
       
       // Clear all queries and refetch auth state
       queryClient.clear();
@@ -320,32 +315,26 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <Label htmlFor="regPassword" className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </Label>
-                <Input
-                  id="regPassword"
-                  type="password"
-                  placeholder="Create a password"
-                  {...registerForm.register("password")}
-                />
+                <div className="relative">
+                  <Input
+                    id="regPassword"
+                    type={showRegPassword ? "text" : "password"}
+                    placeholder="Create a password"
+                    {...registerForm.register("password")}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowRegPassword((v) => !v)}
+                    className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600"
+                    aria-label={showRegPassword ? "Hide password" : "Show password"}
+                  >
+                    {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
                 {registerForm.formState.errors.password && (
                   <p className="text-red-500 text-sm mt-1">
                     {registerForm.formState.errors.password.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password
-                </Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="Confirm your password"
-                  {...registerForm.register("confirmPassword")}
-                />
-                {registerForm.formState.errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {registerForm.formState.errors.confirmPassword.message}
                   </p>
                 )}
               </div>

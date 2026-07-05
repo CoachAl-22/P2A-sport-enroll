@@ -72,6 +72,7 @@ const TermPaymentForm = ({ enrollment, confirmationId, totalAmount }: { enrollme
           <span className="flex items-center justify-center gap-2"><CreditCard className="w-4 h-4" />Pay ${(price * 1.1).toFixed(2)} now</span>
         )}
       </Button>
+      <p className="text-center text-xs text-gray-400 flex items-center justify-center gap-1"><Lock className="w-3 h-3" />Payments secured by Stripe</p>
       <p className="text-center text-xs text-gray-400">By completing this payment, you agree to Power2ADAPT's terms and conditions</p>
     </form>
   );
@@ -149,6 +150,7 @@ const MonthlyPaymentForm = ({ enrollment, onSuccess }: { enrollment: any; onSucc
           <span className="flex items-center justify-center gap-2"><CalendarDays className="w-4 h-4" />Start monthly plan — $121/month</span>
         )}
       </Button>
+      <p className="text-center text-xs text-gray-400 flex items-center justify-center gap-1"><Lock className="w-3 h-3" />Payments secured by Stripe</p>
       <p className="text-center text-xs text-gray-400">By activating this plan, you agree to Power2ADAPT's terms and conditions</p>
     </form>
   );
