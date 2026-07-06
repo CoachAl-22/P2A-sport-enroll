@@ -19,12 +19,24 @@ const stripePromise = validStripeKey ? loadStripe(validStripeKey) : null;
 const MONTHLY_ELIGIBLE = ["academy_year7_above", "senior_squad", "empowered_athlete_program"];
 
 // ── Term (lump sum) form ──────────────────────────────────────────────────────
-const TermPaymentForm = ({ enrollment, confirmationId, totalAmount }: { enrollment: any; confirmationId?: string; totalAmount?: number }) => {
+const TermPaymentForm = ({ enrollment, confirmationId, totalAmount, chargeInfo }: {
+  enrollment: any;
+  confirmationId?: string;
+  totalAmount?: number;
+  // Server-computed charge: authoritative inc-GST total + sibling discount
+  chargeInfo?: { totalCents: number; discountCents: number } | null;
+}) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
   const price = totalAmount ?? parseFloat(enrollment?.class?.pricePerTerm || "0");
+
+  // Prefer the server's numbers (what Stripe will actually charge)
+  const totalIncGst = chargeInfo ? chargeInfo.totalCents / 100 : price * 1.1;
+  const discount = chargeInfo ? chargeInfo.discountCents / 100 : 0;
+  const feeBeforeDiscount = totalIncGst + discount;
+  const gstPortion = totalIncGst - totalIncGst / 1.1;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +44,10 @@ const TermPaymentForm = ({ enrollment, confirmationId, totalAmount }: { enrollme
     if (!stripe || !elements) { setIsProcessing(false); return; }
     try {
       const enrollmentId = confirmationId ?? enrollment?.enrollment?.id ?? enrollment?.id;
+      const discountParam = chargeInfo && chargeInfo.discountCents > 0 ? `&siblingDiscount=${chargeInfo.discountCents}` : "";
       const { error } = await stripe.confirmPayment({
         elements,
-        confirmParams: { return_url: `${window.location.origin}/confirmation?enrollmentId=${enrollmentId}` },
+        confirmParams: { return_url: `${window.location.origin}/confirmation?enrollmentId=${enrollmentId}${discountParam}` },
       });
       if (error) {
         toast({ title: "Payment Failed", description: error.message, variant: "destructive" });
@@ -57,11 +70,16 @@ const TermPaymentForm = ({ enrollment, confirmationId, totalAmount }: { enrollme
 
       <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
         <h4 className="font-semibold text-gray-900">Payment Summary</h4>
-        <div className="flex justify-between"><span>Term fee</span><span>${price.toFixed(2)}</span></div>
-        <div className="flex justify-between"><span>GST (10%)</span><span>${(price * 0.1).toFixed(2)}</span></div>
+        <div className="flex justify-between"><span>Term fee (inc. GST)</span><span>${feeBeforeDiscount.toFixed(2)}</span></div>
+        {discount > 0 && (
+          <div className="flex justify-between text-green-600 font-medium">
+            <span>Sibling discount (20% off 3rd+ child)</span><span>−${discount.toFixed(2)}</span>
+          </div>
+        )}
+        <div className="flex justify-between text-gray-500"><span>Includes GST (10%)</span><span>${gstPortion.toFixed(2)}</span></div>
         <div className="border-t pt-2 flex justify-between font-semibold">
           <span>Total charged today</span>
-          <span>${(price * 1.1).toFixed(2)} AUD</span>
+          <span>${totalIncGst.toFixed(2)} AUD</span>
         </div>
       </div>
 
@@ -69,7 +87,7 @@ const TermPaymentForm = ({ enrollment, confirmationId, totalAmount }: { enrollme
         {isProcessing ? (
           <span className="flex items-center gap-2"><div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />Processing...</span>
         ) : (
-          <span className="flex items-center justify-center gap-2"><CreditCard className="w-4 h-4" />Pay ${(price * 1.1).toFixed(2)} now</span>
+          <span className="flex items-center justify-center gap-2"><CreditCard className="w-4 h-4" />Pay ${totalIncGst.toFixed(2)} now</span>
         )}
       </Button>
       <p className="text-center text-xs text-gray-400 flex items-center justify-center gap-1"><Lock className="w-3 h-3" />Payments secured by Stripe</p>
@@ -160,8 +178,9 @@ const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Frid
 const getDayName = (d: number) => DAY_NAMES[d] ?? "";
 
 // ── Summary card — defined outside Checkout to keep a stable component type ──
-const SummaryCard = ({ isBatch, batchEnrollments, batchTotal, enrollment }: {
+const SummaryCard = ({ isBatch, batchEnrollments, batchTotal, enrollment, discountCents = 0, discountedIndexes = [] }: {
   isBatch: boolean; batchEnrollments: any[]; batchTotal: number; enrollment: any;
+  discountCents?: number; discountedIndexes?: number[];
 }) => {
   if (isBatch) {
     return (
@@ -185,7 +204,12 @@ const SummaryCard = ({ isBatch, batchEnrollments, batchTotal, enrollment }: {
                     <span className="font-heading font-bold text-gray-900">
                       {row.child?.firstName} {row.child?.lastName}
                     </span>
-                    <Badge className="bg-green-100 text-green-800 text-xs">Enrolled</Badge>
+                    <span className="flex items-center gap-1">
+                      {discountedIndexes.includes(i) && (
+                        <Badge className="bg-emerald-100 text-emerald-800 text-xs">20% sibling discount</Badge>
+                      )}
+                      <Badge className="bg-green-100 text-green-800 text-xs">Enrolled</Badge>
+                    </span>
                   </div>
                   <p className="text-sm text-gray-600 mb-2">{row.class?.name}</p>
                   <div className="space-y-1 text-xs text-gray-500">
@@ -197,11 +221,17 @@ const SummaryCard = ({ isBatch, batchEnrollments, batchTotal, enrollment }: {
                   </div>
                 </div>
               ))}
-              <div className="border-t pt-3 flex justify-between font-semibold">
-                <span>Total (ex. GST)</span>
-                <span className="text-primary-600">${batchTotal.toFixed(0)}</span>
+              {discountCents > 0 && (
+                <div className="border-t pt-3 flex justify-between text-sm text-green-600 font-medium">
+                  <span>Sibling discount (20% off 3rd+ child)</span>
+                  <span>−${(discountCents / 100).toFixed(2)}</span>
+                </div>
+              )}
+              <div className={`${discountCents > 0 ? "" : "border-t "}pt-3 flex justify-between font-semibold`}>
+                <span>Total (inc. GST)</span>
+                <span className="text-primary-600">${batchTotal.toFixed(2)}</span>
               </div>
-              <p className="text-xs text-gray-400">GST of ${(batchTotal * 0.1).toFixed(2)} included at checkout</p>
+              <p className="text-xs text-gray-400">Includes GST of ${(batchTotal - batchTotal / 1.1).toFixed(2)}</p>
             </>
           )}
         </CardContent>
@@ -254,6 +284,9 @@ export default function Checkout() {
   const [confirmed, setConfirmed] = useState(false);
   const [batchEnrollments, setBatchEnrollments] = useState<any[]>([]);
   const [batchTotal, setBatchTotal] = useState(0);
+  // Server-computed charge breakdown (inc-GST total + sibling discount)
+  const [chargeInfo, setChargeInfo] = useState<{ totalCents: number; discountCents: number } | null>(null);
+  const [discountedIndexes, setDiscountedIndexes] = useState<number[]>([]);
   // Resolve stripe promise to actual instance — avoids "Illegal constructor" from Elements
   // receiving a pending Promise that gets interrupted by a re-render
   const [stripeInstance, setStripeInstance] = useState<any>(null);
@@ -289,7 +322,10 @@ export default function Checkout() {
     if (isBatch || paymentMode !== "term" || !enrollmentId || !enrollment || clientSecret) return;
     apiRequest("POST", "/api/create-payment-intent", { enrollmentId })
       .then(r => r.json())
-      .then(d => setClientSecret(d.clientSecret))
+      .then(d => {
+        setClientSecret(d.clientSecret);
+        if (typeof d.totalCents === "number") setChargeInfo({ totalCents: d.totalCents, discountCents: d.discountCents ?? 0 });
+      })
       .catch(() => toast({ title: "Payment Error", description: "Failed to initialise payment.", variant: "destructive" }));
   }, [isBatch, paymentMode, enrollmentId, enrollment, clientSecret, toast]);
 
@@ -311,6 +347,8 @@ export default function Checkout() {
         setClientSecret(d.clientSecret);
         setBatchEnrollments(d.enrollments ?? []);
         setBatchTotal(d.totalCents / 100);
+        if (typeof d.totalCents === "number") setChargeInfo({ totalCents: d.totalCents, discountCents: d.discountCents ?? 0 });
+        setDiscountedIndexes(d.discountedIndexes ?? []);
       })
       .catch(() => toast({ title: "Payment Error", description: "Failed to initialise payment.", variant: "destructive" }));
   }, [isBatch, clientSecret]);
@@ -350,7 +388,14 @@ export default function Checkout() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          <SummaryCard isBatch={isBatch} batchEnrollments={batchEnrollments} batchTotal={batchTotal} enrollment={enrollment} />
+          <SummaryCard
+            isBatch={isBatch}
+            batchEnrollments={batchEnrollments}
+            batchTotal={batchTotal}
+            enrollment={enrollment}
+            discountCents={chargeInfo?.discountCents ?? 0}
+            discountedIndexes={discountedIndexes}
+          />
 
           {/* Right: Payment */}
           <Card>
@@ -415,6 +460,7 @@ export default function Checkout() {
                           enrollment={isBatch ? (batchEnrollments[0] ?? {}) : enrollment}
                           confirmationId={confirmationId}
                           totalAmount={isBatch ? batchTotal : undefined}
+                          chargeInfo={chargeInfo}
                         />
                       </Elements>
                     </>

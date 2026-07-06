@@ -1288,8 +1288,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const { term, year } = req.query as { term: string; year: string };
     if (!term || !year) return res.json({ eligible: false, count: 0 });
     try {
-      const count = await storage.getActiveEnrolmentCountForParent(userId, term, parseInt(year, 10));
-      res.json({ eligible: count >= 2, count });
+      // Distinct enrolled children: the NEXT child to enrol gets 20% off when
+      // the family already has 2+ siblings active this term (3rd-child rule)
+      const childIds = await storage.getActiveSiblingChildIdsForParent(userId, term, parseInt(year, 10));
+      res.json({ eligible: childIds.length >= 2, count: childIds.length });
     } catch (error: any) {
       res.status(500).json({ error: 'Failed to check sibling discount' });
     }
@@ -2083,13 +2085,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const chargeBase = pendingPayment?.amount ?? classData.pricePerTerm;
       const fullAmount = Math.round(parseFloat(chargeBase) * 100); // Convert to cents
 
-      // Sibling discount (no-op while SIBLING_DISCOUNT_ENABLED is false —
-      // mechanic awaiting confirmation, see server/siblingDiscount.ts)
-      const priorCount = await storage.getActiveEnrolmentCountForParent(userId, classData.term, classData.year);
-      const { discountedCents, discountCents } = applySiblingDiscount([fullAmount], priorCount);
+      // Sibling discount: 20% off the 3rd+ distinct child of the family
+      // active in this term (see server/siblingDiscount.ts)
+      const priorChildIds = await storage.getActiveSiblingChildIdsForParent(userId, classData.term, classData.year);
+      const { discountedCents, discountCents } = applySiblingDiscount(
+        [{ childId: enrollment.childId, cents: fullAmount }],
+        priorChildIds,
+      );
       const amount = discountedCents[0];
       if (discountCents > 0) {
-        console.log(`[sibling-discount] payment intent for enrollment ${enrollmentId}: ${fullAmount} -> ${amount} cents (prior active: ${priorCount})`);
+        console.log(`[sibling-discount] payment intent for enrollment ${enrollmentId}: ${fullAmount} -> ${amount} cents (prior siblings active: ${priorChildIds.length})`);
       }
 
       if (!stripe) {
@@ -2112,7 +2117,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
-      res.json({ clientSecret: paymentIntent.client_secret });
+      res.json({ clientSecret: paymentIntent.client_secret, totalCents: amount, discountCents });
     } catch (error: any) {
       res.status(500).json({ message: "Error creating payment intent: " + error.message });
     }
@@ -2143,18 +2148,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }),
       );
 
-      // Sibling discount (no-op while SIBLING_DISCOUNT_ENABLED is false —
-      // mechanic awaiting confirmation, see server/siblingDiscount.ts).
-      // Prior count is the family's already-active enrolments this term; the
-      // children in THIS batch count on top of it, in batch order.
+      // Sibling discount: 20% off the 3rd+ distinct child of the family.
+      // Already-active siblings this term count first, then this batch's
+      // children in order of first appearance.
       const firstClass = matched[0].class;
-      const priorCount = firstClass
-        ? await storage.getActiveEnrolmentCountForParent(userId, firstClass.term, firstClass.year)
-        : 0;
-      const { discountedCents, discountCents } = applySiblingDiscount(perEnrollmentCents, priorCount);
+      const priorChildIds = firstClass
+        ? await storage.getActiveSiblingChildIdsForParent(userId, firstClass.term, firstClass.year)
+        : [];
+      const { discountedCents, discountCents, discountedIndexes } = applySiblingDiscount(
+        matched.map((r, i) => ({ childId: r.enrollment.childId, cents: perEnrollmentCents[i] })),
+        priorChildIds,
+      );
       const totalCents = discountedCents.reduce((sum, c) => sum + c, 0);
       if (discountCents > 0) {
-        console.log(`[sibling-discount] batch intent for ${enrollmentIds.length} enrolments: -${discountCents} cents (prior active: ${priorCount})`);
+        console.log(`[sibling-discount] batch intent for ${enrollmentIds.length} enrolments: -${discountCents} cents (prior siblings active: ${priorChildIds.length})`);
       }
 
       if (!stripe) return res.status(500).json({ message: "Payment processing not configured" });
@@ -2173,7 +2180,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
-      res.json({ clientSecret: paymentIntent.client_secret, totalCents, enrollments: matched });
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+        totalCents,
+        discountCents,
+        // Per-enrolment inc-GST amounts after discount + which lines got 20% off,
+        // so the checkout page can show the real per-child breakdown
+        perEnrollmentCents: discountedCents,
+        discountedIndexes,
+        enrollments: matched,
+      });
     } catch (error: any) {
       res.status(500).json({ message: "Error creating batch payment intent: " + error.message });
     }

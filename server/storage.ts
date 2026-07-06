@@ -136,6 +136,7 @@ export interface IStorage {
   }): Promise<Class[]>;
   getClassesWithSpots(filters: { sportType?: string; venueId?: string; term?: string; year?: number; dayOfWeek?: number; }): Promise<any[]>;
   getActiveEnrolmentCountForParent(parentId: string, term: string, year: number): Promise<number>;
+  getActiveSiblingChildIdsForParent(parentId: string, term: string, year: number): Promise<string[]>;
   createWaitlistWithHolidayReservation(childId: string, classId: string, parentId: string): Promise<{ waitlistEntry: any; holidayReservation: any | null }>;
   createClass(classData: InsertClass): Promise<Class>;
   getClassesByTermConfigId(termConfigId: string): Promise<Class[]>;
@@ -530,6 +531,24 @@ export class DatabaseStorage implements IStorage {
         )
       );
     return rows.length;
+  }
+
+  // Distinct children of this parent with an active enrolment in the term —
+  // the sibling-discount counter (a child in two classes still counts once)
+  async getActiveSiblingChildIdsForParent(parentId: string, term: string, year: number): Promise<string[]> {
+    const rows = await db
+      .selectDistinct({ childId: enrollments.childId })
+      .from(enrollments)
+      .innerJoin(classes, eq(enrollments.classId, classes.id))
+      .where(
+        and(
+          eq(enrollments.parentId, parentId),
+          eq(enrollments.status, 'active'),
+          eq(classes.term, term as any),
+          eq(classes.year, year)
+        )
+      );
+    return rows.map((r) => r.childId);
   }
 
   async createWaitlistWithHolidayReservation(

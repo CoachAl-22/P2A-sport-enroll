@@ -1,20 +1,23 @@
-// Sibling discount (legacy SportsBiz rule): 20% off when a THIRD sibling
-// enrols in the program.
+// Sibling discount (legacy SportsBiz rule, confirmed by Al 2026-07-06):
+// 20% off the individual fee of the 3rd sibling and each subsequent sibling.
+// Children 1 and 2 pay full price; the discount applies per-child to that
+// child's own fee — never to the family total.
 //
-// ── HOLD: the exact mechanic is awaiting Al's confirmation ──────────────────
-// Open questions before enabling:
-//   1. Does the 20% apply only to the 3rd (cheapest? as-ordered?) child's fee,
-//      or to the whole family total?
-//   2. Does a 4th+ child also get 20%?
-//   3. Is the threshold counted per distinct CHILD or per enrolment?
-//      (getActiveEnrolmentCountForParent counts enrolments — a child in two
-//      classes counts twice. Probably should be distinct children.)
-// The placeholder mechanic below is: 20% off the fee of every child at family
-// position >= 3 (prior active enrolments + position within this checkout).
-// Flip SIBLING_DISCOUNT_ENABLED to true once the mechanic is confirmed.
-export const SIBLING_DISCOUNT_ENABLED = false;
+// "Sibling" = distinct child linked to the same parent account, enrolled in
+// the same term/year. A child in two classes counts once for positioning,
+// but every enrolment belonging to a discounted child gets the 20% off.
+// Prices are GST-inclusive when they reach this module; 20% off an
+// inc-GST amount equals 20% off ex-GST then ×1.1 (multiplication commutes),
+// so GST stays exactly 10% of the discounted ex-GST base.
+export const SIBLING_DISCOUNT_ENABLED = true;
 export const SIBLING_DISCOUNT_RATE = 0.2;
 export const SIBLING_DISCOUNT_FROM_POSITION = 3; // 1-based family position
+
+export interface SiblingDiscountItem {
+  childId: string;
+  /** GST-inclusive amount for this enrolment, in cents */
+  cents: number;
+}
 
 export interface SiblingDiscountResult {
   /** Per-item amounts after discount, same order as the input */
@@ -26,32 +29,41 @@ export interface SiblingDiscountResult {
 }
 
 /**
- * Apply the sibling discount to a batch of per-enrolment amounts.
+ * Apply the sibling discount to a checkout batch.
  *
- * @param perItemCents  GST-inclusive amount per enrolment in this checkout,
- *                      in cents, in checkout order
- * @param priorCount    the family's already-active enrolment count for the
- *                      same term/year (storage.getActiveEnrolmentCountForParent)
+ * @param items          this checkout's enrolments in order (childId + inc-GST cents)
+ * @param priorChildIds  distinct children of the family already ACTIVE in the
+ *                       same term/year (storage.getActiveSiblingChildIdsForParent)
  */
 export function applySiblingDiscount(
-  perItemCents: number[],
-  priorCount: number,
+  items: SiblingDiscountItem[],
+  priorChildIds: string[],
 ): SiblingDiscountResult {
   if (!SIBLING_DISCOUNT_ENABLED) {
-    return { discountedCents: [...perItemCents], discountCents: 0, discountedIndexes: [] };
+    return { discountedCents: items.map((i) => i.cents), discountCents: 0, discountedIndexes: [] };
   }
+
+  // Family position per distinct child: already-active siblings first, then
+  // this checkout's children in order of first appearance.
+  const position = new Map<string, number>();
+  for (const id of priorChildIds) {
+    if (!position.has(id)) position.set(id, position.size + 1);
+  }
+  for (const item of items) {
+    if (!position.has(item.childId)) position.set(item.childId, position.size + 1);
+  }
+
   const discountedCents: number[] = [];
   const discountedIndexes: number[] = [];
   let discountCents = 0;
-  perItemCents.forEach((cents, i) => {
-    const familyPosition = priorCount + i + 1; // 1-based
-    if (familyPosition >= SIBLING_DISCOUNT_FROM_POSITION) {
-      const off = Math.round(cents * SIBLING_DISCOUNT_RATE);
+  items.forEach((item, i) => {
+    if ((position.get(item.childId) ?? 1) >= SIBLING_DISCOUNT_FROM_POSITION) {
+      const off = Math.round(item.cents * SIBLING_DISCOUNT_RATE);
       discountCents += off;
-      discountedCents.push(cents - off);
+      discountedCents.push(item.cents - off);
       discountedIndexes.push(i);
     } else {
-      discountedCents.push(cents);
+      discountedCents.push(item.cents);
     }
   });
   return { discountedCents, discountCents, discountedIndexes };
