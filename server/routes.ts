@@ -15,6 +15,7 @@ import crypto from "crypto";
 import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, performanceVideoHighlights } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
+import { applySiblingDiscount } from "./siblingDiscount";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } from "./googleSheets";
 import { db } from "./db";
@@ -2080,7 +2081,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // falling back to the flat term price only if no payment record exists.
       const [pendingPayment] = await storage.getPaymentsByEnrollment(enrollmentId);
       const chargeBase = pendingPayment?.amount ?? classData.pricePerTerm;
-      const amount = Math.round(parseFloat(chargeBase) * 100); // Convert to cents
+      const fullAmount = Math.round(parseFloat(chargeBase) * 100); // Convert to cents
+
+      // Sibling discount (no-op while SIBLING_DISCOUNT_ENABLED is false —
+      // mechanic awaiting confirmation, see server/siblingDiscount.ts)
+      const priorCount = await storage.getActiveEnrolmentCountForParent(userId, classData.term, classData.year);
+      const { discountedCents, discountCents } = applySiblingDiscount([fullAmount], priorCount);
+      const amount = discountedCents[0];
+      if (discountCents > 0) {
+        console.log(`[sibling-discount] payment intent for enrollment ${enrollmentId}: ${fullAmount} -> ${amount} cents (prior active: ${priorCount})`);
+      }
 
       if (!stripe) {
         return res.status(500).json({ message: "Payment processing not configured" });
@@ -2098,6 +2108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         metadata: {
           enrollmentId: enrollment.id,
           userId,
+          ...(discountCents > 0 ? { siblingDiscountCents: String(discountCents) } : {}),
         },
       });
 
@@ -2131,7 +2142,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return Math.round(price * 100);
         }),
       );
-      const totalCents = perEnrollmentCents.reduce((sum, c) => sum + c, 0);
+
+      // Sibling discount (no-op while SIBLING_DISCOUNT_ENABLED is false —
+      // mechanic awaiting confirmation, see server/siblingDiscount.ts).
+      // Prior count is the family's already-active enrolments this term; the
+      // children in THIS batch count on top of it, in batch order.
+      const firstClass = matched[0].class;
+      const priorCount = firstClass
+        ? await storage.getActiveEnrolmentCountForParent(userId, firstClass.term, firstClass.year)
+        : 0;
+      const { discountedCents, discountCents } = applySiblingDiscount(perEnrollmentCents, priorCount);
+      const totalCents = discountedCents.reduce((sum, c) => sum + c, 0);
+      if (discountCents > 0) {
+        console.log(`[sibling-discount] batch intent for ${enrollmentIds.length} enrolments: -${discountCents} cents (prior active: ${priorCount})`);
+      }
 
       if (!stripe) return res.status(500).json({ message: "Payment processing not configured" });
 
@@ -2145,6 +2169,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         metadata: {
           enrollmentIds: enrollmentIds.join(","),
           userId,
+          ...(discountCents > 0 ? { siblingDiscountCents: String(discountCents) } : {}),
         },
       });
 
