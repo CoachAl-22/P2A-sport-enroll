@@ -2383,21 +2383,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (firstEnrollment) {
               const parent = await storage.getUser(firstEnrollment.parentId);
               const classData = await storage.getClass(firstEnrollment.classId);
-              if (parent?.mobile && classData) {
+              if (!parent?.mobile) {
+                console.warn(`[confirmation] SMS skipped for payment ${paymentIntent.id}: parent ${firstEnrollment.parentId} has no mobile on file`);
+              } else if (!classData) {
+                console.warn(`[confirmation] SMS skipped for payment ${paymentIntent.id}: class ${firstEnrollment.classId} not found`);
+              } else {
                 const amount = (paymentIntent.amount / 100).toFixed(2);
+                let sent = false;
                 if (enrollmentIdList.length === 1) {
                   const child = await storage.getChild(firstEnrollment.childId);
                   const firstSession = await firstSessionInfo(enrollmentIdList[0], classData);
-                  await smsService.sendPaymentConfirmation(parent.mobile, child?.firstName ?? "your athlete", amount, classData.name, firstSession ?? undefined);
+                  sent = await smsService.sendPaymentConfirmation(parent.mobile, child?.firstName ?? "your athlete", amount, classData.name, firstSession ?? undefined);
                 } else {
-                  await smsService.sendSMS(parent.mobile,
+                  sent = await smsService.sendSMS(parent.mobile,
                     `Payment of $${amount} AUD confirmed for ${enrollmentIdList.length} athletes. See your email for each child's class details. Power2ADAPT 🎉`
                   );
                 }
+                if (!sent) console.warn(`[confirmation] SMS to ${parent.mobile} for payment ${paymentIntent.id} did NOT send (Twilio unconfigured or rejected the number — see error above)`);
               }
             }
           } catch (smsError) {
-            console.log('Payment confirmation SMS failed:', smsError);
+            console.error('[confirmation] Payment confirmation SMS failed:', smsError);
           }
 
           // Send a confirmation email per enrolment (child, class, first session, venue, amount)
@@ -2406,15 +2412,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
               const enrollment = await storage.getEnrollment(enrollmentId);
               if (!enrollment) continue;
               const parent = await storage.getUser(enrollment.parentId);
-              if (!parent?.email) continue;
+              if (!parent?.email) {
+                console.warn(`[confirmation] Email skipped for enrollment ${enrollmentId}: parent ${enrollment.parentId} has no email on file`);
+                continue;
+              }
               const classData = await storage.getClass(enrollment.classId);
-              if (!classData) continue;
+              if (!classData) {
+                console.warn(`[confirmation] Email skipped for enrollment ${enrollmentId}: class ${enrollment.classId} not found`);
+                continue;
+              }
               const child = await storage.getChild(enrollment.childId);
               const venue = classData.venueId ? await storage.getVenue(classData.venueId).catch(() => undefined) : undefined;
               const [payment] = await storage.getPaymentsByEnrollment(enrollmentId);
               const firstSession = await firstSessionInfo(enrollmentId, classData);
 
-              await emailService.sendEnrollmentPaymentConfirmation({
+              const emailSent = await emailService.sendEnrollmentPaymentConfirmation({
                 parentEmail: parent.email,
                 parentFirstName: parent.firstName,
                 childName: child ? `${child.firstName} ${child.lastName ?? ""}`.trim() : "Your athlete",
@@ -2426,8 +2438,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 amountPaid: payment?.amount ?? (paymentIntent.amount / 100).toFixed(2),
                 invoiceNumber: payment?.invoiceNumber ?? null,
               });
+              if (!emailSent) console.warn(`[confirmation] Email to ${parent.email} for enrollment ${enrollmentId} did NOT send (Resend unconfigured or rejected — see error above)`);
             } catch (emailError) {
-              console.log('Payment confirmation email failed for enrollment', enrollmentId, emailError);
+              console.error('[confirmation] Payment confirmation email failed for enrollment', enrollmentId, emailError);
             }
           }
         }
@@ -2672,6 +2685,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // SMS notification routes (requires admin role)
+  // Test the enrolment confirmation email + SMS without a real Stripe charge.
+  // Body: { email?: string, mobile?: string } — sends the same templates the
+  // Stripe webhook uses, with sample data, to the supplied targets.
+  app.post("/api/admin/test-confirmation", isAdmin, async (req, res) => {
+    try {
+      const email = typeof req.body?.email === "string" ? req.body.email.trim() : "";
+      const mobile = typeof req.body?.mobile === "string" ? req.body.mobile.trim() : "";
+      if (!email && !mobile) {
+        return res.status(400).json({ message: "Provide an email and/or a mobile to test" });
+      }
+
+      const config = {
+        resendConfigured: !!process.env.RESEND_API_KEY,
+        twilioConfigured: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER),
+      };
+
+      const results: Record<string, boolean | null> = { email: null, sms: null };
+
+      if (email) {
+        results.email = await emailService.sendEnrollmentPaymentConfirmation({
+          parentEmail: email,
+          parentFirstName: "Test",
+          childName: "Test Athlete",
+          className: "TEST — Confirmation Check",
+          dayAndTime: "Thursday 4:00pm",
+          firstSession: "Thursday 16 July, 4:00pm",
+          venueName: "Test Venue",
+          venueAddress: "1 Test St, Melbourne",
+          amountPaid: "33.00",
+          invoiceNumber: "TEST-0000",
+        });
+      }
+      if (mobile) {
+        results.sms = await smsService.sendPaymentConfirmation(
+          mobile, "Test Athlete", "33.00", "TEST — Confirmation Check", "Thursday 16 July, 4:00pm"
+        );
+      }
+
+      console.log(`[confirmation] Admin test send — email: ${email || "-"} (${results.email}), sms: ${mobile || "-"} (${results.sms}), config: ${JSON.stringify(config)}`);
+      res.json({ results, config, message: "false = send failed or service unconfigured — check server logs for the exact error" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Test send failed: " + error.message });
+    }
+  });
+
   app.post("/api/admin/send-sms", async (req, res) => {
     const userId = (req.session as any)?.userId;
     if (!userId) {
