@@ -4,9 +4,9 @@
 // Version: update this string whenever you deploy a new version
 // ═══════════════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'maj-v2.11';
-const STATIC_CACHE = 'maj-static-v2.11';
-const API_CACHE = 'maj-api-v2.11';
+const CACHE_NAME = 'maj-v2.12';
+const STATIC_CACHE = 'maj-static-v2.12';
+const API_CACHE = 'maj-api-v2.12';
 
 // Files to cache immediately on install
 const STATIC_ASSETS = [
@@ -145,6 +145,23 @@ self.addEventListener('fetch', event => {
             );
           });
         })
+    );
+    return;
+  }
+
+  // Page navigations — network first, so a redeploy's fresh HTML (with new
+  // hashed chunk names) is never blocked by a stale cached copy
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(STATIC_CACHE).then(cache => {
+            cache.put(event.request, copy);
+          });
+          return response;
+        })
+        .catch(() => caches.match(event.request).then(cached => cached || caches.match('/my-athletic-journey')))
     );
     return;
   }
