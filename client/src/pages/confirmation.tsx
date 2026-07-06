@@ -152,7 +152,7 @@ export default function ConfirmationPage() {
         </a>
 
         <p className="text-xs text-center text-gray-400">
-          💡 Did you know? Families enrolling multiple children receive a sibling discount — automatically applied at checkout.
+          💡 Enrolling more than one child? Contact us about family payment arrangements — we're happy to help.
         </p>
       </div>
     </div>
