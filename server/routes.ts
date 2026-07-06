@@ -13,8 +13,9 @@ import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import crypto from "crypto";
 import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, performanceVideoHighlights } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, users, performanceVideoHighlights } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
+import { applySiblingDiscount } from "./siblingDiscount";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } from "./googleSheets";
 import { db } from "./db";
@@ -1286,8 +1287,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const { term, year } = req.query as { term: string; year: string };
     if (!term || !year) return res.json({ eligible: false, count: 0 });
     try {
-      const count = await storage.getActiveEnrolmentCountForParent(userId, term, parseInt(year, 10));
-      res.json({ eligible: count >= 2, count });
+      // Distinct enrolled children: the NEXT child to enrol gets 20% off when
+      // the family already has 2+ siblings active this term (3rd-child rule)
+      const childIds = await storage.getActiveSiblingChildIdsForParent(userId, term, parseInt(year, 10));
+      res.json({ eligible: childIds.length >= 2, count: childIds.length });
     } catch (error: any) {
       res.status(500).json({ error: 'Failed to check sibling discount' });
     }
@@ -2137,13 +2140,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!adminUser || adminUser.role !== "admin") return res.status(403).json({ message: "Forbidden" });
     try {
       const rows = await db
-        .select({ enrollment: enrollments, class: classes, child: children, parent: users })
-        .from(enrollments)
-        .leftJoin(classes, eq(enrollments.classId, classes.id))
-        .leftJoin(children, eq(enrollments.childId, children.id))
-        .leftJoin(users, eq(enrollments.parentId, users.id))
-        .where(eq(enrollments.status, "trial_pending" as any))
-        .orderBy(enrollments.enrolledAt);
+        .select({ enrollment: enrollmentsTable, class: classes, child: children, parent: users })
+        .from(enrollmentsTable)
+        .leftJoin(classes, eq(enrollmentsTable.classId, classes.id))
+        .leftJoin(children, eq(enrollmentsTable.childId, children.id))
+        .leftJoin(users, eq(enrollmentsTable.parentId, users.id))
+        .where(eq(enrollmentsTable.status, "trial_pending" as any))
+        .orderBy(enrollmentsTable.enrolledAt);
       res.json(rows);
     } catch (e: any) { res.status(500).json({ message: e.message }); }
   });
@@ -2217,7 +2220,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // falling back to the flat term price only if no payment record exists.
       const [pendingPayment] = await storage.getPaymentsByEnrollment(enrollmentId);
       const chargeBase = pendingPayment?.amount ?? classData.pricePerTerm;
-      const amount = Math.round(parseFloat(chargeBase) * 100); // Convert to cents
+      const fullAmount = Math.round(parseFloat(chargeBase) * 100); // Convert to cents
+
+      // Sibling discount: 20% off the 3rd+ distinct child of the family
+      // active in this term (see server/siblingDiscount.ts)
+      const priorChildIds = await storage.getActiveSiblingChildIdsForParent(userId, classData.term, classData.year);
+      const { discountedCents, discountCents } = applySiblingDiscount(
+        [{ childId: enrollment.childId, cents: fullAmount }],
+        priorChildIds,
+      );
+      const amount = discountedCents[0];
+      if (discountCents > 0) {
+        console.log(`[sibling-discount] payment intent for enrollment ${enrollmentId}: ${fullAmount} -> ${amount} cents (prior siblings active: ${priorChildIds.length})`);
+      }
 
       if (!stripe) {
         return res.status(500).json({ message: "Payment processing not configured" });
@@ -2235,10 +2250,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         metadata: {
           enrollmentId: enrollment.id,
           userId,
+          ...(discountCents > 0 ? { siblingDiscountCents: String(discountCents) } : {}),
         },
       });
 
-      res.json({ clientSecret: paymentIntent.client_secret, amountInclGst: amount / 100 });
+      res.json({ clientSecret: paymentIntent.client_secret, amountInclGst: amount / 100, totalCents: amount, discountCents });
     } catch (error: any) {
       res.status(500).json({ message: "Error creating payment intent: " + error.message });
     }
@@ -2268,7 +2284,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return Math.round(price * 100);
         }),
       );
-      const totalCents = perEnrollmentCents.reduce((sum, c) => sum + c, 0);
+
+      // Sibling discount: 20% off the 3rd+ distinct child of the family.
+      // Already-active siblings this term count first, then this batch's
+      // children in order of first appearance.
+      const firstClass = matched[0].class;
+      const priorChildIds = firstClass
+        ? await storage.getActiveSiblingChildIdsForParent(userId, firstClass.term, firstClass.year)
+        : [];
+      const { discountedCents, discountCents, discountedIndexes } = applySiblingDiscount(
+        matched.map((r, i) => ({ childId: r.enrollment.childId, cents: perEnrollmentCents[i] })),
+        priorChildIds,
+      );
+      const totalCents = discountedCents.reduce((sum, c) => sum + c, 0);
+      if (discountCents > 0) {
+        console.log(`[sibling-discount] batch intent for ${enrollmentIds.length} enrolments: -${discountCents} cents (prior siblings active: ${priorChildIds.length})`);
+      }
 
       if (!stripe) return res.status(500).json({ message: "Payment processing not configured" });
 
@@ -2282,10 +2313,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         metadata: {
           enrollmentIds: enrollmentIds.join(","),
           userId,
+          ...(discountCents > 0 ? { siblingDiscountCents: String(discountCents) } : {}),
         },
       });
 
-      res.json({ clientSecret: paymentIntent.client_secret, totalCents, enrollments: matched });
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+        totalCents,
+        discountCents,
+        // Per-enrolment inc-GST amounts after discount + which lines got 20% off,
+        // so the checkout page can show the real per-child breakdown
+        perEnrollmentCents: discountedCents,
+        discountedIndexes,
+        enrollments: matched,
+      });
     } catch (error: any) {
       res.status(500).json({ message: "Error creating batch payment intent: " + error.message });
     }
@@ -2520,21 +2561,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (firstEnrollment) {
               const parent = await storage.getUser(firstEnrollment.parentId);
               const classData = await storage.getClass(firstEnrollment.classId);
-              if (parent?.mobile && classData) {
+              if (!parent?.mobile) {
+                console.warn(`[confirmation] SMS skipped for payment ${paymentIntent.id}: parent ${firstEnrollment.parentId} has no mobile on file`);
+              } else if (!classData) {
+                console.warn(`[confirmation] SMS skipped for payment ${paymentIntent.id}: class ${firstEnrollment.classId} not found`);
+              } else {
                 const amount = (paymentIntent.amount / 100).toFixed(2);
+                let sent = false;
                 if (enrollmentIdList.length === 1) {
                   const child = await storage.getChild(firstEnrollment.childId);
                   const firstSession = await firstSessionInfo(enrollmentIdList[0], classData);
-                  await smsService.sendPaymentConfirmation(parent.mobile, child?.firstName ?? "your athlete", amount, classData.name, firstSession ?? undefined);
+                  sent = await smsService.sendPaymentConfirmation(parent.mobile, child?.firstName ?? "your athlete", amount, classData.name, firstSession ?? undefined);
                 } else {
-                  await smsService.sendSMS(parent.mobile,
+                  sent = await smsService.sendSMS(parent.mobile,
                     `Payment of $${amount} AUD confirmed for ${enrollmentIdList.length} athletes. See your email for each child's class details. Power2ADAPT 🎉`
                   );
                 }
+                if (!sent) console.warn(`[confirmation] SMS to ${parent.mobile} for payment ${paymentIntent.id} did NOT send (Twilio unconfigured or rejected the number — see error above)`);
               }
             }
           } catch (smsError) {
-            console.log('Payment confirmation SMS failed:', smsError);
+            console.error('[confirmation] Payment confirmation SMS failed:', smsError);
           }
 
           // Send a confirmation email per enrolment (child, class, first session, venue, amount)
@@ -2543,15 +2590,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
               const enrollment = await storage.getEnrollment(enrollmentId);
               if (!enrollment) continue;
               const parent = await storage.getUser(enrollment.parentId);
-              if (!parent?.email) continue;
+              if (!parent?.email) {
+                console.warn(`[confirmation] Email skipped for enrollment ${enrollmentId}: parent ${enrollment.parentId} has no email on file`);
+                continue;
+              }
               const classData = await storage.getClass(enrollment.classId);
-              if (!classData) continue;
+              if (!classData) {
+                console.warn(`[confirmation] Email skipped for enrollment ${enrollmentId}: class ${enrollment.classId} not found`);
+                continue;
+              }
               const child = await storage.getChild(enrollment.childId);
               const venue = classData.venueId ? await storage.getVenue(classData.venueId).catch(() => undefined) : undefined;
               const [payment] = await storage.getPaymentsByEnrollment(enrollmentId);
               const firstSession = await firstSessionInfo(enrollmentId, classData);
 
-              await emailService.sendEnrollmentPaymentConfirmation({
+              const emailSent = await emailService.sendEnrollmentPaymentConfirmation({
                 parentEmail: parent.email,
                 parentFirstName: parent.firstName,
                 childName: child ? `${child.firstName} ${child.lastName ?? ""}`.trim() : "Your athlete",
@@ -2563,8 +2616,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 amountPaid: payment?.amount ?? (paymentIntent.amount / 100).toFixed(2),
                 invoiceNumber: payment?.invoiceNumber ?? null,
               });
+              if (!emailSent) console.warn(`[confirmation] Email to ${parent.email} for enrollment ${enrollmentId} did NOT send (Resend unconfigured or rejected — see error above)`);
             } catch (emailError) {
-              console.log('Payment confirmation email failed for enrollment', enrollmentId, emailError);
+              console.error('[confirmation] Payment confirmation email failed for enrollment', enrollmentId, emailError);
             }
           }
         }
@@ -2809,6 +2863,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // SMS notification routes (requires admin role)
+  // Test the enrolment confirmation email + SMS without a real Stripe charge.
+  // Body: { email?: string, mobile?: string } — sends the same templates the
+  // Stripe webhook uses, with sample data, to the supplied targets.
+  app.post("/api/admin/test-confirmation", isAdmin, async (req, res) => {
+    try {
+      const email = typeof req.body?.email === "string" ? req.body.email.trim() : "";
+      const mobile = typeof req.body?.mobile === "string" ? req.body.mobile.trim() : "";
+      if (!email && !mobile) {
+        return res.status(400).json({ message: "Provide an email and/or a mobile to test" });
+      }
+
+      const config = {
+        resendConfigured: !!process.env.RESEND_API_KEY,
+        twilioConfigured: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER),
+      };
+
+      const results: Record<string, boolean | null> = { email: null, sms: null };
+
+      if (email) {
+        results.email = await emailService.sendEnrollmentPaymentConfirmation({
+          parentEmail: email,
+          parentFirstName: "Test",
+          childName: "Test Athlete",
+          className: "TEST — Confirmation Check",
+          dayAndTime: "Thursday 4:00pm",
+          firstSession: "Thursday 16 July, 4:00pm",
+          venueName: "Test Venue",
+          venueAddress: "1 Test St, Melbourne",
+          amountPaid: "33.00",
+          invoiceNumber: "TEST-0000",
+        });
+      }
+      if (mobile) {
+        results.sms = await smsService.sendPaymentConfirmation(
+          mobile, "Test Athlete", "33.00", "TEST — Confirmation Check", "Thursday 16 July, 4:00pm"
+        );
+      }
+
+      console.log(`[confirmation] Admin test send — email: ${email || "-"} (${results.email}), sms: ${mobile || "-"} (${results.sms}), config: ${JSON.stringify(config)}`);
+      res.json({ results, config, message: "false = send failed or service unconfigured — check server logs for the exact error" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Test send failed: " + error.message });
+    }
+  });
+
   app.post("/api/admin/send-sms", async (req, res) => {
     const userId = (req.session as any)?.userId;
     if (!userId) {

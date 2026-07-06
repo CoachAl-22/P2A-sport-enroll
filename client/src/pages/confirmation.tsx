@@ -151,9 +151,18 @@ export default function ConfirmationPage() {
           Enrol another child
         </a>
 
-        <p className="text-xs text-center text-gray-400">
-          💡 Did you know? Families enrolling multiple children receive a sibling discount — automatically applied at checkout.
-        </p>
+        {(() => {
+          const discountCents = parseInt(params.get("siblingDiscount") || "0", 10);
+          return discountCents > 0 ? (
+            <p className="text-xs text-center text-emerald-600 font-medium">
+              🎉 Sibling discount applied: you saved ${(discountCents / 100).toFixed(2)} (20% off your 3rd+ child's fee).
+            </p>
+          ) : (
+            <p className="text-xs text-center text-gray-400">
+              💡 Enrolling 3 or more children? The 3rd child and beyond each get 20% off — applied automatically at checkout.
+            </p>
+          );
+        })()}
       </div>
     </div>
   );

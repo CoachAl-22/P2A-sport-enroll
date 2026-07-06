@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -5,57 +6,62 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/use-auth";
 import Landing from "@/pages/landing";
-import HighPerformance from "@/pages/high-performance";
-import SeniorSquad from "@/pages/senior-squad";
-import JuniorAcademy from "@/pages/junior-academy";
-import Dashboard from "@/pages/dashboard";
 import Classes from "@/pages/classes";
-import Enrollment from "@/pages/enrollment";
-import Admin from "@/pages/admin";
-import Import from "@/pages/import";
-import Checkout from "@/pages/checkout";
-import Analytics from "@/pages/analytics";
-import AdminSMS from "@/pages/admin-sms";
-import Blog from "@/pages/blog";
-import BlogArticle from "@/pages/blog-article";
-import AdminBlog from "@/pages/admin-blog";
-import AdminTermConfig from "@/pages/admin-term-config";
-import AdminSetupTerm from "@/pages/admin-setup-term";
-import AdminClasses from "@/pages/admin-classes";
-import AdminStaff from "@/pages/admin-staff";
-import AdminCustomers from "@/pages/admin-customers";
-import AdminEnquiries from "@/pages/admin-enquiries";
-import Attendance from "@/pages/attendance";
-import Waitlist from "@/pages/waitlist";
-import ParentHelpCenter from "@/pages/parent-help-center";
-import EnrollmentGuide from "@/pages/enrollment-guide";
-import PaymentSupport from "@/pages/payment-support";
 import NotFound from "@/pages/not-found";
-import ResetPassword from "@/pages/reset-password";
-import VideoHighlights from "@/pages/video-highlights";
-import SharedVideo from "@/pages/shared-video";
-import VideoHighlightsParent from "@/components/video-highlights-parent";
-import AthletePortal from "@/pages/athlete-portal";
-import Coaches from "@/pages/coaches";
-import Questionnaire from "@/pages/questionnaire";
-import AdminAthletes from "@/pages/admin-athletes";
-import AdminMajAthletes from "@/pages/admin-maj-athletes";
-import AdminApplications from "@/pages/admin-applications";
-import AdminSurveys from "@/pages/admin-surveys";
-import AdminTrials from "@/pages/admin-trials";
-import Onboarding from "@/pages/onboarding";
-import ConfirmationPage from "@/pages/confirmation";
-import ReEnrol from "@/pages/re-enrol";
+
+const HighPerformance = lazy(() => import("@/pages/high-performance"));
+const SeniorSquad = lazy(() => import("@/pages/senior-squad"));
+const JuniorAcademy = lazy(() => import("@/pages/junior-academy"));
+const Dashboard = lazy(() => import("@/pages/dashboard"));
+const Enrollment = lazy(() => import("@/pages/enrollment"));
+const Admin = lazy(() => import("@/pages/admin"));
+const Import = lazy(() => import("@/pages/import"));
+const Checkout = lazy(() => import("@/pages/checkout"));
+const Analytics = lazy(() => import("@/pages/analytics"));
+const AdminSMS = lazy(() => import("@/pages/admin-sms"));
+const Blog = lazy(() => import("@/pages/blog"));
+const BlogArticle = lazy(() => import("@/pages/blog-article"));
+const AdminBlog = lazy(() => import("@/pages/admin-blog"));
+const AdminTermConfig = lazy(() => import("@/pages/admin-term-config"));
+const AdminSetupTerm = lazy(() => import("@/pages/admin-setup-term"));
+const AdminClasses = lazy(() => import("@/pages/admin-classes"));
+const AdminStaff = lazy(() => import("@/pages/admin-staff"));
+const AdminCustomers = lazy(() => import("@/pages/admin-customers"));
+const AdminEnquiries = lazy(() => import("@/pages/admin-enquiries"));
+const Attendance = lazy(() => import("@/pages/attendance"));
+const Waitlist = lazy(() => import("@/pages/waitlist"));
+const ParentHelpCenter = lazy(() => import("@/pages/parent-help-center"));
+const EnrollmentGuide = lazy(() => import("@/pages/enrollment-guide"));
+const PaymentSupport = lazy(() => import("@/pages/payment-support"));
+const ResetPassword = lazy(() => import("@/pages/reset-password"));
+const VideoHighlights = lazy(() => import("@/pages/video-highlights"));
+const SharedVideo = lazy(() => import("@/pages/shared-video"));
+const VideoHighlightsParent = lazy(() => import("@/components/video-highlights-parent"));
+const AthletePortal = lazy(() => import("@/pages/athlete-portal"));
+const Coaches = lazy(() => import("@/pages/coaches"));
+const Questionnaire = lazy(() => import("@/pages/questionnaire"));
+const AdminAthletes = lazy(() => import("@/pages/admin-athletes"));
+const AdminMajAthletes = lazy(() => import("@/pages/admin-maj-athletes"));
+const AdminApplications = lazy(() => import("@/pages/admin-applications"));
+const AdminSurveys = lazy(() => import("@/pages/admin-surveys"));
+const AdminTrials = lazy(() => import("@/pages/admin-trials"));
+const Onboarding = lazy(() => import("@/pages/onboarding"));
+const ConfirmationPage = lazy(() => import("@/pages/confirmation"));
+const ReEnrol = lazy(() => import("@/pages/re-enrol"));
+
+function PageSpinner() {
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
+    </div>
+  );
+}
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-        <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
-      </div>
-    );
+    return <PageSpinner />;
   }
 
   return (
@@ -147,7 +153,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <Suspense fallback={<PageSpinner />}>
+          <Router />
+        </Suspense>
       </TooltipProvider>
     </QueryClientProvider>
   );
