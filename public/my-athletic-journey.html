@@ -3779,15 +3779,27 @@ const MAJ_CONTENT = {
   }
 
   // ── SAVE TO API ───────────────────────────────────────────────────────
+  function showSessionExpiredBanner() {
+    if (document.getElementById('maj-session-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'maj-session-banner';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#ef4444;color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:12px;';
+    banner.innerHTML = '⚠️ Your session expired — progress is saved locally but won\'t sync until you log back in. <button onclick="location.reload()" style="background:#fff;color:#ef4444;border:none;padding:4px 14px;border-radius:4px;font-weight:700;cursor:pointer;">Log back in</button>';
+    document.body.prepend(banner);
+  }
+
   async function saveState() {
     if (!state.athlete.id || state.saving) return;
     state.saving = true;
     try {
       const a = state.athlete;
+      // Always save the canonical current position, not any temporary browsing position
+      const saveModule = state._canonicalModule || a.currentModule;
+      const saveWeek   = state._canonicalWeek   || a.currentWeek;
       await apiPost(`/athlete/${a.id}/progress`, {
         xp: a.xp,
-        currentModule: a.currentModule,
-        currentWeek: a.currentWeek,
+        currentModule: saveModule,
+        currentWeek: saveWeek,
         streak: a.streak,
         streakFreezes: a.streakFreezes,
         lastWeekCompletedAt: a.lastWeekCompletedAt,
@@ -3797,9 +3809,18 @@ const MAJ_CONTENT = {
         earnedBadgeKeys: a.earnedBadgeKeys,
         completedWeeks: a.completedWeeks
       });
+      // Successful save — dismiss any session-expired banner
+      const banner = document.getElementById('maj-session-banner');
+      if (banner) banner.remove();
     } catch(e) {
-      console.warn('Save failed, using localStorage fallback', e);
       try { localStorage.setItem('maj_fallback', JSON.stringify(state.athlete)); } catch(_) {}
+      if (e && e.status === 401) {
+        // Session expired — warn the athlete rather than silently losing progress
+        console.warn('Session expired — progress parked in localStorage');
+        showSessionExpiredBanner();
+      } else {
+        console.warn('Save failed, using localStorage fallback', e);
+      }
     } finally {
       state.saving = false;
     }
@@ -3938,8 +3959,8 @@ const MAJ_CONTENT = {
     }
   }
 
-  // If a save failed while offline, the progress was parked in localStorage.
-  // Re-apply it (XP only ever goes up, so higher XP = newer) and re-save.
+  // If a save failed while offline/session-expired, the progress was parked in localStorage.
+  // Re-apply it using both XP and week position to determine which is newer.
   function restoreFallbackProgress() {
     try {
       const raw = localStorage.getItem('maj_fallback');
@@ -3947,7 +3968,11 @@ const MAJ_CONTENT = {
       const saved = JSON.parse(raw);
       if (!saved || saved.id !== state.athlete.id) return;
       localStorage.removeItem('maj_fallback');
-      if ((saved.xp || 0) > (state.athlete.xp || 0)) {
+      // Compare using a combined progress score: module × 100 + week (higher = further ahead)
+      const savedProgress  = (saved.currentModule || 1) * 100 + (saved.currentWeek || 1);
+      const serverProgress = (state.athlete.currentModule || 1) * 100 + (state.athlete.currentWeek || 1);
+      const savedIsAhead   = (saved.xp || 0) > (state.athlete.xp || 0) || savedProgress > serverProgress;
+      if (savedIsAhead) {
         state.athlete = Object.assign({}, state.athlete, saved);
         saveState();
         toast('Recovered your unsaved progress ✅');
@@ -6031,6 +6056,9 @@ const MAJ_CONTENT = {
   // ── ADVANCE WEEK / MODULE ─────────────────────────────────────────────
   async function advanceWeek() {
     const a = state.athlete;
+    // Clear any browse-state — advancing is always to the real next week
+    state._canonicalModule = null;
+    state._canonicalWeek   = null;
     const isLastWeek = a.currentWeek === 8;
     const isLastModule = a.currentModule === 4;
 
@@ -6120,10 +6148,25 @@ const MAJ_CONTENT = {
   function goToWeek(moduleNum, weekNum) {
     const week = MAJ_CONTENT.getWeek(moduleNum, weekNum);
     if (!week) { toast('This week is not yet available'); return; }
+
+    const realMod = state._canonicalModule || state.athlete.currentModule;
+    const realWk  = state._canonicalWeek   || state.athlete.currentWeek;
+    const isPast  = moduleNum < realMod || (moduleNum === realMod && weekNum < realWk);
+
+    if (isPast) {
+      // Browsing a past week — preserve the real current position so saves don't corrupt it
+      state._canonicalModule = realMod;
+      state._canonicalWeek   = realWk;
+    } else {
+      // Navigating to the current or a future week — clear any browse-state
+      state._canonicalModule = null;
+      state._canonicalWeek   = null;
+    }
+
     state.athlete.currentModule = moduleNum;
-    state.athlete.currentWeek = weekNum;
+    state.athlete.currentWeek   = weekNum;
     state.challengeDone = false;
-    state.reflectDone = false;
+    state.reflectDone   = false;
     renderThisWeek();
     navTo('thisweek');
     // Reset to learn tab
