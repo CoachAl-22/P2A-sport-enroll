@@ -5500,6 +5500,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // ── Restore Leo Wilson's progress to week 8 ───────────────────────
+  // His weeks 3-7 were lost due to silent session-expiry save failures.
+  // This migration is idempotent: only runs if he is still behind week 8.
+  (async () => {
+    try {
+      const [leo] = await db.select().from(majAthletes).where(eq(majAthletes.username, "leo"));
+      if (leo && (leo.currentWeek ?? 1) < 8 && (leo.currentModule ?? 1) <= 1) {
+        const completedWeeks: Record<string, object> = {};
+        for (let w = 1; w <= 7; w++) {
+          completedWeeks[`1-${w}`] = { learn: true, challenge: true, reflect: true };
+        }
+        await db.update(majAthletes)
+          .set({
+            currentModule: 1,
+            currentWeek: 8,
+            xp: Math.max(leo.xp ?? 0, 245),
+            sessionsCompleted: Math.max(leo.sessionsCompleted ?? 0, 7),
+            completedWeeks,
+            updatedAt: new Date(),
+          })
+          .where(eq(majAthletes.username, "leo"));
+        console.log("[migration] Leo Wilson progress restored to week 8");
+      }
+    } catch (e: any) {
+      console.error("[migration] Leo Wilson restore:", e.message);
+    }
+  })();
+
   const httpServer = createServer(app);
   return httpServer;
 }
