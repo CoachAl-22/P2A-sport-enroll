@@ -1898,14 +1898,62 @@ export class DatabaseStorage implements IStorage {
     sessionsCompleted?: number;
     reflectionsSubmitted?: number;
     earnedBadgeKeys?: string[];
-    completedWeeks?: any[];
+    completedWeeks?: any;
   }): Promise<MajAthlete> {
-    // Client sends lastWeekCompletedAt as an ISO string — convert for the timestamp column
-    const { lastWeekCompletedAt, ...rest } = data;
+    const { lastWeekCompletedAt, completedWeeks, currentModule, currentWeek, xp, ...rest } = data;
+
+    // Fetch current record so we can apply monotonic rules
+    const [current] = await db.select().from(majAthletes).where(eq(majAthletes.id, id));
+
     const set: any = { ...rest, updatedAt: new Date() };
+
     if (lastWeekCompletedAt !== undefined) {
       set.lastWeekCompletedAt = lastWeekCompletedAt ? new Date(lastWeekCompletedAt) : null;
     }
+
+    // completedWeeks: monotonic union — weeks can only be added, never removed.
+    // This prevents a stale tab or old device from wiping weeks the athlete already earned.
+    if (completedWeeks !== undefined) {
+      let existing: Record<string, any> = {};
+      try {
+        const raw = (current as any)?.completedWeeks;
+        if (typeof raw === 'string') existing = JSON.parse(raw);
+        else if (raw && typeof raw === 'object') existing = raw as Record<string, any>;
+      } catch { existing = {}; }
+
+      const incoming: Record<string, any> =
+        typeof completedWeeks === 'string' ? JSON.parse(completedWeeks) :
+        (completedWeeks && typeof completedWeeks === 'object' ? completedWeeks : {});
+
+      // Merge: for each incoming week key, union the activity flags with the existing ones
+      const merged = { ...existing };
+      for (const [key, val] of Object.entries(incoming)) {
+        if (!merged[key]) merged[key] = {};
+        if (val && typeof val === 'object') {
+          // Keep any flag that is true on either side — reflectionText is taken from incoming
+          merged[key] = { ...merged[key], ...val };
+        }
+      }
+      set.completedWeeks = merged;
+    }
+
+    // currentModule / currentWeek: only advance, never go back.
+    // Protects against stale tabs or old-device saves overwriting newer progress.
+    if (currentModule !== undefined && currentWeek !== undefined) {
+      const existingProgress = ((current as any)?.currentModule || 1) * 100 + ((current as any)?.currentWeek || 1);
+      const incomingProgress = currentModule * 100 + currentWeek;
+      if (incomingProgress >= existingProgress) {
+        set.currentModule = currentModule;
+        set.currentWeek   = currentWeek;
+      }
+      // If incoming is behind server, silently keep the server value (no-op for these fields)
+    }
+
+    // XP: only ever increases
+    if (xp !== undefined) {
+      set.xp = Math.max(xp, (current as any)?.xp || 0);
+    }
+
     const [updated] = await db.update(majAthletes)
       .set(set)
       .where(eq(majAthletes.id, id))

@@ -46,6 +46,7 @@ const sessionConfig = session({
   secret: sessionSecret || 'dev-secret-change-in-production',
   resave: false,
   saveUninitialized: false,
+  rolling: true, // Reset the 30-day expiry on every request so active athletes stay signed in
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
