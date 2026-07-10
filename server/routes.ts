@@ -13,6 +13,7 @@ import { readFileSync } from "fs";
 import { getAllCustomersWithChildren, getAllStudentsWithParents } from "./api-helpers";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, ABSENCE_REASON_VALUES, CREDIT_ELIGIBLE_ABSENCE_REASONS } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
+import { computeEnrolmentAmount } from "@shared/enrolment-pricing";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } from "./googleSheets";
 import { db } from "./db";
@@ -1966,7 +1967,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const selectedWeekNumbers = (enrollmentData as any).selectedWeekNumbers as number[] | undefined;
       let termWeeks: ReturnType<typeof computeTermWeeks> | null = null;
       let gstRate = GST_DEFAULT;
-      let baseExGst = parseFloat(classData.pricePerTerm);
+      // Inputs for computeEnrolmentAmount (shared/enrolment-pricing.ts) — the
+      // single source of truth for the charged amount. This block only resolves
+      // WHICH prices apply; the math lives in the pure function.
+      let flatBasePrice = classData.pricePerTerm;
+      let pricePerWeekForPricing: string | null = null;
+      let payableCountForPricing = 0;
+      let weeksForPricing: number[] | undefined;
 
       if (isCasual) {
         // Single-session drop-in: charge the flat per-session rate, no term
@@ -1974,7 +1981,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (!classData.pricePerSession || parseFloat(classData.pricePerSession) <= 0) {
           return res.status(400).json({ message: "This class does not offer casual (drop-in) bookings." });
         }
-        baseExGst = parseFloat(classData.pricePerSession);
+        flatBasePrice = classData.pricePerSession;
         if (classData.termConfigId) {
           const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
           if (termConfig?.gstRate != null) gstRate = parseFloat(termConfig.gstRate);
@@ -2011,15 +2018,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
 
         gstRate = termConfig.gstRate != null ? parseFloat(termConfig.gstRate) : GST_DEFAULT;
-        baseExGst = parseFloat(termConfig.pricePerWeek) * uniqueSelected.length;
+        pricePerWeekForPricing = String(termConfig.pricePerWeek);
+        payableCountForPricing = payable.length;
+        weeksForPricing = uniqueSelected;
       } else if (classData.termConfigId) {
         // Full-term path: pick up the class's configured GST rate if present.
         const termConfig = await storage.getTermConfigurationById(classData.termConfigId);
         if (termConfig?.gstRate != null) gstRate = parseFloat(termConfig.gstRate);
       }
 
-      // GST always applied on top of the ex-GST base price.
-      const amountToCharge = (baseExGst * (1 + gstRate)).toFixed(2);
+      // GST always applied on top of the ex-GST base price — computed by the
+      // shared, unit-tested pricing function (casual charges the flat
+      // per-session price through the same full-term path).
+      const amountToCharge = computeEnrolmentAmount({
+        pricePerTerm: flatBasePrice,
+        pricePerWeek: pricePerWeekForPricing,
+        gstRate,
+        payableWeekCount: payableCountForPricing,
+        selectedWeekNumbers: weeksForPricing,
+      }).amount;
 
       const enrollment = await storage.createEnrollment({
         childId,
