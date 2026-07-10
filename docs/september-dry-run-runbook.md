@@ -7,8 +7,8 @@ All [OWNER] steps — Claude/agents must not run these against live infra.
 
 ## Chosen dry-run program
 
-- **Program/squad:** _(pick one small, engaged group — Task 6 Step 2)_
-- **Landing button repointed on:** _(date + commit)_
+- **Program/squad:** Junior Academy (both cards: Ballam Park Tue + Mornington Wed)
+- **Landing button repointed on:** 2026-07-10 — both Junior Academy "Enroll Now" buttons → `/classes`; other 6 SportsBiz buttons untouched
 
 ## Backfill baseline (Task 2)
 

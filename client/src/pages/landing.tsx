@@ -810,10 +810,9 @@ export default function Landing() {
                     </Button>
                     <div className="w-full">
                       <p className="text-xs font-bold text-gray-800 uppercase tracking-wide text-right mb-1">⬇ Existing clients</p>
-                      <Button 
-                        onClick={() => {
-                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                        }}
+                      {/* September dry-run: Junior Academy enrols via the new platform */}
+                      <Button
+                        onClick={() => setLocation('/classes')}
                         className="bg-primary-500 hover:bg-primary-600 text-white w-full"
                       >
                         Enroll Now
@@ -867,10 +866,9 @@ export default function Landing() {
                     </Button>
                     <div className="w-full">
                       <p className="text-xs font-bold text-gray-800 uppercase tracking-wide text-right mb-1">⬇ Existing clients</p>
-                      <Button 
-                        onClick={() => {
-                          window.open("https://www.thinksmartsoftware-au.com/ocr/schedule_view.php?c=5D6DC72044045&p_id=1&t=sportsbiz&set=yes", "_blank");
-                        }}
+                      {/* September dry-run: Junior Academy enrols via the new platform */}
+                      <Button
+                        onClick={() => setLocation('/classes')}
                         className="bg-primary-500 hover:bg-primary-600 text-white w-full"
                       >
                         Enroll Now
