@@ -4410,9 +4410,14 @@ const MAJ_CONTENT = {
     if (!el) return;
     if (!athletes.length) { el.innerHTML = ''; return; }
 
+    const n = athletes.length;
+    let nL = 0, nC = 0, nR = 0;
     const tick = '✅'; const cross = '❌';
     const rows = athletes.map(a => {
       const s = _athleteActivityStatus(a, mod, wk);
+      if (s.learn)     nL++;
+      if (s.challenge) nC++;
+      if (s.reflect)   nR++;
       const name = (a.fullName || a.full_name || 'Athlete');
       return `<tr>
         <td style="padding:5px 8px 5px 0;font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;">${escapeHTML(name)}</td>
@@ -4422,7 +4427,41 @@ const MAJ_CONTENT = {
       </tr>`;
     }).join('');
 
-    el.innerHTML = `
+    // Colour each pill: green when all done, orange when partial, muted when none
+    function _pillColor(done, total) {
+      if (done === total) return 'var(--green)';
+      if (done > 0)       return 'var(--orange)';
+      return 'var(--text3)';
+    }
+    function _pillBg(done, total) {
+      if (done === total) return 'rgba(34,197,94,0.12)';
+      if (done > 0)       return 'var(--orange-dim)';
+      return 'var(--surface3)';
+    }
+
+    const summaryBar = `
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+                    background:${_pillBg(nL,n)};border:1.5px solid ${_pillColor(nL,n)};
+                    border-radius:10px;padding:7px 6px;">
+          <span style="font-size:13px;">📖</span>
+          <span style="font-family:var(--font-display);font-size:16px;font-weight:800;color:${_pillColor(nL,n)};line-height:1;">${nL}/${n}</span>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+                    background:${_pillBg(nC,n)};border:1.5px solid ${_pillColor(nC,n)};
+                    border-radius:10px;padding:7px 6px;">
+          <span style="font-size:13px;">⚡</span>
+          <span style="font-family:var(--font-display);font-size:16px;font-weight:800;color:${_pillColor(nC,n)};line-height:1;">${nC}/${n}</span>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+                    background:${_pillBg(nR,n)};border:1.5px solid ${_pillColor(nR,n)};
+                    border-radius:10px;padding:7px 6px;">
+          <span style="font-size:13px;">✍️</span>
+          <span style="font-family:var(--font-display);font-size:16px;font-weight:800;color:${_pillColor(nR,n)};line-height:1;">${nR}/${n}</span>
+        </div>
+      </div>`;
+
+    el.innerHTML = summaryBar + `
       <div style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:4px;">
         <table style="width:100%;border-collapse:collapse;">
           <thead>
