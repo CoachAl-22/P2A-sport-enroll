@@ -808,6 +808,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ── Coach: toggle an athlete's active / inactive status for the term ─────────
+  app.patch("/api/maj/coach/athletes/:id/active", isMajCoach, async (req, res) => {
+    try {
+      const { active } = req.body as { active?: boolean };
+      if (typeof active !== "boolean") {
+        return res.status(400).json({ message: "active (boolean) is required" });
+      }
+      const athlete = await storage.updateMajAthlete(req.params.id, { enabled: active });
+      const { password: _pw, ...safe } = athlete as any;
+      res.json(safe);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
   // One-tap coach kudos — saved for the athlete's bell and pushed instantly
   // ── Coach bulk-progress: mark learn/challenge complete for multiple athletes ─
   app.post("/api/maj/coach/bulk-progress", isMajCoach, async (req, res) => {

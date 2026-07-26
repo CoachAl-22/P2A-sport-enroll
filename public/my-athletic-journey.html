@@ -3713,6 +3713,17 @@ const MAJ_CONTENT = {
     return res.json();
   }
 
+  async function apiPatch(path, body) {
+    const res = await fetch(`${API}${path}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw apiError(res, path);
+    return res.json();
+  }
+
   async function apiGet(path) {
     const res = await fetch(`${API}${path}`, {
       credentials: 'include'
@@ -4332,18 +4343,51 @@ const MAJ_CONTENT = {
     const tier = MAJ_CONTENT.getTier(a.xp || 0);
     const name = a.fullName || a.full_name || 'Unknown';
     const initials = name.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
-    // Pass only the ID — look up the full object in openAssessment to avoid
-    // embedding complex JSON in onclick attributes (breaks with escaped completedWeeks data).
     const safeId = escapeAttr(a.id);
-    return `<div class="module-item" onclick="openAssessmentById('${safeId}')" style="cursor:pointer;">
-      <div class="module-thumb mod-active" style="font-family:var(--font-display);font-size:14px;font-weight:800;">${escapeHTML(initials)}</div>
+    const isActive = a.enabled !== false;
+
+    // Active/Inactive pill — stopPropagation so row click still opens assessment
+    const pillColor  = isActive ? 'var(--green)'   : 'var(--text3)';
+    const pillBg     = isActive ? 'rgba(34,197,94,0.12)' : 'var(--surface3)';
+    const pillBorder = isActive ? 'var(--green)'   : 'var(--border2)';
+    const pillLabel  = isActive ? '● Active'        : '○ Inactive';
+    const pillHtml   = `<button
+      onclick="event.stopPropagation();toggleAthleteActive('${safeId}',${!isActive})"
+      style="flex-shrink:0;padding:4px 9px;border-radius:20px;border:1.5px solid ${pillBorder};
+             background:${pillBg};color:${pillColor};font-size:11px;font-weight:700;
+             cursor:pointer;white-space:nowrap;letter-spacing:0.2px;">${pillLabel}</button>`;
+
+    const rowOpacity = isActive ? '1' : '0.45';
+    const thumbColor = isActive ? 'var(--orange)' : 'var(--text3)';
+
+    return `<div class="module-item" onclick="openAssessmentById('${safeId}')"
+      style="cursor:pointer;opacity:${rowOpacity};">
+      <div class="module-thumb mod-active"
+        style="font-family:var(--font-display);font-size:14px;font-weight:800;background:${thumbColor};">${escapeHTML(initials)}</div>
       <div class="module-body">
-        <div class="module-name">${escapeHTML(name)}</div>
+        <div class="module-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span>${escapeHTML(name)}</span>
+          ${pillHtml}
+        </div>
         <div class="mini-track"><div class="mini-fill fill-orange" style="width:${Math.round(((a.currentWeek||1)-1)/8*100)}%"></div></div>
         <div class="module-caption">Module ${escapeHTML(a.currentModule||1)} · Week ${escapeHTML(a.currentWeek||1)} · ${escapeHTML(a.xp||0)} XP · ${escapeHTML(tier.name)}</div>
       </div>
       <div style="color:var(--orange);font-size:22px;padding-right:4px;">›</div>
     </div>`;
+  }
+
+  async function toggleAthleteActive(id, newActive) {
+    try {
+      await apiPatch(`/coach/athletes/${id}/active`, { active: newActive });
+      // Patch in memory and redraw immediately
+      const a = _allAthletes.find(x => x.id === id);
+      if (a) a.enabled = newActive;
+      const searchEl = document.getElementById('athlete-search');
+      filterAthletes(searchEl ? searchEl.value : '');
+      toast(newActive ? 'Athlete set to Active ✅' : 'Athlete frozen — inactive this term ❄️');
+    } catch(e) {
+      toast('Could not update athlete status — please try again');
+    }
   }
 
   function openAssessmentById(id) {
@@ -4373,16 +4417,32 @@ const MAJ_CONTENT = {
         })
       : schoolFiltered;
 
-    body.innerHTML = filtered.length
-      ? filtered.map(_athleteRow).join('')
-      : `<div style="text-align:center;padding:30px 16px;color:var(--text2);font-size:14px;">No athletes match "${escapeHTML(q || _activeSchool)}"</div>`;
+    const active   = filtered.filter(a => a.enabled !== false);
+    const inactive = filtered.filter(a => a.enabled === false);
+
+    if (!filtered.length) {
+      body.innerHTML = `<div style="text-align:center;padding:30px 16px;color:var(--text2);font-size:14px;">No athletes match "${escapeHTML(q || _activeSchool)}"</div>`;
+    } else {
+      const inactiveSection = inactive.length ? `
+        <div style="margin-top:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;height:1px;background:var(--border2);"></div>
+          <span style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;white-space:nowrap;">
+            ❄️ Inactive this term (${inactive.length})
+          </span>
+          <div style="flex:1;height:1px;background:var(--border2);"></div>
+        </div>
+        ${inactive.map(_athleteRow).join('')}` : '';
+      body.innerHTML = active.map(_athleteRow).join('') + inactiveSection;
+    }
+
     if (countEl) {
       const schoolLabel = _activeSchool === 'All' ? 'all schools' : _activeSchool;
+      const activeCount = active.length;
       countEl.textContent = q
         ? `${filtered.length} of ${schoolFiltered.length} athletes at ${schoolLabel}`
         : _activeSchool === 'All'
-        ? `Tap an athlete to assess · ${filtered.length} athletes`
-        : `${filtered.length} athletes · ${schoolLabel}`;
+        ? `Tap an athlete to assess · ${activeCount} active${inactive.length ? ` · ${inactive.length} inactive` : ''}`
+        : `${activeCount} active${inactive.length ? ` · ${inactive.length} inactive` : ''} · ${schoolLabel}`;
     }
   }
 
@@ -4485,10 +4545,12 @@ const MAJ_CONTENT = {
   }
 
   function _sessionVisibleAthletes() {
-    // Returns athletes currently shown in the coach list (school + search filtered).
-    const schoolFiltered = _activeSchool === 'All'
+    // Returns active athletes currently shown in the coach list (school + search filtered).
+    // Inactive (frozen) athletes are excluded from all bulk session actions.
+    const schoolFiltered = (_activeSchool === 'All'
       ? _allAthletes
-      : _allAthletes.filter(a => (a.school || 'Other') === _activeSchool);
+      : _allAthletes.filter(a => (a.school || 'Other') === _activeSchool)
+    ).filter(a => a.enabled !== false);
     const searchEl = document.getElementById('athlete-search');
     const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
     if (!q) return schoolFiltered;
