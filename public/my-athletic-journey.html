@@ -4392,6 +4392,11 @@ const MAJ_CONTENT = {
   // Keyed by activity name ('learn' | 'challenge'). Reset on openSessionMode().
   let _sessionExcluded = { learn: new Set(), challenge: new Set() };
 
+  // Tracks athletes whose Challenge checkbox was explicitly toggled by the coach
+  // (not auto-mirrored from Learn). Used to decide whether re-checking Learn
+  // should also restore Challenge.
+  let _challengeExplicitlyExcluded = new Set();
+
   // Returns {learn, challenge, reflect} booleans for one athlete at a given week.
   function _athleteActivityStatus(athlete, mod, wk) {
     const cw = athlete.completedWeeks || {};
@@ -4498,6 +4503,7 @@ const MAJ_CONTENT = {
   function openSessionMode() {
     // Reset per-activity exclusions for each new session
     _sessionExcluded = { learn: new Set(), challenge: new Set() };
+    _challengeExplicitlyExcluded = new Set();
     const athletes = _sessionVisibleAthletes();
     const label = document.getElementById('session-athlete-count-label');
     if (label) label.textContent = `${athletes.length} athlete${athletes.length !== 1 ? 's' : ''}`;
@@ -4513,6 +4519,7 @@ const MAJ_CONTENT = {
   function sessionPickWeek() {
     // Reset exclusions whenever the week/module changes so UI and payload stay in sync.
     _sessionExcluded = { learn: new Set(), challenge: new Set() };
+    _challengeExplicitlyExcluded = new Set();
     const mod = parseInt(document.getElementById('session-module-select').value);
     const wk  = parseInt(document.getElementById('session-week-select').value);
     const weekData = MAJ_CONTENT.getWeek(mod, wk);
@@ -4639,7 +4646,8 @@ const MAJ_CONTENT = {
   // Toggle one athlete's inclusion for a given activity and refresh the button label.
   function sessionToggleAthlete(activity, athleteId) {
     const id = String(athleteId);
-    if (_sessionExcluded[activity].has(id)) {
+    const wasExcluded = _sessionExcluded[activity].has(id);
+    if (wasExcluded) {
       _sessionExcluded[activity].delete(id);
     } else {
       _sessionExcluded[activity].add(id);
@@ -4647,16 +4655,32 @@ const MAJ_CONTENT = {
     // Sync checkbox visual state
     const cb = document.getElementById(`sess-cb-${activity}-${id}`);
     if (cb) cb.checked = !_sessionExcluded[activity].has(id);
-    // When an athlete is excluded from Learn, mirror that exclusion to Challenge
-    // so the coach doesn't have to uncheck absent athletes twice.
-    // Re-including in Learn does NOT auto-re-include in Challenge (coach may have
-    // deliberately kept the athlete excluded from the physical activity).
-    if (activity === 'learn' && _sessionExcluded.learn.has(id)) {
+
+    if (activity === 'challenge') {
+      // Track explicit coach decisions on Challenge independently of Learn mirroring.
+      if (_sessionExcluded.challenge.has(id)) {
+        _challengeExplicitlyExcluded.add(id);
+      } else {
+        _challengeExplicitlyExcluded.delete(id);
+      }
+    } else if (activity === 'learn') {
       const cbC = document.getElementById(`sess-cb-challenge-${id}`);
-      if (cbC) {
-        _sessionExcluded.challenge.add(id);
-        cbC.checked = false;
-        _updateSessionBtnLabel('challenge');
+      if (_sessionExcluded.learn.has(id)) {
+        // Athlete excluded from Learn → mirror exclusion to Challenge so the coach
+        // doesn't have to uncheck absent athletes twice.
+        if (cbC) {
+          _sessionExcluded.challenge.add(id);
+          cbC.checked = false;
+          _updateSessionBtnLabel('challenge');
+        }
+      } else {
+        // Athlete re-included in Learn → also restore Challenge unless the coach
+        // had explicitly and independently unchecked Challenge for this athlete.
+        if (!_challengeExplicitlyExcluded.has(id) && cbC) {
+          _sessionExcluded.challenge.delete(id);
+          cbC.checked = true;
+          _updateSessionBtnLabel('challenge');
+        }
       }
     }
     // Refresh button label
