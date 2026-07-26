@@ -4388,6 +4388,10 @@ const MAJ_CONTENT = {
 
   // ── COACH SESSION MODE ────────────────────────────────────────────────────
 
+  // Per-activity sets of athlete IDs the coach has excluded for this session.
+  // Keyed by activity name ('learn' | 'challenge'). Reset on openSessionMode().
+  let _sessionExcluded = { learn: new Set(), challenge: new Set() };
+
   // Returns {learn, challenge, reflect} booleans for one athlete at a given week.
   function _athleteActivityStatus(athlete, mod, wk) {
     const cw = athlete.completedWeeks || {};
@@ -4453,6 +4457,8 @@ const MAJ_CONTENT = {
   }
 
   function openSessionMode() {
+    // Reset per-activity exclusions for each new session
+    _sessionExcluded = { learn: new Set(), challenge: new Set() };
     const athletes = _sessionVisibleAthletes();
     const label = document.getElementById('session-athlete-count-label');
     if (label) label.textContent = `${athletes.length} athlete${athletes.length !== 1 ? 's' : ''}`;
@@ -4466,6 +4472,8 @@ const MAJ_CONTENT = {
   }
 
   function sessionPickWeek() {
+    // Reset exclusions whenever the week/module changes so UI and payload stay in sync.
+    _sessionExcluded = { learn: new Set(), challenge: new Set() };
     const mod = parseInt(document.getElementById('session-module-select').value);
     const wk  = parseInt(document.getElementById('session-week-select').value);
     const weekData = MAJ_CONTENT.getWeek(mod, wk);
@@ -4517,6 +4525,19 @@ const MAJ_CONTENT = {
         ${learn.closing ? `<div style="font-size:12px;font-style:italic;color:var(--text2);margin-top:8px;border-top:1px solid var(--border2);padding-top:8px;">${escapeHTML(learn.closing)}</div>` : ''}
       </div>
 
+      ${nL === 0 ? '' : `
+      <div id="sess-checklist-learn" style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;margin-bottom:8px;overflow:hidden;">
+        <div style="padding:7px 12px;border-bottom:1px solid var(--border2);font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;">Tap to exclude absent athletes</div>
+        ${needLearn.map(a => {
+          const id = String(a.id);
+          const name = escapeHTML(a.fullName || a.full_name || 'Athlete');
+          return `<div onclick="sessionToggleAthlete('learn','${id}')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--border1);cursor:pointer;-webkit-tap-highlight-color:transparent;">
+            <input type="checkbox" id="sess-cb-learn-${id}" checked onclick="event.stopPropagation();sessionToggleAthlete('learn','${id}')" style="width:18px;height:18px;accent-color:var(--green);cursor:pointer;flex-shrink:0;">
+            <span style="font-size:13px;font-weight:500;">${name}</span>
+          </div>`;
+        }).join('')}
+      </div>`}
+
       <button id="session-learn-btn"
         onclick="sessionMarkAll('learn')"
         ${nL === 0 ? 'disabled' : ''}
@@ -4532,6 +4553,19 @@ const MAJ_CONTENT = {
         ${challengeStepsHtml}
         ${doSec.changeIt ? `<div style="font-size:12px;font-style:italic;color:var(--text2);margin-top:8px;border-top:1px solid var(--border2);padding-top:8px;"><strong>Mix it up:</strong> ${escapeHTML(doSec.changeIt)}</div>` : ''}
       </div>
+
+      ${nC === 0 ? '' : `
+      <div id="sess-checklist-challenge" style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;margin-bottom:8px;overflow:hidden;">
+        <div style="padding:7px 12px;border-bottom:1px solid var(--border2);font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;">Tap to exclude absent athletes</div>
+        ${needChallenge.map(a => {
+          const id = String(a.id);
+          const name = escapeHTML(a.fullName || a.full_name || 'Athlete');
+          return `<div onclick="sessionToggleAthlete('challenge','${id}')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--border1);cursor:pointer;-webkit-tap-highlight-color:transparent;">
+            <input type="checkbox" id="sess-cb-challenge-${id}" checked onclick="event.stopPropagation();sessionToggleAthlete('challenge','${id}')" style="width:18px;height:18px;accent-color:var(--cyan);cursor:pointer;flex-shrink:0;">
+            <span style="font-size:13px;font-weight:500;">${name}</span>
+          </div>`;
+        }).join('')}
+      </div>`}
 
       <button id="session-challenge-btn"
         onclick="sessionMarkAll('challenge')"
@@ -4563,11 +4597,67 @@ const MAJ_CONTENT = {
     `;
   }
 
+  // Toggle one athlete's inclusion for a given activity and refresh the button label.
+  function sessionToggleAthlete(activity, athleteId) {
+    const id = String(athleteId);
+    if (_sessionExcluded[activity].has(id)) {
+      _sessionExcluded[activity].delete(id);
+    } else {
+      _sessionExcluded[activity].add(id);
+    }
+    // Sync checkbox visual state
+    const cb = document.getElementById(`sess-cb-${activity}-${id}`);
+    if (cb) cb.checked = !_sessionExcluded[activity].has(id);
+    // Refresh button label
+    _updateSessionBtnLabel(activity);
+  }
+
+  // Recompute the label and enabled state of a bulk-action button after exclusion changes.
+  function _updateSessionBtnLabel(activity) {
+    const mod = parseInt(document.getElementById('session-module-select').value);
+    const wk  = parseInt(document.getElementById('session-week-select').value);
+    const allVisible = _sessionVisibleAthletes();
+
+    if (activity === 'learn') {
+      const needLearn = allVisible.filter(a => !_athleteActivityStatus(a, mod, wk).learn);
+      const selected  = needLearn.filter(a => !_sessionExcluded.learn.has(String(a.id)));
+      const btn = document.getElementById('session-learn-btn');
+      if (!btn || needLearn.length === 0) return;
+      const nL = needLearn.length, sL = selected.length;
+      if (sL === 0) {
+        btn.disabled = true;
+        btn.textContent = '✅ Mark Learn read for 0 athletes';
+      } else {
+        btn.disabled = false;
+        btn.textContent = sL === nL
+          ? `✅ Mark Learn read for ${sL} athlete${sL !== 1 ? 's' : ''}`
+          : `✅ Mark Learn read for ${sL} of ${nL} athletes`;
+      }
+    } else if (activity === 'challenge') {
+      const needChallenge = allVisible.filter(a => !_athleteActivityStatus(a, mod, wk).challenge);
+      const selected      = needChallenge.filter(a => !_sessionExcluded.challenge.has(String(a.id)));
+      const btn = document.getElementById('session-challenge-btn');
+      if (!btn || needChallenge.length === 0) return;
+      const nC = needChallenge.length, sC = selected.length;
+      if (sC === 0) {
+        btn.disabled = true;
+        btn.textContent = '🏆 Mark Challenge done for 0 athletes';
+      } else {
+        btn.disabled = false;
+        btn.textContent = sC === nC
+          ? `🏆 ${sC} athlete${sC !== 1 ? 's' : ''} completed the challenge`
+          : `🏆 Mark Challenge done for ${sC} of ${nC} athletes`;
+      }
+    }
+  }
+
   async function sessionMarkAll(activity) {
     const mod = parseInt(document.getElementById('session-module-select').value);
     const wk  = parseInt(document.getElementById('session-week-select').value);
-    // Only target athletes who haven't already completed this activity
-    const athletes = _sessionVisibleAthletes().filter(a => !_athleteActivityStatus(a, mod, wk)[activity]);
+    // Only target athletes who haven't already completed this activity and aren't excluded
+    const athletes = _sessionVisibleAthletes()
+      .filter(a => !_athleteActivityStatus(a, mod, wk)[activity])
+      .filter(a => !_sessionExcluded[activity].has(String(a.id)));
     const btnId = activity === 'learn' ? 'session-learn-btn' : 'session-challenge-btn';
     const btn = document.getElementById(btnId);
     if (!btn || btn.disabled) return;
