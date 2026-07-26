@@ -4551,7 +4551,11 @@ const MAJ_CONTENT = {
         onclick="sessionSendReminder(${mod},${wk})"
         ${nR === 0 ? 'disabled' : ''}
         style="width:100%;background:var(--surface3);border:1.5px solid ${nR === 0 ? 'var(--border2)' : 'var(--orange)'};color:${nR === 0 ? 'var(--text3)' : 'var(--orange)'};border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:${nR === 0 ? 'default' : 'pointer'};margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        ${nR === 0 ? '✅ All athletes have reflected' : `📲 Send reflection reminder to ${nR} athlete${nR !== 1 ? 's' : ''}`}
+        ${nR === 0
+          ? '✅ All athletes have reflected'
+          : athletes.length > nR
+            ? `📲 Send reminder to ${nR} of ${athletes.length} athletes (${athletes.length - nR} already reflected)`
+            : `📲 Send reflection reminder to ${nR} athlete${nR !== 1 ? 's' : ''}`}
       </button>
       <div style="font-size:11px;color:var(--text2);text-align:center;padding-bottom:4px;">
         ${nR > 0 ? `Sends: "Complete your reflection to unlock Week ${wk + 1 <= 8 ? wk + 1 : 1} 🔒"` : ''}
