@@ -4606,10 +4606,13 @@ const MAJ_CONTENT = {
         athleteIds: athletes.map(a => a.id),
         title: '✍️ Time to reflect!',
         body: `Complete your Module ${mod} Week ${wk} reflection to unlock Week ${nextWk} 🔒`,
+        moduleNum: mod,
+        weekNum: wk,
       });
       btn.style.border = '1.5px solid var(--green)';
       btn.style.color = 'var(--green)';
-      btn.textContent = `📲 Sent to ${data.sent} athlete${data.sent !== 1 ? 's' : ''}`;
+      const skipNote = data.skipped ? ` (${data.skipped} already reflected)` : '';
+      btn.textContent = `📲 Sent to ${data.sent} athlete${data.sent !== 1 ? 's' : ''}${skipNote}`;
     } catch(e) {
       btn.disabled = false;
       btn.textContent = '📲 Retry';

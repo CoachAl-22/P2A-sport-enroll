@@ -844,24 +844,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ── Coach bulk-push: send a push notification to a list of athletes ─────────
+  // Optional: pass moduleNum + weekNum for a reflection reminder. The server
+  // cross-checks maj_reflections and silently skips athletes who already submitted,
+  // regardless of any stale client-side data.
   app.post("/api/maj/coach/bulk-push", isMajCoach, async (req, res) => {
     try {
-      const { athleteIds, title, body } = req.body as {
+      const { athleteIds, title, body, moduleNum, weekNum } = req.body as {
         athleteIds: string[];
         title: string;
         body: string;
+        moduleNum?: number;
+        weekNum?: number;
       };
       if (!Array.isArray(athleteIds) || !athleteIds.length || !title || !body) {
         return res.status(400).json({ message: "athleteIds[], title and body required" });
       }
+
+      // If this is a reflection reminder, filter out athletes who already reflected
+      let targets = athleteIds;
+      let skipped = 0;
+      if (moduleNum && weekNum) {
+        const { db } = await import("./db.js");
+        const { majReflections } = await import("../shared/schema.js");
+        const { inArray, eq, and } = await import("drizzle-orm");
+        const already = await db
+          .select({ athleteId: majReflections.athleteId })
+          .from(majReflections)
+          .where(
+            and(
+              inArray(majReflections.athleteId, athleteIds),
+              eq(majReflections.moduleNum, moduleNum),
+              eq(majReflections.weekNum, weekNum)
+            )
+          );
+        const doneSet = new Set(already.map(r => r.athleteId));
+        targets = athleteIds.filter(id => !doneSet.has(id));
+        skipped = doneSet.size;
+      }
+
       const results = await Promise.allSettled(
-        athleteIds.map(id =>
+        targets.map(id =>
           sendPushToAthlete(id, { title, body, url: "/my-athletic-journey" })
         )
       );
       const sent   = results.filter(r => r.status === "fulfilled").length;
       const failed = results.filter(r => r.status === "rejected").length;
-      res.json({ sent, failed });
+      res.json({ sent, skipped, failed });
     } catch (e: any) {
       res.status(500).json({ message: e.message });
     }
