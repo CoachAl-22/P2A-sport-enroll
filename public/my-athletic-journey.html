@@ -3926,8 +3926,28 @@ const MAJ_CONTENT = {
     }
     const storedXP = parseInt(data.xp || 0);
     const xp = Math.max(storedXP, derivedXP);
-    // Flag so initApp() can persist the corrected value and show a welcome card
-    const _xpWasBoosted = derivedXP > storedXP;
+
+    // Derive sessionsCompleted and reflectionsSubmitted from completedWeeks as a
+    // floor — same pattern as XP. Coach bulk-mark writes completedWeeks but never
+    // increments these counters, so athletes could show 0 sessions even after
+    // being marked complete.
+    let derivedSessions = 0;
+    let derivedReflections = 0;
+    for (const val of Object.values(completedWeeks)) {
+      if (val && typeof val === 'object') {
+        if (val.challenge) derivedSessions += 1;
+        if (val.reflect)   derivedReflections += 1;
+      }
+    }
+    const storedSessions     = parseInt(data.sessionsCompleted || data.sessions_completed || 0);
+    const storedReflections  = parseInt(data.reflectionsSubmitted || data.reflections_submitted || 0);
+    const sessionsCompleted    = Math.max(storedSessions, derivedSessions);
+    const reflectionsSubmitted = Math.max(storedReflections, derivedReflections);
+
+    // Flag so initApp() can persist all corrected values and show a welcome card
+    const _statsBoosted = derivedXP > storedXP
+      || derivedSessions > storedSessions
+      || derivedReflections > storedReflections;
 
     return {
       id: data.id,
@@ -3940,13 +3960,13 @@ const MAJ_CONTENT = {
       currentModule,
       currentWeek,
       xp,
-      _xpWasBoosted,
+      _statsBoosted,
       streak,
       streakFreezes,
       lastWeekCompletedAt,
       avatar: data.avatar || '',
-      sessionsCompleted: parseInt(data.sessionsCompleted || data.sessions_completed || 0),
-      reflectionsSubmitted: parseInt(data.reflectionsSubmitted || data.reflections_submitted || 0),
+      sessionsCompleted,
+      reflectionsSubmitted,
       earnedBadgeKeys: Array.isArray(earnedBadgeKeys) ? earnedBadgeKeys : [],
       completedWeeks
     };
@@ -5714,9 +5734,9 @@ const MAJ_CONTENT = {
 
     // If derived XP was higher than stored (coach pre-marked activities while
     // athlete had 0 XP), persist the corrected value to DB and show a welcome card.
-    if (a._xpWasBoosted) {
-      delete a._xpWasBoosted;
-      saveState(); // write corrected XP to DB silently
+    if (a._statsBoosted) {
+      delete a._statsBoosted;
+      saveState(); // write corrected XP, sessionsCompleted, reflectionsSubmitted to DB silently
       const coachName = a.coach || 'your coach';
       const gained = a.xp;
       const needsReflect = wp.learn && wp.challenge && !wp.reflect;
