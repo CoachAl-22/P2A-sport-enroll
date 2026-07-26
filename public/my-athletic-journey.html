@@ -4583,11 +4583,22 @@ const MAJ_CONTENT = {
         weekNum: wk,
         activities: { [activity]: true },
       });
-      btn.style.background = 'var(--surface3)';
-      btn.style.border = '1.5px solid var(--green)';
-      btn.style.color = 'var(--green)';
-      btn.textContent = `✅ ${label} marked for ${data.updated} athlete${data.updated !== 1 ? 's' : ''}`;
-      // Refresh local athlete list so progress bars update on next panel open
+
+      // Patch _allAthletes in-memory so the status table updates immediately
+      const weekKey = `${mod}-${wk}`;
+      const affected = new Set(athletes.map(a => a.id));
+      _allAthletes.forEach(a => {
+        if (!affected.has(a.id)) return;
+        if (!a.completedWeeks || typeof a.completedWeeks !== 'object' || Array.isArray(a.completedWeeks)) {
+          a.completedWeeks = {};
+        }
+        if (!a.completedWeeks[weekKey]) a.completedWeeks[weekKey] = {};
+        a.completedWeeks[weekKey][activity] = true;
+      });
+      // Redraw table and button counts without closing the panel
+      sessionPickWeek();
+
+      // Also trigger a background refresh so the home athlete list bars stay accurate
       loadCoachDashboard().catch(() => {});
     } catch(e) {
       btn.disabled = false;
