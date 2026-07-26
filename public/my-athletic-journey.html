@@ -4647,6 +4647,18 @@ const MAJ_CONTENT = {
     // Sync checkbox visual state
     const cb = document.getElementById(`sess-cb-${activity}-${id}`);
     if (cb) cb.checked = !_sessionExcluded[activity].has(id);
+    // When an athlete is excluded from Learn, mirror that exclusion to Challenge
+    // so the coach doesn't have to uncheck absent athletes twice.
+    // Re-including in Learn does NOT auto-re-include in Challenge (coach may have
+    // deliberately kept the athlete excluded from the physical activity).
+    if (activity === 'learn' && _sessionExcluded.learn.has(id)) {
+      const cbC = document.getElementById(`sess-cb-challenge-${id}`);
+      if (cbC) {
+        _sessionExcluded.challenge.add(id);
+        cbC.checked = false;
+        _updateSessionBtnLabel('challenge');
+      }
+    }
     // Refresh button label
     _updateSessionBtnLabel(activity);
   }
