@@ -3912,6 +3912,23 @@ const MAJ_CONTENT = {
     const rawFreezes    = parseInt(data.streakFreezes ?? data.streak_freezes);
     const streakFreezes = Number.isNaN(rawFreezes) ? 1 : rawFreezes;
 
+    // Derive XP from completedWeeks as a floor — catches athletes whose XP
+    // was set to 0 because the coach bulk-marked them before the XP-sync fix.
+    // Badge XP is stored separately so Math.max keeps it if stored > derived.
+    const XP_PER_ACT = { learn: 10, challenge: 10, reflect: 15 };
+    let derivedXP = 0;
+    for (const val of Object.values(completedWeeks)) {
+      if (val && typeof val === 'object') {
+        for (const [act, done] of Object.entries(val)) {
+          if (done && XP_PER_ACT[act]) derivedXP += XP_PER_ACT[act];
+        }
+      }
+    }
+    const storedXP = parseInt(data.xp || 0);
+    const xp = Math.max(storedXP, derivedXP);
+    // Flag so initApp() can persist the corrected value and show a welcome card
+    const _xpWasBoosted = derivedXP > storedXP;
+
     return {
       id: data.id,
       name: nameParts[0] || fullName,
@@ -3922,7 +3939,8 @@ const MAJ_CONTENT = {
       coach: data.coach || 'Al Tait',
       currentModule,
       currentWeek,
-      xp: parseInt(data.xp || 0),
+      xp,
+      _xpWasBoosted,
       streak,
       streakFreezes,
       lastWeekCompletedAt,
@@ -5693,6 +5711,26 @@ const MAJ_CONTENT = {
     renderBadges();
     renderProfile();
     renderQuests();
+
+    // If derived XP was higher than stored (coach pre-marked activities while
+    // athlete had 0 XP), persist the corrected value to DB and show a welcome card.
+    if (a._xpWasBoosted) {
+      delete a._xpWasBoosted;
+      saveState(); // write corrected XP to DB silently
+      const coachName = a.coach || 'your coach';
+      const gained = a.xp;
+      const needsReflect = wp.learn && wp.challenge && !wp.reflect;
+      setTimeout(() => {
+        showOverlay(
+          '⚡',
+          `+${gained} XP from your coach!`,
+          needsReflect
+            ? `${coachName} marked your session complete. Head to REFLECT to finish the week and earn +15 more XP.`
+            : `${coachName} has marked your activities — keep it up!`,
+          'Let\'s go 🔥'
+        );
+      }, 800);
+    }
 
     // Show quests nav tab for athletes
     const questsTab = document.getElementById('nav-quests-btn');
