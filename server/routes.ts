@@ -809,6 +809,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // One-tap coach kudos — saved for the athlete's bell and pushed instantly
+  // ── Coach bulk-progress: mark learn/challenge complete for multiple athletes ─
+  app.post("/api/maj/coach/bulk-progress", isMajCoach, async (req, res) => {
+    try {
+      const { athleteIds, moduleNum, weekNum, activities } = req.body as {
+        athleteIds: string[];
+        moduleNum: number;
+        weekNum: number;
+        activities: { learn?: boolean; challenge?: boolean };
+      };
+      if (!Array.isArray(athleteIds) || !athleteIds.length || !moduleNum || !weekNum || !activities) {
+        return res.status(400).json({ message: "athleteIds[], moduleNum, weekNum and activities required" });
+      }
+      const weekKey = `${moduleNum}-${weekNum}`;
+      const patch: Record<string, any> = {};
+      if (activities.learn)     patch.learn     = true;
+      if (activities.challenge) patch.challenge = true;
+      if (!Object.keys(patch).length) {
+        return res.status(400).json({ message: "At least one activity (learn or challenge) must be true" });
+      }
+      const results = await Promise.allSettled(
+        athleteIds.map(id =>
+          storage.updateMajAthleteProgress(id, {
+            completedWeeks: { [weekKey]: patch },
+          })
+        )
+      );
+      const updated = results.filter(r => r.status === "fulfilled").length;
+      const failed  = results.filter(r => r.status === "rejected").length;
+      res.json({ updated, failed });
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
+  // ── Coach bulk-push: send a push notification to a list of athletes ─────────
+  app.post("/api/maj/coach/bulk-push", isMajCoach, async (req, res) => {
+    try {
+      const { athleteIds, title, body } = req.body as {
+        athleteIds: string[];
+        title: string;
+        body: string;
+      };
+      if (!Array.isArray(athleteIds) || !athleteIds.length || !title || !body) {
+        return res.status(400).json({ message: "athleteIds[], title and body required" });
+      }
+      const results = await Promise.allSettled(
+        athleteIds.map(id =>
+          sendPushToAthlete(id, { title, body, url: "/my-athletic-journey" })
+        )
+      );
+      const sent   = results.filter(r => r.status === "fulfilled").length;
+      const failed = results.filter(r => r.status === "rejected").length;
+      res.json({ sent, failed });
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
   app.post("/api/maj/kudos", isMajCoach, async (req, res) => {
     try {
       const { athleteId, emoji, message, coachName } = req.body;

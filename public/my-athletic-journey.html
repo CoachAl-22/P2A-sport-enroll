@@ -2455,6 +2455,37 @@
     </div>
   </div>
 
+  <!-- ══ COACH SESSION MODE OVERLAY ═════════════════════════════════════ -->
+  <div class="assess-overlay" id="session-overlay">
+    <div class="assess-sheet" style="max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+      <!-- Header -->
+      <div class="assess-header" style="position:sticky;top:0;z-index:10;background:var(--surface1);">
+        <div class="assess-back" onclick="closeSessionMode()">‹</div>
+        <div class="assess-title">⚡ Run a Session</div>
+        <div style="margin-left:auto;font-size:11px;color:var(--text2);font-weight:700;letter-spacing:0.5px;" id="session-athlete-count-label"></div>
+      </div>
+
+      <!-- Week picker -->
+      <div style="padding:14px 16px 8px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text2);margin-bottom:8px;">SELECT WEEK</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select id="session-module-select" onchange="sessionPickWeek()" style="flex:1;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);padding:9px 12px;font-size:14px;font-weight:600;outline:none;">
+            <option value="1">Module 1</option>
+            <option value="2">Module 2</option>
+            <option value="3">Module 3</option>
+            <option value="4">Module 4</option>
+          </select>
+          <select id="session-week-select" onchange="sessionPickWeek()" style="flex:1;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);padding:9px 12px;font-size:14px;font-weight:600;outline:none;">
+            <option value="1">Week 1</option><option value="2">Week 2</option><option value="3">Week 3</option><option value="4">Week 4</option>
+            <option value="5">Week 5</option><option value="6">Week 6</option><option value="7">Week 7</option><option value="8">Week 8</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="session-content-body" style="padding:0 16px 24px;"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -4261,6 +4292,12 @@ const MAJ_CONTENT = {
             onblur="this.style.borderColor='transparent'">
         </div>
 
+        <!-- Session Mode launcher -->
+        <button onclick="openSessionMode()" style="width:100%;margin-bottom:14px;background:var(--orange);border:none;color:#fff;border-radius:14px;padding:13px 16px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.3px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Run a Session
+        </button>
+
         <div id="athlete-count" class="section-label" style="margin-bottom:6px;">
           Tap an athlete to assess · ${escapeHTML(athletes.length)} athletes
         </div>
@@ -4345,6 +4382,176 @@ const MAJ_CONTENT = {
         : `${filtered.length} athletes · ${schoolLabel}`;
     }
   }
+
+  // ── COACH SESSION MODE ────────────────────────────────────────────────────
+
+  function _sessionVisibleAthletes() {
+    // Returns athletes currently shown in the coach list (school + search filtered).
+    const schoolFiltered = _activeSchool === 'All'
+      ? _allAthletes
+      : _allAthletes.filter(a => (a.school || 'Other') === _activeSchool);
+    const searchEl = document.getElementById('athlete-search');
+    const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
+    if (!q) return schoolFiltered;
+    return schoolFiltered.filter(a => {
+      const name = (a.fullName || a.full_name || '').toLowerCase();
+      const prog = (a.program || '').toLowerCase();
+      const grade = (a.grade || '').toLowerCase();
+      return name.includes(q) || prog.includes(q) || grade.includes(q);
+    });
+  }
+
+  function openSessionMode() {
+    const athletes = _sessionVisibleAthletes();
+    const label = document.getElementById('session-athlete-count-label');
+    if (label) label.textContent = `${athletes.length} athlete${athletes.length !== 1 ? 's' : ''}`;
+    document.getElementById('session-overlay').classList.add('open');
+    document.getElementById('session-overlay').scrollTop = 0;
+    sessionPickWeek();
+  }
+
+  function closeSessionMode() {
+    document.getElementById('session-overlay').classList.remove('open');
+  }
+
+  function sessionPickWeek() {
+    const mod = parseInt(document.getElementById('session-module-select').value);
+    const wk  = parseInt(document.getElementById('session-week-select').value);
+    const weekData = MAJ_CONTENT.getWeek(mod, wk);
+    const body = document.getElementById('session-content-body');
+    const athletes = _sessionVisibleAthletes();
+    const n = athletes.length;
+
+    if (!weekData) {
+      body.innerHTML = `<div style="color:var(--text2);text-align:center;padding:24px;">No content for Module ${mod} Week ${wk}</div>`;
+      return;
+    }
+
+    const learn = weekData.learn || {};
+    const doSec = weekData.do   || {};
+    const reflect = weekData.reflect || {};
+
+    // Build points list
+    const pointsHtml = (learn.points || []).map(p =>
+      `<div style="display:flex;gap:10px;margin-bottom:7px;font-size:13px;line-height:1.5;">
+         <span style="color:var(--orange);flex-shrink:0;margin-top:1px;">▸</span>
+         <span>${escapeHTML(p)}</span>
+       </div>`
+    ).join('');
+
+    const challengeStepsHtml = (doSec.steps || []).map((s, i) =>
+      `<div style="display:flex;gap:10px;margin-bottom:7px;font-size:13px;line-height:1.5;">
+         <span style="color:var(--cyan);font-weight:700;flex-shrink:0;">${i+1}.</span>
+         <span>${escapeHTML(s)}</span>
+       </div>`
+    ).join('');
+
+    body.innerHTML = `
+      <!-- ── LEARN ───────────────────────────────────────── -->
+      <div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;border:1.5px solid var(--border2);">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--orange);margin-bottom:6px;">📖 LEARN</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px;line-height:1.3;">${escapeHTML(learn.concept || 'Learn')}</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:10px;">${escapeHTML(learn.intro || '')}</div>
+        ${pointsHtml}
+        ${learn.closing ? `<div style="font-size:12px;font-style:italic;color:var(--text2);margin-top:8px;border-top:1px solid var(--border2);padding-top:8px;">${escapeHTML(learn.closing)}</div>` : ''}
+      </div>
+
+      <button id="session-learn-btn"
+        onclick="sessionMarkAll('learn')"
+        style="width:100%;background:var(--green);border:none;color:#fff;border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        ✅ Mark Learn read for all ${n} athlete${n !== 1 ? 's' : ''}
+      </button>
+
+      <!-- ── CHALLENGE ───────────────────────────────────── -->
+      <div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;border:1.5px solid var(--border2);">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--cyan);margin-bottom:6px;">⚡ CHALLENGE</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px;line-height:1.3;">${escapeHTML(doSec.title || 'Challenge')}</div>
+        ${doSec.setup ? `<div style="font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:10px;">${escapeHTML(doSec.setup)}</div>` : ''}
+        ${challengeStepsHtml}
+        ${doSec.changeIt ? `<div style="font-size:12px;font-style:italic;color:var(--text2);margin-top:8px;border-top:1px solid var(--border2);padding-top:8px;"><strong>Mix it up:</strong> ${escapeHTML(doSec.changeIt)}</div>` : ''}
+      </div>
+
+      <button id="session-challenge-btn"
+        onclick="sessionMarkAll('challenge')"
+        style="width:100%;background:var(--cyan);border:none;color:#fff;border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        🏆 All ${n} athlete${n !== 1 ? 's' : ''} completed the challenge
+      </button>
+
+      <!-- ── REFLECTION REMINDER ─────────────────────────── -->
+      <div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;border:1.5px solid var(--border2);">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text2);margin-bottom:6px;">✍️ REFLECTION (athlete completes individually)</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px;">${escapeHTML(reflect.prompt || '')}</div>
+        ${reflect.hint ? `<div style="font-size:12px;color:var(--text2);font-style:italic;">${escapeHTML(reflect.hint)}</div>` : ''}
+      </div>
+
+      <button id="session-remind-btn"
+        onclick="sessionSendReminder(${mod},${wk})"
+        style="width:100%;background:var(--surface3);border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        📲 Send reflection reminder to ${n} athlete${n !== 1 ? 's' : ''}
+      </button>
+      <div style="font-size:11px;color:var(--text2);text-align:center;padding-bottom:4px;">
+        Sends: "Complete your reflection to unlock Week ${wk + 1 <= 8 ? wk + 1 : 1} 🔒"
+      </div>
+    `;
+  }
+
+  async function sessionMarkAll(activity) {
+    const mod = parseInt(document.getElementById('session-module-select').value);
+    const wk  = parseInt(document.getElementById('session-week-select').value);
+    const athletes = _sessionVisibleAthletes();
+    const btnId = activity === 'learn' ? 'session-learn-btn' : 'session-challenge-btn';
+    const btn = document.getElementById(btnId);
+    if (!btn || btn.disabled) return;
+
+    const label = activity === 'learn' ? 'Learn' : 'Challenge';
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    try {
+      const data = await apiPost('/coach/bulk-progress', {
+        athleteIds: athletes.map(a => a.id),
+        moduleNum: mod,
+        weekNum: wk,
+        activities: { [activity]: true },
+      });
+      btn.style.background = 'var(--surface3)';
+      btn.style.border = '1.5px solid var(--green)';
+      btn.style.color = 'var(--green)';
+      btn.textContent = `✅ ${label} marked for ${data.updated} athlete${data.updated !== 1 ? 's' : ''}`;
+      // Refresh local athlete list so progress bars update on next panel open
+      loadCoachDashboard().catch(() => {});
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = `Retry — ${e.message || 'error'}`;
+      toast(`Could not save ${label}: ${e.message || 'check connection'}`);
+    }
+  }
+
+  async function sessionSendReminder(mod, wk) {
+    const athletes = _sessionVisibleAthletes();
+    const btn = document.getElementById('session-remind-btn');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    const nextWk = wk < 8 ? wk + 1 : 1;
+    try {
+      const data = await apiPost('/coach/bulk-push', {
+        athleteIds: athletes.map(a => a.id),
+        title: '✍️ Time to reflect!',
+        body: `Complete your Module ${mod} Week ${wk} reflection to unlock Week ${nextWk} 🔒`,
+      });
+      btn.style.border = '1.5px solid var(--green)';
+      btn.style.color = 'var(--green)';
+      btn.textContent = `📲 Sent to ${data.sent} athlete${data.sent !== 1 ? 's' : ''}`;
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = '📲 Retry';
+      toast('Could not send reminder — check connection');
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
 
   async function openAssessment(athlete) {
     assessState = { athlete, type: null, ratings: {}, strengths: '', areasForImprovement: '', nextSteps: '', overallRating: null, skillAcquisitionStage: null, reassessmentRequired: false, history: [] };
