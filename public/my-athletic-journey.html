@@ -2482,6 +2482,9 @@
         </div>
       </div>
 
+      <!-- Athlete status table — populated by sessionPickWeek() -->
+      <div id="session-status-table" style="padding:0 16px 8px;"></div>
+
       <div id="session-content-body" style="padding:0 16px 24px;"></div>
     </div>
   </div>
@@ -4385,6 +4388,54 @@ const MAJ_CONTENT = {
 
   // ── COACH SESSION MODE ────────────────────────────────────────────────────
 
+  // Returns {learn, challenge, reflect} booleans for one athlete at a given week.
+  function _athleteActivityStatus(athlete, mod, wk) {
+    const cw = athlete.completedWeeks || {};
+    const key = `${mod}-${wk}`;
+    const entry = cw[key] || {};
+    return {
+      learn:     !!(entry.learn),
+      challenge: !!(entry.challenge),
+      reflect:   !!(entry.reflect),
+    };
+  }
+
+  // Renders the compact status table above the session content.
+  function _renderSessionStatusTable(athletes, mod, wk) {
+    const el = document.getElementById('session-status-table');
+    if (!el) return;
+    if (!athletes.length) { el.innerHTML = ''; return; }
+
+    const tick = '✅'; const cross = '❌';
+    const rows = athletes.map(a => {
+      const s = _athleteActivityStatus(a, mod, wk);
+      const name = (a.fullName || a.full_name || 'Athlete');
+      return `<tr>
+        <td style="padding:5px 8px 5px 0;font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;">${escapeHTML(name)}</td>
+        <td style="padding:5px 6px;text-align:center;font-size:13px;">${s.learn     ? tick : cross}</td>
+        <td style="padding:5px 6px;text-align:center;font-size:13px;">${s.challenge ? tick : cross}</td>
+        <td style="padding:5px 6px;text-align:center;font-size:13px;">${s.reflect   ? tick : cross}</td>
+      </tr>`;
+    }).join('');
+
+    el.innerHTML = `
+      <div style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:4px;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border2);">
+              <th style="padding:7px 8px 7px 12px;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text3);text-align:left;text-transform:uppercase;">Athlete</th>
+              <th style="padding:7px 6px;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--orange);text-align:center;text-transform:uppercase;">📖 Learn</th>
+              <th style="padding:7px 6px;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--cyan);text-align:center;text-transform:uppercase;">⚡ Challenge</th>
+              <th style="padding:7px 6px;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text2);text-align:center;text-transform:uppercase;">✍️ Reflect</th>
+            </tr>
+          </thead>
+          <tbody style="padding:0 4px;">
+            ${rows.replace(/<tr>/g, '<tr style="border-top:1px solid var(--border1);">')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
   function _sessionVisibleAthletes() {
     // Returns athletes currently shown in the coach list (school + search filtered).
     const schoolFiltered = _activeSchool === 'All'
@@ -4420,7 +4471,17 @@ const MAJ_CONTENT = {
     const weekData = MAJ_CONTENT.getWeek(mod, wk);
     const body = document.getElementById('session-content-body');
     const athletes = _sessionVisibleAthletes();
-    const n = athletes.length;
+
+    // Render the per-athlete status table
+    _renderSessionStatusTable(athletes, mod, wk);
+
+    // Count athletes who still need each activity (for button labels)
+    const needLearn     = athletes.filter(a => !_athleteActivityStatus(a, mod, wk).learn);
+    const needChallenge = athletes.filter(a => !_athleteActivityStatus(a, mod, wk).challenge);
+    const needReflect   = athletes.filter(a => !_athleteActivityStatus(a, mod, wk).reflect);
+    const nL = needLearn.length;
+    const nC = needChallenge.length;
+    const nR = needReflect.length;
 
     if (!weekData) {
       body.innerHTML = `<div style="color:var(--text2);text-align:center;padding:24px;">No content for Module ${mod} Week ${wk}</div>`;
@@ -4458,8 +4519,9 @@ const MAJ_CONTENT = {
 
       <button id="session-learn-btn"
         onclick="sessionMarkAll('learn')"
-        style="width:100%;background:var(--green);border:none;color:#fff;border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        ✅ Mark Learn read for all ${n} athlete${n !== 1 ? 's' : ''}
+        ${nL === 0 ? 'disabled' : ''}
+        style="width:100%;background:${nL === 0 ? 'var(--surface3)' : 'var(--green)'};border:${nL === 0 ? '1.5px solid var(--border2)' : 'none'};color:${nL === 0 ? 'var(--text3)' : '#fff'};border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:${nL === 0 ? 'default' : 'pointer'};margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        ${nL === 0 ? '✅ All athletes have learned' : `✅ Mark Learn read for ${nL} athlete${nL !== 1 ? 's' : ''}`}
       </button>
 
       <!-- ── CHALLENGE ───────────────────────────────────── -->
@@ -4473,8 +4535,9 @@ const MAJ_CONTENT = {
 
       <button id="session-challenge-btn"
         onclick="sessionMarkAll('challenge')"
-        style="width:100%;background:var(--cyan);border:none;color:#fff;border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        🏆 All ${n} athlete${n !== 1 ? 's' : ''} completed the challenge
+        ${nC === 0 ? 'disabled' : ''}
+        style="width:100%;background:${nC === 0 ? 'var(--surface3)' : 'var(--cyan)'};border:${nC === 0 ? '1.5px solid var(--border2)' : 'none'};color:${nC === 0 ? 'var(--text3)' : '#fff'};border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:${nC === 0 ? 'default' : 'pointer'};margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        ${nC === 0 ? '🏆 All athletes completed the challenge' : `🏆 ${nC} athlete${nC !== 1 ? 's' : ''} completed the challenge`}
       </button>
 
       <!-- ── REFLECTION REMINDER ─────────────────────────── -->
@@ -4486,11 +4549,12 @@ const MAJ_CONTENT = {
 
       <button id="session-remind-btn"
         onclick="sessionSendReminder(${mod},${wk})"
-        style="width:100%;background:var(--surface3);border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        📲 Send reflection reminder to ${n} athlete${n !== 1 ? 's' : ''}
+        ${nR === 0 ? 'disabled' : ''}
+        style="width:100%;background:var(--surface3);border:1.5px solid ${nR === 0 ? 'var(--border2)' : 'var(--orange)'};color:${nR === 0 ? 'var(--text3)' : 'var(--orange)'};border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:${nR === 0 ? 'default' : 'pointer'};margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        ${nR === 0 ? '✅ All athletes have reflected' : `📲 Send reflection reminder to ${nR} athlete${nR !== 1 ? 's' : ''}`}
       </button>
       <div style="font-size:11px;color:var(--text2);text-align:center;padding-bottom:4px;">
-        Sends: "Complete your reflection to unlock Week ${wk + 1 <= 8 ? wk + 1 : 1} 🔒"
+        ${nR > 0 ? `Sends: "Complete your reflection to unlock Week ${wk + 1 <= 8 ? wk + 1 : 1} 🔒"` : ''}
       </div>
     `;
   }
@@ -4498,7 +4562,8 @@ const MAJ_CONTENT = {
   async function sessionMarkAll(activity) {
     const mod = parseInt(document.getElementById('session-module-select').value);
     const wk  = parseInt(document.getElementById('session-week-select').value);
-    const athletes = _sessionVisibleAthletes();
+    // Only target athletes who haven't already completed this activity
+    const athletes = _sessionVisibleAthletes().filter(a => !_athleteActivityStatus(a, mod, wk)[activity]);
     const btnId = activity === 'learn' ? 'session-learn-btn' : 'session-challenge-btn';
     const btn = document.getElementById(btnId);
     if (!btn || btn.disabled) return;
@@ -4528,7 +4593,8 @@ const MAJ_CONTENT = {
   }
 
   async function sessionSendReminder(mod, wk) {
-    const athletes = _sessionVisibleAthletes();
+    // Only remind athletes who haven't reflected yet
+    const athletes = _sessionVisibleAthletes().filter(a => !_athleteActivityStatus(a, mod, wk).reflect);
     const btn = document.getElementById('session-remind-btn');
     if (!btn || btn.disabled) return;
     btn.disabled = true;

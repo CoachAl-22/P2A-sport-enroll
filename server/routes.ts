@@ -1010,6 +1010,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Feature preview — static demo of the session panel (no login required)
+  app.get("/session-preview", async (req, res) => {
+    const { readFileSync: _rfs } = await import("fs");
+    const { resolve: _res2, dirname: _dn2 } = await import("path");
+    const { fileURLToPath: _ftu3 } = await import("url");
+    const __dn2 = _dn2(_ftu3(import.meta.url));
+    try {
+      const html = _rfs(_res2(__dn2, "../public/session-preview.html"), "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache");
+      return res.send(html);
+    } catch { return res.status(404).send("Not found"); }
+  });
+
   app.get("/my-athletic-journey", async (req, res) => {
     const { readFileSync } = await import("fs");
     const { resolve, dirname } = await import("path");
