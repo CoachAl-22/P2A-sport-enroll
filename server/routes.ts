@@ -13,6 +13,7 @@ import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import crypto from "crypto";
 import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
+import { registerEnrolmentLinkRoutes } from "./enrolment-links";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, users, performanceVideoHighlights } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
 import { applySiblingDiscount } from "./siblingDiscount";
@@ -245,6 +246,12 @@ const enrollmentFormSchema = insertEnrollmentSchema.extend({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Enrolment front door. Registered first so nothing else can shadow /enrol/*.
+  registerEnrolmentLinkRoutes(app, {
+    getEnrolmentLink: (slug) => storage.getEnrolmentLink(slug),
+    logEnrolmentLinkClick: (click) => storage.logEnrolmentLinkClick(click),
+  });
+
   // Proxy /__mockup/ to the mockup sandbox dev server (port 23636) — dev only
   if (process.env.NODE_ENV !== 'production') {
     app.use('/__mockup', (req: any, res: any) => {
