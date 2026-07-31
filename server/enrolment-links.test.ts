@@ -128,4 +128,88 @@ describe("GET /enrol/:slug", () => {
     expect(res.status).toBe(302);
     expect(res.headers.location).toBe("/programs");
   });
+
+  it("rejects a slug containing path characters without hitting the DB", async () => {
+    const getEnrolmentLink = vi.fn().mockResolvedValue(link());
+    const app = buildApp({ getEnrolmentLink, logEnrolmentLinkClick });
+
+    const res = await request(app).get("/enrol/foo%2f..%2fbar");
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe("/programs");
+    expect(getEnrolmentLink).not.toHaveBeenCalled();
+  });
+
+  it("rejects a slug containing a CRLF sequence without hitting the DB", async () => {
+    const getEnrolmentLink = vi.fn().mockResolvedValue(link());
+    const app = buildApp({ getEnrolmentLink, logEnrolmentLinkClick });
+
+    const res = await request(app).get("/enrol/foundation%0d%0aSet-Cookie:x");
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe("/programs");
+    expect(getEnrolmentLink).not.toHaveBeenCalled();
+  });
+
+  it("treats a protocol-relative destination as inactive", async () => {
+    const app = buildApp({
+      getEnrolmentLink: vi.fn().mockResolvedValue(link({ destinationUrl: "//evil.example" })),
+      logEnrolmentLinkClick,
+    });
+
+    const res = await request(app).get("/enrol/foundation");
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe("/programs?closed=foundation");
+  });
+
+  it("treats a javascript: destination as inactive", async () => {
+    const app = buildApp({
+      getEnrolmentLink: vi
+        .fn()
+        .mockResolvedValue(link({ destinationUrl: "javascript:alert(1)" })),
+      logEnrolmentLinkClick,
+    });
+
+    const res = await request(app).get("/enrol/foundation");
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe("/programs?closed=foundation");
+  });
+
+  it("allows an internal absolute path destination", async () => {
+    const app = buildApp({
+      getEnrolmentLink: vi.fn().mockResolvedValue(link({ destinationUrl: "/foundation" })),
+      logEnrolmentLinkClick,
+    });
+
+    const res = await request(app).get("/enrol/foundation");
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe("/foundation");
+  });
+
+  it("truncates an overlong slug to 100 characters before validating", async () => {
+    const getEnrolmentLink = vi.fn().mockResolvedValue(link());
+    const app = buildApp({ getEnrolmentLink, logEnrolmentLinkClick });
+    const longSlug = "a".repeat(150);
+
+    await request(app).get(`/enrol/${longSlug}`);
+
+    expect(getEnrolmentLink).toHaveBeenCalledWith("a".repeat(100));
+  });
+
+  it("truncates an overlong src to 100 characters", async () => {
+    const app = buildApp({
+      getEnrolmentLink: vi.fn().mockResolvedValue(link()),
+      logEnrolmentLinkClick,
+    });
+    const longSrc = "b".repeat(150);
+
+    await request(app).get(`/enrol/foundation?src=${longSrc}`);
+
+    expect(logEnrolmentLinkClick).toHaveBeenCalledWith(
+      expect.objectContaining({ src: "b".repeat(100) }),
+    );
+  });
 });
