@@ -10,7 +10,8 @@
     "check": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "seed:enrol-links": "tsx scripts/seed-enrolment-links.ts"
   },
   "dependencies": {
     "@expo/cli": "^0.24.20",
