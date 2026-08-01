@@ -347,7 +347,7 @@ export default function HighPerformance() {
                 Apply for elite-level coaching and join our High Performance program
               </p>
               <Button
-                onClick={() => { window.location.href = "/enrol/high-performance?src=high-performance-page"; }}
+                onClick={() => setIsApplicationFormOpen(true)}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 text-lg"
                 data-testid="button-open-application"
               >

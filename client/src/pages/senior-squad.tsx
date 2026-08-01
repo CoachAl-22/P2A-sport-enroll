@@ -302,7 +302,7 @@ export default function SeniorSquad() {
             </div>
             <div className="px-8 pb-8">
               <Button
-                onClick={() => { window.location.href = "/enrol/senior-squad?src=senior-squad-page"; }}
+                onClick={() => window.open('/senior-squad-application.html', '_blank')}
                 className="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold"
               >
                 Apply to Join Senior Squad
@@ -354,7 +354,7 @@ export default function SeniorSquad() {
               </a>
             </Button>
             <Button 
-              onClick={() => { window.location.href = "/enrol/senior-squad?src=senior-squad-page"; }}
+              onClick={() => window.open('/senior-squad-application.html', '_blank')}
               size="lg"
               variant="outline"
               className="bg-white/10 border-white text-white hover:bg-white/20 font-bold px-8 py-3 text-lg"
