@@ -95,6 +95,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       { slug: "toorak-foundation-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm", studentsOnly: "Toorak College" },
       { slug: "toorak-foundation-tue", venue: "Toorak College", day: "Tuesday", time: "3:30pm", waitlist: true, studentsOnly: "Toorak College" },
       { slug: "ballam-foundation-thu", venue: "Ballam Park", day: "Thursday", time: "4:30pm" },
+      { slug: "ballam-foundation-tue", venue: "Ballam Park", day: "Tuesday", time: "4:30pm", waitlist: true },
       { slug: "mornington-foundation-wed", venue: "Mornington Athletics Track", day: "Wednesday", time: "4:30pm" },
     ],
   },
@@ -138,6 +139,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
       { slug: "toorak-emerging-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm", studentsOnly: "Toorak College" },
       { slug: "ballam-emerging-thu", venue: "Ballam Park", day: "Thursday", time: "4:30pm" },
+      { slug: "ballam-emerging-tue", venue: "Ballam Park", day: "Tuesday", time: "4:30pm", waitlist: true },
       { slug: "mornington-emerging-wed", venue: "Mornington Athletics Track", day: "Wednesday", time: "4:30pm" },
     ],
   },
@@ -165,7 +167,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     teaser: "For footballers, soccer players, netballers and basketballers who want the gap to show on game day.",
     about: [
       "Their club coach trains the skills. We improve their speed, agility and speed endurance, so they can produce repeat efforts in line with the demands of the game.",
-      "That is the part that usually goes untrained, and it is the part that decides contests: who gets there first, and who is still getting there in the last quarter. It sits alongside club training rather than replacing it. I coach sprinters at World Athletics Level 4, and this is that same work, pointed at footballers, soccer players, netballers and basketballers.",
+      "That is the part that usually goes untrained, and it is the part that decides contests: who gets there first, and who is still getting there in the last quarter. It sits alongside club training rather than replacing it. I coach sprinters at Australian Athletics Level 4, and this is that same work, pointed at footballers, soccer players, netballers and basketballers.",
     ],
     forWho: [
       "Your athlete is 13 or over and plays a team sport",
