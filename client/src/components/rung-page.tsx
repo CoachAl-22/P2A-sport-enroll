@@ -48,6 +48,13 @@ function ClassList({ rung, src }: { rung: RungContent; src: string }) {
                 Waitlist
               </span>
             )}
+            {cls.studentsOnly ? (
+              <span className="mt-1 block text-sm font-bold text-[#0a6b66]">
+                {cls.studentsOnly} students only
+              </span>
+            ) : (
+              <span className="mt-1 block text-sm">Open to everyone</span>
+            )}
           </span>
           <span className="font-bold uppercase tracking-wide text-[#f6930e]">
             {cls.waitlist ? "Join waitlist" : rung.ctaLabel}

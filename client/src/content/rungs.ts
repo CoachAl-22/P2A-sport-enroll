@@ -11,7 +11,8 @@ export interface ClassOffering {
   venue: string;
   day: string;
   time: string;
-  waitlist?: boolean; // true if this class is waitlist-only, not an open intake
+  waitlist?: boolean;     // true if this class is waitlist-only, not an open intake
+  studentsOnly?: string;  // school name when the class is only open to that school's students
 }
 
 // Fields every hub card needs, whether the rung has a full detail page or not.
@@ -90,9 +91,9 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ctaLabel: "Choose your class",
     enrolSlug: "foundation",
     classes: [
-      { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm" },
-      { slug: "toorak-foundation-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm" },
-      { slug: "toorak-foundation-tue", venue: "Toorak College", day: "Tuesday", time: "3:30pm", waitlist: true },
+      { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
+      { slug: "toorak-foundation-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm", studentsOnly: "Toorak College" },
+      { slug: "toorak-foundation-tue", venue: "Toorak College", day: "Tuesday", time: "3:30pm", waitlist: true, studentsOnly: "Toorak College" },
       { slug: "ballam-foundation-thu", venue: "Ballam Park", day: "Thursday", time: "4:30pm" },
       { slug: "mornington-foundation-wed", venue: "Mornington Athletics Track", day: "Wednesday", time: "4:30pm" },
     ],
@@ -134,8 +135,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ctaLabel: "Choose your class",
     enrolSlug: "emerging-athletes",
     classes: [
-      { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm" },
-      { slug: "toorak-emerging-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm" },
+      { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
+      { slug: "toorak-emerging-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm", studentsOnly: "Toorak College" },
       { slug: "ballam-emerging-thu", venue: "Ballam Park", day: "Thursday", time: "4:30pm" },
       { slug: "mornington-emerging-wed", venue: "Mornington Athletics Track", day: "Wednesday", time: "4:30pm" },
     ],
