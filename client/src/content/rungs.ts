@@ -93,6 +93,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm" },
       { slug: "toorak-foundation-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm" },
       { slug: "toorak-foundation-tue", venue: "Toorak College", day: "Tuesday", time: "3:30pm", waitlist: true },
+      { slug: "ballam-foundation-thu", venue: "Ballam Park", day: "Thursday", time: "4:30pm" },
     ],
   },
 
@@ -133,6 +134,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     enrolSlug: "emerging-athletes",
     classes: [
       { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm" },
+      { slug: "toorak-emerging-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm" },
+      { slug: "ballam-emerging-thu", venue: "Ballam Park", day: "Thursday", time: "4:30pm" },
     ],
   },
 

@@ -38,9 +38,13 @@ const LINKS: InsertEnrolmentLink[] = [
   // The URL carries required query params (c, p_id, t, set). Do not append UTM tags to
   // it. Source attribution already comes from our own click log via ?src=.
   { slug: "pg-foundation-mon", label: "Peninsula Grammar, Foundation, Mon 3:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
-  { slug: "pg-emerging-mon", label: "Peninsula Grammar, Emerging Athletes, Mon 3:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
   { slug: "toorak-foundation-thu", label: "Toorak College, Foundation, Thu 3:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
-  { slug: "toorak-foundation-tue", label: "Toorak College, Foundation, Tue, waitlist", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: "Waitlist class. The schedule page is shared, so the waitlist framing lives on the rung page, not here." },
+  { slug: "toorak-foundation-tue", label: "Toorak College, Foundation, Tue 3:30, waitlist", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: "Waitlist class. The schedule page is shared, so the waitlist framing lives on the rung page, not here." },
+  { slug: "ballam-foundation-thu", label: "Ballam Park, Foundation, Thu 4:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
+
+  { slug: "pg-emerging-mon", label: "Peninsula Grammar, Emerging Athletes, Mon 3:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
+  { slug: "toorak-emerging-thu", label: "Toorak College, Emerging Athletes, Thu 3:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
+  { slug: "ballam-emerging-thu", label: "Ballam Park, Emerging Athletes, Thu 4:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
   // Three Team Sport Speed sessions, each with its own Setmore class link. Slugs carry
   // the day as well as the time: two sessions share 5:30 and a time-only slug would be
   // ambiguous the moment it appeared in a newsletter.
