@@ -29,7 +29,7 @@ export default function Programs() {
         )}
 
         <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#0a6b66]">
-          Mornington &middot; Ages 7 to 17+
+          Frankston &middot; Mornington &middot; Mt Eliza
         </p>
         <h1 className="mb-4 text-4xl font-black text-[#2e2600] md:text-5xl">
           Every athlete starts somewhere
