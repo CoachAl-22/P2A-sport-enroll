@@ -15,13 +15,23 @@ async function main() {
       : link.destinationUrl;
 
     try {
-      const res = await fetch(url, { redirect: "follow" });
-      const ok = res.status === 200;
-      console.log(`${ok ? "OK  " : "FAIL"}  ${res.status}  /enrol/${link.slug}  ->  ${url}`);
-      if (!ok) failures.push(`/enrol/${link.slug} -> ${url} returned ${res.status}`);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+
+      try {
+        const res = await fetch(url, { redirect: "follow", signal: controller.signal });
+        clearTimeout(timeout);
+        const ok = res.status === 200;
+        console.log(`${ok ? "OK  " : "FAIL"}  ${res.status}  /enrol/${link.slug}  ->  ${url}`);
+        if (!ok) failures.push(`/enrol/${link.slug} -> ${url} returned ${res.status}`);
+      } finally {
+        clearTimeout(timeout);
+      }
     } catch (err) {
+      const isTimeout = err instanceof Error && err.name === "AbortError";
+      const message = isTimeout ? "timeout (10s)" : (err as Error).message;
       console.log(`FAIL  ERR  /enrol/${link.slug}  ->  ${url}`);
-      failures.push(`/enrol/${link.slug} -> ${url} threw ${(err as Error).message}`);
+      failures.push(`/enrol/${link.slug} -> ${url} ${isTimeout ? "timed out" : `threw ${message}`}`);
     }
   }
 
