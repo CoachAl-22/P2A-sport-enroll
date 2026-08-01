@@ -1139,3 +1139,37 @@ export type MajCoach = typeof majCoaches.$inferSelect;
 export type InsertMajCoach = z.infer<typeof insertMajCoachSchema>;
 export type MajPushSubscription = typeof majPushSubscriptions.$inferSelect;
 export type MajKudosEntry = typeof majKudos.$inferSelect;
+
+// Enrolment front door — slug to destination redirect table.
+// Rung slugs point at internal pages, class slugs point at SportsBiz.
+export const enrolmentLinks = pgTable("enrolment_links", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  label: varchar("label", { length: 200 }).notNull(),
+  destinationUrl: text("destination_url").notNull(),
+  kind: varchar("kind", { length: 20 }).notNull(), // sportsbiz | internal | setmore
+  active: boolean("active").notNull().default(true),
+  notes: text("notes"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// One row per click. slug is deliberately NOT a foreign key, so unknown-slug
+// misses (a parent mistyping from a printed newsletter) are recorded too.
+export const enrolmentLinkClicks = pgTable("enrolment_link_clicks", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: varchar("slug", { length: 100 }).notNull(),
+  src: varchar("src", { length: 100 }).notNull().default("direct"),
+  referrer: text("referrer"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertEnrolmentLinkSchema = createInsertSchema(enrolmentLinks).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export type EnrolmentLink = typeof enrolmentLinks.$inferSelect;
+export type InsertEnrolmentLink = z.infer<typeof insertEnrolmentLinkSchema>;
+export type EnrolmentLinkClick = typeof enrolmentLinkClicks.$inferSelect;
+export type InsertEnrolmentLinkClick = typeof enrolmentLinkClicks.$inferInsert;

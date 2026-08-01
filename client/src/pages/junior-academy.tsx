@@ -190,6 +190,45 @@ export default function JuniorAcademy() {
         </div>
       </section>
 
+      {/* Session times */}
+      <section className="py-16 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-heading font-bold text-gray-900 mb-4">When Does It Run?</h2>
+            <p className="text-gray-600">
+              Two venues, six sessions a week. Your athlete trains up to twice a week, so pick the
+              sessions that fit around school and their sport. These times hold for both Term 3 and
+              Term 4.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="rounded-xl border border-gray-200 p-6" data-testid="ja-sessions-ballam">
+              <h3 className="text-xl font-heading font-bold text-gray-900">Ballam Park, Frankston</h3>
+              <p className="text-gray-600 mb-4">5:30pm to 7:00pm</p>
+              <ul className="space-y-2 text-gray-700">
+                <li>Monday</li>
+                <li>Tuesday</li>
+                <li>Thursday</li>
+              </ul>
+            </div>
+            <div className="rounded-xl border border-gray-200 p-6" data-testid="ja-sessions-mornington">
+              <h3 className="text-xl font-heading font-bold text-gray-900">Mornington Athletics Track</h3>
+              <p className="text-gray-600 mb-4">Track sessions</p>
+              <ul className="space-y-2 text-gray-700">
+                <li>Wednesday 5:30pm</li>
+                <li>Friday 4:30pm</li>
+                <li>Friday 5:30pm</li>
+              </ul>
+              <p className="mt-4 text-sm text-gray-500">
+                Track sessions are shared with Team Sport Speed. Your athlete trains alongside
+                footballers, soccer players, netballers and basketballers working on the same
+                speed and acceleration qualities, on their own Junior Academy programming.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

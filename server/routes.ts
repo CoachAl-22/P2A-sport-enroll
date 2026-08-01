@@ -13,6 +13,7 @@ import { InvoiceService } from "./invoiceService";
 import { readFileSync } from "fs";
 import crypto from "crypto";
 import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
+import { registerEnrolmentLinkRoutes } from "./enrolment-links";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, users, performanceVideoHighlights } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
 import { applySiblingDiscount } from "./siblingDiscount";
@@ -246,6 +247,12 @@ const enrollmentFormSchema = insertEnrollmentSchema.extend({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Enrolment front door. Registered first so nothing else can shadow /enrol/*.
+  registerEnrolmentLinkRoutes(app, {
+    getEnrolmentLink: (slug) => storage.getEnrolmentLink(slug),
+    logEnrolmentLinkClick: (click) => storage.logEnrolmentLinkClick(click),
+  });
+
   // Proxy /__mockup/ to the mockup sandbox dev server (port 23636) — dev only
   if (process.env.NODE_ENV !== 'production') {
     app.use('/__mockup', (req: any, res: any) => {
@@ -4589,6 +4596,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Error deleting term holiday:', error);
       res.status(500).json({ message: "Failed to delete term holiday" });
+    }
+  });
+
+  // ── Admin: enrolment links ───────────────────────────────────────────────
+  app.get("/api/admin/enrolment-links", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const adminUser = await storage.getUser(userId);
+    if (!adminUser || adminUser.role !== "admin") return res.status(403).json({ message: "Forbidden" });
+    try {
+      res.json(await storage.getAllEnrolmentLinks());
+    } catch (err) {
+      console.error("[enrol] list failed", err);
+      res.status(500).json({ message: "Failed to load enrolment links" });
+    }
+  });
+
+  app.patch("/api/admin/enrolment-links/:slug", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const adminUser = await storage.getUser(userId);
+    if (!adminUser || adminUser.role !== "admin") return res.status(403).json({ message: "Forbidden" });
+    try {
+      const { destinationUrl, label, kind, active, notes } = req.body;
+      const updates: Record<string, unknown> = {};
+      if (typeof destinationUrl === "string") updates.destinationUrl = destinationUrl.trim();
+      if (typeof label === "string") updates.label = label.trim();
+      if (typeof kind === "string") updates.kind = kind;
+      if (typeof active === "boolean") updates.active = active;
+      if (typeof notes === "string" || notes === null) updates.notes = notes;
+
+      if (Object.keys(updates).length === 0) {
+        return res.status(400).json({ message: "No valid fields to update" });
+      }
+
+      const updated = await storage.updateEnrolmentLink(req.params.slug, updates);
+      if (!updated) return res.status(404).json({ message: "Slug not found" });
+      res.json(updated);
+    } catch (err) {
+      console.error("[enrol] update failed", err);
+      res.status(500).json({ message: "Failed to update enrolment link" });
+    }
+  });
+
+  app.get("/api/admin/enrolment-link-clicks", async (req, res) => {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+    const adminUser = await storage.getUser(userId);
+    if (!adminUser || adminUser.role !== "admin") return res.status(403).json({ message: "Forbidden" });
+    try {
+      res.json(await storage.getEnrolmentLinkClickCounts());
+    } catch (err) {
+      console.error("[enrol] click counts failed", err);
+      res.status(500).json({ message: "Failed to load click counts" });
     }
   });
 

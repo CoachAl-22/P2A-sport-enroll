@@ -8,6 +8,10 @@ import { useAuth } from "@/hooks/use-auth";
 import Landing from "@/pages/landing";
 import Classes from "@/pages/classes";
 import NotFound from "@/pages/not-found";
+import Foundation from "@/pages/foundation";
+import EmergingAthletes from "@/pages/emerging-athletes";
+import TeamSportSpeed from "@/pages/team-sport-speed";
+import Programs from "@/pages/programs";
 
 const HighPerformance = lazy(() => import("@/pages/high-performance"));
 const SeniorSquad = lazy(() => import("@/pages/senior-squad"));
@@ -45,6 +49,7 @@ const AdminMajAthletes = lazy(() => import("@/pages/admin-maj-athletes"));
 const AdminApplications = lazy(() => import("@/pages/admin-applications"));
 const AdminSurveys = lazy(() => import("@/pages/admin-surveys"));
 const AdminTrials = lazy(() => import("@/pages/admin-trials"));
+const AdminEnrolmentLinks = lazy(() => import("@/pages/admin-enrolment-links"));
 const Onboarding = lazy(() => import("@/pages/onboarding"));
 const ConfirmationPage = lazy(() => import("@/pages/confirmation"));
 const ReEnrol = lazy(() => import("@/pages/re-enrol"));
@@ -74,6 +79,10 @@ function Router() {
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/senior-squad" component={SeniorSquad} />
           <Route path="/junior-academy" component={JuniorAcademy} />
+          <Route path="/foundation" component={Foundation} />
+          <Route path="/emerging-athletes" component={EmergingAthletes} />
+          <Route path="/team-sport-speed" component={TeamSportSpeed} />
+          <Route path="/programs" component={Programs} />
           <Route path="/blog" component={Blog} />
           <Route path="/education" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
@@ -102,6 +111,10 @@ function Router() {
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/senior-squad" component={SeniorSquad} />
           <Route path="/junior-academy" component={JuniorAcademy} />
+          <Route path="/foundation" component={Foundation} />
+          <Route path="/emerging-athletes" component={EmergingAthletes} />
+          <Route path="/team-sport-speed" component={TeamSportSpeed} />
+          <Route path="/programs" component={Programs} />
           <Route path="/questionnaire" component={Questionnaire} />
           <Route path="/questionnaire.html" component={Questionnaire} />
           <Route path="/enrollment/:classId" component={Enrollment} />
@@ -139,6 +152,7 @@ function Router() {
           <Route path="/admin/applications" component={AdminApplications} />
           <Route path="/admin/surveys" component={AdminSurveys} />
           <Route path="/admin/trials" component={AdminTrials} />
+          <Route path="/admin/enrolment-links" component={AdminEnrolmentLinks} />
           <Route path="/admin/athletes" component={AdminAthletes} />
           <Route path="/admin/maj-athletes" component={AdminMajAthletes} />
         </>
