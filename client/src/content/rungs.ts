@@ -178,8 +178,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ],
     included: COMMON_INCLUDED,
     logistics: [
-      "One session a week, Friday afternoons at the Mornington track",
-      "Two group times, 4:30 and 5:30",
+      "One session a week at the Mornington track",
+      "Three groups to choose from: Wednesday 5:30, Friday 4:30 and Friday 5:30",
       "Runners and training clothes, plus a drink bottle",
       "Wet weather: we train unless it is unsafe, and you will hear from me before the session if it is called off",
     ],
@@ -188,8 +188,9 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ctaLabel: "Choose your class",
     enrolSlug: "team-sport-speed",
     classes: [
-      { slug: "team-speed-430", venue: "Mornington track", day: "Friday", time: "4:30pm" },
-      { slug: "team-speed-530", venue: "Mornington track", day: "Friday", time: "5:30pm" },
+      { slug: "team-speed-wed-530", venue: "Mornington track", day: "Wednesday", time: "5:30pm" },
+      { slug: "team-speed-fri-430", venue: "Mornington track", day: "Friday", time: "4:30pm" },
+      { slug: "team-speed-fri-530", venue: "Mornington track", day: "Friday", time: "5:30pm" },
     ],
   },
 
