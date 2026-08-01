@@ -815,7 +815,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ── Coach: toggle an athlete's active / inactive status for the term ─────────
+  app.patch("/api/maj/coach/athletes/:id/active", isMajCoach, async (req, res) => {
+    try {
+      const { active } = req.body as { active?: boolean };
+      if (typeof active !== "boolean") {
+        return res.status(400).json({ message: "active (boolean) is required" });
+      }
+      const athlete = await storage.updateMajAthlete(req.params.id, { enabled: active });
+      const { password: _pw, ...safe } = athlete as any;
+      res.json(safe);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
   // One-tap coach kudos — saved for the athlete's bell and pushed instantly
+  // ── Coach bulk-progress: mark learn/challenge complete for multiple athletes ─
+  app.post("/api/maj/coach/bulk-progress", isMajCoach, async (req, res) => {
+    try {
+      const { athleteIds, moduleNum, weekNum, activities } = req.body as {
+        athleteIds: string[];
+        moduleNum: number;
+        weekNum: number;
+        activities: { learn?: boolean; challenge?: boolean };
+      };
+      if (!Array.isArray(athleteIds) || !athleteIds.length || !moduleNum || !weekNum || !activities) {
+        return res.status(400).json({ message: "athleteIds[], moduleNum, weekNum and activities required" });
+      }
+      const weekKey = `${moduleNum}-${weekNum}`;
+      const patch: Record<string, any> = {};
+      if (activities.learn)     patch.learn     = true;
+      if (activities.challenge) patch.challenge = true;
+      if (!Object.keys(patch).length) {
+        return res.status(400).json({ message: "At least one activity (learn or challenge) must be true" });
+      }
+      const results = await Promise.allSettled(
+        athleteIds.map(id =>
+          storage.updateMajAthleteProgress(id, {
+            completedWeeks: { [weekKey]: patch },
+          })
+        )
+      );
+      const updated = results.filter(r => r.status === "fulfilled").length;
+      const failed  = results.filter(r => r.status === "rejected").length;
+      res.json({ updated, failed });
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
+  // ── Coach bulk-push: send a push notification to a list of athletes ─────────
+  // Optional: pass moduleNum + weekNum for a reflection reminder. The server
+  // cross-checks maj_reflections and silently skips athletes who already submitted,
+  // regardless of any stale client-side data.
+  app.post("/api/maj/coach/bulk-push", isMajCoach, async (req, res) => {
+    try {
+      const { athleteIds, title, body, moduleNum, weekNum } = req.body as {
+        athleteIds: string[];
+        title: string;
+        body: string;
+        moduleNum?: number;
+        weekNum?: number;
+      };
+      if (!Array.isArray(athleteIds) || !athleteIds.length || !title || !body) {
+        return res.status(400).json({ message: "athleteIds[], title and body required" });
+      }
+
+      // If this is a reflection reminder, filter out athletes who already reflected
+      let targets = athleteIds;
+      let skipped = 0;
+      if (moduleNum && weekNum) {
+        const { db } = await import("./db.js");
+        const { majReflections } = await import("../shared/schema.js");
+        const { inArray, eq, and } = await import("drizzle-orm");
+        const already = await db
+          .select({ athleteId: majReflections.athleteId })
+          .from(majReflections)
+          .where(
+            and(
+              inArray(majReflections.athleteId, athleteIds),
+              eq(majReflections.moduleNum, moduleNum),
+              eq(majReflections.weekNum, weekNum)
+            )
+          );
+        const doneSet = new Set(already.map(r => r.athleteId));
+        targets = athleteIds.filter(id => !doneSet.has(id));
+        skipped = doneSet.size;
+      }
+
+      const results = await Promise.allSettled(
+        targets.map(id =>
+          sendPushToAthlete(id, { title, body, url: "/my-athletic-journey" })
+        )
+      );
+      const sent   = results.filter(r => r.status === "fulfilled").length;
+      const failed = results.filter(r => r.status === "rejected").length;
+      res.json({ sent, skipped, failed });
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
   app.post("/api/maj/kudos", isMajCoach, async (req, res) => {
     try {
       const { athleteId, emoji, message, coachName } = req.body;
@@ -957,6 +1058,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch {
       res.status(404).send("Page not found");
     }
+  });
+
+  // Feature preview — static demo of the session panel (no login required)
+  app.get("/session-preview", async (req, res) => {
+    const { readFileSync: _rfs } = await import("fs");
+    const { resolve: _res2, dirname: _dn2 } = await import("path");
+    const { fileURLToPath: _ftu3 } = await import("url");
+    const __dn2 = _dn2(_ftu3(import.meta.url));
+    try {
+      const html = _rfs(_res2(__dn2, "../public/session-preview.html"), "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache");
+      return res.send(html);
+    } catch { return res.status(404).send("Not found"); }
   });
 
   app.get("/my-athletic-journey", async (req, res) => {

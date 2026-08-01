@@ -1948,6 +1948,28 @@ export class DatabaseStorage implements IStorage {
         }
       }
       set.completedWeeks = merged;
+
+      // Auto-increment XP for newly-completed activities when the caller
+      // (e.g. bulk-progress) didn't supply an explicit XP value.
+      // If XP is provided explicitly the athlete's own computed total takes
+      // priority via the Math.max below — no double-counting risk.
+      if (xp === undefined) {
+        const XP_PER: Record<string, number> = { learn: 10, challenge: 10, reflect: 15 };
+        let delta = 0;
+        for (const [key, val] of Object.entries(incoming)) {
+          const existingEntry = ((existing[key] || {}) as Record<string, any>);
+          if (val && typeof val === 'object') {
+            for (const [activity, isTrue] of Object.entries(val as Record<string, any>)) {
+              if (isTrue && !existingEntry[activity] && XP_PER[activity]) {
+                delta += XP_PER[activity];
+              }
+            }
+          }
+        }
+        if (delta > 0) {
+          set.xp = ((current as any)?.xp || 0) + delta;
+        }
+      }
     }
 
     // currentModule / currentWeek: only advance, never go back.
@@ -1962,7 +1984,7 @@ export class DatabaseStorage implements IStorage {
       // If incoming is behind server, silently keep the server value (no-op for these fields)
     }
 
-    // XP: only ever increases
+    // XP: only ever increases (applies when the athlete's own saveState() provides xp)
     if (xp !== undefined) {
       set.xp = Math.max(xp, (current as any)?.xp || 0);
     }

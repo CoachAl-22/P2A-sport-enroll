@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Panel — Feature Preview</title>
+<style>
+  :root {
+    --orange: #F26522; --cyan: #00B4D8; --black: #0a0a0a;
+    --surface: #111111; --surface2: #1a1a1a; --surface3: #222222;
+    --border1: #1e1e1e; --border2: #2a2a2a;
+    --text: #fff; --text2: #888; --text3: #6b6b6b;
+    --green: #22c55e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #000; font-family: 'DM Sans', sans-serif; color: var(--text); }
+  .banner {
+    background: linear-gradient(90deg,#1a0d00,#2a1500);
+    border-bottom: 1px solid var(--orange);
+    padding: 10px 16px;
+    font-size: 12px; color: var(--orange); font-weight: 600;
+    text-align: center; letter-spacing: 0.5px;
+  }
+  .sheet { max-width: 420px; margin: 0 auto; background: var(--surface); min-height: 100vh; padding-bottom: 40px; }
+  .header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px; border-bottom: 1px solid var(--border2);
+    position: sticky; top: 0; background: var(--surface); z-index: 10;
+  }
+  .back { font-size: 22px; color: var(--text2); }
+  .title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .count-label { margin-left: auto; font-size: 11px; color: var(--text2); font-weight: 700; }
+
+  .week-picker { padding: 14px 16px 8px; }
+  .picker-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; color: var(--text2); margin-bottom: 8px; }
+  .picker-row { display: flex; gap: 8px; }
+  select {
+    flex: 1; background: var(--surface2); border: 1.5px solid var(--border2);
+    border-radius: 10px; color: var(--text); padding: 9px 12px;
+    font-size: 14px; font-weight: 600; outline: none;
+  }
+
+  .status-wrap { padding: 0 16px 8px; }
+  .status-box { background: var(--surface2); border: 1.5px solid var(--border2); border-radius: 12px; overflow: hidden; margin-bottom: 4px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { border-bottom: 1px solid var(--border2); }
+  th { padding: 7px 6px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-align: center; }
+  th.nc { text-align: left; padding-left: 12px; color: var(--text3); }
+  tbody tr { border-top: 1px solid var(--border1); }
+  td { padding: 6px 6px; text-align: center; font-size: 14px; }
+  td.nc { text-align: left; padding-left: 12px; font-size: 12px; color: var(--text); }
+
+  .content { padding: 0 16px; }
+  .card { background: var(--surface2); border-radius: 14px; padding: 16px; margin-bottom: 14px; border: 1.5px solid var(--border2); }
+  .card-tag { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; margin-bottom: 6px; }
+  .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .card-body { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+  .btn {
+    width: 100%; border-radius: 12px; padding: 13px 16px; font-size: 14px;
+    font-weight: 700; cursor: pointer; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px; border: none;
+  }
+  .remind-hint { font-size: 11px; color: var(--text2); text-align: center; margin-top: -14px; padding-bottom: 16px; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="banner">⚠️ PREVIEW ONLY — mock data. Real panel lives at /my-athletic-journey (coach login)</div>
+<div class="sheet">
+  <div class="header">
+    <div class="back">‹</div>
+    <div class="title">⚡ Run a Session</div>
+    <div class="count-label">6 athletes</div>
+  </div>
+
+  <div class="week-picker">
+    <div class="picker-label">SELECT WEEK</div>
+    <div class="picker-row">
+      <select><option>Module 1</option></select>
+      <select><option>Week 3</option></select>
+    </div>
+  </div>
+
+  <div class="status-wrap">
+    <div class="status-box">
+      <table>
+        <thead>
+          <tr>
+            <th class="nc">Athlete</th>
+            <th style="color:#F26522;">📖 Learn</th>
+            <th style="color:#00B4D8;">⚡ Challenge</th>
+            <th style="color:#888;">✍️ Reflect</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="nc">Jordan M.</td>  <td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td class="nc">Aisha K.</td>   <td>✅</td><td>✅</td><td>❌</td></tr>
+          <tr><td class="nc">Theo R.</td>    <td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td class="nc">Priya S.</td>   <td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td class="nc">Callum B.</td>  <td>❌</td><td>❌</td><td>❌</td></tr>
+          <tr><td class="nc">Mei-Lin C.</td> <td>❌</td><td>❌</td><td>❌</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="card">
+      <div class="card-tag" style="color:#F26522;">📖 LEARN</div>
+      <div class="card-title">Growth Mindset</div>
+      <div class="card-body">Your brain grows stronger every time you push through a challenge — just like a muscle.</div>
+    </div>
+    <!-- 2 athletes (Callum, Mei-Lin) still need Learn -->
+    <button class="btn" style="background:var(--green);color:#fff;">✅ Mark Learn read for 2 athletes</button>
+
+    <div class="card">
+      <div class="card-tag" style="color:#00B4D8;">⚡ CHALLENGE</div>
+      <div class="card-title">The Effort Experiment</div>
+      <div class="card-body">Pick one drill and give 50% effort, then 100%. Notice what changes.</div>
+    </div>
+    <!-- 4 athletes still need Challenge -->
+    <button class="btn" style="background:var(--cyan);color:#fff;">🏆 4 athletes completed the challenge</button>
+
+    <div class="card">
+      <div class="card-tag" style="color:#888;">✍️ REFLECTION (athlete completes individually)</div>
+      <div class="card-title">What did you notice when you gave full effort?</div>
+    </div>
+    <!-- 5 athletes still need Reflect -->
+    <button class="btn" style="background:var(--surface3);border:1.5px solid var(--orange);color:var(--orange);margin-bottom:8px;">📲 Send reflection reminder to 5 athletes</button>
+    <div class="remind-hint">Sends: "Complete your reflection to unlock Week 4 🔒"</div>
+  </div>
+</div>
+</body>
+</html>
