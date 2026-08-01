@@ -219,6 +219,11 @@ export default function JuniorAcademy() {
                 <li>Friday 4:30pm</li>
                 <li>Friday 5:30pm</li>
               </ul>
+              <p className="mt-4 text-sm text-gray-500">
+                Track sessions are shared with Team Sport Speed. Your athlete trains alongside
+                footballers, soccer players, netballers and basketballers working on the same
+                speed and acceleration qualities, on their own Junior Academy programming.
+              </p>
             </div>
           </div>
         </div>

@@ -188,6 +188,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     logistics: [
       "One session a week at the Mornington track",
       "Three groups to choose from: Wednesday 5:30, Friday 4:30 and Friday 5:30",
+      "You train alongside Junior Academy athletes, on programming built for your sport",
       "Runners and training clothes, plus a drink bottle",
       "Wet weather: we train unless it is unsafe, and you will hear from me before the session if it is called off",
     ],
