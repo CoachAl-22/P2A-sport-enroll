@@ -14,6 +14,13 @@ const SPORTSBIZ_TERM_SCHEDULE =
 // Team Sport Speed books through Setmore, not SportsBiz. Each session has its own
 // Setmore class link, confirmed by Alistair 2026-08-01. Do not append UTM tags: these
 // are per-class booking URLs and source attribution already comes from our click log.
+// Waitlist classes have no SportsBiz waitlist path, and the site's own class browser
+// already answers "I want a spot that does not exist yet" with a discovery call. Confirmed
+// by Alistair 2026-08-01. A parent tapping "Join waitlist" gets a conversation, not a
+// schedule page offering them a different class.
+const SETMORE_DISCOVERY_CALL =
+  "https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0";
+
 const SETMORE_TEAM_SPEED_WED_530 =
   "https://power2adapt.setmore.com/classes/f1ce9df4-2ef7-43c6-a4db-217f44abb3aa";
 const SETMORE_TEAM_SPEED_FRI_430 =
@@ -39,15 +46,15 @@ const LINKS: InsertEnrolmentLink[] = [
   // it. Source attribution already comes from our own click log via ?src=.
   { slug: "pg-foundation-mon", label: "Peninsula Grammar, Foundation, Mon 3:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
   { slug: "toorak-foundation-thu", label: "Toorak College, Foundation, Thu 3:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
-  { slug: "toorak-foundation-tue", label: "Toorak College, Foundation, Tue 3:30, waitlist", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: "Waitlist class. The schedule page is shared, so the waitlist framing lives on the rung page, not here." },
+  { slug: "toorak-foundation-tue", label: "Toorak College, Foundation, Tue 3:30, waitlist", destinationUrl: SETMORE_DISCOVERY_CALL, kind: "setmore", active: true, notes: "Waitlist. Goes to a discovery call, not SportsBiz: there is no SportsBiz waitlist path and the class is not running yet." },
   { slug: "ballam-foundation-thu", label: "Ballam Park, Foundation, Thu 4:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
-  { slug: "ballam-foundation-tue", label: "Ballam Park, Foundation, Tue 4:30, waitlist", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: "Waitlist class." },
+  { slug: "ballam-foundation-tue", label: "Ballam Park, Foundation, Tue 4:30, waitlist", destinationUrl: SETMORE_DISCOVERY_CALL, kind: "setmore", active: true, notes: "Waitlist. Goes to a discovery call, not SportsBiz: there is no SportsBiz waitlist path and the class is not running yet." },
   { slug: "mornington-foundation-wed", label: "Mornington Athletics Track, Foundation, Wed 4:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
 
   { slug: "pg-emerging-mon", label: "Peninsula Grammar, Emerging Athletes, Mon 3:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
   { slug: "toorak-emerging-thu", label: "Toorak College, Emerging Athletes, Thu 3:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
   { slug: "ballam-emerging-thu", label: "Ballam Park, Emerging Athletes, Thu 4:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
-  { slug: "ballam-emerging-tue", label: "Ballam Park, Emerging Athletes, Tue 4:30, waitlist", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: "Waitlist class." },
+  { slug: "ballam-emerging-tue", label: "Ballam Park, Emerging Athletes, Tue 4:30, waitlist", destinationUrl: SETMORE_DISCOVERY_CALL, kind: "setmore", active: true, notes: "Waitlist. Goes to a discovery call, not SportsBiz: there is no SportsBiz waitlist path and the class is not running yet." },
   { slug: "mornington-emerging-wed", label: "Mornington Athletics Track, Emerging Athletes, Wed 4:30", destinationUrl: SPORTSBIZ_TERM_SCHEDULE, kind: "sportsbiz", active: true, notes: null },
   // Three Team Sport Speed sessions, each with its own Setmore class link. Slugs carry
   // the day as well as the time: two sessions share 5:30 and a time-only slug would be
