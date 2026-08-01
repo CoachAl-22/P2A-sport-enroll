@@ -18,8 +18,8 @@ const LINKS: InsertEnrolmentLink[] = [
   { slug: "pg-emerging-mon", label: "Peninsula Grammar, Emerging Athletes, Mon 3:30", destinationUrl: "https://www.power2adapt.online/classes", kind: "sportsbiz", active: false, notes: "Needs real SportsBiz URL" },
   { slug: "toorak-foundation-thu", label: "Toorak College, Foundation, Thu 3:30", destinationUrl: "https://www.power2adapt.online/classes", kind: "sportsbiz", active: false, notes: "Needs real SportsBiz URL" },
   { slug: "toorak-foundation-tue", label: "Toorak College, Foundation, Tue, waitlist", destinationUrl: "https://www.power2adapt.online/classes", kind: "sportsbiz", active: false, notes: "Waitlist. Needs real SportsBiz URL" },
-  { slug: "team-speed-430", label: "Mornington, Team Sport Speed, Fri 4:30", destinationUrl: "https://www.power2adapt.online/classes", kind: "sportsbiz", active: false, notes: "Needs real SportsBiz URL" },
-  { slug: "team-speed-530", label: "Mornington, Team Sport Speed, Fri 5:30", destinationUrl: "https://www.power2adapt.online/classes", kind: "sportsbiz", active: false, notes: "Needs real SportsBiz URL" },
+  { slug: "team-speed-430", label: "Mornington, Team Sport Speed, Fri 4:30", destinationUrl: "https://booking.setmore.com/scheduleappointment/25c37fb9-f05a-4f3d-80a5-8b302288f337?utm_source=power2adapt&utm_medium=enrol-link&utm_campaign=team-sport-speed", kind: "setmore", active: false, notes: "General Setmore booking link. If separate booking links exist for the 4:30 and 5:30 sessions, paste the specific one here per slug." },
+  { slug: "team-speed-530", label: "Mornington, Team Sport Speed, Fri 5:30", destinationUrl: "https://booking.setmore.com/scheduleappointment/25c37fb9-f05a-4f3d-80a5-8b302288f337?utm_source=power2adapt&utm_medium=enrol-link&utm_campaign=team-sport-speed", kind: "setmore", active: false, notes: "General Setmore booking link. If separate booking links exist for the 4:30 and 5:30 sessions, paste the specific one here per slug." },
 ];
 
 async function main() {
