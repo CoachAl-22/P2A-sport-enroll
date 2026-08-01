@@ -58,24 +58,23 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     slug: "foundation",
     name: "Foundation",
     ageBand: "Prep to Year 2",
-    teaser: "Runs a bit like a baby giraffe? This is where we sort out the basics.",
+    teaser: "Where we start building the athletic movement engine everything else runs on.",
     about: [
-      "Most parents ring me saying some version of the same thing. Their child runs with a funny action, or looks stiff, or lands heavy on their heels. Nobody has ever actually taught them how to run.",
-      "That is what Foundation is for. We build the basics everything else sits on later: running tall, landing softly, changing direction without ending up on the grass. It is playful on purpose, because that is how five to seven year olds learn fastest, and because a kid who enjoys it is a kid who comes back next term.",
+      "Foundation is where we begin building the engine. Running, jumping, landing, changing direction, balance, coordination. These are the movement skills every sport gets bolted onto later, and they are learned far more easily at six than at sixteen.",
+      "Kids this age are not too young to train. They are exactly the right age to learn. Get this part right in Prep to Year 2 and by the time they pick a sport, they already move well, whichever one they pick. It is playful on purpose, because that is how five to seven year olds learn fastest.",
     ],
     forWho: [
       "Your child is in Prep, Year 1 or Year 2",
-      "They run like a baby giraffe and you are not sure whether to laugh or worry",
-      "They are slow off the mark, or they run on their heels",
-      "They love running around and have never been taught how",
-      "You want them to enjoy sport, not specialise in one at six",
+      "You want them building real movement skills early, rather than specialising in one sport",
+      "They have plenty of energy and you would like it pointed somewhere useful",
+      "You are thinking about the next ten years, not this weekend's game",
     ],
     notForWho:
       "If your athlete is in Year 3 or above, start them at Emerging Athletes instead. It moves quicker, asks more of them, and they will get more out of it.",
     session: [
       "We greet your child by name. Every coach knows every kid in the group",
       "A game based warm up, which is really me watching how they move without them knowing it",
-      "One skill for the session, taught with a single cue so it actually sticks",
+      "One movement skill for the session, taught with a single cue so it actually sticks",
       "Games and relays that get them repeating that skill fifty times without noticing",
       "A finish, one win named out loud, and back to you",
     ],
@@ -104,13 +103,13 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     teaser: "The age where technique starts to stick, and speed starts showing up on Saturday.",
     about: [
       "This is the age where it all starts to land. They are old enough to understand why a change matters, so I tell them the why, not just the drill. That is the difference between a kid who copies a drill and a kid who owns it.",
-      "We work on running mechanics, acceleration, agility, and the strength to hold a good position when they are tired. Most of these athletes play something on the weekend, and the whole point is that the work turns up there on Saturday.",
+      "The engine we started building at Foundation now gets refined: running mechanics, acceleration, agility, and the strength to hold a good position when they are tired. Most of these athletes play something on the weekend, and the whole point is that the work turns up there on Saturday.",
     ],
     forWho: [
       "Your athlete is in Years 3 to 6",
-      "Their arms look funny when they run, or they run stiff legged",
-      "They play sport on the weekend and you can see speed is the thing holding them back",
+      "They play sport on the weekend and you want the athleticism underneath it developed properly",
       "They are ready to be corrected, and to work at something across a whole term",
+      "You would rather they built a base now than chase a quick fix later",
     ],
     notForWho:
       "If they are 12 or over, Junior Academy is the right level for them. Year 2 or below, start at Foundation. One exception worth knowing: if an athlete moves through the competencies quickly, I will invite them up to Junior Academy early rather than hold them at their year level.",
@@ -159,8 +158,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ageBand: "Ages 13 and over",
     teaser: "For footballers, netballers and basketballers who want the gap to show on game day.",
     about: [
-      "Their club coach trains skills. Almost nobody trains how they actually run, which has always struck me as odd, because game day is decided by who gets there first, and who is still getting there in the last quarter.",
-      "Team Sport Speed is that missing piece: acceleration, changing direction, and repeat efforts. It sits alongside club training rather than replacing it. I coach sprinters at World Athletics Level 4, and this is that same work, pointed at footballers, netballers and basketballers.",
+      "Their club coach trains the skills. We improve their speed, agility and speed endurance, so they can produce repeat efforts in line with the demands of the game.",
+      "That is the part that usually goes untrained, and it is the part that decides contests: who gets there first, and who is still getting there in the last quarter. It sits alongside club training rather than replacing it. I coach sprinters at World Athletics Level 4, and this is that same work, pointed at footballers, netballers and basketballers.",
     ],
     forWho: [
       "Your athlete is 13 or over and plays a team sport",
@@ -174,7 +173,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       "Warm up built around the positions their sport actually puts them in",
       "Acceleration at full effort, with real rest between reps",
       "Change of direction and deceleration, the part almost nobody trains and the part that decides contests",
-      "Repeat effort conditioning matched to their sport's work to rest ratio",
+      "Speed endurance work, matched to the work to rest ratio their game actually demands",
       "Cool down, and one cue to take into club training that week",
     ],
     included: COMMON_INCLUDED,
