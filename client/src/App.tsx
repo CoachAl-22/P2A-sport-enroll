@@ -11,6 +11,7 @@ import NotFound from "@/pages/not-found";
 import Foundation from "@/pages/foundation";
 import EmergingAthletes from "@/pages/emerging-athletes";
 import TeamSportSpeed from "@/pages/team-sport-speed";
+import Programs from "@/pages/programs";
 
 const HighPerformance = lazy(() => import("@/pages/high-performance"));
 const SeniorSquad = lazy(() => import("@/pages/senior-squad"));
@@ -80,6 +81,7 @@ function Router() {
           <Route path="/foundation" component={Foundation} />
           <Route path="/emerging-athletes" component={EmergingAthletes} />
           <Route path="/team-sport-speed" component={TeamSportSpeed} />
+          <Route path="/programs" component={Programs} />
           <Route path="/blog" component={Blog} />
           <Route path="/education" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
@@ -111,6 +113,7 @@ function Router() {
           <Route path="/foundation" component={Foundation} />
           <Route path="/emerging-athletes" component={EmergingAthletes} />
           <Route path="/team-sport-speed" component={TeamSportSpeed} />
+          <Route path="/programs" component={Programs} />
           <Route path="/questionnaire" component={Questionnaire} />
           <Route path="/questionnaire.html" component={Questionnaire} />
           <Route path="/enrollment/:classId" component={Enrollment} />
