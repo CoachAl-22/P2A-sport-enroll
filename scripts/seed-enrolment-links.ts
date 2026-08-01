@@ -23,15 +23,39 @@ const LINKS: InsertEnrolmentLink[] = [
 ];
 
 async function main() {
+  const results = { succeeded: [] as string[], failed: [] as { slug: string; error: string }[] };
+
   for (const link of LINKS) {
-    await storage.upsertEnrolmentLink(link);
-    console.log(`${link.active ? "active  " : "inactive"}  /enrol/${link.slug}  ->  ${link.destinationUrl}`);
+    try {
+      await storage.upsertEnrolmentLink(link);
+      results.succeeded.push(link.slug);
+      console.log(`✓ ${link.active ? "active  " : "inactive"}  /enrol/${link.slug}  ->  ${link.destinationUrl}`);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      results.failed.push({ slug: link.slug, error: errorMsg });
+      console.error(`✗ Failed to seed /enrol/${link.slug}: ${errorMsg}`);
+    }
   }
-  console.log(`\nSeeded ${LINKS.length} enrolment links.`);
+
+  console.log(`\n${results.succeeded.length}/${LINKS.length} enrolment links seeded successfully.`);
+
+  if (results.failed.length > 0) {
+    console.error(`\nFailed slugs (${results.failed.length}):`);
+    results.failed.forEach(({ slug, error }) => {
+      console.error(`  ${slug}: ${error}`);
+    });
+    console.log(`\nNote: upsertEnrolmentLink updates on conflict, so this script is safe to re-run after fixing the cause.`);
+    console.log(`The ${results.succeeded.length} rows already seeded will be skipped.`);
+    process.exit(1);
+  }
+
+  console.log(`All links seeded. Script is safe to re-run if needed.`);
   process.exit(0);
 }
 
 main().catch((err) => {
-  console.error(err);
+  const errorMsg = err instanceof Error ? err.message : String(err);
+  console.error(`\nUnexpected error: ${errorMsg}`);
+  console.error(`Some rows may have been partially seeded. Script is safe to re-run.`);
   process.exit(1);
 });
