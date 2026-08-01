@@ -3,7 +3,7 @@ import type { RungContent } from "@/content/rungs";
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mb-10">
-      <h2 className="mb-3 text-2xl font-bold text-[#0e9b93]">{title}</h2>
+      <h2 className="mb-3 text-2xl font-bold text-[#0a6b66]">{title}</h2>
       {children}
     </section>
   );
@@ -64,7 +64,7 @@ export default function RungPage({ rung }: { rung: RungContent }) {
   return (
     <div className="min-h-screen bg-[#faf8f5]">
       <div className="mx-auto max-w-3xl px-6 py-14">
-        <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#0e9b93]">
+        <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#0a6b66]">
           {rung.ageBand}
         </p>
         <h1 className="mb-4 text-4xl font-black text-[#2e2600] md:text-5xl">{rung.name}</h1>

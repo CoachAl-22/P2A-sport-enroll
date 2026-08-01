@@ -28,7 +28,7 @@ export default function Programs() {
           </div>
         )}
 
-        <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#0e9b93]">
+        <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#0a6b66]">
           Mornington &middot; Ages 7 to 17+
         </p>
         <h1 className="mb-4 text-4xl font-black text-[#2e2600] md:text-5xl">
@@ -52,7 +52,7 @@ export default function Programs() {
                 className="block rounded-xl bg-white p-6 shadow-sm transition hover:shadow-md"
                 data-testid={`rung-card-${slug}`}
               >
-                <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#0e9b93]">
+                <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#0a6b66]">
                   {rung.ageBand}
                 </p>
                 <h2 className="mb-2 text-xl font-black text-[#2e2600]">{rung.name}</h2>
