@@ -1,19 +1,20 @@
 import { RUNGS, RUNG_ORDER } from "@/content/rungs";
 
-function useClosedSlug(): string | null {
+function getClosedSlug(): string | null {
   if (typeof window === "undefined") return null;
   const value = new URLSearchParams(window.location.search).get("closed");
   return value && value.length <= 100 ? value : null;
 }
 
-function useSrc(): string {
+function getSrc(): string {
   if (typeof window === "undefined") return "direct";
-  return new URLSearchParams(window.location.search).get("src") || "direct";
+  const value = new URLSearchParams(window.location.search).get("src");
+  return value && value.length <= 100 ? value : "direct";
 }
 
 export default function Programs() {
-  const closed = useClosedSlug();
-  const src = useSrc();
+  const closed = getClosedSlug();
+  const src = getSrc();
 
   return (
     <div className="min-h-screen bg-[#faf8f5]">
@@ -45,7 +46,9 @@ export default function Programs() {
             return (
               <a
                 key={slug}
-                href={`/enrol/${rung.enrolSlug}?src=${src === "direct" ? "programs" : src}`}
+                href={`/enrol/${rung.enrolSlug}?src=${encodeURIComponent(
+                  src === "direct" ? "programs" : src
+                )}`}
                 className="block rounded-xl bg-white p-6 shadow-sm transition hover:shadow-md"
                 data-testid={`rung-card-${slug}`}
               >
