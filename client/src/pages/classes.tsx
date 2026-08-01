@@ -400,8 +400,13 @@ export default function Classes() {
             <h1 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 mb-2 text-center">
               Which program are you interested in?
             </h1>
-            <p className="text-gray-500 text-sm text-center mb-8">
+            <p className="text-gray-500 text-sm text-center mb-2">
               Choose the one that best matches your child.
+            </p>
+            <p className="text-sm text-center mb-8">
+              <a href="/programs" className="font-semibold text-primary-600 hover:text-primary-700 underline">
+                Not sure which one? Read what each program involves
+              </a>
             </p>
             <div className="grid sm:grid-cols-2 gap-3">
               {PROGRAMS.map((p) => (

@@ -31,6 +31,7 @@ export default function Landing() {
             </div>
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
+                <a href="/programs" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Programs</a>
                 <a href="/classes" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Classes</a>
                 <a href="#features" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Features</a>
                 <a href="/coaches" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Our Coaches</a>
@@ -79,15 +80,22 @@ export default function Landing() {
         {isMobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
-              <a 
-                href="/classes" 
+              <a
+                href="/programs"
+                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Programs
+              </a>
+              <a
+                href="/classes"
                 className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Classes
               </a>
-              <a 
-                href="#features" 
+              <a
+                href="#features"
                 className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
