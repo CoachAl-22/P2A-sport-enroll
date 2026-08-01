@@ -49,6 +49,7 @@ const AdminMajAthletes = lazy(() => import("@/pages/admin-maj-athletes"));
 const AdminApplications = lazy(() => import("@/pages/admin-applications"));
 const AdminSurveys = lazy(() => import("@/pages/admin-surveys"));
 const AdminTrials = lazy(() => import("@/pages/admin-trials"));
+const AdminEnrolmentLinks = lazy(() => import("@/pages/admin-enrolment-links"));
 const Onboarding = lazy(() => import("@/pages/onboarding"));
 const ConfirmationPage = lazy(() => import("@/pages/confirmation"));
 const ReEnrol = lazy(() => import("@/pages/re-enrol"));
@@ -151,6 +152,7 @@ function Router() {
           <Route path="/admin/applications" component={AdminApplications} />
           <Route path="/admin/surveys" component={AdminSurveys} />
           <Route path="/admin/trials" component={AdminTrials} />
+          <Route path="/admin/enrolment-links" component={AdminEnrolmentLinks} />
           <Route path="/admin/athletes" component={AdminAthletes} />
           <Route path="/admin/maj-athletes" component={AdminMajAthletes} />
         </>
