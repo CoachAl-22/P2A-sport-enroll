@@ -216,7 +216,7 @@ export default function JuniorAcademy() {
               </div>
               <div className="px-8 pb-8">
                 <Button
-                  onClick={() => window.open("/junior-academy-application.html", "_blank")}
+                  onClick={() => { window.location.href = "/enrol/junior-academy?src=junior-academy-page"; }}
                   className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold"
                 >
                   Apply — Starter
@@ -243,7 +243,7 @@ export default function JuniorAcademy() {
               </div>
               <div className="px-8 pb-8">
                 <Button
-                  onClick={() => window.open("/junior-academy-application.html", "_blank")}
+                  onClick={() => { window.location.href = "/enrol/junior-academy?src=junior-academy-page"; }}
                   className="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold"
                 >
                   Apply — Performance
@@ -366,7 +366,7 @@ export default function JuniorAcademy() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              onClick={() => window.open("/junior-academy-application.html", "_blank")}
+              onClick={() => { window.location.href = "/enrol/junior-academy?src=junior-academy-page"; }}
               className="bg-secondary-500 hover:bg-secondary-600 text-white font-bold px-8 py-3 text-lg"
             >
               Apply Now
