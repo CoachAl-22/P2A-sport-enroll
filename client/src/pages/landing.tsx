@@ -32,7 +32,6 @@ export default function Landing() {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 <a href="/programs" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Programs</a>
-                <a href="/classes" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Classes</a>
                 <a href="#features" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Features</a>
                 <a href="/coaches" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Our Coaches</a>
                 <a href="/high-performance" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">High Performance</a>
@@ -86,13 +85,6 @@ export default function Landing() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Programs
-              </a>
-              <a
-                href="/classes"
-                className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Classes
               </a>
               <a
                 href="#features"

@@ -70,7 +70,15 @@ export default function RungPage({ rung }: { rung: RungContent }) {
 
   return (
     <div className="min-h-screen bg-[#faf8f5]">
-      <div className="mx-auto max-w-3xl px-6 py-14">
+      <div className="mx-auto flex max-w-3xl items-center justify-between px-6 pt-6">
+        <a href="/" className="font-bold text-[#0a6b66] hover:underline" data-testid="home-link">
+          &larr; Power2ADAPT home
+        </a>
+        <a href="/programs" className="text-sm font-bold text-[#0a6b66] hover:underline">
+          All programs
+        </a>
+      </div>
+      <div className="mx-auto max-w-3xl px-6 pb-14 pt-6">
         <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#0a6b66]">
           {rung.ageBand}
         </p>
