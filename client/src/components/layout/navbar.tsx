@@ -291,6 +291,15 @@ export default function Navbar() {
                       Home
                     </Button>
                   </Link>
+                  <Link href="/programs">
+                    <Button
+                      variant={location === "/programs" ? "default" : "ghost"}
+                      className="w-full justify-start text-gray-700"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Programs
+                    </Button>
+                  </Link>
                   <Link href="/classes">
                     <Button
                       variant={location === "/classes" ? "default" : "ghost"}
