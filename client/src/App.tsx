@@ -8,6 +8,9 @@ import { useAuth } from "@/hooks/use-auth";
 import Landing from "@/pages/landing";
 import Classes from "@/pages/classes";
 import NotFound from "@/pages/not-found";
+import Foundation from "@/pages/foundation";
+import EmergingAthletes from "@/pages/emerging-athletes";
+import TeamSportSpeed from "@/pages/team-sport-speed";
 
 const HighPerformance = lazy(() => import("@/pages/high-performance"));
 const SeniorSquad = lazy(() => import("@/pages/senior-squad"));
@@ -74,6 +77,9 @@ function Router() {
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/senior-squad" component={SeniorSquad} />
           <Route path="/junior-academy" component={JuniorAcademy} />
+          <Route path="/foundation" component={Foundation} />
+          <Route path="/emerging-athletes" component={EmergingAthletes} />
+          <Route path="/team-sport-speed" component={TeamSportSpeed} />
           <Route path="/blog" component={Blog} />
           <Route path="/education" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
@@ -102,6 +108,9 @@ function Router() {
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/senior-squad" component={SeniorSquad} />
           <Route path="/junior-academy" component={JuniorAcademy} />
+          <Route path="/foundation" component={Foundation} />
+          <Route path="/emerging-athletes" component={EmergingAthletes} />
+          <Route path="/team-sport-speed" component={TeamSportSpeed} />
           <Route path="/questionnaire" component={Questionnaire} />
           <Route path="/questionnaire.html" component={Questionnaire} />
           <Route path="/enrollment/:classId" component={Enrollment} />
