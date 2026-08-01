@@ -116,7 +116,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       "You would rather they built a base now than chase a quick fix later",
     ],
     notForWho:
-      "If they are 12 or over, Junior Academy is the right level for them. Year 2 or below, start at Foundation. One exception worth knowing: if an athlete moves through the competencies quickly, I will invite them up to Junior Academy early rather than hold them at their year level.",
+      "If they are in Year 7 or above, Junior Academy is the right level for them. Year 2 or below, start at Foundation. One exception worth knowing: Junior Academy takes athletes from Year 6, so if yours moves through the competencies quickly I will invite them up early rather than hold them at their year level.",
     session: [
       "Warm up as a group while I watch how each athlete is moving that day",
       "One technical cue for the session, drilled properly, rather than six drilled badly",
@@ -147,7 +147,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
   "junior-academy": {
     slug: "junior-academy",
     name: "Junior Academy",
-    ageBand: "Ages 12 to 16, or by invitation",
+    ageBand: "Years 6 to 9, or by invitation",
     teaser: "Multi-sport athletic development for athletes who have decided they are serious.",
     enrolSlug: "junior-academy",
   },
