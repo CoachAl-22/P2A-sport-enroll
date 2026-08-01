@@ -81,6 +81,11 @@ import {
   type InsertTrainingGoal,
   type SurveyResponse,
   type InsertSurveyResponse,
+  enrolmentLinks,
+  enrolmentLinkClicks,
+  type EnrolmentLink,
+  type InsertEnrolmentLink,
+  type InsertEnrolmentLinkClick,
 } from "@shared/schema";
 import { cloneClassForTerm, type CloneableClass } from "@shared/term-setup";
 import { db } from "./db";
@@ -289,6 +294,14 @@ export interface IStorage {
   getChildrenNeedingMaj(): Promise<{ childId: string; classId: string }[]>;
   getChildrenMajStatus(): Promise<{ childId: string; majAthleteId: string | null; username: string | null; enabled: boolean | null; displayPassword: string | null }[]>;
   setMajEnabledBySchool(school: string, enabled: boolean): Promise<number>;
+
+  // Enrolment front door
+  getEnrolmentLink(slug: string): Promise<EnrolmentLink | undefined>;
+  getAllEnrolmentLinks(): Promise<EnrolmentLink[]>;
+  upsertEnrolmentLink(link: InsertEnrolmentLink): Promise<EnrolmentLink>;
+  updateEnrolmentLink(slug: string, updates: Partial<InsertEnrolmentLink>): Promise<EnrolmentLink>;
+  logEnrolmentLinkClick(click: InsertEnrolmentLinkClick): Promise<void>;
+  getEnrolmentLinkClickCounts(): Promise<Array<{ slug: string; src: string; count: number }>>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2193,6 +2206,64 @@ export class DatabaseStorage implements IStorage {
     ) as any;
     const rows = result.rows ?? result;
     return Array.isArray(rows) ? rows : [];
+  }
+
+  // Enrolment front door
+  async getEnrolmentLink(slug: string): Promise<EnrolmentLink | undefined> {
+    const [link] = await db.select().from(enrolmentLinks).where(eq(enrolmentLinks.slug, slug));
+    return link;
+  }
+
+  async getAllEnrolmentLinks(): Promise<EnrolmentLink[]> {
+    return db.select().from(enrolmentLinks).orderBy(enrolmentLinks.slug);
+  }
+
+  async upsertEnrolmentLink(link: InsertEnrolmentLink): Promise<EnrolmentLink> {
+    const [row] = await db
+      .insert(enrolmentLinks)
+      .values(link)
+      .onConflictDoUpdate({
+        target: enrolmentLinks.slug,
+        set: {
+          label: link.label,
+          destinationUrl: link.destinationUrl,
+          kind: link.kind,
+          active: link.active ?? true,
+          notes: link.notes ?? null,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return row;
+  }
+
+  async updateEnrolmentLink(
+    slug: string,
+    updates: Partial<InsertEnrolmentLink>,
+  ): Promise<EnrolmentLink> {
+    const [row] = await db
+      .update(enrolmentLinks)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(enrolmentLinks.slug, slug))
+      .returning();
+    return row;
+  }
+
+  async logEnrolmentLinkClick(click: InsertEnrolmentLinkClick): Promise<void> {
+    await db.insert(enrolmentLinkClicks).values(click);
+  }
+
+  async getEnrolmentLinkClickCounts(): Promise<Array<{ slug: string; src: string; count: number }>> {
+    const rows = await db
+      .select({
+        slug: enrolmentLinkClicks.slug,
+        src: enrolmentLinkClicks.src,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(enrolmentLinkClicks)
+      .groupBy(enrolmentLinkClicks.slug, enrolmentLinkClicks.src)
+      .orderBy(sql`count(*) desc`);
+    return rows;
   }
 }
 
