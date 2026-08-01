@@ -1,6 +1,6 @@
 import RungPage from "@/components/rung-page";
-import { RUNGS } from "@/content/rungs";
+import { RUNG_PAGES } from "@/content/rungs";
 
 export default function TeamSportSpeed() {
-  return <RungPage rung={RUNGS["team-sport-speed"]} />;
+  return <RungPage rung={RUNG_PAGES["team-sport-speed"]} />;
 }

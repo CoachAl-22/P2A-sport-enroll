@@ -1,6 +1,6 @@
 import RungPage from "@/components/rung-page";
-import { RUNGS } from "@/content/rungs";
+import { RUNG_PAGES } from "@/content/rungs";
 
 export default function EmergingAthletes() {
-  return <RungPage rung={RUNGS["emerging-athletes"]} />;
+  return <RungPage rung={RUNG_PAGES["emerging-athletes"]} />;
 }

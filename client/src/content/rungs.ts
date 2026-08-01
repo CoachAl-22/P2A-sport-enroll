@@ -6,11 +6,24 @@ export type RungSlug =
   | "team-sport-speed"
   | "high-performance";
 
-export interface RungContent {
+export interface ClassOffering {
+  slug: string;       // the /enrol/{slug} this class links to, resolves via SportsBiz
+  venue: string;
+  day: string;
+  time: string;
+  waitlist?: boolean; // true if this class is waitlist-only, not an open intake
+}
+
+// Fields every hub card needs, whether the rung has a full detail page or not.
+interface RungCard {
   slug: RungSlug;
   name: string;
   ageBand: string;
-  teaser: string;          // one line, used on the /programs hub card
+  teaser: string;      // one line, used on the /programs hub card
+  enrolSlug: string;    // where the hub card links
+}
+
+export interface RungContent extends RungCard {
   about: string[];         // section 1: what this class is about
   forWho: string[];        // section 2: who it is for
   notForWho: string;       // section 2b: who it is not for
@@ -20,8 +33,14 @@ export interface RungContent {
   price: string;           // section 6
   priceNote: string;
   ctaLabel: string;        // section 7
-  enrolSlug: string;       // the /enrol/{slug} this page's CTA points at
+  classes: ClassOffering[]; // section 7: the classes a parent can enrol into
 }
+
+// junior-academy, senior-squad and high-performance render through their own
+// hand-built pages (by application), not RungPage. Only the hub card fields
+// are consumed from here, so that is all this shape carries. This prevents
+// unreachable prose from drifting out of date unnoticed (see Finding 3).
+export type RungSummary = RungCard;
 
 const COMMON_INCLUDED = [
   "Individual programming, so your athlete knows what they are working on",
@@ -29,7 +48,12 @@ const COMMON_INCLUDED = [
   "My Athletic Journey app access for the full term",
 ];
 
-export const RUNGS: Record<RungSlug, RungContent> = {
+const TERM_PRICE_NOTE =
+  "$30 + GST per class, for the number of weeks in your school's term. A 10 week term is $300 + GST, a 9 week term is $270 + GST. Term length varies by school (Toorak College and Peninsula Grammar run 9 week terms), so check the exact number of weeks at checkout.";
+
+type FullRungSlug = "foundation" | "emerging-athletes" | "team-sport-speed";
+
+export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
   foundation: {
     slug: "foundation",
     name: "Foundation",
@@ -61,10 +85,15 @@ export const RUNGS: Record<RungSlug, RungContent> = {
       "Drop off and pick up at the session venue, coaches stay until every child is collected",
       "Wet weather: we run unless it is unsafe, and you will hear from us before the session if it is called off",
     ],
-    price: "PRICE_UNCONFIRMED",
-    priceNote: "10 week term, includes My Athletic Journey app access.",
-    ctaLabel: "Enrol in Foundation",
+    price: "$30 + GST per class",
+    priceNote: TERM_PRICE_NOTE,
+    ctaLabel: "Choose your class",
     enrolSlug: "foundation",
+    classes: [
+      { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm" },
+      { slug: "toorak-foundation-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm" },
+      { slug: "toorak-foundation-tue", venue: "Toorak College", day: "Tuesday", time: "3:30pm", waitlist: true },
+    ],
   },
 
   "emerging-athletes": {
@@ -98,10 +127,13 @@ export const RUNGS: Record<RungSlug, RungContent> = {
       "Sessions run at your athlete's school venue or at the Mornington track, depending on the group",
       "Wet weather: we run unless it is unsafe, and you will hear from us before the session if it is called off",
     ],
-    price: "PRICE_UNCONFIRMED",
-    priceNote: "10 week term, includes My Athletic Journey app access.",
-    ctaLabel: "Enrol in Emerging Athletes",
+    price: "$30 + GST per class",
+    priceNote: TERM_PRICE_NOTE,
+    ctaLabel: "Choose your class",
     enrolSlug: "emerging-athletes",
+    classes: [
+      { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm" },
+    ],
   },
 
   "junior-academy": {
@@ -109,39 +141,6 @@ export const RUNGS: Record<RungSlug, RungContent> = {
     name: "Junior Academy",
     ageBand: "Ages 12 to 16",
     teaser: "Multi-sport athletic development for athletes who have decided they are serious.",
-    about: [
-      "Junior Academy is a proper athletic development program: speed, strength, and the movement skills that carry into whatever they play on the weekend.",
-      "Athletes train up to twice a week on individual programming, and are tested through the term so improvement is a number, not an opinion.",
-    ],
-    forWho: [
-      "Your athlete is 12 to 16",
-      "They play at a decent level and want to be faster and more robust",
-      "They are willing to be challenged and to turn up consistently",
-      "You take a long-term view, and understand real progress takes terms not weeks",
-    ],
-    notForWho:
-      "This is not a drop-in speed class. If your athlete cannot commit to the term, Team Sport Speed is a better fit.",
-    session: [
-      "Individual warm up from their own program",
-      "Technical speed work, coached one athlete at a time",
-      "Strength and power block, loaded to their stage not their age",
-      "Conditioning matched to their sport's demands",
-      "Session logged in My Athletic Journey before they leave",
-    ],
-    included: [
-      "Individual programming, up to two sessions per week",
-      "Testing in weeks 1, 5 and 10, so progress is measured not guessed",
-      "My Athletic Journey app access for the full term",
-    ],
-    logistics: [
-      "Up to two sessions per week, during the school term",
-      "Training clothes and runners. Bring a drink bottle and a towel",
-      "Mornington track and partner venues",
-      "Wet weather: we run unless it is unsafe, and you will hear from us before the session if it is called off",
-    ],
-    price: "$100 to $200 per month",
-    priceNote: "Depends on whether they train once or twice a week.",
-    ctaLabel: "Apply for Junior Academy",
     enrolSlug: "junior-academy",
   },
 
@@ -150,39 +149,6 @@ export const RUNGS: Record<RungSlug, RungContent> = {
     name: "Senior Squad",
     ageBand: "Ages 16 and over",
     teaser: "Competition-ready. Speed, strength and the mental side of performing on the day.",
-    about: [
-      "Senior Squad is for athletes who compete and want to be ready when it counts.",
-      "Programming covers speed, strength and the mental strategies that hold up under pressure. Sessions are built around a competition calendar, not a generic block.",
-    ],
-    forWho: [
-      "Your athlete is 16 or over",
-      "They compete, and the result matters to them",
-      "They want individual programming rather than a group workout",
-      "They are prepared to train consistently across a season",
-    ],
-    notForWho:
-      "If they are chasing general fitness rather than performance, this is more than they need.",
-    session: [
-      "Individual warm up and movement prep from their program",
-      "Speed or power work, the priority of the session, done fresh",
-      "Strength block against their current phase",
-      "Sport-specific conditioning",
-      "Debrief, and the session logged in My Athletic Journey",
-    ],
-    included: [
-      "Individual programming built around your competition calendar",
-      "Testing in weeks 1, 5 and 10, so progress is measured not guessed",
-      "My Athletic Journey app access for the full term",
-    ],
-    logistics: [
-      "Session times set with the squad each term",
-      "Training clothes, runners, spikes if they use them. Drink bottle and towel",
-      "Mornington track and partner venues",
-      "Wet weather: we run unless it is unsafe, and you will hear from us before the session if it is called off",
-    ],
-    price: "$200 to $300 per month",
-    priceNote: "Depends on session frequency.",
-    ctaLabel: "Enrol in Senior Squad",
     enrolSlug: "senior-squad",
   },
 
@@ -217,10 +183,14 @@ export const RUNGS: Record<RungSlug, RungContent> = {
       "Runners and training clothes. Bring a drink bottle",
       "Wet weather: we run unless it is unsafe, and you will hear from us before the session if it is called off",
     ],
-    price: "$300 + GST per term",
-    priceNote: "10 weeks of coaching, includes My Athletic Journey app access.",
-    ctaLabel: "Enrol in Team Sport Speed",
+    price: "$30 + GST per class",
+    priceNote: TERM_PRICE_NOTE,
+    ctaLabel: "Choose your class",
     enrolSlug: "team-sport-speed",
+    classes: [
+      { slug: "team-speed-430", venue: "Mornington track", day: "Friday", time: "4:30pm" },
+      { slug: "team-speed-530", venue: "Mornington track", day: "Friday", time: "5:30pm" },
+    ],
   },
 
   "high-performance": {
@@ -228,39 +198,16 @@ export const RUNGS: Record<RungSlug, RungContent> = {
     name: "High Performance",
     ageBand: "By invitation",
     teaser: "One to one coaching with elite testing and physio partnership.",
-    about: [
-      "High Performance is one to one coaching for athletes operating at the top of their level.",
-      "Sessions include elite testing and are delivered in partnership with our physio partners, so training and rehabilitation are pulling the same direction.",
-    ],
-    forWho: [
-      "Your athlete competes at state level or above, or is on that path",
-      "They need a program built around them, not a squad",
-      "You want testing and physio integrated rather than separate",
-    ],
-    notForWho:
-      "This is by application. Most athletes are better served, and better value, in Senior Squad.",
-    session: [
-      "Full testing battery on the first session, so training starts from data",
-      "One to one coaching for the full hour",
-      "Physio input where the athlete is managing an issue",
-      "Programming written and adjusted between sessions",
-    ],
-    included: [
-      "One to one coaching, 60 minutes",
-      "Elite testing battery",
-      "Physio partnership where required",
-      "My Athletic Journey app access",
-    ],
-    logistics: [
-      "By prior booking only",
-      "Melbourne CBD physio clinic or Mornington track, agreed at booking",
-      "Training clothes, runners, spikes if used",
-    ],
-    price: "From $400 per session",
-    priceNote: "60 minutes, one to one, by application.",
-    ctaLabel: "Apply for High Performance",
     enrolSlug: "high-performance",
   },
+};
+
+// The three rungs that actually render through RungPage (see Finding 3).
+// Typed as full RungContent so their pages don't need to narrow the union.
+export const RUNG_PAGES: Record<FullRungSlug, RungContent> = {
+  foundation: RUNGS.foundation as RungContent,
+  "emerging-athletes": RUNGS["emerging-athletes"] as RungContent,
+  "team-sport-speed": RUNGS["team-sport-speed"] as RungContent,
 };
 
 export const RUNG_ORDER: RungSlug[] = [

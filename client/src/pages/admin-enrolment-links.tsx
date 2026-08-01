@@ -26,8 +26,13 @@ export default function AdminEnrolmentLinks() {
   const update = useMutation({
     mutationFn: async ({ slug, ...body }: { slug: string } & Partial<EnrolmentLink>) =>
       apiRequest("PATCH", `/api/admin/enrolment-links/${slug}`, body),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/enrolment-links"] });
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[variables.slug];
+        return next;
+      });
       toast({ title: "Saved" });
     },
     onError: () => toast({ title: "Save failed", variant: "destructive" }),

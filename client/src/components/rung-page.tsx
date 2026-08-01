@@ -22,15 +22,39 @@ function Bullets({ items }: { items: string[] }) {
   );
 }
 
-function EnrolButton({ rung, src }: { rung: RungContent; src: string }) {
+function ClassList({ rung, src }: { rung: RungContent; src: string }) {
+  if (rung.classes.length === 0) {
+    return (
+      <p className="rounded-lg bg-white p-4 text-[#525759]" data-testid={`classes-empty-${rung.slug}`}>
+        Classes for {rung.name} are being finalised. Check back soon or get in touch.
+      </p>
+    );
+  }
+
   return (
-    <a
-      href={`/enrol/${rung.enrolSlug}?src=${src}`}
-      className="inline-block rounded-full bg-[#f6930e] px-8 py-4 font-bold uppercase tracking-wide text-[#2e2600] hover:opacity-90"
-      data-testid={`enrol-cta-${rung.slug}`}
-    >
-      {rung.ctaLabel}
-    </a>
+    <div className="space-y-3" data-testid={`classes-${rung.slug}`}>
+      {rung.classes.map((cls) => (
+        <a
+          key={cls.slug}
+          href={`/enrol/${cls.slug}?src=${src}`}
+          className="flex items-center justify-between rounded-lg bg-white p-4 shadow-sm transition hover:shadow-md"
+          data-testid={`enrol-cta-${cls.slug}`}
+        >
+          <span className="text-[#525759]">
+            <span className="font-bold text-[#2e2600]">{cls.venue}</span>
+            {" "}&middot; {cls.day} {cls.time}
+            {cls.waitlist && (
+              <span className="ml-2 rounded bg-[#f6930e] px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-[#2e2600]">
+                Waitlist
+              </span>
+            )}
+          </span>
+          <span className="font-bold uppercase tracking-wide text-[#f6930e]">
+            {cls.waitlist ? "Join waitlist" : rung.ctaLabel}
+          </span>
+        </a>
+      ))}
+    </div>
   );
 }
 
@@ -47,7 +71,7 @@ export default function RungPage({ rung }: { rung: RungContent }) {
         <p className="mb-8 text-lg text-[#525759]">{rung.teaser}</p>
 
         <div className="mb-12">
-          <EnrolButton rung={rung} src={src} />
+          <ClassList rung={rung} src={src} />
         </div>
 
         <Section title="What this program is about">
@@ -82,7 +106,7 @@ export default function RungPage({ rung }: { rung: RungContent }) {
 
         <div className="border-t border-[#e5e0d8] pt-10">
           <p className="mb-4 font-bold text-[#2e2600]">Excellence Through Consistency</p>
-          <EnrolButton rung={rung} src={src} />
+          <ClassList rung={rung} src={src} />
         </div>
       </div>
     </div>
