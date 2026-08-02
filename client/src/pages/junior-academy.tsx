@@ -85,7 +85,7 @@ export default function JuniorAcademy() {
               Back to Main Programs
             </Link>
             <div className="inline-block bg-white/10 text-primary-100 text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full mb-4">
-              Ages 12 – 16 · Multi-Sport Athletes
+              Years 6 to 9 · Multi-Sport Athletes
             </div>
             <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4">Junior Academy</h1>
             <p className="text-xl text-primary-100 max-w-3xl mx-auto leading-relaxed">

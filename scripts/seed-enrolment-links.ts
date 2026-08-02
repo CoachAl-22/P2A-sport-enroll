@@ -29,6 +29,7 @@ const SETMORE_TEAM_SPEED_FRI_530 =
   "https://power2adapt.setmore.com/classes/309e4fdb-39fe-4cbe-8531-b48cdb9d5a62";
 
 const LINKS: InsertEnrolmentLink[] = [
+  { slug: "book-a-call", label: "Book a 10 minute discovery call", destinationUrl: SETMORE_DISCOVERY_CALL, kind: "setmore", active: true, notes: null },
   { slug: "foundation", label: "Foundation", destinationUrl: "/foundation", kind: "internal", active: true, notes: null },
   { slug: "emerging-athletes", label: "Emerging Athletes", destinationUrl: "/emerging-athletes", kind: "internal", active: true, notes: null },
   { slug: "junior-academy", label: "Junior Academy", destinationUrl: "/junior-academy", kind: "internal", active: true, notes: null },

@@ -131,7 +131,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ],
     price: "$30 + GST per class",
     priceNote: TERM_PRICE_NOTE,
-    ctaLabel: "Choose your class",
+    ctaLabel: "Enrol now",
     enrolSlug: "foundation",
     classes: [
       { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
@@ -176,7 +176,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ],
     price: "$30 + GST per class",
     priceNote: TERM_PRICE_NOTE,
-    ctaLabel: "Choose your class",
+    ctaLabel: "Enrol now",
     enrolSlug: "emerging-athletes",
     classes: [
       { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
@@ -241,7 +241,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ],
     price: "$30 + GST per class",
     priceNote: TERM_PRICE_NOTE,
-    ctaLabel: "Choose your class",
+    ctaLabel: "Book",
     enrolSlug: "team-sport-speed",
     classes: [
       { slug: "team-speed-wed-530", venue: "Mornington track", day: "Wednesday", time: "5:30pm" },
@@ -276,18 +276,32 @@ export const RUNG_ORDER: RungSlug[] = [
 ];
 
 // The two pages render sessions grouped by venue; the finder renders them flat.
-export const SESSION_VENUES: { venue: string; note: string; times: string[] }[] = [
-  {
-    venue: "Ballam Park, Frankston",
-    note: "5:30pm to 7:00pm",
-    times: ["Monday", "Tuesday", "Thursday"],
-  },
-  {
-    venue: "Mornington Athletics Track",
-    note: "Track sessions",
-    times: ["Wednesday 5:30pm", "Friday 4:30pm", "Friday 5:30pm"],
-  },
-];
+// Derived from APPLICATION_SESSIONS so a time change only needs one edit.
+// Ballam Park sessions share one time for all three days, so they collapse to
+// a single note; Mornington sessions each have their own time, so they are
+// listed individually as "Day time" strings.
+function deriveSessionVenues(): { venue: string; note: string; times: string[] }[] {
+  const byVenue = new Map<string, SessionTime[]>();
+  for (const session of APPLICATION_SESSIONS) {
+    const existing = byVenue.get(session.venue) ?? [];
+    existing.push(session);
+    byVenue.set(session.venue, existing);
+  }
+
+  return Array.from(byVenue.entries()).map(([venue, sessions]) => {
+    const allSameTime = sessions.every((s) => s.time === sessions[0].time);
+    return {
+      venue,
+      note: allSameTime ? sessions[0].time : "Track sessions",
+      times: allSameTime
+        ? sessions.map((s) => s.day)
+        : sessions.map((s) => `${s.day} ${s.time}`),
+    };
+  });
+}
+
+export const SESSION_VENUES: { venue: string; note: string; times: string[] }[] =
+  deriveSessionVenues();
 
 // The venue list above is shared, but the explanation of who else trains at
 // Mornington reads differently per program, so it is not folded into

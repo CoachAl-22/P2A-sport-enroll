@@ -3,9 +3,6 @@ import { FINDER_CHOICES, resolveRung, type FinderChoiceId } from "@/content/find
 import { RUNGS, type RungContent, type RungSummary, type RungApplyCard } from "@/content/rungs";
 import { ClassTiles, SessionList } from "@/components/class-tiles";
 
-const DISCOVERY_URL =
-  "https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0";
-
 // wouter strips query params, so read them from the location directly.
 function getClosedSlug(): string | null {
   if (typeof window === "undefined") return null;
@@ -31,15 +28,13 @@ function hasApplyUrl(rung: RungSummary): rung is RungApplyCard {
   return "applyUrl" in rung;
 }
 
-function BookACall({ label }: { label: string }) {
+function BookACall({ label, src }: { label: string; src: string }) {
   return (
     <div className="mt-8 rounded-xl bg-white p-6" data-testid="book-a-call">
       <h3 className="mb-2 text-lg font-black text-[#2e2600]">Not sure, or nothing fits?</h3>
       <p className="mb-4 text-[#525759]">{label}</p>
       <a
-        href={DISCOVERY_URL}
-        target="_blank"
-        rel="noopener noreferrer"
+        href={`/enrol/book-a-call?src=${src}`}
         className="inline-block rounded-full border-2 border-[#0a6b66] px-6 py-3 font-bold uppercase tracking-wide text-[#0a6b66] hover:bg-[#0a6b66] hover:text-white"
       >
         Book a 10 minute call
@@ -112,6 +107,12 @@ export default function Programs() {
             <h2 className="mb-3 mt-1 text-3xl font-black text-[#2e2600]">{rung.name}</h2>
             <p className="mb-4 text-[#525759]">{rung.teaser}</p>
 
+            {hasClasses(rung) && rung.notForWho && (
+              <p className="mb-4 rounded-lg bg-white p-4 text-sm text-[#0a6b66]">
+                {rung.notForWho}
+              </p>
+            )}
+
             <a
               href={`/enrol/${rung.enrolSlug}?src=${finderSrc}`}
               className="font-bold text-[#0a6b66] underline hover:no-underline"
@@ -159,12 +160,18 @@ export default function Programs() {
               </>
             ) : null}
 
-            <BookACall label="If none of those days or venues work, have a quick chat and I will sort it out." />
+            <BookACall
+              label="If none of those days or venues work, have a quick chat and I will sort it out."
+              src={`${finderSrc}-${rung.slug}`}
+            />
           </div>
         )}
 
         {!rung && (
-          <BookACall label="Pick a year level above, or if you would rather just talk it through, book a call." />
+          <BookACall
+            label="Pick a year level above, or if you would rather just talk it through, book a call."
+            src={finderSrc}
+          />
         )}
 
         <p className="mt-12 border-t border-[#e7e1d8] pt-6 font-bold text-[#2e2600]">
