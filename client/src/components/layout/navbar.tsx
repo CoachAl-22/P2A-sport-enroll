@@ -87,14 +87,6 @@ export default function Navbar() {
                     Education Hub
                   </Button>
                 </a>
-                <Link href="/questionnaire">
-                  <Button
-                    variant={location === "/questionnaire" ? "default" : "ghost"}
-                    className="text-white bg-primary-500 hover:bg-primary-600 font-bold px-4 py-2 rounded-md shadow-sm ml-2"
-                  >
-                    Check-In
-                  </Button>
-                </Link>
                 <Link href="/#contact">
                   <Button
                     variant="ghost"
@@ -166,14 +158,6 @@ export default function Navbar() {
                       Education Hub
                     </Button>
                   </a>
-                  <Link href="/questionnaire">
-                    <Button
-                      variant={location === "/questionnaire" ? "default" : "ghost"}
-                      className="text-white bg-primary-500 hover:bg-primary-600 font-bold px-4 py-2 rounded-md shadow-sm"
-                    >
-                      Check-In
-                    </Button>
-                  </Link>
                   <Link href="/video-highlights">
                   <Button
                     variant={location === "/video-highlights" ? "default" : "ghost"}
@@ -345,15 +329,6 @@ export default function Navbar() {
                       Education Hub
                     </Button>
                   </a>
-                  <Link href="/questionnaire">
-                    <Button
-                      variant={location === "/questionnaire" ? "default" : "ghost"}
-                      className="w-full justify-start text-primary-600 font-bold"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Check-In
-                    </Button>
-                  </Link>
                   <Link href="/#contact">
                     <Button
                       variant="ghost"
@@ -432,15 +407,6 @@ export default function Navbar() {
                       Education Hub
                     </Button>
                   </a>
-                  <Link href="/questionnaire">
-                    <Button
-                      variant={location === "/questionnaire" ? "default" : "ghost"}
-                      className="w-full justify-start text-primary-600 font-bold"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Check-In
-                    </Button>
-                  </Link>
                   <Link href="/video-highlights">
                     <Button
                       variant={location === "/video-highlights" ? "default" : "ghost"}

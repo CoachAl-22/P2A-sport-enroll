@@ -43,7 +43,6 @@ const SharedVideo = lazy(() => import("@/pages/shared-video"));
 const VideoHighlightsParent = lazy(() => import("@/components/video-highlights-parent"));
 const AthletePortal = lazy(() => import("@/pages/athlete-portal"));
 const Coaches = lazy(() => import("@/pages/coaches"));
-const Questionnaire = lazy(() => import("@/pages/questionnaire"));
 const AdminAthletes = lazy(() => import("@/pages/admin-athletes"));
 const AdminMajAthletes = lazy(() => import("@/pages/admin-maj-athletes"));
 const AdminApplications = lazy(() => import("@/pages/admin-applications"));
@@ -90,8 +89,6 @@ function Router() {
           <Route path="/parent-help-center" component={ParentHelpCenter} />
           <Route path="/enrollment-guide" component={EnrollmentGuide} />
           <Route path="/payment-support" component={PaymentSupport} />
-          <Route path="/questionnaire" component={Questionnaire} />
-          <Route path="/questionnaire.html" component={Questionnaire} />
           <Route path="/enrollment/:classId" component={Enrollment} />
           <Route path="/checkout" component={Checkout} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
@@ -115,8 +112,6 @@ function Router() {
           <Route path="/emerging-athletes" component={EmergingAthletes} />
           <Route path="/team-sport-speed" component={TeamSportSpeed} />
           <Route path="/programs" component={Programs} />
-          <Route path="/questionnaire" component={Questionnaire} />
-          <Route path="/questionnaire.html" component={Questionnaire} />
           <Route path="/enrollment/:classId" component={Enrollment} />
           <Route path="/checkout" component={Checkout} />
           <Route path="/checkout/:enrollmentId" component={Checkout} />
