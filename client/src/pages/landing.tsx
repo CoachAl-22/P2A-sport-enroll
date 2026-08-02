@@ -38,7 +38,6 @@ export default function Landing() {
                 <a href="/junior-academy" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Junior Academy</a>
                 <a href="/senior-squad" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Senior Squad</a>
                 <a href="https://www.skool.com/power2adapt-speed-school-8929" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Education</a>
-                <a href="/questionnaire" className="bg-primary-500 text-white hover:bg-primary-600 px-4 py-2 rounded-md text-sm font-bold shadow-sm">Check-In</a>
                 <a href="#contact" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
               </div>
             </div>
@@ -130,15 +129,8 @@ export default function Landing() {
               >
                 Education
               </a>
-              <a 
-                href="/questionnaire" 
-                className="block px-3 py-2 text-primary-600 font-bold"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Check-In
-              </a>
-              <a 
-                href="#contact" 
+              <a
+                href="#contact"
                 className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

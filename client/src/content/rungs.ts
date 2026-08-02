@@ -15,6 +15,24 @@ export interface ClassOffering {
   studentsOnly?: string;  // school name when the class is only open to that school's students
 }
 
+export interface SessionTime {
+  venue: string;
+  day: string;
+  time: string;
+}
+
+// Junior Academy and Senior Squad run the same six sessions, all coached by
+// Alistair. The Mornington ones are shared with Team Sport Speed: athletes
+// train alongside each other on their own programming.
+const APPLICATION_SESSIONS: SessionTime[] = [
+  { venue: "Ballam Park, Frankston", day: "Monday", time: "5:30pm to 7:00pm" },
+  { venue: "Ballam Park, Frankston", day: "Tuesday", time: "5:30pm to 7:00pm" },
+  { venue: "Ballam Park, Frankston", day: "Thursday", time: "5:30pm to 7:00pm" },
+  { venue: "Mornington Athletics Track", day: "Wednesday", time: "5:30pm" },
+  { venue: "Mornington Athletics Track", day: "Friday", time: "4:30pm" },
+  { venue: "Mornington Athletics Track", day: "Friday", time: "5:30pm" },
+];
+
 // Fields every hub card needs, whether the rung has a full detail page or not.
 interface RungCard {
   slug: RungSlug;
@@ -22,6 +40,28 @@ interface RungCard {
   ageBand: string;
   teaser: string;      // one line, used on the /programs hub card
   enrolSlug: string;    // where the hub card links
+}
+
+// By-application programs (Junior Academy, Senior Squad) list session times
+// and must always carry somewhere to apply. sessions and applyUrl are
+// co-required: a program cannot declare one without the other, so the finder
+// can never render an "Apply" button with nowhere to send a parent.
+//
+// The `sessions?: undefined; applyUrl?: undefined` sibling on RungPlainCard
+// is deliberate, not decorative: without it, TypeScript's excess-property
+// check only flags a property as "excess" if it appears in NO member of the
+// target union. Since `sessions` is a legitimate key on RungApplyCard, a
+// plain card with a stray `sessions` field (and no `applyUrl`) would
+// silently satisfy RungCard and the invariant would not hold. Declaring both
+// fields on every branch forces a real structural check instead.
+export interface RungApplyCard extends RungCard {
+  sessions: SessionTime[];
+  applyUrl: string;
+}
+
+interface RungPlainCard extends RungCard {
+  sessions?: undefined;
+  applyUrl?: undefined;
 }
 
 export interface RungContent extends RungCard {
@@ -41,7 +81,10 @@ export interface RungContent extends RungCard {
 // hand-built pages (by application), not RungPage. Only the hub card fields
 // are consumed from here, so that is all this shape carries. This prevents
 // unreachable prose from drifting out of date unnoticed (see Finding 3).
-export type RungSummary = RungCard;
+// junior-academy and senior-squad are RungApplyCard (session times + an
+// apply link); high-performance is RungPlainCard, since it is
+// invitation-only and never rendered through the session/apply path.
+export type RungSummary = RungPlainCard | RungApplyCard;
 
 const COMMON_INCLUDED = [
   "Individual programming, so your athlete knows exactly what they are working on",
@@ -88,7 +131,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ],
     price: "$30 + GST per class",
     priceNote: TERM_PRICE_NOTE,
-    ctaLabel: "Choose your class",
+    ctaLabel: "Enrol now",
     enrolSlug: "foundation",
     classes: [
       { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
@@ -133,7 +176,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ],
     price: "$30 + GST per class",
     priceNote: TERM_PRICE_NOTE,
-    ctaLabel: "Choose your class",
+    ctaLabel: "Enrol now",
     enrolSlug: "emerging-athletes",
     classes: [
       { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
@@ -150,6 +193,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ageBand: "Years 6 to 9, or by invitation",
     teaser: "Multi-sport athletic development for athletes who have decided they are serious.",
     enrolSlug: "junior-academy",
+    sessions: APPLICATION_SESSIONS,
+    applyUrl: "/junior-academy-application.html",
   },
 
   "senior-squad": {
@@ -158,6 +203,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ageBand: "Ages 16 and over",
     teaser: "Competition-ready. Speed, strength and the mental side of performing on the day.",
     enrolSlug: "senior-squad",
+    sessions: APPLICATION_SESSIONS,
+    applyUrl: "/senior-squad-application.html",
   },
 
   "team-sport-speed": {
@@ -194,7 +241,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ],
     price: "$30 + GST per class",
     priceNote: TERM_PRICE_NOTE,
-    ctaLabel: "Choose your class",
+    ctaLabel: "Book",
     enrolSlug: "team-sport-speed",
     classes: [
       { slug: "team-speed-wed-530", venue: "Mornington track", day: "Wednesday", time: "5:30pm" },
@@ -227,3 +274,45 @@ export const RUNG_ORDER: RungSlug[] = [
   "senior-squad",
   "team-sport-speed",
 ];
+
+// The two pages render sessions grouped by venue; the finder renders them flat.
+// Derived from APPLICATION_SESSIONS so a time change only needs one edit.
+// Ballam Park sessions share one time for all three days, so they collapse to
+// a single note; Mornington sessions each have their own time, so they are
+// listed individually as "Day time" strings.
+function deriveSessionVenues(): { venue: string; note: string; times: string[] }[] {
+  const byVenue = new Map<string, SessionTime[]>();
+  for (const session of APPLICATION_SESSIONS) {
+    const existing = byVenue.get(session.venue) ?? [];
+    existing.push(session);
+    byVenue.set(session.venue, existing);
+  }
+
+  return Array.from(byVenue.entries()).map(([venue, sessions]) => {
+    const allSameTime = sessions.every((s) => s.time === sessions[0].time);
+    return {
+      venue,
+      note: allSameTime ? sessions[0].time : "Track sessions",
+      times: allSameTime
+        ? sessions.map((s) => s.day)
+        : sessions.map((s) => `${s.day} ${s.time}`),
+    };
+  });
+}
+
+export const SESSION_VENUES: { venue: string; note: string; times: string[] }[] =
+  deriveSessionVenues();
+
+// The venue list above is shared, but the explanation of who else trains at
+// Mornington reads differently per program, so it is not folded into
+// SESSION_VENUES. Keyed by rung slug; each page passes its own copy in.
+export const MORNINGTON_SHARED_NOTE: Partial<Record<RungSlug, string>> = {
+  "junior-academy":
+    "Track sessions are shared with Team Sport Speed. Your athlete trains alongside footballers, soccer players, netballers and basketballers working on the same speed and acceleration qualities, on their own Junior Academy programming.",
+  "senior-squad":
+    "Track sessions are shared with Junior Academy and Team Sport Speed. You train alongside them on your own Senior Squad programming.",
+};
+
+export function RUNG_BY_SLUG(slug: RungSlug): RungContent | RungSummary {
+  return RUNGS[slug];
+}
