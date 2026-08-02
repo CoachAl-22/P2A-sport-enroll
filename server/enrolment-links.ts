@@ -40,6 +40,24 @@ function isSafeDestination(destination: string): boolean {
 }
 
 export function registerEnrolmentLinkRoutes(app: Express, deps: EnrolmentLinkDeps): void {
+  // /classes is retired in favour of /programs. It is redirected rather than
+  // removed because the URL is in school newsletters, past emails, Instagram
+  // and Google's index, and a parent holding an old link should arrive
+  // somewhere useful rather than at a 404. 302 while the new page beds in;
+  // make it 301 once we are sure.
+  app.get("/classes", (req, res) => {
+    const src = readSrc(req);
+    void deps
+      .logEnrolmentLinkClick({
+        slug: "legacy-classes-page",
+        src,
+        referrer: req.get("referer") ?? null,
+        userAgent: req.get("user-agent") ?? null,
+      })
+      .catch((err) => console.error("[enrol] legacy /classes log failed", err));
+    return res.redirect(302, HUB);
+  });
+
   app.get("/enrol/:slug", async (req, res) => {
     const rawSlug = req.params.slug.toLowerCase().slice(0, 100);
     const src = readSrc(req);

@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -74,7 +74,7 @@ function Router() {
       {!isAuthenticated ? (
         <>
           <Route path="/" component={Landing} />
-          <Route path="/classes" component={Classes} />
+          <Route path="/classes"><Redirect to="/programs" /></Route>
           <Route path="/coaches" component={Coaches} />
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/senior-squad" component={SeniorSquad} />
@@ -106,7 +106,7 @@ function Router() {
           <Route path="/" component={Landing} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/athlete-portal" component={AthletePortal} />
-          <Route path="/classes" component={Classes} />
+          <Route path="/classes"><Redirect to="/programs" /></Route>
           <Route path="/coaches" component={Coaches} />
           <Route path="/high-performance" component={HighPerformance} />
           <Route path="/senior-squad" component={SeniorSquad} />

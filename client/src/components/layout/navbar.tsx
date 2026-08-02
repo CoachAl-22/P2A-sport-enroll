@@ -55,12 +55,12 @@ export default function Navbar() {
                     Home
                   </Button>
                 </Link>
-                <Link href="/classes">
+                <Link href="/programs">
                   <Button
-                    variant={location === "/classes" ? "default" : "ghost"}
+                    variant={location === "/programs" ? "default" : "ghost"}
                     className="text-gray-700 hover:text-primary-500 font-medium"
                   >
-                    Classes
+                    Programs
                   </Button>
                 </Link>
                 <Link href="/junior-academy">
@@ -118,9 +118,9 @@ export default function Navbar() {
                     Home
                   </Button>
                 </Link>
-                <Link href="/classes">
+                <Link href="/programs">
                   <Button
-                    variant={location === "/classes" ? "default" : "ghost"}
+                    variant={location === "/programs" ? "default" : "ghost"}
                     className="text-gray-700 hover:text-primary-500"
                   >
                     Programs
@@ -300,15 +300,6 @@ export default function Navbar() {
                       Programs
                     </Button>
                   </Link>
-                  <Link href="/classes">
-                    <Button
-                      variant={location === "/classes" ? "default" : "ghost"}
-                      className="w-full justify-start text-gray-700"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Classes
-                    </Button>
-                  </Link>
                   <Link href="/high-performance">
                     <Button
                       variant={location === "/high-performance" ? "default" : "ghost"}
@@ -387,9 +378,9 @@ export default function Navbar() {
                       Home
                     </Button>
                   </Link>
-                  <Link href="/classes">
+                  <Link href="/programs">
                     <Button
-                      variant={location === "/classes" ? "default" : "ghost"}
+                      variant={location === "/programs" ? "default" : "ghost"}
                       className="w-full justify-start"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >

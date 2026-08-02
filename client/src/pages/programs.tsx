@@ -18,7 +18,12 @@ export default function Programs() {
 
   return (
     <div className="min-h-screen bg-[#faf8f5]">
-      <div className="mx-auto max-w-4xl px-6 py-14">
+      <div className="mx-auto max-w-4xl px-6 pt-6">
+        <a href="/" className="font-bold text-[#0a6b66] hover:underline" data-testid="home-link">
+          &larr; Power2ADAPT home
+        </a>
+      </div>
+      <div className="mx-auto max-w-4xl px-6 pb-14 pt-6">
         {closed && (
           <div
             className="mb-8 rounded-lg border border-[#f6930e] bg-white p-4 text-[#525759]"
