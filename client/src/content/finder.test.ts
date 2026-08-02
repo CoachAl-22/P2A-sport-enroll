@@ -40,6 +40,13 @@ describe("resolveRung", () => {
     expect(resolveRung("year-7")).toBeNull();
     expect(resolveRung("../etc/passwd")).toBeNull();
   });
+
+  it("returns null for non-string input rather than throwing", () => {
+    const odd = [null, undefined, 42, {}, []] as unknown[];
+    for (const value of odd) {
+      expect(resolveRung(value as string)).toBeNull();
+    }
+  });
 });
 
 describe("choice labels", () => {
