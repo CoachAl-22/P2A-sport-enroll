@@ -44,7 +44,7 @@ export default function RungPage({ rung }: { rung: RungContent }) {
         <p className="mb-8 text-lg text-[#525759]">{rung.teaser}</p>
 
         <div className="mb-12">
-          <ClassTiles classes={rung.classes} src={src} ctaLabel={rung.ctaLabel} />
+          <ClassTiles classes={rung.classes} src={src} ctaLabel={rung.ctaLabel} programName={rung.name} />
         </div>
 
         <Section title="What this program is about">
@@ -79,7 +79,7 @@ export default function RungPage({ rung }: { rung: RungContent }) {
 
         <div className="border-t border-[#e5e0d8] pt-10">
           <p className="mb-4 font-bold text-[#2e2600]">Excellence Through Consistency</p>
-          <ClassTiles classes={rung.classes} src={src} ctaLabel={rung.ctaLabel} />
+          <ClassTiles classes={rung.classes} src={src} ctaLabel={rung.ctaLabel} programName={rung.name} />
         </div>
       </div>
     </div>

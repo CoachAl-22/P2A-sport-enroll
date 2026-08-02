@@ -7,15 +7,17 @@ export function ClassTiles({
   classes,
   src,
   ctaLabel,
+  programName,
 }: {
   classes: ClassOffering[];
   src: string;
   ctaLabel: string;
+  programName?: string;
 }) {
   if (classes.length === 0) {
     return (
       <p className="rounded-lg bg-white p-4 text-[#525759]" data-testid="classes-empty">
-        Classes are being finalised. Book a call and we will let you know as soon as times are set.
+        {programName ? `Classes for ${programName} are` : "Classes are"} being finalised. Book a call and we will let you know as soon as times are set.
       </p>
     );
   }
