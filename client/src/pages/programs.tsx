@@ -28,28 +28,21 @@ function hasApplyUrl(rung: RungSummary): rung is RungApplyCard {
   return "applyUrl" in rung;
 }
 
-// The discovery call booking. This is the one CTA that links straight out to
-// Setmore rather than through /enrol/{slug}, on Alistair's call 2026-08-02: the
-// tracked version needs a `book-a-call` row seeded in the production database,
-// and until that runs the button would dead-end on the closed-intake message.
-// A working button beats a tracked one on the page's most visible fallback.
+// The discovery call booking. Routed through /enrol/book-a-call so the click is
+// logged before the redirect, like every other action on this page. The `src`
+// carries the program the parent was looking at when they gave up, which says
+// which program is failing to convert.
 //
-// The `book-a-call` slug is already in scripts/seed-enrolment-links.ts. To turn
-// tracking on later: seed it, then point this href at
-// `/enrol/book-a-call?src=${src}`. The src carries the program the parent
-// stalled on, which is the signal worth having.
-const SETMORE_DISCOVERY_CALL =
-  "https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0";
-
-function BookACall({ label }: { label: string }) {
+// This depends on the `book-a-call` row in scripts/seed-enrolment-links.ts being
+// present in whichever database the deployment reads. Seed before republishing,
+// or the button lands on the closed-intake message.
+function BookACall({ label, src }: { label: string; src: string }) {
   return (
     <div className="mt-8 rounded-xl bg-white p-6" data-testid="book-a-call">
       <h3 className="mb-2 text-lg font-black text-[#2e2600]">Not sure, or nothing fits?</h3>
       <p className="mb-4 text-[#525759]">{label}</p>
       <a
-        href={SETMORE_DISCOVERY_CALL}
-        target="_blank"
-        rel="noopener noreferrer"
+        href={`/enrol/book-a-call?src=${src}`}
         className="inline-block rounded-full border-2 border-[#0a6b66] px-6 py-3 font-bold uppercase tracking-wide text-[#0a6b66] hover:bg-[#0a6b66] hover:text-white"
       >
         Book a 10 minute call
@@ -175,12 +168,18 @@ export default function Programs() {
               </>
             ) : null}
 
-            <BookACall label="If none of those days or venues work, have a quick chat and I will sort it out." />
+            <BookACall
+              label="If none of those days or venues work, have a quick chat and I will sort it out."
+              src={`${finderSrc}-${rung.slug}`}
+            />
           </div>
         )}
 
         {!rung && (
-          <BookACall label="Pick a year level above, or if you would rather just talk it through, book a call." />
+          <BookACall
+            label="Pick a year level above, or if you would rather just talk it through, book a call."
+            src={finderSrc}
+          />
         )}
 
         <p className="mt-12 border-t border-[#e7e1d8] pt-6 font-bold text-[#2e2600]">
