@@ -97,9 +97,14 @@ export default function Enrollment() {
           <p className="text-gray-500 mb-8">
             Junior Academy, Senior Squad, and High Performance programs require an application. Our coaching team reviews all applications before offering a place.
           </p>
-          <Link href="/classes">
+          <Link href="/programs">
+            <Button className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-3 mb-3">
+              Find your class
+            </Button>
+          </Link>
+          <Link href="/programs">
             <Button variant="ghost" className="w-full text-gray-500">
-              ← Back to classes
+              ← See all programs
             </Button>
           </Link>
         </div>
