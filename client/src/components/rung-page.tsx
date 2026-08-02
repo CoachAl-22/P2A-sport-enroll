@@ -1,4 +1,5 @@
 import type { RungContent } from "@/content/rungs";
+import { ClassTiles } from "@/components/class-tiles";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -19,49 +20,6 @@ function Bullets({ items }: { items: string[] }) {
         </li>
       ))}
     </ul>
-  );
-}
-
-function ClassList({ rung, src }: { rung: RungContent; src: string }) {
-  if (rung.classes.length === 0) {
-    return (
-      <p className="rounded-lg bg-white p-4 text-[#525759]" data-testid={`classes-empty-${rung.slug}`}>
-        Classes for {rung.name} are being finalised. Check back soon or get in touch.
-      </p>
-    );
-  }
-
-  return (
-    <div className="space-y-3" data-testid={`classes-${rung.slug}`}>
-      {rung.classes.map((cls) => (
-        <a
-          key={cls.slug}
-          href={`/enrol/${cls.slug}?src=${src}`}
-          className="flex items-center justify-between rounded-lg bg-white p-4 shadow-sm transition hover:shadow-md"
-          data-testid={`enrol-cta-${cls.slug}`}
-        >
-          <span className="text-[#525759]">
-            <span className="font-bold text-[#2e2600]">{cls.venue}</span>
-            {" "}&middot; {cls.day} {cls.time}
-            {cls.waitlist && (
-              <span className="ml-2 rounded bg-[#f6930e] px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-[#2e2600]">
-                Waitlist
-              </span>
-            )}
-            {cls.studentsOnly ? (
-              <span className="mt-1 block text-sm font-bold text-[#0a6b66]">
-                {cls.studentsOnly} students only
-              </span>
-            ) : (
-              <span className="mt-1 block text-sm">Open to everyone</span>
-            )}
-          </span>
-          <span className="font-bold uppercase tracking-wide text-[#f6930e]">
-            {cls.waitlist ? "Join waitlist" : rung.ctaLabel}
-          </span>
-        </a>
-      ))}
-    </div>
   );
 }
 
@@ -86,7 +44,7 @@ export default function RungPage({ rung }: { rung: RungContent }) {
         <p className="mb-8 text-lg text-[#525759]">{rung.teaser}</p>
 
         <div className="mb-12">
-          <ClassList rung={rung} src={src} />
+          <ClassTiles classes={rung.classes} src={src} ctaLabel={rung.ctaLabel} />
         </div>
 
         <Section title="What this program is about">
@@ -121,7 +79,7 @@ export default function RungPage({ rung }: { rung: RungContent }) {
 
         <div className="border-t border-[#e5e0d8] pt-10">
           <p className="mb-4 font-bold text-[#2e2600]">Excellence Through Consistency</p>
-          <ClassList rung={rung} src={src} />
+          <ClassTiles classes={rung.classes} src={src} ctaLabel={rung.ctaLabel} />
         </div>
       </div>
     </div>
