@@ -4,7 +4,7 @@ import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
 import { Users, ArrowLeft, CheckCircle, Star, Target, Zap, Shield, Calendar, MessageCircle, ChevronDown, ChevronUp, Home } from "lucide-react";
 import { Link } from "wouter";
-import { SESSION_VENUES } from "@/content/rungs";
+import { SESSION_VENUES, MORNINGTON_SHARED_NOTE } from "@/content/rungs";
 
 const faqs = [
   {
@@ -207,7 +207,7 @@ export default function JuniorAcademy() {
               <div
                 key={v.venue}
                 className="rounded-xl border border-gray-200 p-6"
-                data-testid={`ja-sessions-${v.venue.split(",")[0].toLowerCase().replace(/\s+/g, "-")}`}
+                data-testid={`ja-sessions-${v.venue.includes("Ballam") ? "ballam" : "mornington"}`}
               >
                 <h3 className="text-xl font-heading font-bold text-gray-900">{v.venue}</h3>
                 <p className="text-gray-600 mb-4">{v.note}</p>
@@ -216,6 +216,11 @@ export default function JuniorAcademy() {
                     <li key={t}>{t}</li>
                   ))}
                 </ul>
+                {v.venue.includes("Mornington") && MORNINGTON_SHARED_NOTE["junior-academy"] && (
+                  <p className="mt-4 text-sm text-gray-500">
+                    {MORNINGTON_SHARED_NOTE["junior-academy"]}
+                  </p>
+                )}
               </div>
             ))}
           </div>

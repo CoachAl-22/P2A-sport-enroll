@@ -261,10 +261,20 @@ export const SESSION_VENUES: { venue: string; note: string; times: string[] }[] 
   },
   {
     venue: "Mornington Athletics Track",
-    note: "Track sessions, shared with Team Sport Speed",
+    note: "Track sessions",
     times: ["Wednesday 5:30pm", "Friday 4:30pm", "Friday 5:30pm"],
   },
 ];
+
+// The venue list above is shared, but the explanation of who else trains at
+// Mornington reads differently per program, so it is not folded into
+// SESSION_VENUES. Keyed by rung slug; each page passes its own copy in.
+export const MORNINGTON_SHARED_NOTE: Partial<Record<RungSlug, string>> = {
+  "junior-academy":
+    "Track sessions are shared with Team Sport Speed. Your athlete trains alongside footballers, soccer players, netballers and basketballers working on the same speed and acceleration qualities, on their own Junior Academy programming.",
+  "senior-squad":
+    "Track sessions are shared with Junior Academy and Team Sport Speed. You train alongside them on your own Senior Squad programming.",
+};
 
 export function RUNG_BY_SLUG(slug: RungSlug): RungContent | RungSummary {
   return RUNGS[slug];
