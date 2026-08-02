@@ -15,6 +15,24 @@ export interface ClassOffering {
   studentsOnly?: string;  // school name when the class is only open to that school's students
 }
 
+export interface SessionTime {
+  venue: string;
+  day: string;
+  time: string;
+}
+
+// Junior Academy and Senior Squad run the same six sessions, all coached by
+// Alistair. The Mornington ones are shared with Team Sport Speed: athletes
+// train alongside each other on their own programming.
+const APPLICATION_SESSIONS: SessionTime[] = [
+  { venue: "Ballam Park, Frankston", day: "Monday", time: "5:30pm to 7:00pm" },
+  { venue: "Ballam Park, Frankston", day: "Tuesday", time: "5:30pm to 7:00pm" },
+  { venue: "Ballam Park, Frankston", day: "Thursday", time: "5:30pm to 7:00pm" },
+  { venue: "Mornington Athletics Track", day: "Wednesday", time: "5:30pm" },
+  { venue: "Mornington Athletics Track", day: "Friday", time: "4:30pm" },
+  { venue: "Mornington Athletics Track", day: "Friday", time: "5:30pm" },
+];
+
 // Fields every hub card needs, whether the rung has a full detail page or not.
 interface RungCard {
   slug: RungSlug;
@@ -22,6 +40,8 @@ interface RungCard {
   ageBand: string;
   teaser: string;      // one line, used on the /programs hub card
   enrolSlug: string;    // where the hub card links
+  sessions?: SessionTime[];   // by-application programs list times rather than enrol links
+  applyUrl?: string;          // where the Apply button goes, for by-application programs
 }
 
 export interface RungContent extends RungCard {
@@ -150,6 +170,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ageBand: "Years 6 to 9, or by invitation",
     teaser: "Multi-sport athletic development for athletes who have decided they are serious.",
     enrolSlug: "junior-academy",
+    sessions: APPLICATION_SESSIONS,
+    applyUrl: "/junior-academy-application.html",
   },
 
   "senior-squad": {
@@ -158,6 +180,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ageBand: "Ages 16 and over",
     teaser: "Competition-ready. Speed, strength and the mental side of performing on the day.",
     enrolSlug: "senior-squad",
+    sessions: APPLICATION_SESSIONS,
+    applyUrl: "/senior-squad-application.html",
   },
 
   "team-sport-speed": {
@@ -227,3 +251,21 @@ export const RUNG_ORDER: RungSlug[] = [
   "senior-squad",
   "team-sport-speed",
 ];
+
+// The two pages render sessions grouped by venue; the finder renders them flat.
+export const SESSION_VENUES: { venue: string; note: string; times: string[] }[] = [
+  {
+    venue: "Ballam Park, Frankston",
+    note: "5:30pm to 7:00pm",
+    times: ["Monday", "Tuesday", "Thursday"],
+  },
+  {
+    venue: "Mornington Athletics Track",
+    note: "Track sessions, shared with Team Sport Speed",
+    times: ["Wednesday 5:30pm", "Friday 4:30pm", "Friday 5:30pm"],
+  },
+];
+
+export function RUNG_BY_SLUG(slug: RungSlug): RungContent | RungSummary {
+  return RUNGS[slug];
+}

@@ -4,6 +4,7 @@ import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
 import { Users, Building2, Smartphone, ArrowLeft, Star, CheckCircle, Trophy, Target, Clock, Heart, Home } from "lucide-react";
 import { Link } from "wouter";
+import { SESSION_VENUES } from "@/content/rungs";
 
 export default function SeniorSquad() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -219,28 +220,21 @@ export default function SeniorSquad() {
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-gray-200 bg-white p-6" data-testid="ss-sessions-ballam">
-              <h3 className="text-xl font-heading font-bold text-gray-900">Ballam Park, Frankston</h3>
-              <p className="text-gray-600 mb-4">5:30pm to 7:00pm</p>
-              <ul className="space-y-2 text-gray-700">
-                <li>Monday</li>
-                <li>Tuesday</li>
-                <li>Thursday</li>
-              </ul>
-            </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-6" data-testid="ss-sessions-mornington">
-              <h3 className="text-xl font-heading font-bold text-gray-900">Mornington Athletics Track</h3>
-              <p className="text-gray-600 mb-4">Track sessions</p>
-              <ul className="space-y-2 text-gray-700">
-                <li>Wednesday 5:30pm</li>
-                <li>Friday 4:30pm</li>
-                <li>Friday 5:30pm</li>
-              </ul>
-              <p className="mt-4 text-sm text-gray-500">
-                Track sessions are shared with Junior Academy and Team Sport Speed. You train
-                alongside them on your own Senior Squad programming.
-              </p>
-            </div>
+            {SESSION_VENUES.map((v) => (
+              <div
+                key={v.venue}
+                className="rounded-xl border border-gray-200 bg-white p-6"
+                data-testid={`ss-sessions-${v.venue.split(",")[0].toLowerCase().replace(/\s+/g, "-")}`}
+              >
+                <h3 className="text-xl font-heading font-bold text-gray-900">{v.venue}</h3>
+                <p className="text-gray-600 mb-4">{v.note}</p>
+                <ul className="space-y-2 text-gray-700">
+                  {v.times.map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </section>
