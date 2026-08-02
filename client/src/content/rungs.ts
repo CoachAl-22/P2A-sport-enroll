@@ -40,8 +40,28 @@ interface RungCard {
   ageBand: string;
   teaser: string;      // one line, used on the /programs hub card
   enrolSlug: string;    // where the hub card links
-  sessions?: SessionTime[];   // by-application programs list times rather than enrol links
-  applyUrl?: string;          // where the Apply button goes, for by-application programs
+}
+
+// By-application programs (Junior Academy, Senior Squad) list session times
+// and must always carry somewhere to apply. sessions and applyUrl are
+// co-required: a program cannot declare one without the other, so the finder
+// can never render an "Apply" button with nowhere to send a parent.
+//
+// The `sessions?: undefined; applyUrl?: undefined` sibling on RungPlainCard
+// is deliberate, not decorative: without it, TypeScript's excess-property
+// check only flags a property as "excess" if it appears in NO member of the
+// target union. Since `sessions` is a legitimate key on RungApplyCard, a
+// plain card with a stray `sessions` field (and no `applyUrl`) would
+// silently satisfy RungCard and the invariant would not hold. Declaring both
+// fields on every branch forces a real structural check instead.
+export interface RungApplyCard extends RungCard {
+  sessions: SessionTime[];
+  applyUrl: string;
+}
+
+interface RungPlainCard extends RungCard {
+  sessions?: undefined;
+  applyUrl?: undefined;
 }
 
 export interface RungContent extends RungCard {
@@ -61,7 +81,10 @@ export interface RungContent extends RungCard {
 // hand-built pages (by application), not RungPage. Only the hub card fields
 // are consumed from here, so that is all this shape carries. This prevents
 // unreachable prose from drifting out of date unnoticed (see Finding 3).
-export type RungSummary = RungCard;
+// junior-academy and senior-squad are RungApplyCard (session times + an
+// apply link); high-performance is RungPlainCard, since it is
+// invitation-only and never rendered through the session/apply path.
+export type RungSummary = RungPlainCard | RungApplyCard;
 
 const COMMON_INCLUDED = [
   "Individual programming, so your athlete knows exactly what they are working on",

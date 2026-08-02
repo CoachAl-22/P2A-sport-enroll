@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FINDER_CHOICES, resolveRung, type FinderChoiceId } from "@/content/finder";
-import { RUNGS, type RungContent, type RungSummary } from "@/content/rungs";
+import { RUNGS, type RungContent, type RungSummary, type RungApplyCard } from "@/content/rungs";
 import { ClassTiles, SessionList } from "@/components/class-tiles";
 
 const DISCOVERY_URL =
@@ -21,6 +21,14 @@ function getSrc(): string {
 
 function hasClasses(rung: RungContent | RungSummary): rung is RungContent {
   return "classes" in rung;
+}
+
+// Counterpart to hasClasses: narrows the by-application shape, where
+// sessions and applyUrl are co-required (see RungApplyCard). A rung that is
+// not RungContent and not RungApplyCard (currently just High Performance)
+// never reaches this page via the finder.
+function hasApplyUrl(rung: RungSummary): rung is RungApplyCard {
+  return "applyUrl" in rung;
 }
 
 function BookACall({ label }: { label: string }) {
@@ -132,15 +140,15 @@ export default function Programs() {
 
             {hasClasses(rung) ? (
               <ClassTiles classes={rung.classes} src={finderSrc} ctaLabel={rung.ctaLabel} />
-            ) : (
+            ) : hasApplyUrl(rung) ? (
               <>
-                <SessionList sessions={rung.sessions ?? []} />
+                <SessionList sessions={rung.sessions} />
                 <p className="mt-4 text-[#525759]">
                   {rung.name} is by application, so one form covers every session. Apply and I will
                   be in touch to set up training and payment.
                 </p>
                 <a
-                  href={rung.applyUrl ?? "/"}
+                  href={rung.applyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 inline-block rounded-full bg-[#f6930e] px-8 py-4 font-bold uppercase tracking-wide text-[#2e2600] hover:opacity-90"
@@ -149,7 +157,7 @@ export default function Programs() {
                   Apply for {rung.name}
                 </a>
               </>
-            )}
+            ) : null}
 
             <BookACall label="If none of those days or venues work, have a quick chat and I will sort it out." />
           </div>
