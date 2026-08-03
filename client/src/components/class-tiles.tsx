@@ -16,7 +16,10 @@ export function ClassTiles({
 }) {
   if (classes.length === 0) {
     return (
-      <p className="rounded-lg bg-white p-4 text-[#525759]" data-testid="classes-empty">
+      <p
+        className="rounded-xl border-2 border-[#e7e1d8] bg-white p-4 text-[#525759]"
+        data-testid="classes-empty"
+      >
         {programName ? `Classes for ${programName} are` : "Classes are"} being finalised. Book a call and we will let you know as soon as times are set.
       </p>
     );
@@ -28,7 +31,7 @@ export function ClassTiles({
         <a
           key={cls.slug}
           href={`/enrol/${cls.slug}?src=${src}`}
-          className="flex items-center justify-between rounded-lg bg-white p-4 shadow-sm transition hover:shadow-md"
+          className="flex items-center justify-between rounded-xl border-2 border-[#e7e1d8] bg-white p-4 shadow-sm transition hover:border-[#12d4c8] hover:shadow-md"
           data-testid={`enrol-cta-${cls.slug}`}
         >
           <span className="text-[#525759]">
@@ -65,7 +68,7 @@ export function SessionList({ sessions }: { sessions: SessionTime[] }) {
       {sessions.map((s) => (
         <div
           key={`${s.venue}-${s.day}-${s.time}`}
-          className="rounded-lg bg-white p-3 text-[#525759]"
+          className="rounded-xl border-2 border-[#e7e1d8] bg-white p-3 text-[#525759]"
         >
           <span className="font-bold text-[#2e2600]">{s.venue}</span>
           {" "}&middot; {s.day} {s.time}
