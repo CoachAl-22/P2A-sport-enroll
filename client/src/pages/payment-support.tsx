@@ -210,7 +210,7 @@ export default function PaymentSupport() {
             </p>
             <ul className="list-disc list-inside space-y-1 text-gray-600">
               <li>Check your email inbox and spam folder</li>
-              <li>Ask us for a copy and we will send it through</li>
+              <li>Ask me for a copy and I will send it through</li>
               <li>Contact us with your child's name and enrollment date</li>
               <li>We can resend receipts within 24 hours</li>
             </ul>
@@ -224,7 +224,7 @@ export default function PaymentSupport() {
         },
         {
           question: "How long should I keep my receipts?",
-          answer: "We recommend keeping receipts for at least 5 years for tax purposes. Ask us any time and we will resend a copy."
+          answer: "We recommend keeping receipts for at least 5 years for tax purposes. Ask me any time and I will resend a copy."
         }
       ]
     },

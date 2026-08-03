@@ -34,14 +34,14 @@ export default function ParentHelpCenter() {
       content: (
         <div className="space-y-4">
           <div>
-            <h4 className="font-semibold text-gray-900 mb-2">Enrolling Your Child</h4>
-            <p className="text-gray-600 mb-3">To enrol your child in Power2ADAPT programs:</p>
+            <h4 className="font-semibold text-gray-900 mb-2">Getting your child into a class</h4>
+            <p className="text-gray-600 mb-3">You do not need to know which program is right. That is my job. Start here:</p>
             <ol className="list-decimal list-inside space-y-2 text-gray-600">
-              <li>Go to <a href="/programs" className="text-primary-500 underline">Find the right class</a> and pick your child's year level</li>
-              <li>We tell you which program that is, and show you when and where it runs</li>
-              <li>Choose the class that suits your week and follow the enrol button</li>
-              <li>Enter your family details and your child's information, and pay</li>
-              <li>Not sure? Book a 10 minute call from that page and we will place them</li>
+              <li>Open <a href="/programs" className="text-primary-500 underline">Find the right class</a> and tell me your child's year level</li>
+              <li>I will show you the program that fits, and when and where it runs</li>
+              <li>Pick the day that works for your week and follow the enrol button</li>
+              <li>Add your family and athlete details, and you are in</li>
+              <li>Still not sure? Book a 10 minute call from that page and we will work it out together</li>
             </ol>
           </div>
           <div>
@@ -232,7 +232,7 @@ export default function ParentHelpCenter() {
             <h4 className="font-semibold text-gray-900 mb-2">Updating Your Information</h4>
             <p className="text-gray-600 mb-2">Keep your contact details current through:</p>
             <ul className="list-disc list-inside space-y-1 text-gray-600">
-              <li>Email us at info@power2adapt.com</li>
+              <li>Email me at info@power2adapt.com</li>
               <li>Call us on +61 434 679 395</li>
             </ul>
           </div>
@@ -241,7 +241,7 @@ export default function ParentHelpCenter() {
       faqs: [
         {
           question: "I'm not receiving SMS notifications. What should I do?",
-          answer: "Check with us that we have your mobile number recorded correctly. If the issue persists, contact us as your messages may be going to spam or your carrier may be blocking them."
+          answer: "Give me a call and we will check I have the right mobile number for you. If it is correct and they are still not arriving, they are most likely being filtered by your carrier, and we will sort out another way to reach you."
         },
         {
           question: "How do I opt out of marketing messages?",
@@ -267,7 +267,7 @@ export default function ParentHelpCenter() {
         },
         {
           question: "How do waitlists work?",
-          answer: "If a class is full, get in touch and we will add your child to the waitlist at no cost. We contact you as soon as a spot opens up, and waitlisted families get first go at it."
+          answer: "If a class is full, tell me and I will put your child on the waitlist. It costs nothing. As soon as a spot opens up I get in touch, and the families already waiting get first go at it."
         },
         {
           question: "Can my child switch programs during the term?",
