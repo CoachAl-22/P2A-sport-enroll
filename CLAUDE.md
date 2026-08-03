@@ -1,5 +1,4 @@
-# yed Australia/Melbourne
-SportsEnrol (P2A-sport-enroll) - Project Instructions
+# SportsEnrol (P2A-sport-enroll) - Project Instructions
 
 Power2ADAPT's enrolment platform, replacing SportsBiz (Thinksmart Software, $150/mo AUD).
 Owner: Alistair Tait (Al). Live at https://www.power2adapt.online
@@ -28,7 +27,8 @@ Lessons already paid for: never run bare `git add -A` outside the project folder
 - Waitlist-only classes (e.g. Foundation Tuesday Toorak) use capacity 0 so all bookings route to the waitlist; it becomes a real class at 10-20 names
 - Makeup credits (SportsBiz parity, not yet built): absence = holiday makeup class OR credit to next term
 - Australian spelling in parent-facing copy (enrolment), AUD currency, dates DD/MM or "Thursday 16 July"
-- Never commit `.env` (gitignored). Timestamps stored UTC, display
+- Never commit `.env` (gitignored). Timestamps stored UTC, displayed Australia/Melbourne
+
 ## Current state (as of 2026-07-04, commit b625034 pushed, NOT yet deployed - Replit credits exhausted)
 
 Shipped and live: class browser with term selector + current-term default, quiz, per-week picker with GST, Stripe payments (real money confirmed: $33-$660 charges), waitlist join + notify with booking link, password reset, admin enrolment-open gate, rate limiting, helmet.
