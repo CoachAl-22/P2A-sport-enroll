@@ -118,14 +118,6 @@ export default function Navbar() {
                     Programs
                   </Button>
                 </Link>
-                <Link href="/dashboard">
-                  <Button
-                    variant={location === "/dashboard" ? "default" : "ghost"}
-                    className="text-gray-700 hover:text-primary-500"
-                  >
-                    My Family
-                  </Button>
-                </Link>
                 <Link href="/athlete-portal">
                   <Button
                     variant={location === "/athlete-portal" ? "default" : "ghost"}
@@ -142,14 +134,6 @@ export default function Navbar() {
                     My Journey
                   </Button>
                 </a>
-                <Link href="/waitlist">
-                  <Button
-                    variant={location === "/waitlist" ? "default" : "ghost"}
-                    className="text-gray-700 hover:text-primary-500"
-                  >
-                    Waitlists
-                  </Button>
-                </Link>
                   <a href="https://www.skool.com/power2adapt-speed-school-8929" target="_blank" rel="noopener noreferrer">
                     <Button
                       variant="ghost"
@@ -362,15 +346,6 @@ export default function Navbar() {
                       Programs
                     </Button>
                   </Link>
-                  <Link href="/dashboard">
-                    <Button
-                      variant={location === "/dashboard" ? "default" : "ghost"}
-                      className="w-full justify-start"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      My Family
-                    </Button>
-                  </Link>
                   <Link href="/athlete-portal">
                     <Button
                       variant={location === "/athlete-portal" ? "default" : "ghost"}
@@ -389,15 +364,6 @@ export default function Navbar() {
                       My Journey ✦
                     </Button>
                   </a>
-                  <Link href="/waitlist">
-                    <Button
-                      variant={location === "/waitlist" ? "default" : "ghost"}
-                      className="w-full justify-start"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Waitlists
-                    </Button>
-                  </Link>
                   <a href="https://www.skool.com/power2adapt-speed-school-8929" target="_blank" rel="noopener noreferrer">
                     <Button
                       variant="ghost"

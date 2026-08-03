@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/use-auth";
 import Landing from "@/pages/landing";
-import Classes from "@/pages/classes";
 import NotFound from "@/pages/not-found";
 import Foundation from "@/pages/foundation";
 import EmergingAthletes from "@/pages/emerging-athletes";
@@ -16,11 +15,8 @@ import Programs from "@/pages/programs";
 const HighPerformance = lazy(() => import("@/pages/high-performance"));
 const SeniorSquad = lazy(() => import("@/pages/senior-squad"));
 const JuniorAcademy = lazy(() => import("@/pages/junior-academy"));
-const Dashboard = lazy(() => import("@/pages/dashboard"));
-const Enrollment = lazy(() => import("@/pages/enrollment"));
 const Admin = lazy(() => import("@/pages/admin"));
 const Import = lazy(() => import("@/pages/import"));
-const Checkout = lazy(() => import("@/pages/checkout"));
 const Analytics = lazy(() => import("@/pages/analytics"));
 const AdminSMS = lazy(() => import("@/pages/admin-sms"));
 const Blog = lazy(() => import("@/pages/blog"));
@@ -33,7 +29,6 @@ const AdminStaff = lazy(() => import("@/pages/admin-staff"));
 const AdminCustomers = lazy(() => import("@/pages/admin-customers"));
 const AdminEnquiries = lazy(() => import("@/pages/admin-enquiries"));
 const Attendance = lazy(() => import("@/pages/attendance"));
-const Waitlist = lazy(() => import("@/pages/waitlist"));
 const ParentHelpCenter = lazy(() => import("@/pages/parent-help-center"));
 const EnrollmentGuide = lazy(() => import("@/pages/enrollment-guide"));
 const PaymentSupport = lazy(() => import("@/pages/payment-support"));
@@ -50,8 +45,6 @@ const AdminSurveys = lazy(() => import("@/pages/admin-surveys"));
 const AdminTrials = lazy(() => import("@/pages/admin-trials"));
 const AdminEnrolmentLinks = lazy(() => import("@/pages/admin-enrolment-links"));
 const Onboarding = lazy(() => import("@/pages/onboarding"));
-const ConfirmationPage = lazy(() => import("@/pages/confirmation"));
-const ReEnrol = lazy(() => import("@/pages/re-enrol"));
 
 function PageSpinner() {
   return (
@@ -89,19 +82,22 @@ function Router() {
           <Route path="/parent-help-center" component={ParentHelpCenter} />
           <Route path="/enrollment-guide" component={EnrollmentGuide} />
           <Route path="/payment-support" component={PaymentSupport} />
-          <Route path="/enrollment/:classId" component={Enrollment} />
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/checkout/:enrollmentId" component={Checkout} />
-          <Route path="/confirmation" component={ConfirmationPage} />
+          {/* Retired with the enrolment engine (2026-08-03). Redirected, not 404,
+              because old confirmation emails and SMS still carry these links. */}
+          <Route path="/enrollment/:classId"><Redirect to="/programs" /></Route>
+          <Route path="/checkout"><Redirect to="/programs" /></Route>
+          <Route path="/checkout/:enrollmentId"><Redirect to="/programs" /></Route>
+          <Route path="/confirmation"><Redirect to="/programs" /></Route>
+          <Route path="/re-enrol"><Redirect to="/programs" /></Route>
+          <Route path="/waitlist"><Redirect to="/programs" /></Route>
           <Route path="/reset-password" component={ResetPassword} />
-          <Route path="/re-enrol" component={ReEnrol} />
           <Route path="/video-highlights/:shareableLink" component={SharedVideo} />
         </>
       ) : (
         <>
           {/* Logged-in users still land on the public homepage; their dashboard lives at /dashboard (admins use /admin) */}
           <Route path="/" component={Landing} />
-          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/dashboard"><Redirect to="/programs" /></Route>
           <Route path="/athlete-portal" component={AthletePortal} />
           <Route path="/classes"><Redirect to="/programs" /></Route>
           <Route path="/coaches" component={Coaches} />
@@ -112,13 +108,15 @@ function Router() {
           <Route path="/emerging-athletes" component={EmergingAthletes} />
           <Route path="/team-sport-speed" component={TeamSportSpeed} />
           <Route path="/programs" component={Programs} />
-          <Route path="/enrollment/:classId" component={Enrollment} />
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/checkout/:enrollmentId" component={Checkout} />
-          <Route path="/confirmation" component={ConfirmationPage} />
+          {/* Retired with the enrolment engine (2026-08-03). Redirected, not 404,
+              because old confirmation emails and SMS still carry these links. */}
+          <Route path="/enrollment/:classId"><Redirect to="/programs" /></Route>
+          <Route path="/checkout"><Redirect to="/programs" /></Route>
+          <Route path="/checkout/:enrollmentId"><Redirect to="/programs" /></Route>
+          <Route path="/confirmation"><Redirect to="/programs" /></Route>
+          <Route path="/re-enrol"><Redirect to="/programs" /></Route>
+          <Route path="/waitlist"><Redirect to="/programs" /></Route>
           <Route path="/reset-password" component={ResetPassword} />
-          <Route path="/re-enrol" component={ReEnrol} />
-          <Route path="/waitlist" component={Waitlist} />
           <Route path="/blog" component={Blog} />
           <Route path="/education" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />

@@ -387,7 +387,7 @@ export default function EnrollmentGuide() {
             <p className="mb-6 opacity-90">Follow our simple enrollment process and get your child started in Power2ADAPT programs today!</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild className="bg-white text-primary-500 hover:bg-gray-100">
-                <Link href="/classes">Browse Programs</Link>
+                <Link href="/programs">Browse Programs</Link>
               </Button>
               <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-primary-500 bg-transparent">
                 <a href="mailto:info@power2adapt.com" className="text-white hover:text-primary-500">Ask a Question</a>

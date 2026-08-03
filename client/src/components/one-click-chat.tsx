@@ -22,7 +22,7 @@ type TopicKey = typeof TOPICS[number]["key"];
 const ANSWERS: Record<TopicKey, { text: string; cta?: { label: string; href: string; external?: boolean } }> = {
   programs: {
     text: "We run 6 programs designed for different ages and goals:\n\n• **Foundation Class** — Prep–Year 2 (Ages 5–8). Movement skills & games. _(Peninsula Grammar, Toorak College, Mornington & Ballam Park)_\n• **Emerging Athletes** — Year 3–6 (Ages 8–12). Running, jumping, throwing. _(Peninsula Grammar, Toorak College, Mornington & Ballam Park)_\n• **Junior Academy — Ages 12–16** — Structured athletics & competition prep. Ballam Park & Mornington.\n• **Senior Squad** — Ages 16+. High-level squad training. Ballam Park & Mornington.\n• **Elite HP Squad** — By application only. Next-level performance.\n• **Team Sport Speed** — Ages 10+. Speed & agility for AFL, soccer, basketball & more. Wed & Fri at Mornington.\n\nUse our 3-step finder to see live class times at your preferred venue.",
-    cta: { label: "Find the right class →", href: "/classes" },
+    cta: { label: "Find the right class →", href: "/programs" },
   },
   cost: {
     text: "All programs are **$300 + GST per term** (approx. 9–10 weeks).\n\n• **Foundation, Emerging Athletes & Team Sport Speed** — full term payment upfront.\n• **Junior Academy, Senior Squad & Elite HP Squad** — full term or monthly direct debit available.\n\nDiscounts aren't listed publicly, but if your situation warrants it, bring it up on a Discovery Call and Alistair will work something out.",
@@ -30,7 +30,7 @@ const ANSWERS: Record<TopicKey, { text: string; cta?: { label: string; href: str
   },
   venues: {
     text: "We run across **4 venues** on the Mornington Peninsula.\n\n🏫 **Toorak College** — Foundation & Emerging Athletes (Thu 3:30–4:45pm · Tue waitlist)\n🏫 **Peninsula Grammar** — Foundation & Emerging Athletes (Mon 3:30–4:45pm)\n🏟️ **Ballam Park Athletic Track** — Foundation & Emerging Athletes (Thu 4:30–5:30pm) · Junior Academy, Senior Squad & Elite HP Squad (Tue & Thu 5:30pm)\n🏃 **Mornington Athletic Track** — Foundation & Emerging Athletes (Wed 4:30–5:30pm) · Junior Academy, Senior Squad, Elite HP Squad & Team Sport Speed (Wed & Fri 5:30pm)\n\n─────────────────\n📅 **Monday · Peninsula Grammar** (3:30–4:45pm)\n→ Foundation Class, Emerging Athletes\n\n📅 **Tuesday · Toorak College** _(Waitlist only)_\n→ Foundation Class, Emerging Athletes (3:30–4:45pm)\n📅 **Tuesday · Ballam Park** (5:30pm)\n→ Junior Academy, Senior Squad, Elite HP Squad\n\n📅 **Wednesday · Mornington**\n→ Foundation Class, Emerging Athletes (4:30–5:30pm)\n→ Junior Academy, Senior Squad, Elite HP Squad & Team Sport Speed (5:30pm)\n\n📅 **Thursday · Toorak College** (3:30–4:45pm)\n→ Foundation Class, Emerging Athletes\n📅 **Thursday · Ballam Park**\n→ Foundation Class, Emerging Athletes (4:30–5:30pm)\n→ Junior Academy, Senior Squad, Elite HP Squad (5:30pm)\n\n📅 **Friday · Mornington** (5:30pm)\n→ Junior Academy, Senior Squad & Team Sport Speed\n\n📅 **Saturday** · 1-on-1 coaching 8am–12pm (book via Setmore)\n\n📅 **Sunday** · Senior Squad & Elite HP Squad only _(venue & time TBC — contact us)_",
-    cta: { label: "Browse by venue →", href: "/classes" },
+    cta: { label: "Browse by venue →", href: "/programs" },
   },
   included: {
     text: "Every session includes:\n\n✓ **Expert coaching** from qualified athletics coaches\n✓ **Structured warm-up** and cool-down\n✓ **Skill-based drills** tailored to the program level\n✓ **Small group sizes** for personal attention\n✓ **Progress tracking** through our platform\n\nFor Senior Squad & Elite HP Squad, athletes also get access to personalised training programmes and direct coach feedback between sessions.",
@@ -41,7 +41,7 @@ const ANSWERS: Record<TopicKey, { text: string; cta?: { label: string; href: str
   },
   enrol: {
     text: "Enrolment is simple and takes about 2 minutes:\n\n1️⃣ Use the **class finder** to pick your program, day & venue\n2️⃣ Click **\"Book this class\"** on the session you want\n3️⃣ Create an account (or log in) and add your child's details\n4️⃣ Pay securely — you're confirmed!\n\nFor Junior Academy, Senior Squad & Elite HP Squad, you'll need to submit an application first.",
-    cta: { label: "Start the class finder →", href: "/classes" },
+    cta: { label: "Start the class finder →", href: "/programs" },
   },
   apply: {
     text: "**Junior Academy** and **Senior Squad** are selective programs designed for athletes who are ready to commit to structured training.\n\nTo apply:\n• Complete a short online application\n• Our coaching team reviews it\n• You'll hear back within 5 business days\n\nNot sure if your athlete is ready? Book a free discovery call — Alistair will give you an honest assessment.",

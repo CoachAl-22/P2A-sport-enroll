@@ -49,13 +49,6 @@ export default function Landing() {
               >
                 Login
               </Button>
-              <Button 
-                onClick={() => setIsLoginModalOpen(true)}
-                className="hidden sm:inline-flex bg-secondary-500 hover:bg-secondary-600 text-white font-medium"
-              >
-                Sign Up
-              </Button>
-              
               {/* Mobile menu button */}
               <div className="md:hidden">
                 <Button
@@ -147,15 +140,6 @@ export default function Landing() {
                 >
                   Login
                 </Button>
-                <Button 
-                  onClick={() => {
-                    setIsLoginModalOpen(true);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="w-full justify-start bg-secondary-500 hover:bg-secondary-600 text-white font-medium mt-2"
-                >
-                  Sign Up
-                </Button>
               </div>
             </div>
           </div>
@@ -180,7 +164,7 @@ export default function Landing() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
-                  onClick={() => setLocation('/classes')}
+                  onClick={() => setLocation('/programs')}
                   className="bg-secondary-500 hover:bg-secondary-600 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
                   Find the Right Class →
@@ -318,7 +302,7 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
-                  <a href="/classes?sportType=foundation_prep_year2" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
                 </div>
               </div>
             </div>
@@ -338,7 +322,7 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
-                  <a href="/classes?sportType=emerging_year3_6" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
                 </div>
               </div>
             </div>
@@ -358,7 +342,7 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
-                  <a href="/classes?sportType=foundation_prep_year2" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
                 </div>
               </div>
             </div>
@@ -378,7 +362,7 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
-                  <a href="/enrollment/02d3daec-f523-4a86-aefd-55e6a3b9a8fb" className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Join Waitlist</a>
+                  <a href="/programs" className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Join Waitlist</a>
                 </div>
               </div>
             </div>
@@ -398,7 +382,7 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
-                  <a href="/classes?sportType=team_sport_speed" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
                 </div>
               </div>
             </div>
@@ -418,7 +402,7 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
-                  <a href="/classes?sportType=team_sport_speed" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
+                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
                 </div>
               </div>
             </div>
