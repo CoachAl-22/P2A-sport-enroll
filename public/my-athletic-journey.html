@@ -4501,6 +4501,10 @@ const MAJ_CONTENT = {
   // (not auto-mirrored from Learn). Used to decide whether re-checking Learn
   // should also restore Challenge.
   let _challengeExplicitlyExcluded = new Set();
+  // Identifies the currently rendered module/week. A redraw after marking Learn
+  // or Challenge must keep attendance exclusions; changing the week must reset
+  // them so selections from one session cannot leak into another.
+  let _sessionSelectionKey = null;
 
   // Returns {learn, challenge, reflect} booleans for one athlete at a given week.
   function _athleteActivityStatus(athlete, mod, wk) {
@@ -4624,11 +4628,16 @@ const MAJ_CONTENT = {
   }
 
   function sessionPickWeek() {
-    // Reset exclusions whenever the week/module changes so UI and payload stay in sync.
-    _sessionExcluded = { learn: new Set(), challenge: new Set() };
-    _challengeExplicitlyExcluded = new Set();
     const mod = parseInt(document.getElementById('session-module-select').value);
     const wk  = parseInt(document.getElementById('session-week-select').value);
+    const selectionKey = `${mod}-${wk}`;
+    if (_sessionSelectionKey !== selectionKey) {
+      // Reset only when the week/module changes. Redraws after a bulk action
+      // must preserve the coach's attendance selections for this session.
+      _sessionExcluded = { learn: new Set(), challenge: new Set() };
+      _challengeExplicitlyExcluded = new Set();
+      _sessionSelectionKey = selectionKey;
+    }
     const weekData = MAJ_CONTENT.getWeek(mod, wk);
     const body = document.getElementById('session-content-body');
     const athletes = _sessionVisibleAthletes();
