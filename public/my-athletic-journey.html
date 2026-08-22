@@ -4649,9 +4649,14 @@ const MAJ_CONTENT = {
     const needLearn     = athletes.filter(a => !_athleteActivityStatus(a, mod, wk).learn);
     const needChallenge = athletes.filter(a => !_athleteActivityStatus(a, mod, wk).challenge);
     const needReflect   = athletes.filter(a => !_athleteActivityStatus(a, mod, wk).reflect);
+    // Reflect reminders follow the Learn attendance selection. Learn is the
+    // session's canonical attendance list; its exclusions are mirrored into
+    // Challenge, but Challenge can also be independently left incomplete.
+    const remindReflect = needReflect.filter(a => !_sessionExcluded.learn.has(String(a.id)));
     const nL = needLearn.length;
     const nC = needChallenge.length;
     const nR = needReflect.length;
+    const nRR = remindReflect.length;
 
     if (!weekData) {
       body.innerHTML = `<div style="color:var(--text2);text-align:center;padding:24px;">No content for Module ${mod} Week ${wk}</div>`;
@@ -4745,13 +4750,15 @@ const MAJ_CONTENT = {
 
       <button id="session-remind-btn"
         onclick="sessionSendReminder(${mod},${wk})"
-        ${nR === 0 ? 'disabled' : ''}
-        style="width:100%;background:var(--surface3);border:1.5px solid ${nR === 0 ? 'var(--border2)' : 'var(--orange)'};color:${nR === 0 ? 'var(--text3)' : 'var(--orange)'};border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:${nR === 0 ? 'default' : 'pointer'};margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        ${nRR === 0 ? 'disabled' : ''}
+        style="width:100%;background:var(--surface3);border:1.5px solid ${nRR === 0 ? 'var(--border2)' : 'var(--orange)'};color:${nRR === 0 ? 'var(--text3)' : 'var(--orange)'};border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:${nRR === 0 ? 'default' : 'pointer'};margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;">
         ${nR === 0
           ? '✅ All athletes have reflected'
-          : athletes.length > nR
-            ? `📲 Send reminder to ${nR} of ${athletes.length} athletes (${athletes.length - nR} already reflected)`
-            : `📲 Send reflection reminder to ${nR} athlete${nR !== 1 ? 's' : ''}`}
+          : nRR === 0
+            ? '✅ No present attendees need a reminder'
+          : nRR < nR
+            ? `📲 Send reminder to ${nRR} attendees (${nR - nRR} absent)`
+            : `📲 Send reflection reminder to ${nRR} attendee${nRR !== 1 ? 's' : ''}`}
       </button>
       <div style="font-size:11px;color:var(--text2);text-align:center;padding-bottom:4px;">
         ${nR > 0 ? `Sends: "Complete your reflection to unlock Week ${wk + 1 <= 8 ? wk + 1 : 1} 🔒"` : ''}
@@ -4889,8 +4896,12 @@ const MAJ_CONTENT = {
   }
 
   async function sessionSendReminder(mod, wk) {
-    // Only remind athletes who haven't reflected yet
-    const athletes = _sessionVisibleAthletes().filter(a => !_athleteActivityStatus(a, mod, wk).reflect);
+    // Only remind present attendees who haven't reflected yet. Learn is the
+    // canonical attendance selection and remains available after the Learn
+    // bulk action redraws the session.
+    const athletes = _sessionVisibleAthletes()
+      .filter(a => !_athleteActivityStatus(a, mod, wk).reflect)
+      .filter(a => !_sessionExcluded.learn.has(String(a.id)));
     const btn = document.getElementById('session-remind-btn');
     if (!btn || btn.disabled) return;
     btn.disabled = true;
