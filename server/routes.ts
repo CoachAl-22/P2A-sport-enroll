@@ -1081,6 +1081,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Weekly parent one pagers: /week/7/emerging-athletes -> public/week/7/emerging-athletes.html
+  // Parameterised on purpose, so publishing a later week is a file, not a code deploy.
+  // Unlisted rather than private: the pages name no child and carry no personal data, but
+  // they are kept out of search results by a meta tag and this header.
+  app.get("/week/:week/:rung", async (req, res) => {
+    const { readFileSync } = await import("fs");
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const { week, rung } = req.params;
+    // Both params land in a filesystem path, so whitelist their shape rather than
+    // sanitising. Anything else 404s before touching disk.
+    if (!/^[0-9]{1,2}$/.test(week) || !/^[a-z0-9-]{1,40}$/.test(rung)) {
+      return res.status(404).send("Page not found");
+    }
+    const filePath = resolve(__dirname, `../public/week/${week}/${rung}.html`);
+    try {
+      const content = readFileSync(filePath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("X-Robots-Tag", "noindex, nofollow");
+      return res.send(content);
+    } catch {
+      return res.status(404).send("Page not found");
+    }
+  });
+
   app.get(["/start", "/start/index.html"], async (req, res) => {
     const { readFileSync } = await import("fs");
     const { resolve, dirname } = await import("path");
