@@ -146,6 +146,11 @@ export default function Landing() {
         )}
       </nav>
 
+      <div className="bg-orange-500 px-4 py-3 text-center text-sm font-bold text-white sm:text-base">
+        Term 4 starts Monday 5 October. $30 + GST per class. Spots open now.{" "}
+        <a href="/programs" className="underline underline-offset-2 hover:no-underline">Find your class →</a>
+      </div>
+
       {/* Hero Section */}
       <section className="relative gradient-primary text-white py-20">
         <div className="absolute inset-0 opacity-10" style={{
@@ -208,8 +213,8 @@ export default function Landing() {
               <div className="text-gray-600">Athletic development - AFL, Soccer, Basketball, Netball and many more</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">98%</div>
-              <div className="text-gray-600">Parent Satisfaction</div>
+              <div className="text-3xl md:text-4xl font-heading font-bold text-primary-500 mb-2">20+ years</div>
+              <div className="text-gray-600">Coaching on the Mornington Peninsula</div>
             </div>
           </div>
         </div>

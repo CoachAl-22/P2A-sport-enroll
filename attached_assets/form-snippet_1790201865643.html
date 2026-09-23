@@ -1,0 +1,79 @@
+<!-- Power2ADAPT enquiry form: paste into the /programs page in Replit.
+     Replace PASTE_WEB_APP_URL_HERE with the Apps Script web app URL (ends in /exec). -->
+<section id="p2a-enquiry" style="max-width:560px;margin:2rem auto;padding:1.5rem;border-radius:12px;background:#111;color:#fff;font-family:inherit">
+  <h2 style="margin:0 0 .25rem">Find the right class for your athlete</h2>
+  <p style="margin:0 0 1rem;opacity:.8">Five quick questions. Coach Al will be in touch within 24 hours.</p>
+  <form id="p2a-form">
+    <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <label>Your name*<input name="parent_name" required></label>
+    <label>Email*<input name="email" type="email" required></label>
+    <label>Mobile<input name="phone" type="tel"></label>
+    <label>Athlete's first name<input name="child_name"></label>
+
+    <label>1. School year*
+      <select name="school_year" required>
+        <option value="">Choose...</option>
+        <option value="prep-2">Prep to Grade 2</option>
+        <option value="3-6">Grade 3 to 6</option>
+        <option value="7-9">Year 7 to 9</option>
+        <option value="10-12">Year 10 to 12</option>
+        <option value="adult">Adult</option>
+      </select></label>
+
+    <label>2. Where suits you?*
+      <select name="venue" required>
+        <option value="">Choose...</option>
+        <option value="peninsula">Peninsula Grammar (students)</option>
+        <option value="toorak">Toorak College (students)</option>
+        <option value="frankston">Frankston / Ballam Park</option>
+        <option value="mornington">Mornington</option>
+        <option value="other">Somewhere else</option>
+      </select></label>
+
+    <label>3. What's the main goal?*
+      <select name="goal" required>
+        <option value="">Choose...</option>
+        <option value="speed">Get faster for their sport</option>
+        <option value="technique">Fix their running action (arms, heels, stiff legs)</option>
+        <option value="development">All-round athletic development</option>
+        <option value="injury">Coming back from injury (e.g. ACL)</option>
+        <option value="performance">Compete at a higher level</option>
+      </select></label>
+
+    <fieldset style="border:0;padding:0;margin:.75rem 0">
+      <legend>4. Which afternoons work?</legend>
+      <label style="display:inline"><input type="checkbox" name="days" value="Monday"> Mon</label>
+      <label style="display:inline"><input type="checkbox" name="days" value="Tuesday"> Tue</label>
+      <label style="display:inline"><input type="checkbox" name="days" value="Wednesday"> Wed</label>
+      <label style="display:inline"><input type="checkbox" name="days" value="Thursday"> Thu</label>
+      <label style="display:inline"><input type="checkbox" name="days" value="Friday"> Fri</label>
+    </fieldset>
+
+    <label>5. Main sport<input name="sport" placeholder="e.g. AFL, netball, athletics"></label>
+    <label>Anything else?<textarea name="message" rows="3"></textarea></label>
+
+    <button type="submit" style="margin-top:1rem;padding:.75rem 1.5rem;border:0;border-radius:8px;background:#F26522;color:#fff;font-weight:700;cursor:pointer">Send enquiry</button>
+    <p id="p2a-msg" style="margin-top:.75rem"></p>
+  </form>
+</section>
+<style>
+#p2a-form label{display:block;margin:.6rem 0;font-size:.95rem}
+#p2a-form input:not([type=checkbox]),#p2a-form select,#p2a-form textarea{display:block;width:100%;margin-top:.25rem;padding:.55rem;border-radius:6px;border:1px solid #444;background:#1c1c1c;color:#fff;box-sizing:border-box}
+</style>
+<script>
+(function () {
+  var URL = 'PASTE_WEB_APP_URL_HERE';
+  var form = document.getElementById('p2a-form'), msg = document.getElementById('p2a-msg');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Sending...';
+    fetch(URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(form)) })
+      .then(function () {
+        form.reset();
+        msg.textContent = 'Thanks! Coach Al will be in touch within 24 hours. 🙌';
+      })
+      .catch(function () { msg.textContent = 'Something went wrong. Please email info@power2adapt.com'; })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Send enquiry'; });
+  });
+})();
+</script>

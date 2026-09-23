@@ -69,6 +69,9 @@ export default function Programs() {
       </div>
 
       <div className="mx-auto max-w-3xl px-6 pb-16 pt-6">
+        <div className="mb-6 rounded-lg bg-[#0a6b66] px-5 py-4 font-bold text-white">
+          Term 4 starts Monday 5 October. $30 + GST per class. Spots open now.
+        </div>
         {closed && (
           <div
             className="mb-8 rounded-lg border border-[#f6930e] bg-white p-4 text-[#525759]"
@@ -88,6 +91,38 @@ export default function Programs() {
           Start with your athlete's year level. We will tell you which program that is, and show
           you when and where it runs.
         </p>
+
+        <section className="mb-10" aria-labelledby="term4-times">
+          <h2 id="term4-times" className="mb-3 text-2xl font-black text-[#2e2600]">Term 4 class times</h2>
+          <div className="overflow-x-auto rounded-xl border border-[#e7e1d8] bg-white">
+            <table className="w-full min-w-[590px] text-left text-sm text-[#2e2600]">
+              <thead className="bg-[#f1ede7]">
+                <tr>{["Class", "Day", "Time", "Venue"].map(label =>
+                  <th key={label} scope="col" className="px-4 py-3 font-bold">{label}</th>
+                )}</tr>
+              </thead>
+              <tbody className="divide-y divide-[#e7e1d8]">
+                {[
+                  ["Foundation (Prep to Gr 2)", "Monday", "3:30 to 4:45pm", "Peninsula Grammar (school students)"],
+                  ["Emerging Athletes (Gr 3 to 6)", "Monday", "3:30 to 4:45pm", "Peninsula Grammar (school students)"],
+                  ["Foundation (Prep to Gr 2)", "Thursday", "3:30 to 4:45pm", "Toorak College (school students)"],
+                  ["Emerging Athletes (Gr 3 to 6)", "Thursday", "3:30 to 4:45pm", "Toorak College (school students)"],
+                  ["Junior Academy", "Tuesday", "4:30pm", "Frankston (new this term)"],
+                  ["Junior Academy / Senior Squad", "Mon, Tue, Thu", "5:30 to 7:00pm", "Ballam Park, Frankston"],
+                  ["Senior Squad / Team Sport Speed", "Wednesday", "5:30pm", "Mornington Athletics Track"],
+                  ["Team Sport Speed", "Friday", "4:30pm and 5:30pm", "Mornington Athletics Track"],
+                ].map(([name, day, time, venue], i) =>
+                  <tr key={i}>
+                    {[name, day, time, venue].map((value, j) =>
+                      <td key={j} className="px-4 py-3 align-top">{value}</td>
+                    )}
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-[#525759]">School sessions are for students of that school. Select a year level below to find an enrolment option.</p>
+        </section>
 
         <div className="grid gap-3 sm:grid-cols-2" data-testid="finder-choices">
           {FINDER_CHOICES.map((c) => (
@@ -181,6 +216,16 @@ export default function Programs() {
             src={finderSrc}
           />
         )}
+
+        <section className="mt-10 rounded-xl border border-[#e7e1d8] bg-white p-6">
+          <h2 className="mb-2 text-2xl font-black text-[#2e2600]">New this term: Train the Mind</h2>
+          <p className="text-[#525759]">
+            Every session includes a short mental skills block, built from Coach Alistair's guide
+            <em> Becoming an Empowered Athlete</em>. Weeks 1 to 4 cover managing nerves, weeks 5 to 7
+            healthy expectations (beating their own number, not the kid next to them), and weeks 8 to 10
+            building momentum into summer sport.
+          </p>
+        </section>
 
         <p className="mt-12 border-t border-[#e7e1d8] pt-6 font-bold text-[#2e2600]">
           Excellence Through Consistency

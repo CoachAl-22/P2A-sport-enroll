@@ -211,7 +211,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     slug: "team-sport-speed",
     name: "Team Sport Speed",
     ageBand: "Ages 13 and over",
-    teaser: "For footballers, soccer players, netballers and basketballers who want the gap to show on game day.",
+    teaser: "For footballers, soccer players, netballers and basketballers who are slow off the mark or can't back up repeat efforts.",
     about: [
       "Their club coach trains the skills. We improve their speed, agility and speed endurance, so they can produce repeat efforts in line with the demands of the game.",
       "That is the part that usually goes untrained, and it is the part that decides contests: who gets there first, and who is still getting there in the last quarter. It sits alongside club training rather than replacing it. I coach sprinters at Australian Athletics Level 4, and this is that same work, pointed at footballers, soccer players, netballers and basketballers.",
