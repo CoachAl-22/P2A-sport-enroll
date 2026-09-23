@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FINDER_CHOICES, resolveRung, type FinderChoiceId } from "@/content/finder";
 import { RUNGS, type RungContent, type RungSummary, type RungApplyCard } from "@/content/rungs";
 import { ClassTiles, SessionList } from "@/components/class-tiles";
+import { ProgramEnquiryForm } from "@/components/program-enquiry-form";
 
 // wouter strips query params, so read them from the location directly.
 function getClosedSlug(): string | null {
@@ -94,6 +95,7 @@ export default function Programs() {
 
         <section className="mb-10" aria-labelledby="term4-times">
           <h2 id="term4-times" className="mb-3 text-2xl font-black text-[#2e2600]">Term 4 class times</h2>
+          <p className="mb-2 text-sm text-[#525759] sm:hidden">Swipe sideways to see the venue →</p>
           <div className="overflow-x-auto rounded-xl border border-[#e7e1d8] bg-white">
             <table className="w-full min-w-[590px] text-left text-sm text-[#2e2600]">
               <thead className="bg-[#f1ede7]">
@@ -216,6 +218,8 @@ export default function Programs() {
             src={finderSrc}
           />
         )}
+
+        <ProgramEnquiryForm />
 
         <section className="mt-10 rounded-xl border border-[#e7e1d8] bg-white p-6">
           <h2 className="mb-2 text-2xl font-black text-[#2e2600]">New this term: Train the Mind</h2>

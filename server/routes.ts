@@ -13,6 +13,7 @@ import { readFileSync } from "fs";
 import crypto from "crypto";
 import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
 import { registerEnrolmentLinkRoutes } from "./enrolment-links";
+import { registerProgramEnquiryRoute } from "./program-enquiry";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, users, performanceVideoHighlights } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
 import { applySiblingDiscount } from "./siblingDiscount";
@@ -269,6 +270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Session middleware
   app.use(sessionConfig);
   app.use("/api/auth", authRateLimiter);
+  registerProgramEnquiryRoute(app);
 
   // Serve PWA icons and assets from public folder
   const { default: express } = await import("express");
