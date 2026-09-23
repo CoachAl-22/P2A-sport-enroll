@@ -930,6 +930,7 @@
   }
 
   function showSuccess() {
+    try { window.umami?.track('program_application_submitted', { program: 'senior_squad' }); } catch (_) {}
     document.getElementById('progressWrap').style.display = 'none';
     document.querySelector('.step.active').style.display = 'none';
     document.getElementById('successScreen').style.display = 'block';

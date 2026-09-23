@@ -3742,6 +3742,15 @@ const MAJ_CONTENT = {
     }).catch(() => {});
   }
 
+  // Replit's published-site analytics tracker is injected by the proxy.
+  // Keep it separate from the app's athlete analytics and send only aggregate
+  // actions and fixed, non-identifying dimensions.
+  function trackProjectEvent(name, data) {
+    try { window.umami?.track(name, data); } catch (_) {
+      // Analytics must not interrupt a session or an athlete's progress.
+    }
+  }
+
   async function apiPatch(path, body) {
     const res = await fetch(`${API}${path}`, {
       method: 'PATCH',
@@ -4621,6 +4630,7 @@ const MAJ_CONTENT = {
     document.getElementById('session-overlay').classList.add('open');
     document.getElementById('session-overlay').scrollTop = 0;
     sessionPickWeek();
+    trackProjectEvent('coach_session_opened');
   }
 
   function closeSessionMode() {
@@ -4871,6 +4881,9 @@ const MAJ_CONTENT = {
         weekNum: wk,
         activities: { [activity]: true },
       });
+      trackProjectEvent('coach_session_progress_marked', {
+        activity, module: mod, week: wk, athlete_count: athletes.length
+      });
 
       // Patch _allAthletes in-memory so the status table updates immediately
       const weekKey = `${mod}-${wk}`;
@@ -4915,6 +4928,9 @@ const MAJ_CONTENT = {
         body: `Complete your Module ${mod} Week ${wk} reflection to unlock Week ${nextWk} 🔒`,
         moduleNum: mod,
         weekNum: wk,
+      });
+      trackProjectEvent('coach_reflect_reminder_sent', {
+        module: mod, week: wk, recipient_count: Number(data.sent) || 0
       });
       btn.style.border = '1.5px solid var(--green)';
       btn.style.color = 'var(--green)';
@@ -6514,6 +6530,7 @@ const MAJ_CONTENT = {
     showOverlay('📖', '+10 XP!', "Concept learned! Head to the DO tab for this week's challenge.");
 
     await saveState();
+    trackProjectEvent('athlete_learn_completed', { module: a.currentModule, week: a.currentWeek });
   }
 
   // ── CHALLENGE COMPLETE ────────────────────────────────────────────────
@@ -6588,6 +6605,7 @@ const MAJ_CONTENT = {
 
     trackEvent('challenge_completed', 'week', { module: a.currentModule, week: a.currentWeek, xpEarned });
     await saveState();
+    trackProjectEvent('athlete_challenge_completed', { module: a.currentModule, week: a.currentWeek });
   }
 
   // ── REFLECT ──────────────────────────────────────────────────────────
@@ -6654,6 +6672,7 @@ const MAJ_CONTENT = {
     document.querySelectorAll('.stat-val')[1].textContent = a.reflectionsSubmitted;
 
     await saveState();
+    trackProjectEvent('athlete_reflection_submitted', { module: a.currentModule, week: a.currentWeek });
   }
 
   // ── ADVANCE WEEK / MODULE ─────────────────────────────────────────────
