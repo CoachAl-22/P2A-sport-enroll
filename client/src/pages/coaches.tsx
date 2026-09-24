@@ -1,7 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Users, Plus, BarChart3, ArrowLeft } from "lucide-react";
-const coachSamiImage = "/images/coach-sami.jpg";
 const coachAlistairImage = "/images/coach-photo.jpg";
 const coachMiahImage = "/images/coach-miah.jpg";
 const coachBlakeImage = "/images/coach-blake.jpg";
@@ -113,27 +112,6 @@ export default function Coaches() {
               </p>
               <p className="text-gray-300 text-sm leading-relaxed mt-3">
                 Alistair prides himself on being an athletic movement and performance mindset specialist and is passionate about unlocking your potential to move better, live better and perform better in everything you do!
-              </p>
-            </div>
-
-            {/* Coach 2 - Sami */}
-            <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 hover:shadow-xl hover:border-gray-600 transition-all" data-testid="coach-card-sami">
-              <div className="text-center mb-4">
-                <img 
-                  src={coachSamiImage} 
-                  alt="Sami - Running Specialist Coach" 
-                  className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-400"
-                  data-testid="img-coach-sami"
-                />
-                <h4 className="text-xl font-heading font-bold text-cyan-400" data-testid="text-coach-name-sami">Sami</h4>
-                <p className="text-sm text-gray-100 font-medium" data-testid="text-coach-title-sami">Distance Running Specialist</p>
-              </div>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                Sami's passion for running ignited during his soccer days when his natural speed and endurance shone through. 
-                By 2020, running became his primary focus, and he has since dedicated himself to becoming stronger every day. As a competitive runner with four years of experience, Sami understands the challenges of starting a new sport, learning first-hand the risks of overtraining and the value of proper guidance.
-              </p>
-              <p className="text-gray-300 text-sm leading-relaxed mt-3">
-                Through coaching education and personal experience, Sami has developed a tailored, holistic approach to help clients achieve their goals. Whether you aim to compete at a national level or build a foundation for another sport, Sami's expertise ensures you train efficiently and effectively. Backed by a network of experts and his team at Power2Adapt, Sami is dedicated to creating personalised, research-based programs to help you reach your full athletic potential.
               </p>
             </div>
 
