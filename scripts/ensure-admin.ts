@@ -4,10 +4,15 @@
 //   npx tsx scripts/ensure-admin.ts                 # dry run, changes nothing
 //   npx tsx scripts/ensure-admin.ts --apply         # create/repair the accounts
 //
-// To also set the password, put it in a Replit Secret first, so it never lands
-// in the code or in git history:
+// A missing account cannot be created without a password. Put it in a Replit
+// Secret first, so it never lands in the code or in git history:
 //   ADMIN_INITIAL_PASSWORD=<a strong password>
 //   npx tsx scripts/ensure-admin.ts --apply --set-password
+//
+// --set-password applies to accounts being CREATED only. An existing account's
+// password is never touched, because that would lock you out of an account whose
+// password already works. To deliberately reset an existing one:
+//   npx tsx scripts/ensure-admin.ts --apply --set-password --reset-existing-password
 //
 // Deliberately a script and NOT an HTTP endpoint: an endpoint that can mint an
 // admin password is a remote takeover risk, no matter how it is guarded.
@@ -19,6 +24,7 @@ import { sql } from "drizzle-orm";
 
 const APPLY = process.argv.includes("--apply");
 const SET_PASSWORD = process.argv.includes("--set-password");
+const RESET_EXISTING = process.argv.includes("--reset-existing-password");
 
 const TARGETS = [
   { email: "alistair@power2adapt.com", firstName: "Alistair", lastName: "Tait", userId: "alistair" },
@@ -83,9 +89,14 @@ async function main() {
       updates.active = true;
       why.push("active false -> true");
     }
-    if (hash) {
+    // An existing password is left alone unless the reset is asked for
+    // explicitly. Overwriting a working password while only trying to fix a
+    // role would be a self-inflicted lockout.
+    if (hash && RESET_EXISTING) {
       updates.password = hash;
-      why.push("set password from ADMIN_INITIAL_PASSWORD");
+      why.push("RESET password from ADMIN_INITIAL_PASSWORD");
+    } else if (hash) {
+      console.log(`${t.email}: account exists, leaving its password untouched (pass --reset-existing-password to change it)`);
     }
 
     if (why.length === 0) {
