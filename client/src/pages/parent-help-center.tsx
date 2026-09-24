@@ -41,7 +41,7 @@ export default function ParentHelpCenter() {
               <li>I will show you the program that fits, and when and where it runs</li>
               <li>Pick the day that works for your week and follow the enrol button</li>
               <li>Add your family and athlete details, and you are in</li>
-              <li>Still not sure? Book a 10 minute call from that page and we will work it out together</li>
+              <li>Still not sure? Book a discovery call from that page and we will work it out together</li>
             </ol>
           </div>
           <div>

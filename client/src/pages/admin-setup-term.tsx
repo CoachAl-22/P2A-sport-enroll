@@ -30,6 +30,33 @@ export default function AdminSetupTerm() {
   const [holidayDate, setHolidayDate] = useState("");
   const [holidayName, setHolidayName] = useState("");
   const [newConfigId, setNewConfigId] = useState<string | null>(null);
+  const [term4Confirmation, setTerm4Confirmation] = useState("");
+
+  const { data: term4Status, isError: term4StatusError } = useQuery<{
+    term3ActiveCount: number;
+    term3OpenCount: number;
+    term4ClassCount: number;
+    term3ConfigActive: boolean;
+    term4ConfigExists: boolean;
+    term4ConfigActive: boolean;
+  }>({ queryKey: ["/api/admin/term4-2026/setup-status"] });
+
+  const setupTerm4 = useMutation({
+    mutationFn: async () => {
+      const r = await apiRequest("POST", "/api/admin/term4-2026/setup", {
+        confirmation: term4Confirmation,
+      });
+      return r.json() as Promise<{ created: number; archived: number }>;
+    },
+    onSuccess: ({ created, archived }) => {
+      setTerm4Confirmation("");
+      toast({ title: "Term 4 ready", description: `${created} closed Term 4 classes created; ${archived} Term 3 classes archived.` });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/term4-2026/setup-status"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/term-configurations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/classes"] });
+    },
+    onError: (e: Error) => toast({ title: "Term 4 setup failed", description: e.message, variant: "destructive" }),
+  });
 
   // Step 2 state — source term
   const [sourceConfigId, setSourceConfigId] = useState<string>("");
@@ -97,9 +124,52 @@ export default function AdminSetupTerm() {
     setHolidays((h) => [...h, { date: holidayDate, name: holidayName }]);
     setHolidayDate(""); setHolidayName("");
   };
+  const reservedTerm4 = term === "term_4" && year === 2026;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      <Card>
+        <CardHeader><CardTitle>Term 4 2026 — one-time setup</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          {term4StatusError ? (
+            <p role="alert" className="text-sm text-red-700">Could not check the term status. No setup action is available.</p>
+          ) : !term4Status ? (
+            <p className="text-sm text-gray-600">Checking this site's term records…</p>
+          ) : term4Status.term4ConfigExists || term4Status.term4ClassCount > 0 ? (
+            <p className="text-sm text-gray-700">
+              Term 4 already has {term4Status.term4ClassCount} class records here.
+              {term4Status.term3OpenCount > 0
+                ? ` ${term4Status.term3OpenCount} Term 3 classes are still open — review them in Classes admin before making changes.`
+                : " The one-time setup cannot run again."}
+            </p>
+          ) : !term4Status.term3ConfigActive || term4Status.term3ActiveCount === 0 ? (
+            <p className="text-sm text-gray-700">Term 3 source classes are not ready. No setup action is available.</p>
+          ) : (
+            <>
+              <p className="text-sm text-gray-700">
+                This site has {term4Status.term3ActiveCount} active Term 3 classes.
+                Set up the approved Term 4 schedule, create its classes with enrolment closed,
+                mark active Term 3 classes completed, and close Term 3 enrolment.
+                Existing enrolment history stays intact. SportsBiz and Setmore are unchanged.
+              </p>
+              <Label htmlFor="term4-confirmation">Type ARCHIVE TERM 3 2026 to confirm</Label>
+              <Input
+                id="term4-confirmation"
+                value={term4Confirmation}
+                onChange={(event) => setTerm4Confirmation(event.target.value)}
+                autoComplete="off"
+              />
+              <Button
+                type="button"
+                disabled={term4Confirmation !== "ARCHIVE TERM 3 2026" || setupTerm4.isPending}
+                onClick={() => setupTerm4.mutate()}
+              >
+                {setupTerm4.isPending ? "Setting up Term 4…" : "Set up Term 4 and archive Term 3"}
+              </Button>
+            </>
+          )}
+        </CardContent>
+      </Card>
       <h1 className="text-2xl font-bold">Set Up New Term — Step {step} of 4</h1>
 
       {step === 1 && (
@@ -137,7 +207,10 @@ export default function AdminSetupTerm() {
                 {holidays.map((h, i) => <li key={i}>{h.date} — {h.name}</li>)}
               </ul>
             </div>
-            <Button onClick={() => createConfig.mutate()} disabled={createConfig.isPending} className="w-full">
+            {reservedTerm4 && (
+              <p className="text-sm text-amber-800">Use the one-time Term 4 2026 setup above for this term.</p>
+            )}
+            <Button onClick={() => createConfig.mutate()} disabled={createConfig.isPending || reservedTerm4} className="w-full">
               {createConfig.isPending ? "Creating…" : "Create term & continue →"}
             </Button>
           </CardContent>

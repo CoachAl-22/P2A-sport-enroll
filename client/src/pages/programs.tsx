@@ -34,9 +34,8 @@ function hasApplyUrl(rung: RungSummary): rung is RungApplyCard {
 // carries the program the parent was looking at when they gave up, which says
 // which program is failing to convert.
 //
-// This depends on the `book-a-call` row in scripts/seed-enrolment-links.ts being
-// present in whichever database the deployment reads. Seed before republishing,
-// or the button lands on the closed-intake message.
+// The route has a Setmore fallback when the optional admin-managed link row is
+// missing, so the call remains bookable in either environment.
 function BookACall({ label, src }: { label: string; src: string }) {
   return (
     <div className="mt-8 rounded-xl bg-white p-6" data-testid="book-a-call">
@@ -46,7 +45,7 @@ function BookACall({ label, src }: { label: string; src: string }) {
         href={`/enrol/book-a-call?src=${src}`}
         className="inline-block rounded-full border-2 border-[#0a6b66] px-6 py-3 font-bold uppercase tracking-wide text-[#0a6b66] hover:bg-[#0a6b66] hover:text-white"
       >
-        Book a 10 minute call
+        Book a discovery call
       </a>
     </div>
   );

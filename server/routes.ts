@@ -14,6 +14,7 @@ import crypto from "crypto";
 import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
 import { registerEnrolmentLinkRoutes } from "./enrolment-links";
 import { registerProgramEnquiryRoute } from "./program-enquiry";
+import { configureTerm4AndArchiveTerm3, getTerm4SetupStatus, Term4AlreadyConfiguredError } from "./term4-2026-setup";
 import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, termConfigurations, coaches, venues, majCoaches, majAthletes, children, users, performanceVideoHighlights } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
 import { applySiblingDiscount } from "./siblingDiscount";
@@ -3912,6 +3913,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Term Configuration Routes
+  app.get("/api/admin/term4-2026/setup-status", isAdmin, async (_req, res) => {
+    try {
+      res.json(await getTerm4SetupStatus());
+    } catch (error) {
+      console.error("Failed to check Term 4 setup status", error);
+      res.status(500).json({ message: "Could not check Term 4 setup status." });
+    }
+  });
+
+  app.post("/api/admin/term4-2026/setup", isAdmin, async (req, res) => {
+    if (!req.is("application/json") || req.body?.confirmation !== "ARCHIVE TERM 3 2026") {
+      return res.status(400).json({ message: "Type ARCHIVE TERM 3 2026 to confirm." });
+    }
+    try {
+      const result = await configureTerm4AndArchiveTerm3();
+      res.json(result);
+    } catch (error) {
+      if (error instanceof Term4AlreadyConfiguredError) return res.status(409).json({ message: error.message });
+      console.error("Term 4 setup failed", error);
+      res.status(500).json({ message: "Term 4 setup failed; no changes were made. Check the server logs." });
+    }
+  });
+
   app.get("/api/admin/term-stats", isAdmin, async (req, res) => {
     try {
       const statsRows = await db
@@ -3944,6 +3968,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/term-configurations", isAdmin, async (req, res) => {
     try {
       const b = req.body ?? {};
+      if (b.term === "term_4" && Number(b.year) === 2026) {
+        return res.status(409).json({ message: "Use the one-time Term 4 setup above instead of creating this term manually." });
+      }
       // Drizzle numeric/decimal columns expect strings; integer columns expect numbers.
       // Clients (the setup-term wizard and the term-config admin form) send these as JS
       // numbers, which fails the insert silently — coerce them here so both callers work.

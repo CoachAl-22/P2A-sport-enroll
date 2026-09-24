@@ -7,6 +7,10 @@ export interface EnrolmentLinkDeps {
 }
 
 const HUB = "/programs";
+// Keep the discovery call available even before the admin-managed link table
+// has been seeded. The other enrolment destinations remain DB-managed.
+const DISCOVERY_CALL_URL =
+  "https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0";
 
 // Real slugs are lowercase letters, digits and hyphens only, e.g.
 // "foundation", "toorak-foundation-tue", "team-speed-430".
@@ -95,10 +99,11 @@ export function registerEnrolmentLinkRoutes(app: Express, deps: EnrolmentLinkDep
       link = await deps.getEnrolmentLink(slug);
     } catch (err) {
       console.error("[enrol] lookup failed", slug, err);
-      return res.redirect(302, HUB);
+      return res.redirect(302, slug === "book-a-call" ? DISCOVERY_CALL_URL : HUB);
     }
 
     if (!link || !link.active || !isSafeDestination(link.destinationUrl)) {
+      if (slug === "book-a-call") return res.redirect(302, DISCOVERY_CALL_URL);
       return res.redirect(302, `${HUB}?closed=${encodeURIComponent(slug)}`);
     }
 

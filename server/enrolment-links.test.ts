@@ -83,6 +83,28 @@ describe("GET /enrol/:slug", () => {
     );
   });
 
+  it("sends the discovery call to Setmore when its database row is missing", async () => {
+    const app = buildApp({
+      getEnrolmentLink: vi.fn().mockResolvedValue(undefined),
+      logEnrolmentLinkClick,
+    });
+    const res = await request(app).get("/enrol/book-a-call?src=programs");
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe("https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0");
+    expect(logEnrolmentLinkClick).toHaveBeenCalledWith(
+      expect.objectContaining({ slug: "book-a-call", src: "programs" }),
+    );
+  });
+
+  it("keeps the discovery call available if the link lookup fails", async () => {
+    const app = buildApp({
+      getEnrolmentLink: vi.fn().mockRejectedValue(new Error("db down")),
+      logEnrolmentLinkClick,
+    });
+    const res = await request(app).get("/enrol/book-a-call");
+    expect(res.headers.location).toBe("https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0");
+  });
+
   it("sends an inactive slug to /programs", async () => {
     const app = buildApp({
       getEnrolmentLink: vi.fn().mockResolvedValue(link({ active: false })),
