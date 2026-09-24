@@ -214,13 +214,12 @@ export default function SeniorSquad() {
           <div className="text-center mb-10">
             <h2 className="text-3xl font-heading font-bold text-gray-900 mb-4">When Does It Run?</h2>
             <p className="text-gray-600">
-              Two venues, six sessions a week, all coached by Alistair. Pick the sessions that fit
-              around school, work and your competition calendar. These times hold for both Term 3
-              and Term 4.
+              Four Term 4 sessions a week at Ballam Park and Mornington, all coached by Alistair.
+              Pick the sessions that fit around school, work and your competition calendar.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
-            {SESSION_VENUES.map((v) => (
+            {SESSION_VENUES["senior-squad"].map((v) => (
               <div
                 key={v.venue}
                 className="rounded-xl border border-gray-200 bg-white p-6"

@@ -7,7 +7,7 @@ export type RungSlug =
   | "high-performance";
 
 export interface ClassOffering {
-  slug: string;       // the /enrol/{slug} this class links to, resolves via SportsBiz
+  slug: string;       // the /enrol/{slug} this class links to, resolves via SportsBiz or Setmore
   venue: string;
   day: string;
   time: string;
@@ -21,16 +21,19 @@ export interface SessionTime {
   time: string;
 }
 
-// Junior Academy and Senior Squad run the same six sessions, all coached by
-// Alistair. The Mornington ones are shared with Team Sport Speed: athletes
-// train alongside each other on their own programming.
-const APPLICATION_SESSIONS: SessionTime[] = [
+// The Term 4 table is the source of truth for by-application sessions.
+const JUNIOR_SESSIONS: SessionTime[] = [
+  { venue: "Ballam Park, Frankston", day: "Tuesday", time: "4:30pm" },
+  { venue: "Ballam Park, Frankston", day: "Monday", time: "5:30pm to 7:00pm" },
+  { venue: "Ballam Park, Frankston", day: "Tuesday", time: "5:30pm to 7:00pm" },
+  { venue: "Ballam Park, Frankston", day: "Thursday", time: "5:30pm to 7:00pm" },
+];
+
+const SENIOR_SESSIONS: SessionTime[] = [
   { venue: "Ballam Park, Frankston", day: "Monday", time: "5:30pm to 7:00pm" },
   { venue: "Ballam Park, Frankston", day: "Tuesday", time: "5:30pm to 7:00pm" },
   { venue: "Ballam Park, Frankston", day: "Thursday", time: "5:30pm to 7:00pm" },
   { venue: "Mornington Athletics Track", day: "Wednesday", time: "5:30pm" },
-  { venue: "Mornington Athletics Track", day: "Friday", time: "4:30pm" },
-  { venue: "Mornington Athletics Track", day: "Friday", time: "5:30pm" },
 ];
 
 // Fields every hub card needs, whether the rung has a full detail page or not.
@@ -134,12 +137,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ctaLabel: "Enrol now",
     enrolSlug: "foundation",
     classes: [
-      { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
-      { slug: "toorak-foundation-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm", studentsOnly: "Toorak College" },
-      { slug: "toorak-foundation-tue", venue: "Toorak College", day: "Tuesday", time: "3:30pm", waitlist: true, studentsOnly: "Toorak College" },
-      { slug: "ballam-foundation-thu", venue: "Ballam Park", day: "Thursday", time: "4:30pm" },
-      { slug: "ballam-foundation-tue", venue: "Ballam Park", day: "Tuesday", time: "4:30pm", waitlist: true },
-      { slug: "mornington-foundation-wed", venue: "Mornington Athletics Track", day: "Wednesday", time: "4:30pm" },
+      { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm to 4:45pm", studentsOnly: "Peninsula Grammar" },
+      { slug: "toorak-foundation-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm to 4:45pm", studentsOnly: "Toorak College" },
     ],
   },
 
@@ -179,11 +178,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ctaLabel: "Enrol now",
     enrolSlug: "emerging-athletes",
     classes: [
-      { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
-      { slug: "toorak-emerging-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm", studentsOnly: "Toorak College" },
-      { slug: "ballam-emerging-thu", venue: "Ballam Park", day: "Thursday", time: "4:30pm" },
-      { slug: "ballam-emerging-tue", venue: "Ballam Park", day: "Tuesday", time: "4:30pm", waitlist: true },
-      { slug: "mornington-emerging-wed", venue: "Mornington Athletics Track", day: "Wednesday", time: "4:30pm" },
+      { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm to 4:45pm", studentsOnly: "Peninsula Grammar" },
+      { slug: "toorak-emerging-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm to 4:45pm", studentsOnly: "Toorak College" },
     ],
   },
 
@@ -193,7 +189,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ageBand: "Years 6 to 9, or by invitation",
     teaser: "Multi-sport athletic development for athletes who have decided they are serious.",
     enrolSlug: "junior-academy",
-    sessions: APPLICATION_SESSIONS,
+    sessions: JUNIOR_SESSIONS,
     applyUrl: "/junior-academy-application.html",
   },
 
@@ -203,7 +199,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ageBand: "Ages 16 and over",
     teaser: "Competition-ready. Speed, strength and the mental side of performing on the day.",
     enrolSlug: "senior-squad",
-    sessions: APPLICATION_SESSIONS,
+    sessions: SENIOR_SESSIONS,
     applyUrl: "/senior-squad-application.html",
   },
 
@@ -275,14 +271,10 @@ export const RUNG_ORDER: RungSlug[] = [
   "team-sport-speed",
 ];
 
-// The two pages render sessions grouped by venue; the finder renders them flat.
-// Derived from APPLICATION_SESSIONS so a time change only needs one edit.
-// Ballam Park sessions share one time for all three days, so they collapse to
-// a single note; Mornington sessions each have their own time, so they are
-// listed individually as "Day time" strings.
-function deriveSessionVenues(): { venue: string; note: string; times: string[] }[] {
+// Detail pages group each program's own sessions by venue.
+function deriveSessionVenues(sessionsForProgram: SessionTime[]): { venue: string; note: string; times: string[] }[] {
   const byVenue = new Map<string, SessionTime[]>();
-  for (const session of APPLICATION_SESSIONS) {
+  for (const session of sessionsForProgram) {
     const existing = byVenue.get(session.venue) ?? [];
     existing.push(session);
     byVenue.set(session.venue, existing);
@@ -292,7 +284,7 @@ function deriveSessionVenues(): { venue: string; note: string; times: string[] }
     const allSameTime = sessions.every((s) => s.time === sessions[0].time);
     return {
       venue,
-      note: allSameTime ? sessions[0].time : "Track sessions",
+      note: allSameTime ? sessions[0].time : "Term 4 sessions",
       times: allSameTime
         ? sessions.map((s) => s.day)
         : sessions.map((s) => `${s.day} ${s.time}`),
@@ -300,17 +292,15 @@ function deriveSessionVenues(): { venue: string; note: string; times: string[] }
   });
 }
 
-export const SESSION_VENUES: { venue: string; note: string; times: string[] }[] =
-  deriveSessionVenues();
+export const SESSION_VENUES: Record<"junior-academy" | "senior-squad", { venue: string; note: string; times: string[] }[]> = {
+  "junior-academy": deriveSessionVenues(JUNIOR_SESSIONS),
+  "senior-squad": deriveSessionVenues(SENIOR_SESSIONS),
+};
 
-// The venue list above is shared, but the explanation of who else trains at
-// Mornington reads differently per program, so it is not folded into
-// SESSION_VENUES. Keyed by rung slug; each page passes its own copy in.
+// The Senior Squad page explains the shared Wednesday track session separately.
 export const MORNINGTON_SHARED_NOTE: Partial<Record<RungSlug, string>> = {
-  "junior-academy":
-    "Track sessions are shared with Team Sport Speed. Your athlete trains alongside footballers, soccer players, netballers and basketballers working on the same speed and acceleration qualities, on their own Junior Academy programming.",
   "senior-squad":
-    "Track sessions are shared with Junior Academy and Team Sport Speed. You train alongside them on your own Senior Squad programming.",
+    "Wednesday track sessions are shared with Team Sport Speed. You train alongside them on your own Senior Squad programming.",
 };
 
 export function RUNG_BY_SLUG(slug: RungSlug): RungContent | RungSummary {

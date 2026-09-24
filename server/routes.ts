@@ -14,7 +14,7 @@ import crypto from "crypto";
 import { getAllCustomersWithChildren, getAllStudentsWithParents, toSafeUser } from "./api-helpers";
 import { registerEnrolmentLinkRoutes } from "./enrolment-links";
 import { registerProgramEnquiryRoute } from "./program-enquiry";
-import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, coaches, venues, majCoaches, majAthletes, children, users, performanceVideoHighlights } from "@shared/schema";
+import { insertUserSchema, insertChildSchema, insertEnrollmentSchema, insertPaymentSchema, insertSeniorSquadApplicationSchema, insertHighPerformanceSquadApplicationSchema, insertContactEnquirySchema, insertWaitlistSchema, insertBlogArticleSchema, insertClassSchema, insertCoachSchema, insertPerformanceVideoHighlightSchema, insertVideoShareSchema, insertSurveyResponseSchema, insertPerformanceRecordSchema, insertTrainingGoalSchema, enrollments as enrollmentsTable, classes, termConfigurations, coaches, venues, majCoaches, majAthletes, children, users, performanceVideoHighlights } from "@shared/schema";
 import { computeTermWeeks, payableWeeks, minimumSelectableWeeks } from "@shared/term-weeks";
 import { applySiblingDiscount } from "./siblingDiscount";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
@@ -4835,9 +4835,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
-  // ── Migrate: Term 2 → archive, Term 3 → go live ──────────────────
+  // ── Legacy Term 2 → Term 3 migration (never undo a later term switch) ──
   (async () => {
     try {
+      const term4 = await db.select({ id: termConfigurations.id }).from(termConfigurations)
+        .where(and(eq(termConfigurations.term, 'term_4'), eq(termConfigurations.year, 2026)));
+      if (term4.length > 0) {
+        console.log("[migration] Term 4 exists; skipping legacy Term 3 activation");
+        return;
+      }
       // Archive Term 2 2026 active classes
       await db.execute(sql`
         UPDATE classes
@@ -4895,6 +4901,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           WHERE NOT EXISTS (
             SELECT 1 FROM classes WHERE name = ${cls.name} AND term = 'term_3' AND year = 2026
           )
+          AND NOT EXISTS (
+            SELECT 1 FROM term_configurations WHERE term = 'term_4' AND year = 2026
+          )
         `);
       }
       console.log("[migration] Wednesday Mornington classes created");
@@ -4912,8 +4921,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         WHERE name ILIKE '%emerging%' AND day_of_week = 4
           AND term = 'term_3' AND year = 2026
           AND venue_id = (SELECT id FROM venues WHERE name ILIKE '%toorak%' LIMIT 1)
+          AND NOT EXISTS (SELECT 1 FROM term_configurations WHERE term = 'term_4' AND year = 2026)
       `);
-      console.log("[migration] Toorak Thursday Emerging Athletes activated");
+      console.log("[migration] legacy Toorak Emerging activation checked");
     } catch(e: any) {
       console.error("[migration] Toorak Thursday Emerging Athletes:", e.message);
     }
@@ -4940,8 +4950,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         WHERE name = 'Foundation Class — Monday (Peninsula Grammar)'
           AND term = 'term_3' AND year = 2026
           AND status = 'cancelled'
+          AND NOT EXISTS (SELECT 1 FROM term_configurations WHERE term = 'term_4' AND year = 2026)
       `);
-      console.log("[migration] Foundation Mon PG reactivated");
+      console.log("[migration] legacy Foundation PG activation checked");
     } catch(e: any) {
       console.error("[migration] Foundation Mon PG:", e.message);
     }

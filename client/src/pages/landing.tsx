@@ -280,7 +280,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Term 3 Class Tiles */}
+      {/* Current class tiles */}
       <section id="classes" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -348,26 +348,6 @@ export default function Landing() {
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
                   <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Enrol Now</a>
-                </div>
-              </div>
-            </div>
-
-            {/* Foundation — Toorak College Tuesday (Waitlist) */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
-              <img src="/images/coach-georgia-crew.jpg" alt="Young children learning fundamental movement skills" className="w-full h-48 object-cover" />
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-heading font-bold text-gray-900">Foundation Class</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Waitlist Open</span>
-                </div>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Tuesday 3:30 – 4:45pm</span></div>
-                  <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Toorak College</span></div>
-                  <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2 • Collecting interest - join the waitlist</span></div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
-                  <a href="/programs" className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">Join Waitlist</a>
                 </div>
               </div>
             </div>

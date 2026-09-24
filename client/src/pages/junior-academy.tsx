@@ -4,7 +4,7 @@ import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
 import { Users, ArrowLeft, CheckCircle, Star, Target, Zap, Shield, Calendar, MessageCircle, ChevronDown, ChevronUp, Home } from "lucide-react";
 import { Link } from "wouter";
-import { SESSION_VENUES, MORNINGTON_SHARED_NOTE } from "@/content/rungs";
+import { SESSION_VENUES } from "@/content/rungs";
 
 const faqs = [
   {
@@ -197,13 +197,13 @@ export default function JuniorAcademy() {
           <div className="text-center mb-10">
             <h2 className="text-3xl font-heading font-bold text-gray-900 mb-4">When Does It Run?</h2>
             <p className="text-gray-600">
-              Two venues, six sessions a week. Your athlete trains up to twice a week, so pick the
-              sessions that fit around school and their sport. These times hold for both Term 3 and
-              Term 4.
+              Four Term 4 sessions a week at Ballam Park, including the new Tuesday 4:30pm
+              session. Your athlete trains up to twice a week, so pick the sessions that fit
+              around school and their sport.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
-            {SESSION_VENUES.map((v) => (
+            {SESSION_VENUES["junior-academy"].map((v) => (
               <div
                 key={v.venue}
                 className="rounded-xl border border-gray-200 p-6"
@@ -216,11 +216,6 @@ export default function JuniorAcademy() {
                     <li key={t}>{t}</li>
                   ))}
                 </ul>
-                {v.venue.includes("Mornington") && MORNINGTON_SHARED_NOTE["junior-academy"] && (
-                  <p className="mt-4 text-sm text-gray-500">
-                    {MORNINGTON_SHARED_NOTE["junior-academy"]}
-                  </p>
-                )}
               </div>
             ))}
           </div>

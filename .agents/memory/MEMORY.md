@@ -1,0 +1,1 @@
+- [Term 4 schedule authority](term4-schedule-authority.md) — the supplied eight-row table, not every SportsBiz listing, defines which classes the finder advertises.
