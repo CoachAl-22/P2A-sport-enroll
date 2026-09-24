@@ -311,8 +311,15 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  // Email is matched case-insensitively. Password managers and phone keyboards
+  // capitalise the first letter, and "Alistair@..." has to reach the same
+  // account as "alistair@...". This also stops a duplicate account being
+  // created on import for an email that differs only by case.
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(sql`lower(${users.email}) = lower(${email})`);
     return user;
   }
 
