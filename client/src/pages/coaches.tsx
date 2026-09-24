@@ -115,6 +115,20 @@ export default function Coaches() {
               </p>
             </div>
 
+            {/* Coach 2 - Declyn */}
+            <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 hover:shadow-xl hover:border-gray-600 transition-all" data-testid="coach-card-declyn">
+              <div className="text-center mb-4">
+                <div aria-hidden="true" className="w-20 h-20 rounded-full bg-cyan-900 text-cyan-100 flex items-center justify-center mx-auto mb-3 border-2 border-primary-400 text-2xl font-heading font-bold">
+                  DT
+                </div>
+                <h4 className="text-xl font-heading font-bold text-cyan-400">Declyn Tanner</h4>
+                <p className="text-sm text-gray-100 font-medium">Middle Distance Coach</p>
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Declyn coaches middle-distance running with a relaxed and friendly approach. She welcomes athletes who are finding their rhythm or working towards their next running goal.
+              </p>
+            </div>
+
             {/* Coach 3 - Georgia */}
             <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 hover:shadow-xl hover:border-gray-600 transition-all" data-testid="coach-card-georgia">
               <div className="text-center mb-4">
