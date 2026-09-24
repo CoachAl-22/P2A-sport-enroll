@@ -1396,6 +1396,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admins need historical classes too; the public finder only returns active ones.
+  app.get("/api/admin/classes", isAdmin, async (_req, res) => {
+    try {
+      res.json(await db.select().from(classes).orderBy(classes.year, classes.term, classes.dayOfWeek, classes.startTime));
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/classes/:id", async (req, res) => {
     try {
       const classData = await storage.getClassWithDetails(req.params.id);
@@ -4835,100 +4844,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
-  // ── Legacy Term 2 → Term 3 migration (never undo a later term switch) ──
-  (async () => {
-    try {
-      const term4 = await db.select({ id: termConfigurations.id }).from(termConfigurations)
-        .where(and(eq(termConfigurations.term, 'term_4'), eq(termConfigurations.year, 2026)));
-      if (term4.length > 0) {
-        console.log("[migration] Term 4 exists; skipping legacy Term 3 activation");
-        return;
-      }
-      // Archive Term 2 2026 active classes
-      await db.execute(sql`
-        UPDATE classes
-        SET status = 'completed', is_enrollment_open = false
-        WHERE term = 'term_2' AND year = 2026 AND status = 'active'
-      `);
-      // Close enrollment on any remaining Term 2 2026 cancelled classes that still have it open
-      await db.execute(sql`
-        UPDATE classes
-        SET is_enrollment_open = false
-        WHERE term = 'term_2' AND year = 2026 AND is_enrollment_open = true
-      `);
-      // Open enrollment on Term 3 2026 active classes
-      await db.execute(sql`
-        UPDATE classes
-        SET is_enrollment_open = true
-        WHERE term = 'term_3' AND year = 2026 AND status = 'active'
-      `);
-      // Set term configurations: Term 2 inactive, Term 3 active
-      await db.execute(sql`
-        UPDATE term_configurations SET active = false WHERE term = 'term_2' AND year = 2026
-      `);
-      await db.execute(sql`
-        UPDATE term_configurations SET active = true WHERE term = 'term_3' AND year = 2026
-      `);
-      console.log("[migration] Term 2 archived, Term 3 live");
-    } catch(e: any) {
-      console.error("[migration] term switch:", e.message);
-    }
-  })();
-
-  // ── Migrate: Create Wednesday Mornington classes (Foundation, Emerging, TSS) ─
-  (async () => {
-    try {
-      const venueId = '2cc8193c-e889-4a7a-9117-4c3d57ad3a61';
-      const coachId = '5ea656a7-743c-46d5-9e4c-3e0fa62989d8';
-      const termConfigId = '9a60c5de-fa13-4954-ad86-385cb7202fdf';
-      const classes = [
-        { name: 'Foundation Class — Wednesday (Mornington)', sportType: 'foundation_prep_year2', startTime: '16:30', endTime: '17:30', minAge: 5, maxAge: 8, capacity: 10 },
-        { name: 'Emerging Athletes — Wednesday (Mornington)', sportType: 'emerging_year3_6', startTime: '16:30', endTime: '17:30', minAge: 8, maxAge: 12, capacity: 10 },
-        { name: 'Team Sport Speed — Wednesday (Mornington)', sportType: 'team_sport_speed', startTime: '17:30', endTime: '18:30', minAge: 10, maxAge: 99, capacity: 15 },
-      ];
-      for (const cls of classes) {
-        await db.execute(sql`
-          INSERT INTO classes (name, description, sport_type, venue_id, coach_id, term, year,
-            day_of_week, start_time, end_time, start_date, end_date, min_age, max_age,
-            max_capacity, current_enrollment, price_per_term, status, term_config_id,
-            is_enrollment_open, is_holiday_program, is_makeup_eligible, price_per_session,
-            per_week_enabled, price_per_casual)
-          SELECT ${cls.name}, 'Athletic development class at Mornington Athletic Track.',
-            ${cls.sportType}, ${venueId}, ${coachId}, 'term_3', 2026, 3,
-            ${cls.startTime}, ${cls.endTime}, '2026-07-13', '2026-09-19',
-            ${cls.minAge}, ${cls.maxAge}, ${cls.capacity}, 0, 300.00, 'active', ${termConfigId},
-            true, false, false, 30.00, true, 30.00
-          WHERE NOT EXISTS (
-            SELECT 1 FROM classes WHERE name = ${cls.name} AND term = 'term_3' AND year = 2026
-          )
-          AND NOT EXISTS (
-            SELECT 1 FROM term_configurations WHERE term = 'term_4' AND year = 2026
-          )
-        `);
-      }
-      console.log("[migration] Wednesday Mornington classes created");
-    } catch(e: any) {
-      console.error("[migration] Wednesday Mornington classes:", e.message);
-    }
-  })();
-
-  // ── Migrate: Activate Toorak Thursday Emerging Athletes Term 3 ────────
-  (async () => {
-    try {
-      await db.execute(sql`
-        UPDATE classes
-        SET status = 'active', is_enrollment_open = true
-        WHERE name ILIKE '%emerging%' AND day_of_week = 4
-          AND term = 'term_3' AND year = 2026
-          AND venue_id = (SELECT id FROM venues WHERE name ILIKE '%toorak%' LIMIT 1)
-          AND NOT EXISTS (SELECT 1 FROM term_configurations WHERE term = 'term_4' AND year = 2026)
-      `);
-      console.log("[migration] legacy Toorak Emerging activation checked");
-    } catch(e: any) {
-      console.error("[migration] Toorak Thursday Emerging Athletes:", e.message);
-    }
-  })();
-
   // ── Migrate: Archive all 2025 terms ───────────────────────────────
   (async () => {
     try {
@@ -4941,66 +4856,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
-  // ── Migrate: Reactivate Foundation Monday (Peninsula Grammar) T3 ──
-  (async () => {
-    try {
-      await db.execute(sql`
-        UPDATE classes
-        SET status = 'active', is_enrollment_open = true
-        WHERE name = 'Foundation Class — Monday (Peninsula Grammar)'
-          AND term = 'term_3' AND year = 2026
-          AND status = 'cancelled'
-          AND NOT EXISTS (SELECT 1 FROM term_configurations WHERE term = 'term_4' AND year = 2026)
-      `);
-      console.log("[migration] legacy Foundation PG activation checked");
-    } catch(e: any) {
-      console.error("[migration] Foundation Mon PG:", e.message);
-    }
-  })();
-
   // ── Migrate: New columns for casual/trial enrolment ─────────────────
   (async () => {
     try {
       await db.execute(sql`ALTER TABLE classes ADD COLUMN IF NOT EXISTS price_per_casual numeric(8,2)`);
       await db.execute(sql`ALTER TABLE enrollments ADD COLUMN IF NOT EXISTS enrollment_type varchar(20) NOT NULL DEFAULT 'term'`);
       await db.execute(sql`ALTER TYPE enrollment_status ADD VALUE IF NOT EXISTS 'trial_pending'`);
-      // Default casual price for all active Term 3 classes that don't have one
-      await db.execute(sql`UPDATE classes SET price_per_casual = 30.00 WHERE price_per_casual IS NULL AND term = 'term_3' AND year = 2026 AND status = 'active'`);
       console.log("[migration] casual/trial columns ready");
     } catch(e: any) {
       console.error("[migration] casual/trial columns:", e.message);
-    }
-  })();
-
-  // ── Migrate: Fix Toorak College Foundation price_per_term ($30→$300) ─
-  (async () => {
-    try {
-      await db.execute(sql`
-        UPDATE classes
-        SET price_per_term = '300.00'
-        WHERE sport_type = 'foundation_prep_year2'
-          AND term = 'term_3' AND year = 2026
-          AND CAST(price_per_term AS numeric) < 100
-      `);
-      console.log("[migration] Toorak Foundation price_per_term corrected to $300");
-    } catch(e: any) {
-      console.error("[migration] Toorak Foundation price fix:", e.message);
-    }
-  })();
-
-  // ── Migrate: Enable per-week enrolment on Term 3 2026 classes ─────
-  (async () => {
-    try {
-      await db.execute(sql`
-        UPDATE classes
-        SET per_week_enabled = true
-        WHERE term = 'term_3' AND year = 2026
-          AND status = 'active'
-          AND sport_type NOT IN ('senior_squad', 'empowered_athlete_program', 'academy_year7_above')
-      `);
-      console.log("[migration] per-week enrolment enabled on Term 3 classes");
-    } catch(e: any) {
-      console.error("[migration] per-week enable:", e.message);
     }
   })();
 

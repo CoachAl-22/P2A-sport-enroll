@@ -967,8 +967,12 @@ export class DatabaseStorage implements IStorage {
     outstanding: number;
     percentageChange: number;
   }> {
-    const currentYear = new Date().getFullYear();
-    const currentTerm = "term_3"; // Current term based on date
+    const [currentTerm] = await db
+      .select({ term: termConfigurations.term, year: termConfigurations.year })
+      .from(termConfigurations)
+      .where(eq(termConfigurations.active, true))
+      .orderBy(desc(termConfigurations.year), desc(termConfigurations.term))
+      .limit(1);
 
     const [termResult] = await db
       .select({
@@ -978,11 +982,11 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(enrollments, eq(payments.enrollmentId, enrollments.id))
       .leftJoin(classes, eq(enrollments.classId, classes.id))
       .where(
-        and(
+        currentTerm ? and(
           eq(payments.status, "completed"),
-          eq(classes.term, currentTerm),
-          eq(classes.year, currentYear)
-        )
+          eq(classes.term, currentTerm.term),
+          eq(classes.year, currentTerm.year)
+        ) : sql`false`
       );
 
     const [outstandingResult] = await db

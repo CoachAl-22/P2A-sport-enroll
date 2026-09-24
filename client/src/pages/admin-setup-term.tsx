@@ -17,11 +17,12 @@ export default function AdminSetupTerm() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
   // Step 1 state — new term config
-  const [term, setTerm] = useState("term_3");
-  const [year, setYear] = useState(2026);
-  const [name, setName] = useState("Term 3 2026");
-  const [startDate, setStartDate] = useState("2026-07-13");
-  const [endDate, setEndDate] = useState("2026-09-18");
+  // Term 4 2026 is already configured; the wizard starts with the next term.
+  const [term, setTerm] = useState("term_1");
+  const [year, setYear] = useState(2027);
+  const [name, setName] = useState("Term 1 2027");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [weeksCount, setWeeksCount] = useState(10);
   const [pricePerWeek, setPricePerWeek] = useState(30);
   const [gstRate, setGstRate] = useState(0.1);

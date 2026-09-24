@@ -87,9 +87,9 @@ const DEFAULT_TIME_SLOTS = [
 
 const EMPTY_FORM = {
   name: "", description: "", sportType: "", venueId: "", coachId: "",
-  term: "term_3", year: 2026, dayOfWeek: "", startTime: "", endTime: "",
+  term: "term_4", year: 2026, dayOfWeek: "", startTime: "", endTime: "",
   startDate: "", endDate: "",
-  minAge: "", maxAge: "", maxCapacity: "", pricePerSession: "", isEnrollmentOpen: true,
+  minAge: "", maxAge: "", maxCapacity: "", pricePerSession: "", isEnrollmentOpen: false,
   perWeekEnabled: false,
   isMakeupEligible: false,
   isHolidayProgram: false,
@@ -100,7 +100,7 @@ export default function AdminClasses() {
   const { toast } = useToast();
 
   const [viewMode, setViewMode] = useState<"schedule" | "table">("schedule");
-  const [selectedTerm, setSelectedTerm] = useState("term_3");
+  const [selectedTerm, setSelectedTerm] = useState("term_4");
   const [selectedYear, setSelectedYear] = useState(2026);
   const [selectedVenueId, setSelectedVenueId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -111,7 +111,7 @@ export default function AdminClasses() {
   if (!authLoading && user?.role !== "admin") return <Redirect to="/" />;
 
   const { data: classes = [], isLoading: classesLoading } = useQuery<any[]>({
-    queryKey: ["/api/classes"],
+    queryKey: ["/api/admin/classes"],
     enabled: user?.role === "admin",
   });
   const { data: venues = [] } = useQuery<any[]>({
@@ -164,7 +164,7 @@ export default function AdminClasses() {
   const createMutation = useMutation({
     mutationFn: (data: any) => apiRequest("POST", "/api/classes", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/classes"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/classes"] });
       setIsDialogOpen(false);
       setFormData({ ...EMPTY_FORM });
       toast({ title: "Class created" });
@@ -175,7 +175,7 @@ export default function AdminClasses() {
   const updateMutation = useMutation({
     mutationFn: ({ id, ...data }: any) => apiRequest("PUT", `/api/classes/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/classes"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/classes"] });
       setIsDialogOpen(false);
       setEditingClass(null);
       toast({ title: "Class updated" });
@@ -186,7 +186,7 @@ export default function AdminClasses() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiRequest("DELETE", `/api/classes/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/classes"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/classes"] });
       toast({ title: "Class deleted" });
     },
     onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -206,7 +206,7 @@ export default function AdminClasses() {
       sportType: cls.sportType || "",
       venueId: cls.venueId || "",
       coachId: cls.coachId || "",
-      term: cls.term || "term_3",
+      term: cls.term || "term_4",
       year: cls.year || 2026,
       dayOfWeek: cls.dayOfWeek?.toString() || "",
       startTime: cls.startTime || "",
@@ -397,9 +397,9 @@ export default function AdminClasses() {
                                         {enrolled}/{cap}
                                       </span>
                                     </div>
-                                    {!cls.isEnrollmentOpen && (
-                                      <div className="text-[10px] opacity-60 italic mt-0.5">Closed</div>
-                                    )}
+                                    <div className="text-[10px] opacity-60 italic mt-0.5">
+                                      {cls.status !== "active" ? cls.status : !cls.isEnrollmentOpen ? "Closed" : "Open"}
+                                    </div>
                                   </div>
                                 );
                               })}
@@ -497,7 +497,7 @@ export default function AdminClasses() {
                       <TableRow key={cls.id}>
                         <TableCell>
                           <div className="font-medium text-sm">{cls.name}</div>
-                          <div className="text-xs text-gray-400">Ages {cls.minAge}–{cls.maxAge} · {cls.year} {termLabel(cls.term)}</div>
+                          <div className="text-xs text-gray-400">Ages {cls.minAge}–{cls.maxAge} · {cls.year} {termLabel(cls.term)} · {cls.status}</div>
                         </TableCell>
                         <TableCell>
                           <span className={`text-xs px-2 py-0.5 rounded border ${style.bg} ${style.text} ${style.border}`}>

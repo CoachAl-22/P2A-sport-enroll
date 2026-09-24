@@ -68,8 +68,11 @@ async function main() {
     }
 
     await tx.update(termConfigurations).set({ active: false }).where(and(eq(termConfigurations.term, "term_3"), eq(termConfigurations.year, 2026)));
-    await tx.update(classes).set({ isEnrollmentOpen: false }).where(and(eq(classes.term, "term_3"), eq(classes.year, 2026)));
-    console.log(`Term 4 2026 configured with ${prepared.length} classes; Term 3 enrolment closed.`);
+    await tx.update(classes).set({ status: "completed", isEnrollmentOpen: false })
+      .where(and(eq(classes.term, "term_3"), eq(classes.year, 2026), eq(classes.status, "active")));
+    await tx.update(classes).set({ isEnrollmentOpen: false })
+      .where(and(eq(classes.term, "term_3"), eq(classes.year, 2026)));
+    console.log(`Term 4 2026 configured with ${prepared.length} closed classes; Term 3 archived.`);
   });
 }
 
