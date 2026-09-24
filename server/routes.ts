@@ -49,7 +49,11 @@ const sessionConfig = session({
 });
 
 const loginSchema = z.object({
-  identifier: z.string().min(1, "Email, mobile, or user ID is required"),
+  // Trimmed because autofill and mobile keyboards routinely add a trailing
+  // space, and an untrimmed identifier matches nothing and reads to the user as
+  // "Invalid credentials". The password is deliberately NOT trimmed: spaces can
+  // be a legitimate part of it.
+  identifier: z.string().trim().min(1, "Email, mobile, or user ID is required"),
   password: z.string().min(1, "Password is required"),
 });
 
