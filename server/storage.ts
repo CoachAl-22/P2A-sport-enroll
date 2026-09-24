@@ -311,16 +311,37 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  // Email is matched case-insensitively. Password managers and phone keyboards
-  // capitalise the first letter, and "Alistair@..." has to reach the same
-  // account as "alistair@...". This also stops a duplicate account being
-  // created on import for an email that differs only by case.
+  // Password managers and phone keyboards capitalise the first letter, so
+  // "Alistair@..." has to be able to reach an account stored as "alistair@...".
+  //
+  // Exact match is tried FIRST and wins outright. That matters because this
+  // table currently holds ~30 pairs of accounts whose emails differ only by
+  // case (the unique constraint is case-sensitive, so they were allowed in).
+  // Matching case-insensitively and taking the first row would let a parent
+  // land in whichever of their two accounts the database happened to return,
+  // with the wrong children and enrolments attached.
+  //
+  // So the case-insensitive pass only resolves when it is unambiguous. Where a
+  // duplicate pair exists, behaviour is unchanged from before: the exact
+  // spelling still works, and nothing silently picks for the user.
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db
+    const trimmed = email.trim();
+
+    const [exact] = await db.select().from(users).where(eq(users.email, trimmed));
+    if (exact) return exact;
+
+    const matches = await db
       .select()
       .from(users)
-      .where(sql`lower(${users.email}) = lower(${email})`);
-    return user;
+      .where(sql`lower(${users.email}) = lower(${trimmed})`);
+
+    if (matches.length === 1) return matches[0];
+    if (matches.length > 1) {
+      console.warn(
+        `getUserByEmail: ${matches.length} accounts match "${trimmed}" differing only by case; refusing to guess. Merge these accounts.`,
+      );
+    }
+    return undefined;
   }
 
   async getUserByMobile(mobile: string): Promise<User | undefined> {
