@@ -2,7 +2,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { recoverAdminFromSecret } from "./admin-recovery";
 
 const app = express();
 app.set('trust proxy', 1); // trust reverse proxy for secure session cookies in production
@@ -44,7 +43,6 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  await recoverAdminFromSecret();
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
