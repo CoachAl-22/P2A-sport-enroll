@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import LoginModal from "@/components/auth/login-modal";
@@ -9,14 +9,18 @@ import { Calendar, MapPin, Users, CreditCard, Smartphone, RotateCcw, Building2, 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Landing() {
-  const [, setLocation] = useLocation();
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [location, setLocation] = useLocation();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(location === "/login");
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
   const [isHighPerformanceSquadModalOpen, setIsHighPerformanceSquadModalOpen] = useState(false);
   const [isSchoolPartnershipsModalOpen, setIsSchoolPartnershipsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFoundationInfoModalOpen, setIsFoundationInfoModalOpen] = useState(false);
   const [isEmergingAthletesInfoModalOpen, setIsEmergingAthletesInfoModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (location === "/login") setIsLoginModalOpen(true);
+  }, [location]);
 
   return (
     <div className="font-sans bg-gray-50">
@@ -487,7 +491,10 @@ export default function Landing() {
 
       <LoginModal 
         isOpen={isLoginModalOpen} 
-        onClose={() => setIsLoginModalOpen(false)} 
+        onClose={() => {
+          setIsLoginModalOpen(false);
+          if (location === "/login") setLocation("/");
+        }}
       />
       
       <ContactFormModal 

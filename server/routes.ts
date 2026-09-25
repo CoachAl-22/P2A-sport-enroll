@@ -4899,20 +4899,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
-  // ── Migrate: Update admin password ────────────────────────────────
-  (async () => {
-    try {
-      const hashed = await bcrypt.hash("Power2run@5505", 10);
-      await db.execute(sql`
-        UPDATE users SET password = ${hashed}
-        WHERE email = 'admin@power2adapt.com'
-      `);
-      console.log("[migration] admin password updated");
-    } catch(e: any) {
-      console.error("[migration] admin password:", e.message);
-    }
-  })();
-
   // ── Seed Toorak College athletes ──────────────────────────────────
   (async () => {
     const tcAthletes = [

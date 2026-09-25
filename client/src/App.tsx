@@ -150,6 +150,7 @@ function Router() {
           <Route path="/admin/maj-athletes" component={AdminMajAthletes} />
         </>
       )}
+      <Route path="/login" component={Landing} />
       <Route component={NotFound} />
     </Switch>
   );
