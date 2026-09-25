@@ -123,6 +123,7 @@ export interface IStorage {
   // Coach operations
   getCoach(id: string): Promise<Coach | undefined>;
   getAllCoaches(): Promise<Coach[]>;
+  getAllCoachesIncludingInactive(): Promise<Coach[]>;
   getCoachByUserId(userId: string): Promise<Coach | undefined>;
   createCoach(coach: InsertCoach): Promise<Coach>;
   updateCoach(id: string, updates: Partial<Coach>): Promise<Coach>;
@@ -436,6 +437,10 @@ export class DatabaseStorage implements IStorage {
 
   async getAllCoaches(): Promise<Coach[]> {
     return await db.select().from(coaches).where(eq(coaches.active, true));
+  }
+
+  async getAllCoachesIncludingInactive(): Promise<Coach[]> {
+    return await db.select().from(coaches);
   }
 
   async getCoachByUserId(userId: string): Promise<Coach | undefined> {

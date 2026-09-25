@@ -308,7 +308,7 @@ export default function AdminStaff() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-blue-600">
-                {staff?.filter((s: any) => s.role === "admin").length || 0}
+                {staff?.filter((s: any) => s.role === "admin" && s.active !== false).length || 0}
               </div>
             </CardContent>
           </Card>
@@ -422,6 +422,8 @@ export default function AdminStaff() {
                           size="sm"
                           variant="outline"
                           onClick={() => handleDelete(staffMember.id)}
+                          disabled={staffMember.role === "admin"}
+                          title={staffMember.role === "admin" ? "Edit and set Status to Inactive instead" : "Delete staff member"}
                         >
                           <TrashIcon className="w-4 h-4" />
                         </Button>
@@ -497,7 +499,7 @@ export default function AdminStaff() {
               {/* Account Information */}
               <div>
                 <h3 className="text-lg font-medium mb-4">Account Information</h3>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
                     <Label htmlFor="userId">User ID</Label>
                     <Input
@@ -535,7 +537,26 @@ export default function AdminStaff() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div>
+                    <Label htmlFor="staff-status">Status</Label>
+                    <Select
+                      value={newStaff.active ? "active" : "inactive"}
+                      onValueChange={(value) => setNewStaff(prev => ({ ...prev, active: value === "active" }))}
+                      disabled={editingStaff?.id === user?.id}
+                    >
+                      <SelectTrigger id="staff-status">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  Inactive staff cannot sign in. Their existing records are kept.
+                </p>
               </div>
 
               {/* Coach-specific fields */}

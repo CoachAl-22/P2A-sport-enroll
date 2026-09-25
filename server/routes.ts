@@ -24,6 +24,7 @@ import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
 import { provisionMajAccess } from "./maj-provisioning";
+import { adminAccountChangeError } from "./staff-status";
 
 const sessionSecret = process.env.SESSION_SECRET;
 if (process.env.NODE_ENV === 'production' && !sessionSecret) {
@@ -58,6 +59,35 @@ const loginSchema = z.object({
   identifier: z.string().trim().min(1, "Email, mobile, or user ID is required"),
   password: z.string().min(1, "Password is required"),
 });
+
+class StaffStatusChangeError extends Error {}
+
+// Serialize staff account changes so two concurrent deactivations cannot each
+// see the other administrator as active and lock everyone out.
+async function updateStaffAccount(
+  actorId: string,
+  targetId: string,
+  userUpdates: Partial<typeof users.$inferSelect>,
+  coachUpdates: Partial<typeof coaches.$inferSelect>,
+) {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(901225, 1)`);
+    const [target] = await tx.select().from(users).where(eq(users.id, targetId));
+    if (!target) throw new StaffStatusChangeError("Staff member not found");
+    const [count] = await tx.select({ total: sql<number>`count(*)::int` })
+      .from(users).where(and(eq(users.role, "admin"), eq(users.active, true)));
+    const error = adminAccountChangeError(
+      actorId, target, userUpdates.role ?? target.role,
+      userUpdates.active ?? target.active, count.total
+    );
+    if (error) throw new StaffStatusChangeError(error);
+    const [updated] = await tx.update(users)
+      .set({ ...userUpdates, updatedAt: new Date() })
+      .where(eq(users.id, targetId)).returning();
+    await tx.update(coaches).set(coachUpdates).where(eq(coaches.userId, targetId));
+    return updated;
+  });
+}
 
 const publicRegisterSchema = insertUserSchema.pick({
   email: true,
@@ -1600,27 +1630,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const [users, coaches] = await Promise.all([
         storage.getAllUsers(),
-        storage.getAllCoaches()
+        storage.getAllCoachesIncludingInactive()
       ]);
       
       // Only get admin and coach users (not parents/customers)
       const staffUsers = users.filter(u => u.role === 'admin' || u.role === 'coach');
       
-      // Get only active coaches
-      const activeCoaches = coaches.filter(c => c.active);
-      
       // Combine user and coach data for staff members
       const staff: any[] = staffUsers.map(user => {
-        const coachData = activeCoaches.find(c => c.userId === user.id);
+        const coachData = coaches.find(c => c.userId === user.id);
         return {
-          ...toSafeUser(user),
           ...coachData,
+          ...toSafeUser(user),
           id: user.id, // Ensure we use the user ID
         };
       });
       
       // Add coaches without user accounts (standalone coach records)
-      const coachesWithoutUsers = activeCoaches.filter(c => !c.userId && c.active);
+      const coachesWithoutUsers = coaches.filter(c => !c.userId);
       coachesWithoutUsers.forEach(coach => {
         staff.push({
           id: coach.id,
@@ -1665,10 +1692,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         firstName: staffData.firstName,
         lastName: staffData.lastName,
         email: staffData.email,
-        mobile: staffData.mobile,
-        userId: staffData.userId,
+        mobile: staffData.mobile?.trim() || null,
+        userId: staffData.userId?.trim() || null,
         password: hashedPassword,
         role: staffData.role,
+        active: staffData.active !== false,
       });
       
       const newUser = await storage.createUser(userData);
@@ -1717,14 +1745,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const existingCoach = await storage.getCoach(staffId);
       
       if (existingUser) {
+         if (staffData.active !== undefined && typeof staffData.active !== "boolean") {
+           return res.status(400).json({ message: "Status must be Active or Inactive" });
+         }
+         const requestedActive = staffData.active ?? existingUser.active;
         // This is a user account - update user table
         const userUpdates: any = {
           firstName: staffData.firstName,
           lastName: staffData.lastName,
           email: staffData.email,
-          mobile: staffData.mobile,
-          userId: staffData.userId,
+          mobile: staffData.mobile?.trim() || null,
+          userId: staffData.userId?.trim() || null,
           role: staffData.role,
+           active: requestedActive,
         };
         
         // Hash password if provided
@@ -1732,25 +1765,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           userUpdates.password = await bcrypt.hash(staffData.password, 10);
         }
         
-        // Update user account
-        const updatedUser = await storage.updateUser(staffId, userUpdates);
-        
-        // Update associated coach profile if role is coach
+         // Keep any linked coach profile's visibility in sync even when the
+         // user is currently an admin rather than a coach.
+         const coachUpdates: Partial<typeof coaches.$inferSelect> = { active: requestedActive };
         if (staffData.role === "coach") {
-          const associatedCoach = await storage.getCoachByUserId(staffId);
-          if (associatedCoach) {
-            const coachData = {
-              firstName: staffData.firstName,
-              lastName: staffData.lastName,
-              specializations: staffData.specializations || [],
-              qualifications: staffData.qualifications || [],
-              experience: staffData.experience || "",
-              bio: staffData.bio || "",
-              active: staffData.active !== false,
-            };
-            await storage.updateCoach(associatedCoach.id, coachData);
-          }
+           Object.assign(coachUpdates, {
+             firstName: staffData.firstName,
+             lastName: staffData.lastName,
+             specializations: staffData.specializations || [],
+             qualifications: staffData.qualifications || [],
+             experience: staffData.experience || "",
+             bio: staffData.bio || "",
+           });
         }
+         const updatedUser = await updateStaffAccount(userId, staffId, userUpdates, coachUpdates);
         
         res.json({ ...toSafeUser(updatedUser), message: "Staff member updated successfully" });
         
@@ -1800,6 +1828,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const staffId = req.params.id;
+      const existingUser = await storage.getUser(staffId);
+      if (existingUser?.role === "admin") {
+        return res.status(409).json({ message: "Administrators cannot be deleted here. Edit the account and set Status to Inactive to preserve its records." });
+      }
+      if (!existingUser) {
+        const standaloneCoach = await storage.getCoach(staffId);
+        if (!standaloneCoach || standaloneCoach.userId) {
+          return res.status(404).json({ message: "Staff member not found" });
+        }
+        await storage.deleteCoach(staffId);
+        return res.json({ message: "Staff member deleted successfully" });
+      }
       
       // Delete coach profile if exists
       const existingCoach = await storage.getCoachByUserId(staffId);
@@ -2454,10 +2494,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const { active } = req.body;
       if (typeof active !== "boolean") return res.status(400).json({ message: "active must be a boolean" });
-      const updated = await storage.updateUser(id, { active });
+      const updated = await updateStaffAccount(userId, id, { active }, { active });
       res.json(toSafeUser(updated));
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.status(error instanceof StaffStatusChangeError ? 400 : 500).json({ message: error.message });
     }
   });
 

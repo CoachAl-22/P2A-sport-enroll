@@ -1,1 +1,2 @@
 - [Term 4 schedule authority](term4-schedule-authority.md) — the supplied eight-row table, not every SportsBiz listing, defines which classes the finder advertises.
+- [Admin account identity](admin-account-identity.md) — a retired fictional login and a separate branded admin account looked similar; verify the exact account before staff changes.
