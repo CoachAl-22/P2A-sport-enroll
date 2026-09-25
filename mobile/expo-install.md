@@ -32,7 +32,7 @@ Run this from your project root:
 5. **Test on your phone:**
    - Install "Expo Go" app
    - Scan QR code
-   - Login: `admin@power2adapt.com` / `admin123`
+    - Sign in with your assigned account. For account access, contact Alistair at alistair@power2adapt.com.
 
 ## Features Working
 

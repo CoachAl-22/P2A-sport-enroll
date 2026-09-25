@@ -274,6 +274,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Session middleware
   app.use(sessionConfig);
+  // An account can be retired while an old browser session is still valid.
+  // Revoke that session before any API handler can use its stored user ID.
+  app.use("/api", async (req: any, res, next) => {
+    if (req.path === "/auth/login" || req.path === "/auth/logout" || !req.session?.userId) {
+      return next();
+    }
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (user?.active) return next();
+      req.session.destroy(() => res.status(401).json({ message: "Account is no longer active." }));
+    } catch (error) {
+      console.error("Could not validate active session", error);
+      res.status(503).json({ message: "Could not validate your session. Please try again." });
+    }
+  });
   app.use("/api/auth", authRateLimiter);
   registerProgramEnquiryRoute(app);
 
@@ -1230,7 +1245,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         user = await storage.getUserByUserId(identifier);
       }
       
-      if (!user) {
+      if (!user || !user.active) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
       
@@ -1334,7 +1349,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "This reset link is invalid or has expired. Please request a new one." });
       }
       const user = await storage.getUser(userId);
-      if (!user) {
+      if (!user || !user.active) {
         return res.status(400).json({ message: "This reset link is invalid or has expired. Please request a new one." });
       }
       const hashed = await bcrypt.hash(password, 10);

@@ -20,7 +20,7 @@ Your mobile development server is now running with:
    - iOS: Use Camera app or Expo Go app to scan
    - Android: Use Expo Go app to scan
 
-3. **Login with**: `admin@power2adapt.com` / `admin123`
+3. Sign in with your assigned account. For account access, contact Alistair at `alistair@power2adapt.com`.
 
 ### Option 2: Direct Access Commands
 

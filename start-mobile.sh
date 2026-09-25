@@ -27,7 +27,7 @@ fi
 echo ""
 echo "🎯 Starting Expo development server..."
 echo "📱 Use Expo Go app on your phone to scan the QR code"
-echo "🔑 Test credentials: admin@power2adapt.com / admin123"
+echo "🔑 Sign in with your assigned account; contact Alistair for account access."
 echo ""
 
 # Start the Expo development server with tunnel for external access

@@ -65,9 +65,6 @@ export default function LoginScreen() {
             Login
           </Button>
           
-          <Text style={styles.hint}>
-            Try: admin@power2adapt.com / admin123
-          </Text>
         </Card.Content>
       </Card>
     </View>

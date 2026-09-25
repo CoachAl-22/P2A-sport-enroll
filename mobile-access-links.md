@@ -26,9 +26,9 @@ You can also test the mobile interface in your browser:
 - **Web URL**: `http://localhost:8081`
 - This gives you a web preview of the mobile app interface
 
-## 🔑 Login Credentials
-- **Admin**: `admin@power2adapt.com` / `admin123`
-- **Test Parent**: Any imported account from your SportsBiz CSV
+## 🔑 Signing In
+Use an account provisioned for you. For account access, contact Alistair at
+`alistair@power2adapt.com`.
 
 ## 📱 What You'll See
 - Dashboard with enrollment overview

@@ -6,4 +6,4 @@ Instructions:
 2. Skip login (look for "Continue as Guest" or "Skip")
 3. Find "Enter URL" or "+" button
 4. Paste the link above
-5. Login with: admin@power2adapt.com / admin123
+5. Sign in with your assigned account. For account access, contact Alistair at alistair@power2adapt.com.

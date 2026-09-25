@@ -38,11 +38,10 @@ You have several ways to test the mobile app:
 I've already configured the mobile app to connect to your current Replit server:
 - **API URL**: `https://868ede8d-c814-4847-9bfc-097bdd55a79a-00-1r2al5zaw3y2f.janeway.replit.dev`
 
-### Step 4: Test Login
+### Step 4: Sign In
 
-Use the same credentials as your web app:
-- **Admin**: `admin@power2adapt.com` / `admin123`
-- **Or any imported parent account**
+Use an account provisioned for you. For account access, contact Alistair at
+alistair@power2adapt.com.
 
 ### What's Included
 
