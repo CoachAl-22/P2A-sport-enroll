@@ -5,6 +5,7 @@ const coachAlistairImage = "/images/coach-photo.jpg";
 const coachMiahImage = "/images/coach-miah.jpg";
 const coachBlakeImage = "/images/coach-blake.jpg";
 const coachGeorgiaImage = "/images/coach-georgia.jpg";
+const coachGeenaImage = "/images/coach-geena.webp";
 
 export default function Coaches() {
   return (
@@ -129,16 +130,25 @@ export default function Coaches() {
               </p>
             </div>
 
-            {/* Geena's photo and bio can be added when supplied. */}
+            {/* Coach - Geena Davy */}
             <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 hover:shadow-xl hover:border-gray-600 transition-all" data-testid="coach-card-geena">
               <div className="text-center mb-4">
-                <div aria-hidden="true" className="w-20 h-20 rounded-full bg-cyan-900 text-cyan-100 flex items-center justify-center mx-auto mb-3 border-2 border-primary-400 text-2xl font-heading font-bold">
-                  GD
-                </div>
+                <img
+                  src={coachGeenaImage}
+                  alt="Geena Davy - Junior Jumps and Sprints Coach"
+                  className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-400"
+                  loading="lazy"
+                  data-testid="img-coach-geena"
+                />
                 <h4 className="text-xl font-heading font-bold text-cyan-400">Geena Davy</h4>
-                <p className="text-sm text-gray-100 font-medium">Coach</p>
+                <p className="text-sm text-gray-100 font-medium">Junior Jumps and Sprints Coach</p>
               </div>
-              <p className="text-gray-300 text-sm leading-relaxed">Photo and profile details coming soon.</p>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                I'm Geena Davy, a specialist junior jumps and sprint coach, and a Level 2 coach currently studying Sports Development at Deakin University. I'm coached by Jason Hodson and was selected to represent Australia in the long jump at the 2026 World U20 Championships in Eugene, Oregon. This experience gave me an insight into future international competitions and how different athletes respond to different techniques, which also built my knowledge as a coach.
+              </p>
+              <p className="text-gray-300 text-sm leading-relaxed mt-3">
+                I specialise in jumps and sprints, and I love building a relationship with my athletes and watching them build their skill set over time. As a coach, I bring strong enthusiasm to learning a new skill, which encourages the athletes and keeps them motivated within the sport.
+              </p>
             </div>
 
             {/* Coach 3 - Georgia */}
