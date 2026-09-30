@@ -128,7 +128,7 @@ export default function Coaches() {
                   data-testid="img-coach-declyn"
                 />
                 <h4 className="text-xl font-heading font-bold text-cyan-400">Declyn Tanner</h4>
-                <p className="text-sm text-gray-100 font-medium">Junior Athletics Coach</p>
+                <p className="text-sm text-gray-100 font-medium">Level 2 Development Coach</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
                 I’m Declyn Tanner, a national-level 400m and 800m runner, Level 2 coach, and current Nutrition Science student at Deakin University.
