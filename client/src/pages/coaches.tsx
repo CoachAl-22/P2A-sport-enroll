@@ -6,6 +6,7 @@ const coachMiahImage = "/images/coach-miah.jpg";
 const coachBlakeImage = "/images/coach-blake.jpg";
 const coachGeorgiaImage = "/images/coach-georgia.jpg";
 const coachGeenaImage = "/images/coach-geena.webp";
+const coachDeclynImage = "/images/coach-declyn.webp";
 
 export default function Coaches() {
   return (
@@ -119,14 +120,33 @@ export default function Coaches() {
             {/* Coach 2 - Declyn */}
             <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 hover:shadow-xl hover:border-gray-600 transition-all" data-testid="coach-card-declyn">
               <div className="text-center mb-4">
-                <div aria-hidden="true" className="w-20 h-20 rounded-full bg-cyan-900 text-cyan-100 flex items-center justify-center mx-auto mb-3 border-2 border-primary-400 text-2xl font-heading font-bold">
-                  DT
-                </div>
+                <img
+                  src={coachDeclynImage}
+                  alt="Declyn Tanner running on a track"
+                  className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-primary-400"
+                  loading="lazy"
+                  data-testid="img-coach-declyn"
+                />
                 <h4 className="text-xl font-heading font-bold text-cyan-400">Declyn Tanner</h4>
-                <p className="text-sm text-gray-100 font-medium">Middle Distance Coach</p>
+                <p className="text-sm text-gray-100 font-medium">Junior Athletics Coach</p>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
-                Declyn coaches middle-distance running with a relaxed and friendly approach. She welcomes athletes who are finding their rhythm or working towards their next running goal.
+                I’m Declyn Tanner, a national-level 400m and 800m runner, Level 2 coach, and current Nutrition Science student at Deakin University.
+              </p>
+              <p className="text-gray-300 text-sm leading-relaxed mt-3">
+                My journey with Power2ADAPT started when I was just nine years old. I was coached by Al for a couple of years before moving on to other coaches and continuing to develop as an athlete. It was during those early years with Power2ADAPT that I discovered my passion for athletics, particularly the 400m and 800m.
+              </p>
+              <p className="text-gray-300 text-sm leading-relaxed mt-3">
+                At 16, I returned to Power2ADAPT—this time as a coach—and I’ve been coaching ever since. Having experienced the program first-hand as a young athlete, it’s incredibly rewarding to now help provide that same positive experience for the next generation.
+              </p>
+              <p className="text-gray-300 text-sm leading-relaxed mt-3">
+                I coach our Prep–Grade 2 and Year 3–6 athletes, and what I enjoy most is watching young athletes build confidence, develop new skills and, most importantly, have fun while being active. I love finding ways to make training feel like a game while still teaching the fundamentals of running, movement and athletics.
+              </p>
+              <p className="text-gray-300 text-sm leading-relaxed mt-3">
+                My own experience as a competitive athlete shapes the way I coach. It allows me to lead by example and gives me an understanding of the commitment, discipline and enjoyment that come with sport.
+              </p>
+              <p className="text-gray-300 text-sm leading-relaxed mt-3">
+                As a coach, I want every child to feel encouraged to give things a go, learn new skills and enjoy the process. If they leave a session feeling more confident, having learnt something and looking forward to coming back, then we’re doing something right.
               </p>
             </div>
 
