@@ -27,7 +27,10 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
+      const privateMajResponse = path.startsWith("/api/maj/observe") ||
+        path.startsWith("/api/maj/parent/") || path.endsWith("/parent-invite") ||
+        path.endsWith("/quick-notes");
+      if (capturedJsonResponse && !privateMajResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
 

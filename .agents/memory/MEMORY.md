@@ -1,3 +1,4 @@
 - [Term 4 schedule authority](term4-schedule-authority.md) — the supplied eight-row table, not every SportsBiz listing, defines which classes the finder advertises.
 - [Admin account identity](admin-account-identity.md) — a retired fictional login and a separate branded admin account looked similar; verify the exact account before staff changes.
 - [Legacy mobile security upgrades](legacy-mobile-security.md) — prefer compatible patches over a wholesale SDK migration; verify clean installs and native bundles after transitive overrides.
+- [MAJ parent view](maj-parent-view.md) — families read Quick Notes inside MAJ, using existing website parent identities.

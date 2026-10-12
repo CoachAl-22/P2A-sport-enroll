@@ -1784,6 +1784,25 @@
   @keyframes confetti-fall {
     to { transform: translateY(110vh) rotate(720deg); opacity: 0.85; }
   }
+  .maj-parent-entry{margin-top:18px;background:transparent;border:1px solid var(--border2);border-radius:10px;color:var(--text2);padding:11px 18px;font:600 13px var(--font-body);cursor:pointer}
+  #app [hidden]{display:none!important}
+  .maj-feature{margin:0 0 18px;padding:17px;background:linear-gradient(145deg,#171c1c,#121313);border:1px solid #2c3939;border-radius:16px}
+  .maj-feature h2,.maj-feature h3{font-family:var(--font-display);letter-spacing:.2px}
+  .maj-feature h2{font-size:23px;margin-bottom:4px}.maj-muted{color:var(--text2);font-size:12px;line-height:1.5}
+  .maj-field{width:100%;background:#0d1010;color:var(--text);border:1px solid #354242;border-radius:9px;padding:11px 12px;font:14px var(--font-body);outline:none}
+  .maj-field:focus{border-color:var(--cyan)}textarea.maj-field{min-height:88px;resize:vertical;line-height:1.5}
+  .maj-action{border:0;border-radius:9px;padding:11px 14px;background:var(--orange);color:white;font:700 14px var(--font-body);cursor:pointer}
+  .maj-action.secondary{background:#222b2b;border:1px solid #364444;color:var(--text)}
+  .maj-action:disabled{opacity:.48;cursor:wait}.maj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .maj-review{background:#151919;border:1px solid #34403f;border-radius:14px;padding:15px;margin:12px 0}
+  .maj-review label,.maj-form label{display:block;font-size:11px;font-weight:700;color:#aab6b4;margin:9px 0 5px}
+  .maj-status{font-size:12px;margin-top:10px;color:var(--cyan);line-height:1.5}
+  .maj-toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);margin:12px 0}
+  .maj-tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
+  .maj-parent-shell{max-width:500px;margin:0 auto;padding:18px 18px 40px}
+  .maj-note-item{border-left:2px solid var(--orange);padding:9px 12px;margin:9px 0;background:#171a1a;border-radius:0 9px 9px 0}
+  .maj-pill{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);margin-bottom:5px}
+  @media(max-width:520px){.maj-grid{grid-template-columns:1fr}.maj-feature{padding:14px}}
 </style>
 </head>
 <body>
@@ -1812,6 +1831,7 @@
       </div>
 
       <div class="login-hint">Your coach gives you your username and password when you join.</div>
+      <button class="maj-parent-entry" type="button" onclick="window.MAJQuickNotes && window.MAJQuickNotes.showParentSignIn()">Parent sign in</button>
     </div>
   </div>
 
@@ -4107,6 +4127,7 @@ const MAJ_CONTENT = {
     // the coach view rewrites the Home page DOM, so switching accounts
     // without a reload leaves the app in a broken half-state.
     document.getElementById('bottom-nav').style.display = 'none';
+    if (window.MAJQuickNotes) window.MAJQuickNotes.lockCoach();
     apiPost('/logout', {}).catch(() => {}).finally(() => location.reload());
   }
 
@@ -4366,6 +4387,7 @@ const MAJ_CONTENT = {
       </div>`;
     document.getElementById('page-home').innerHTML = coachHtml;
     filterAthletes('');
+    if (window.MAJQuickNotes) window.MAJQuickNotes.coachReady(athletes, state.coach);
   }
 
   function setSchoolFilter(school) {
@@ -4391,7 +4413,8 @@ const MAJ_CONTENT = {
     const name = a.fullName || a.full_name || 'Unknown';
     const initials = name.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
     const safeId = escapeAttr(a.id);
-    const isActive = a.enabled !== false;
+    const isActive = a.rosterActive !== false;
+    const accessDisabled = a.enabled === false;
 
     // iOS-style toggle switch — universally understood as something to flip
     const trackColor  = isActive ? 'var(--green)' : 'var(--surface3)';
@@ -4411,8 +4434,8 @@ const MAJ_CONTENT = {
       <span style="font-size:11px;font-weight:700;color:${toggleLabelColor};white-space:nowrap;">${toggleLabel}</span>
     </div>`;
 
-    const rowOpacity = isActive ? '1' : '0.45';
-    const thumbColor = isActive ? 'var(--orange)' : 'var(--text3)';
+    const rowOpacity = isActive && !accessDisabled ? '1' : '0.45';
+    const thumbColor = isActive && !accessDisabled ? 'var(--orange)' : 'var(--text3)';
 
     return `<div class="module-item" onclick="openAssessmentById('${safeId}')"
       style="cursor:pointer;opacity:${rowOpacity};">
@@ -4424,7 +4447,9 @@ const MAJ_CONTENT = {
           ${toggleHtml}
         </div>
         <div class="mini-track"><div class="mini-fill fill-orange" style="width:${Math.round(((a.currentWeek||1)-1)/8*100)}%"></div></div>
-        <div class="module-caption">Module ${escapeHTML(a.currentModule||1)} · Week ${escapeHTML(a.currentWeek||1)} · ${escapeHTML(a.xp||0)} XP · ${escapeHTML(tier.name)}</div>
+        <div class="module-caption">Module ${escapeHTML(a.currentModule||1)} · Week ${escapeHTML(a.currentWeek||1)} · ${escapeHTML(a.xp||0)} XP · ${escapeHTML(tier.name)}${accessDisabled ? ' · Access disabled' : ''}
+          ${isActive ? ` · <button type="button" onclick="event.stopPropagation();window.MAJQuickNotes&&window.MAJQuickNotes.inviteParent('${safeId}')" style="border:0;background:none;color:var(--cyan);font:600 11px var(--font-body);cursor:pointer;padding:2px;">Invite parent</button>` : ''}
+        </div>
       </div>
       <div style="color:var(--orange);font-size:22px;padding-right:4px;">›</div>
     </div>`;
@@ -4433,14 +4458,16 @@ const MAJ_CONTENT = {
   async function toggleAthleteActive(id, newActive) {
     try {
       await apiPatch(`/coach/athletes/${id}/active`, { active: newActive });
-      // Patch in memory and redraw immediately
-      const a = _allAthletes.find(x => x.id === id);
-      if (a) a.enabled = newActive;
+      const a = _allAthletes.find(x => String(x.id) === String(id));
+      if (a) a.rosterActive = newActive;
       const searchEl = document.getElementById('athlete-search');
       filterAthletes(searchEl ? searchEl.value : '');
-      toast(newActive ? 'Athlete set to Active ✅' : 'Athlete frozen — inactive this term ❄️');
+      if (window.MAJQuickNotes) window.MAJQuickNotes.rosterToggleDone(id, newActive);
+      toast(newActive ? 'Athlete set to active' : 'Athlete moved to inactive roster');
+      return true;
     } catch(e) {
       toast('Could not update athlete status — please try again');
+      return false;
     }
   }
 
@@ -4471,13 +4498,14 @@ const MAJ_CONTENT = {
         })
       : schoolFiltered;
 
-    const active   = filtered.filter(a => a.enabled !== false);
-    const inactive = filtered.filter(a => a.enabled === false);
+    const active   = filtered.filter(a => a.rosterActive !== false);
+    const inactive = filtered.filter(a => a.rosterActive === false);
+    const showInactive = window.MAJQuickNotes && window.MAJQuickNotes.showingInactive();
 
     if (!filtered.length) {
       body.innerHTML = `<div style="text-align:center;padding:30px 16px;color:var(--text2);font-size:14px;">No athletes match "${escapeHTML(q || _activeSchool)}"</div>`;
     } else {
-      const inactiveSection = inactive.length ? `
+      const inactiveSection = inactive.length && showInactive ? `
         <div style="margin-top:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
           <div style="flex:1;height:1px;background:var(--border2);"></div>
           <span style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;white-space:nowrap;">
@@ -4493,7 +4521,7 @@ const MAJ_CONTENT = {
       const schoolLabel = _activeSchool === 'All' ? 'all schools' : _activeSchool;
       const activeCount = active.length;
       countEl.textContent = q
-        ? `${filtered.length} of ${schoolFiltered.length} athletes at ${schoolLabel}`
+        ? `${(showInactive ? filtered.length : active.length)} of ${schoolFiltered.length} athletes at ${schoolLabel}`
         : _activeSchool === 'All'
         ? `Tap an athlete to assess · ${activeCount} active${inactive.length ? ` · ${inactive.length} inactive` : ''}`
         : `${activeCount} active${inactive.length ? ` · ${inactive.length} inactive` : ''} · ${schoolLabel}`;
@@ -4608,7 +4636,7 @@ const MAJ_CONTENT = {
     const schoolFiltered = (_activeSchool === 'All'
       ? _allAthletes
       : _allAthletes.filter(a => (a.school || 'Other') === _activeSchool)
-    ).filter(a => a.enabled !== false);
+    ).filter(a => a.enabled !== false && a.rosterActive !== false);
     const searchEl = document.getElementById('athlete-search');
     const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
     if (!q) return schoolFiltered;
@@ -5016,11 +5044,13 @@ const MAJ_CONTENT = {
       const history = await apiGet(`/athlete/${athlete.id}/skill-assessments`);
       assessState.history = history || [];
       renderAssessmentHistory(history || []);
+      if (window.MAJQuickNotes) window.MAJQuickNotes.loadCoachHistory(athlete);
       const hasData = history && history.length > 0;
       csvBtn.style.display = hasData ? 'block' : 'none';
       document.getElementById('assess-sheets-btn').style.display = hasData ? 'block' : 'none';
     } catch(e) {
       panel.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:8px 0;">Could not load history.</div>';
+      if (window.MAJQuickNotes) window.MAJQuickNotes.loadCoachHistory(athlete);
     }
   }
 
@@ -7142,11 +7172,16 @@ const MAJ_CONTENT = {
   // ── SESSION RESTORE ───────────────────────────────────────────────────
   // Skip the login screen if the server still has a session for this device.
   (async function restoreSession() {
+    const params = new URLSearchParams(window.location.search);
+    const parentMode = params.get('parent') === '1';
     try {
       const me = await apiGet('/me');
-      if (me && me.role) enterApp(me);
+      window.__MAJ_SESSION_RESULT = { me: me || null, parentMode };
+      window.dispatchEvent(new CustomEvent('maj-session-resolved', { detail: window.__MAJ_SESSION_RESULT }));
+      if (!parentMode && me && me.role && me.role !== 'parent') enterApp(me);
     } catch(_) {
-      // No active session — stay on the login page.
+      window.__MAJ_SESSION_RESULT = { me: null, parentMode };
+      window.dispatchEvent(new CustomEvent('maj-session-resolved', { detail: window.__MAJ_SESSION_RESULT }));
     }
   })();
 
@@ -7160,5 +7195,6 @@ const MAJ_CONTENT = {
   }
 
 </script>
+<script src="/maj-quick-notes.js"></script>
 </body>
 </html>

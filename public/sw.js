@@ -4,14 +4,15 @@
 // Version: update this string whenever you deploy a new version
 // ═══════════════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'maj-v2.12';
-const STATIC_CACHE = 'maj-static-v2.12';
-const API_CACHE = 'maj-api-v2.12';
+const CACHE_NAME = 'maj-v2.13';
+const STATIC_CACHE = 'maj-static-v2.13';
+const API_CACHE = 'maj-api-v2.13';
 
 // Files to cache immediately on install
 const STATIC_ASSETS = [
   '/my-athletic-journey',
   '/my-athletic-journey/',
+  '/maj-quick-notes.js',
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',

@@ -290,7 +290,7 @@ export interface IStorage {
   getAllSurveyResponses(): Promise<SurveyResponse[]>;
 
   // MAJ operations
-  updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; password: string; school: string; schoolCode: string; fullName: string; displayPassword: string }>): Promise<MajAthlete>;
+  updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; rosterActive: boolean; password: string; school: string; schoolCode: string; fullName: string; displayPassword: string }>): Promise<MajAthlete>;
   getAllMajUsernames(): Promise<string[]>;
   getChildrenNeedingMaj(): Promise<{ childId: string; classId: string }[]>;
   getChildrenMajStatus(): Promise<{ childId: string; majAthleteId: string | null; username: string | null; enabled: boolean | null; displayPassword: string | null }[]>;
@@ -2049,7 +2049,7 @@ export class DatabaseStorage implements IStorage {
     return athlete;
   }
 
-  async updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; password: string; school: string; schoolCode: string; fullName: string; displayPassword: string }>): Promise<MajAthlete> {
+  async updateMajAthlete(id: string, updates: Partial<{ enabled: boolean; rosterActive: boolean; password: string; school: string; schoolCode: string; fullName: string; displayPassword: string }>): Promise<MajAthlete> {
     const [updated] = await db
       .update(majAthletes)
       .set({ ...updates, updatedAt: new Date() })
@@ -2170,7 +2170,7 @@ export class DatabaseStorage implements IStorage {
       .values(data)
       .onConflictDoUpdate({
         target: majPushSubscriptions.endpoint,
-        set: { athleteId: data.athleteId, p256dh: data.p256dh, auth: data.auth },
+        set: { athleteId: data.athleteId, parentId: null, p256dh: data.p256dh, auth: data.auth },
       })
       .returning();
     return sub;
@@ -2241,7 +2241,10 @@ export class DatabaseStorage implements IStorage {
 
   async getSkillAssessmentsForAthlete(athleteId: string): Promise<any[]> {
     const result = await db.execute(
-      sql`SELECT * FROM maj_skill_assessments WHERE athlete_id = ${athleteId} ORDER BY created_at DESC`
+      // Quick Notes have their own visibility-filtered endpoints. Never leak a
+      // coach-only note through the legacy athlete history, banner or bell APIs.
+      sql`SELECT * FROM maj_skill_assessments WHERE athlete_id = ${athleteId}
+          AND observation_kind = 'assessment' ORDER BY created_at DESC`
     ) as any;
     const rows = result.rows ?? result;
     return Array.isArray(rows) ? rows : [];

@@ -1049,6 +1049,7 @@ export const majAthletes = pgTable("maj_athletes", {
   school: varchar("school", { length: 150 }),
   avatar: varchar("avatar", { length: 16 }),
   enabled: boolean("enabled").notNull().default(true),
+  rosterActive: boolean("roster_active").notNull().default(true),
   schoolCode: varchar("school_code", { length: 20 }),
   displayPassword: varchar("display_password", { length: 50 }),
   currentModule: integer("current_module").notNull().default(1),
@@ -1108,11 +1109,52 @@ export const majKudos = pgTable("maj_kudos", {
 // Web Push subscriptions — one row per device an athlete enabled reminders on
 export const majPushSubscriptions = pgTable("maj_push_subscriptions", {
   id: uuid("id").primaryKey().defaultRandom(),
-  athleteId: uuid("athlete_id").references(() => majAthletes.id, { onDelete: "cascade" }).notNull(),
+  athleteId: uuid("athlete_id").references(() => majAthletes.id, { onDelete: "cascade" }),
+  parentId: uuid("parent_id").references(() => users.id, { onDelete: "cascade" }),
   endpoint: text("endpoint").notNull().unique(),
   p256dh: text("p256dh").notNull(),
   auth: text("auth").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Existing Coach Observer storage, also used for reviewed Quick Notes.
+export const majSkillAssessments = pgTable("maj_skill_assessments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  athleteId: uuid("athlete_id").references(() => majAthletes.id).notNull(),
+  coachName: text("coach_name"),
+  assessmentType: varchar("assessment_type", { length: 20 }).notNull(),
+  assessmentDate: date("assessment_date").default(sql`CURRENT_DATE`),
+  criteriaResults: jsonb("criteria_results").default(sql`'{}'::jsonb`),
+  strengths: text("strengths").default(""),
+  areasForImprovement: text("areas_for_improvement").default(""),
+  nextSteps: text("next_steps").default(""),
+  overallRating: varchar("overall_rating", { length: 30 }),
+  reassessmentRequired: boolean("reassessment_required").default(false),
+  skillAcquisitionStage: text("skill_acquisition_stage"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  observationKind: text("observation_kind").notNull().default("assessment"),
+  skill: text("skill"),
+  parentMessage: text("parent_message"),
+  sendToParent: boolean("send_to_parent").notNull().default(true),
+  clientNoteId: uuid("client_note_id").unique(),
+  coachUsername: text("coach_username"),
+});
+
+// Links reuse website parent accounts. Enrolled children also link via children.majAthleteId.
+export const majParentLinks = pgTable("maj_parent_links", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  athleteId: uuid("athlete_id").references(() => majAthletes.id, { onDelete: "cascade" }).notNull(),
+  parentId: uuid("parent_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+}, table => [unique().on(table.athleteId, table.parentId)]);
+
+export const majParentInvites = pgTable("maj_parent_invites", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  athleteId: uuid("athlete_id").references(() => majAthletes.id, { onDelete: "cascade" }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  tokenHash: text("token_hash").notNull().unique(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  acceptedBy: uuid("accepted_by").references(() => users.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
 export const majAnalyticsEvents = pgTable("maj_analytics_events", {

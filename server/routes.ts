@@ -21,6 +21,8 @@ import { applySiblingDiscount } from "./siblingDiscount";
 import { importStudentsFromCSV, previewStudentsFromCSV } from "./csv-import";
 import { appendSurveyToSheet, ensureSheetHeaders, exportAssessmentsToSheet } from "./googleSheets";
 import { db } from "./db";
+import { ensureMajQuickNoteSchema } from "./maj-quick-note-schema";
+import { registerMajQuickNoteRoutes } from "./maj-quick-notes";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
 import { provisionMajAccess } from "./maj-provisioning";
@@ -275,6 +277,7 @@ const enrollmentFormSchema = insertEnrollmentSchema.extend({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  await ensureMajQuickNoteSchema();
   // Enrolment front door. Registered first so nothing else can shadow /enrol/*.
   registerEnrolmentLinkRoutes(app, {
     getEnrolmentLink: (slug) => storage.getEnrolmentLink(slug),
@@ -320,6 +323,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   app.use("/api/auth", authRateLimiter);
+  registerMajQuickNoteRoutes(app, { isMajCoach, getWebPush, pushConfigured });
   registerProgramEnquiryRoute(app);
 
   // Serve PWA icons and assets from public folder
@@ -570,7 +574,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!pushConfigured()) return res.json({ sent: 0, message: "Push not configured" });
 
       const subs = await storage.getAllPushSubscriptions();
-      const athleteIds = Array.from(new Set(subs.map(s => s.athleteId)));
+      const athleteIds = Array.from(new Set(subs.map(s => s.athleteId).filter((id): id is string => !!id)));
       let sent = 0;
       for (const id of athleteIds) {
         const athlete = await storage.getMajAthleteById(id);
@@ -859,21 +863,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ── Coach: toggle an athlete's active / inactive status for the term ─────────
-  app.patch("/api/maj/coach/athletes/:id/active", isMajCoach, async (req, res) => {
-    try {
-      const { active } = req.body as { active?: boolean };
-      if (typeof active !== "boolean") {
-        return res.status(400).json({ message: "active (boolean) is required" });
-      }
-      const athlete = await storage.updateMajAthlete(req.params.id, { enabled: active });
-      const { password: _pw, ...safe } = athlete as any;
-      res.json(safe);
-    } catch (error: any) {
-      res.status(400).json({ message: error.message });
-    }
-  });
-
   // One-tap coach kudos — saved for the athlete's bell and pushed instantly
   // ── Coach bulk-progress: mark learn/challenge complete for multiple athletes ─
   app.post("/api/maj/coach/bulk-progress", isMajCoach, async (req, res) => {
@@ -1133,6 +1122,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/maj-quick-notes.js", async (_req, res) => {
+    const { resolve, dirname } = await import("path");
+    const { fileURLToPath } = await import("url");
+    res.setHeader("Cache-Control", "no-cache");
+    res.sendFile(resolve(dirname(fileURLToPath(import.meta.url)), "../public/maj-quick-notes.js"));
+  });
+
   app.get(["/start", "/start/index.html"], async (req, res) => {
     const { readFileSync } = await import("fs");
     const { resolve, dirname } = await import("path");
@@ -1286,6 +1282,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Set session
       (req.session as any).userId = user.id;
+      // A website sign-in must not inherit a previous MAJ coach/athlete role.
+      delete (req.session as any).majRole;
+      delete (req.session as any).majAthleteId;
+      delete (req.session as any).majCoachUser;
       
       res.json({
         user: {
