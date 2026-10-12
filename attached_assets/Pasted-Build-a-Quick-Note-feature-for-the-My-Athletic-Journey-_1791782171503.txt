@@ -1,0 +1,34 @@
+Build a "Quick Note" feature for the My Athletic Journey (MAJ) app.
+
+CONTEXT
+- MAJ is a PWA for junior athletes, with coach and parent views.
+- Stack: single HTML frontend, Neon PostgreSQL via Drizzle ORM, API routes prefixed /api/maj/, existing web push notifications.
+- Problem: coaches rarely use the current Coach Observer because logging an observation takes too many taps at the track.
+
+BEFORE YOU START
+Inspect the codebase and tell me:
+1. The current athlete, coach, parent and observation tables (Drizzle schema).
+2. How web push subscriptions are stored and sent.
+3. How Coach Observer currently saves observations.
+Reuse existing tables and the push setup wherever possible. Don't duplicate them.
+
+FEATURE 1: QUICK NOTE (priority)
+- On the coach home screen, add one large text box labelled "Quick Note" with a Save button. Coaches will use the phone keyboard's mic to dictate, so no custom voice feature is needed.
+- Example input: "Looked at James Pendergrass today, running arms look pretty good, needs to adjust his head."
+- New endpoint POST /api/maj/observe:
+  - Send the note text plus the coach's ACTIVE roster (names and ids) to the Claude API (Anthropic SDK, model claude-sonnet-5-5, key in Replit Secrets as ANTHROPIC_API_KEY).
+  - Ask Claude to return JSON only: an array of observations, each with athlete_id, athlete_name, skill (e.g. "Running Arms"), working_well, to_improve, suggested_cue, plus a parent_message (short, positive-first, encouraging, written for the parent).
+  - Fuzzy-match names (e.g. "Pendergrass" vs "Prendergast"). If there's no confident match, return it as unmatched so the coach can pick the athlete from a dropdown.
+  - One dictated note can mention several kids, so return one observation per kid.
+- Show a confirm card per observation with every field editable, plus a "Send to parent" toggle that is ON by default.
+- On confirm: save it to the athlete's journey as a coach observation (reuse the existing observation table if there is one). If the toggle is on, show the parent_message on the parent journey page and send a web push to that athlete's parents, e.g. "Coach Al left a note on James's running arms."
+- If the toggle is off, the note stays coach-only and never appears in parent views.
+- Offline: if the network fails, queue the note locally and sync it when the connection returns.
+
+FEATURE 2: ROSTER ACTIVE/INACTIVE TOGGLE
+- Add an Active/Inactive toggle per athlete on the coach roster screen.
+- This is a soft deactivation: keep all history, XP, badges and notes. Inactive athletes are hidden from coach lists and excluded from Quick Note name matching.
+- "Add athlete" should only require name and group. The parent invite can be sent later.
+
+WHEN DONE
+Summarise the schema changes, new endpoints and files changed, then list anything I need to set up (e.g. the API key secret).
