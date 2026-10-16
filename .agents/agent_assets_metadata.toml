@@ -6,27 +6,46 @@ id = "MYrXqKQP3Wu92roHwgNk3"
 uri = "file://public/icons/icon-192.png"
 type = "image"
 title = "MAJ Homescreen Icon (192×192)"
+logical_id = "54cdaaa1-033c-4dbc-a9e3-e1db83ace9c9"
 
 [[outputs]]
 id = "3LBi63B34PsNJ-OjIS2Xl"
 uri = "file://attached_assets/my-athletic-journey.txt"
 type = "text"
 title = "My Athletic Journey — Full Source Code"
+logical_id = "747961bb-3b14-46b9-8def-e0981f1529dd"
 
 [[outputs]]
 id = "4m2QxpgoTR69bpdwEB1Ay"
 uri = "file://screenshots/junior-academy.jpg"
 type = "image"
 title = "Junior Academy — hero photo"
+logical_id = "81cf6f19-01d9-439a-b470-2f9311b60093"
 
 [[outputs]]
 id = "iPp1LKenSWFP-r-h0Cjfi"
 uri = "file://screenshots/junior-academy-final.jpg"
 type = "image"
 title = "Junior Academy page — current"
+logical_id = "e92af81e-fbfa-45a1-9b7b-1e7932fb28b4"
 
 [[outputs]]
 id = "PuenmnbRWgqi7WTq4rrsr"
 uri = "file://screenshots/junior-academy-sized.jpg"
 type = "image"
 title = "Junior Academy page — current size"
+logical_id = "35f145ee-f7e0-4cbc-b41e-18e5c5eebf92"
+
+[[outputs]]
+id = "_zJmUOVG_Z-_DcYgImPuB"
+uri = "file://generated-artifacts/maj/Quest-I-Build-the-Foundations.pdf"
+type = "pdf"
+title = "Quest I — Build the Foundations"
+description = "11-page PDF of the MAJ Quest I document, including all eight weeks and the complete overview."
+logical_id = "6c57dbab-fd26-467b-aed8-3131ec89fede"
+content_hash = "sha256:d3ca17c7c0f54ec468196f4941246a94f8d69b44e916c307e577ea28d1139429"
+size = 988818
+mtime_ms = 1792121702420
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:868ede8d-c814-4847-9bfc-097bdd55a79a/6c57dbab-fd26-467b-aed8-3131ec89fede/1cd2f9af-3795-4793-b3a6-cf8ec086a5e2"
+storage_version_token = "1792121727925995"
+content_type = "application/pdf"
