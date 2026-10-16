@@ -381,7 +381,7 @@ export default function HighPerformance() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-2xl font-heading font-bold mb-4">Power2ADAPT</h3>
+              <h3 className="text-2xl font-heading font-bold mb-4">Power2ADAPT Pty Ltd</h3>
               <p className="text-gray-300 mb-4">Elite athletic development through expert coaching and consulting services.</p>
             </div>
             
@@ -407,7 +407,7 @@ export default function HighPerformance() {
           </div>
           
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p>&copy; 2026 Power2ADAPT. All rights reserved.</p>
+            <p>&copy; 2026 Power2ADAPT Pty Ltd. All rights reserved.</p>
           </div>
         </div>
       </footer>
