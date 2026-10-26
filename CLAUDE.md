@@ -65,3 +65,7 @@ Full detail: `projects/sportsenrol/BACKLOG.md` in the assistant workspace. Top i
 - `projects/sportsenrol/SIGNUP-FLOW-REVIEW-2026-07-04.md` - five-star UX review + confirmation diagnosis
 - `projects/sportsenrol/BACKLOG.md` - living backlog with done-log
 - `decisions/log.md` - decision log (December cut decision recorded 2026-07-02)
+
+## Go-live checks (added 2026-10-26 from the claude-mem history review; project paused)
+- SMS/email confirmations fail silently unless all three are in place: the Stripe webhook registered (and the endpoint returns non-404 when curled), the Twilio env vars set, and a phone number on the record.
+- Before any go-live smoke test, confirm production uses `sk_live`/`pk_live` keys, not test keys.
