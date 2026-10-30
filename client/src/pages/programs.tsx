@@ -91,6 +91,10 @@ export default function Programs() {
           Start with your athlete's year level. We will tell you which program that is, and show
           you when and where it runs.
         </p>
+        <p className="mb-8 text-sm text-[#525759]">
+          <a href="https://power2adapt.coach/where-we-train" className="font-bold text-[#0a6b66] underline hover:no-underline">Where we train</a>
+          {" "}for venue details, the weekly schedule and Ballam Park membership information.
+        </p>
 
         <section className="mb-10" aria-labelledby="term4-times">
           <h2 id="term4-times" className="mb-3 text-2xl font-black text-[#2e2600]">Term 4 class times</h2>

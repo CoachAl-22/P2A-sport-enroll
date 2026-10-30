@@ -36,7 +36,7 @@ export default function Landing() {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 <a href="/programs" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Programs</a>
-                <a href="#features" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Our approach</a>
+                <a href="https://power2adapt.coach/where-we-train" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Where we train</a>
                 <a href="/coaches" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Our Coaches</a>
                 <a href="/high-performance" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">High Performance</a>
                 <a href="/junior-academy" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Junior Academy</a>
@@ -86,11 +86,11 @@ export default function Landing() {
                 Programs
               </a>
               <a
-                href="#features"
+                href="https://power2adapt.coach/where-we-train"
                 className="block px-3 py-2 text-gray-700 hover:text-primary-500 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Our approach
+                Where we train
               </a>
               <a 
                 href="/coaches" 
@@ -424,6 +424,7 @@ export default function Landing() {
             <div>
               <h4 className="font-heading font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-300">
+                <li><a href="https://power2adapt.coach/where-we-train" className="hover:text-white">Where we train</a></li>
                 <li><a href="/parent-help-center" className="hover:text-white">Parent Help Centre</a></li>
                 <li><a href="/enrollment-guide" className="hover:text-white">Enrolment Guide</a></li>
                 <li><a href="/payment-support" className="hover:text-white">Payment Support</a></li>
