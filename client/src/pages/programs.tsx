@@ -70,7 +70,7 @@ export default function Programs() {
 
       <div className="mx-auto max-w-3xl px-6 pb-16 pt-6">
         <div className="mb-6 rounded-lg bg-[#0a6b66] px-5 py-4 font-bold text-white">
-          Term 4 starts Monday 5 October. $30 + GST per class. Spots open now.
+          Find your program, venue and session time. Ask Coach Al if you are unsure where to start.
         </div>
         {closed && (
           <div
@@ -221,7 +221,7 @@ export default function Programs() {
         <ProgramEnquiryForm />
 
         <section className="mt-10 rounded-xl border border-[#e7e1d8] bg-white p-6">
-          <h2 className="mb-2 text-2xl font-black text-[#2e2600]">New this term: Train the Mind</h2>
+          <h2 className="mb-2 text-2xl font-black text-[#2e2600]">Train the Mind</h2>
           <p className="text-[#525759]">
             Every session includes a short mental skills block, built from Coach Alistair's guide
             <em> Becoming an Empowered Athlete</em>. Weeks 1 to 4 cover managing nerves, weeks 5 to 7

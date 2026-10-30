@@ -20,7 +20,7 @@ export default function HighPerformance() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <Link href="/">
-                  <h1 className="text-2xl font-heading font-bold text-primary-500 cursor-pointer">Power2ADAPT</h1>
+                  <span className="text-2xl font-heading font-bold text-primary-500 cursor-pointer">Power2ADAPT</span>
                 </Link>
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function HighPerformance() {
                       Alistair was born and bred in Seaford and has lived on the Mornington Peninsula all of his life. He first became involved in athletics at the age of 8 and has been involved in the sport for over 30 years.
                     </p>
                     <p className="text-gray-200 leading-relaxed">
-                      Alistair is a former track and field athlete and has since taken his love of athletics, health and fitness into coaching. He completed a Bachelor's Degree in Sports Coaching and holds a Level 3 Performance Development Coach accreditation with Athletics Australia.
+                      Alistair is a former track and field athlete and has since taken his love of athletics, health and fitness into coaching. He holds a Bachelor of Sports Coaching (PE stream) and is an Australian Athletics Level 4 High Performance Coach.
                     </p>
                     <div className="bg-primary-900/30 rounded-lg p-4 border-l-4 border-primary-500">
                       <h4 className="font-semibold text-primary-400 mb-2">Movement & Mindset Specialist</h4>
@@ -133,13 +133,13 @@ export default function HighPerformance() {
                       <div className="flex items-center space-x-3">
                         <div className="w-3 h-3 bg-primary-500 rounded-full flex-shrink-0"></div>
                         <p className="text-gray-200">
-                          <span className="font-semibold text-white">Level 4 High Performance Coach</span> with World and Australian Athletics
+                          <span className="font-semibold text-white">Australian Athletics Level 4 High Performance Coach</span>
                         </p>
                       </div>
                       <div className="flex items-center space-x-3">
                         <div className="w-3 h-3 bg-primary-500 rounded-full flex-shrink-0"></div>
                         <p className="text-gray-200">
-                          <span className="font-semibold text-white">Bachelor of Sports Coaching - PE Stream</span> (Victorian University)
+                          <span className="font-semibold text-white">Bachelor of Sports Coaching (PE stream)</span>
                         </p>
                       </div>
                     </div>
