@@ -85,7 +85,7 @@ export default function JuniorAcademy() {
               Back to Main Programs
             </Link>
             <div className="inline-block bg-white/10 text-primary-100 text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full mb-4">
-              Years 6 to 9 · Multi-Sport Athletes
+              Years 6 to 9 · Individual exceptions considered
             </div>
             <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4">Junior Academy</h1>
             <p className="text-xl text-primary-100 max-w-3xl mx-auto leading-relaxed">
@@ -117,7 +117,7 @@ export default function JuniorAcademy() {
             What Is the Junior Academy?
           </h2>
           <p className="text-lg text-gray-700 leading-relaxed">
-            The Power2ADAPT Junior Academy is an in-person athletic development programme for young athletes aged 12–16, designed for multi-sport athletes who want to build the physical foundations that make them better at every sport they play — not just one. Sessions run up to twice per week and focus on movement quality, speed, strength, and athletic confidence — skills that transfer across all sports and carry athletes forward as they grow.
+            The Power2ADAPT Junior Academy is an in-person athletic development programme for athletes in Years 6 to 9, with individual exceptions considered, designed for multi-sport athletes who want to build the physical foundations that make them better at every sport they play — not just one. Sessions run up to twice per week and focus on movement quality, speed, strength, and athletic confidence — skills that transfer across all sports and carry athletes forward as they grow.
           </p>
         </div>
       </section>
@@ -156,13 +156,13 @@ export default function JuniorAcademy() {
             <div>
               <h2 className="text-3xl font-heading font-bold text-gray-900 mb-6">Who Is It For?</h2>
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                The Junior Academy is for young athletes aged 12–16 who compete in any sport — or multiple sports. Footballers, swimmers, rugby players, gymnasts, runners — any discipline is welcome.
+                The Junior Academy is for athletes in Years 6 to 9, with individual exceptions considered who compete in any sport — or multiple sports. Footballers, swimmers, rugby players, gymnasts, runners — any discipline is welcome.
               </p>
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
                 Your child does not need to be elite, just willing to work, open to coaching, and ready to improve.
               </p>
               <div className="space-y-3">
-                {["Any sport or combination of sports", "Any current fitness level — we start from where your child is", "Athletes aged 12 to 16", "Multi-sport athletes juggling busy calendars"].map((point, i) => (
+                {["Any sport or combination of sports", "Any current fitness level — we start from where your child is", "Athletes in Years 6 to 9; individual exceptions considered", "Multi-sport athletes juggling busy calendars"].map((point, i) => (
                   <div key={i} className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
                     <span className="text-gray-700">{point}</span>

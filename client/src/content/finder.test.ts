@@ -30,7 +30,7 @@ describe("resolveRung", () => {
   it("resolves each choice to its program", () => {
     expect(resolveRung("prep-2")).toBe("foundation");
     expect(resolveRung("years-3-6")).toBe("emerging-athletes");
-    expect(resolveRung("years-7-10")).toBe("junior-academy");
+    expect(resolveRung("years-6-9")).toBe("junior-academy");
     expect(resolveRung("age-16-plus")).toBe("senior-squad");
     expect(resolveRung("team-sport")).toBe("team-sport-speed");
   });
@@ -50,12 +50,12 @@ describe("resolveRung", () => {
 });
 
 describe("choice labels", () => {
-  it("uses year levels for the school-age bands and an age for the oldest", () => {
+  it("uses school stages and keeps a route beyond Year 9", () => {
     const labels = FINDER_CHOICES.map((c) => c.label);
     expect(labels[0]).toMatch(/^Prep to Year 2$/);
     expect(labels[1]).toMatch(/^Years 3 to 6$/);
-    expect(labels[2]).toMatch(/^Years 7 to 10$/);
-    expect(labels[3]).toMatch(/16/);
+    expect(labels[2]).toMatch(/^Years 6 to 9$/);
+    expect(labels[3]).toMatch(/^Year 10 and above$/);
   });
 
   it("carries no em dashes", () => {

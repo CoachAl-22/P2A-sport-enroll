@@ -167,8 +167,8 @@ export default function Programs() {
 
             {rung.slug === "emerging-athletes" && (
               <p className="mt-4 rounded-lg bg-white p-4 text-sm text-[#525759]">
-                Moving quickly? Junior Academy takes athletes from Year 6 by invitation. Mention it
-                on your call and I will tell you whether they are ready.
+                Junior Academy is for Years 6 to 9, with individual exceptions. Year 6 athletes can
+                also join Emerging Athletes through their school. Ask Coach Al which group fits.
               </p>
             )}
 

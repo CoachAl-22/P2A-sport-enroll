@@ -631,7 +631,7 @@
 
   <!-- ── Hero ── -->
   <div class="hero">
-    <div class="hero-eye">Junior Academy — Ages 12–16</div>
+    <div class="hero-eye">Junior Academy · Years 6–9</div>
     <div class="hero-title">Apply for the<br><span>Junior Academy</span></div>
     <div class="hero-sub">Complete this short application and Alistair will be in touch within 48 hours to confirm your child's place and next steps.</div>
   </div>
@@ -676,9 +676,22 @@
           <div class="field-error">Please enter your child's name</div>
         </div>
         <div class="field" data-required>
+          <label for="athleteSchoolYear">Athlete's school year <span class="req">*</span></label>
+          <select id="athleteSchoolYear">
+            <option value="">Choose a school year</option>
+            <option value="Year 6">Year 6</option>
+            <option value="Year 7">Year 7</option>
+            <option value="Year 8">Year 8</option>
+            <option value="Year 9">Year 9</option>
+            <option value="Other / individual exception">Other / request an individual exception</option>
+          </select>
+          <div class="field-hint">Outside Years 6–9? Choose the exception option and explain your situation in the coach notes. Coach Al will review the right placement.</div>
+          <div class="field-error">Please select a school year or the exception option</div>
+        </div>
+        <div class="field" data-required>
           <label>Athlete's date of birth <span class="req">*</span></label>
           <input type="date" id="athleteDob">
-          <div class="field-hint">Athletes must be aged 12–16 to join the Junior Academy.</div>
+          <div class="field-hint">For Years 6–9, with individual exceptions reviewed by Coach Al. Date of birth helps with placement; it is not an age cut-off.</div>
           <div class="field-error">Please enter your child's date of birth</div>
         </div>
       </div>
@@ -1045,7 +1058,7 @@
     let valid = true;
 
     if (step === 1) {
-      ['parentName','parentEmail','parentPhone','athleteName','athleteDob'].forEach(function(id) {
+      ['parentName','parentEmail','parentPhone','athleteName','athleteDob','athleteSchoolYear'].forEach(function(id) {
         const el = document.getElementById(id);
         const field = el.closest('.field');
         if (!el.value.trim()) {
@@ -1058,11 +1071,11 @@
       });
       const dob = document.getElementById('athleteDob').value;
       if (dob) {
-        const age = Math.floor((new Date() - new Date(dob)) / (365.25 * 24 * 3600 * 1000));
-        if (age < 12 || age > 16) {
+        const birthDate = new Date(dob + 'T00:00:00');
+        if (!Number.isFinite(birthDate.getTime()) || birthDate > new Date()) {
           const field = document.getElementById('athleteDob').closest('.field');
           field.classList.add('has-error');
-          field.querySelector('.field-error').textContent = 'The Junior Academy is for athletes aged 12–16.';
+          field.querySelector('.field-error').textContent = 'Please enter a valid date of birth that is not in the future.';
           valid = false;
         }
       }
@@ -1162,7 +1175,7 @@
       nervous:      document.getElementById('q12').value,
       contactPref:  getRadioValue('q13'),
       feedbackPref: getRadioValue('q14'),
-      coachNotes:   document.getElementById('q15').value,
+      coachNotes:   'School year: ' + document.getElementById('athleteSchoolYear').value + '\n' + document.getElementById('q15').value,
       programme:    getRadioValue('qProgramme'),
       photoConsent: getRadioValue('qPhoto'),
     };
