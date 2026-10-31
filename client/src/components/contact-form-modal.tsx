@@ -122,7 +122,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl font-heading font-bold text-gray-900">
-              Book a Call / Send Email
+              Talk to Coach Al
             </DialogTitle>
             <Button
               variant="ghost"
@@ -134,9 +134,14 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
             </Button>
           </div>
           <p className="text-sm text-gray-600">
-            Get in touch to discuss your athletic goals and schedule a consultation
+            Prefer to email? Please include your mobile number and the best time to call, along with your athlete’s goals, so Coach Al can confirm how we can help.
           </p>
         </DialogHeader>
+
+        <Button asChild className="w-full">
+          <a href="https://power2adapt.setmore.com/book?step=additional-products&amp;products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&amp;type=service&amp;staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&amp;staffSelected=false">Book a Free 15-Minute Discovery Call</a>
+        </Button>
+        <p className="text-sm text-gray-600">A video call to discuss your athlete, understand their goals and confirm whether we can help.</p>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -331,7 +336,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="Tell us about your athletic goals, experience level, and what you'd like to discuss..."
+                      placeholder="Tell us about your athlete and goals. Please include your mobile number and the best time to call."
                       rows={4}
                       data-testid="input-contact-message"
                     />

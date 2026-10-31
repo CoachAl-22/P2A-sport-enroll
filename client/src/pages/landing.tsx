@@ -176,11 +176,10 @@ export default function Landing() {
                 Running technique, speed and athletic development across Frankston, Mornington and Mt Eliza. Find the right program for your athlete's stage and build confidence through consistent coaching.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  onClick={() => setLocation('/programs')}
+                <Button asChild
                   className="bg-secondary-500 hover:bg-secondary-600 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
-                  Find the Right Class →
+                  <a href="https://power2adapt.setmore.com/book?step=additional-products&amp;products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&amp;type=service&amp;staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&amp;staffSelected=false">Book a Discovery Call →</a>
                 </Button>
                 <Button 
                   onClick={() => {
@@ -437,7 +436,7 @@ export default function Landing() {
               <h4 className="font-heading font-semibold mb-4">Contact Info</h4>
               <div className="space-y-2 text-gray-300">
                 <p className="flex items-center"><Phone className="w-4 h-4 mr-2" />+61 434 679 395</p>
-                <p className="flex items-center"><Mail className="w-4 h-4 mr-2" /><a href="mailto:info@power2adapt.com" className="hover:text-white">info@power2adapt.com</a></p>
+                <p className="flex items-center"><Mail className="w-4 h-4 mr-2" /><a href="mailto:info@power2adapt.com?subject=Coaching%20enquiry&amp;body=My%20mobile%20number%3A%20%0ABest%20time%20to%20call%3A%20%0AAthlete%20and%20goals%3A%20" className="hover:text-white">info@power2adapt.com</a></p>
                 <p className="flex items-center"><School className="w-4 h-4 mr-2" />Serving Schools, Sporting Clubs and the Community</p>
                 <p className="flex items-center"><Clock className="w-4 h-4 mr-2" />Mon-Fri: 8am-6pm</p>
               </div>
