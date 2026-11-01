@@ -5,7 +5,6 @@ import { Link, useLocation } from "wouter";
 import LoginModal from "@/components/auth/login-modal";
 import ContactFormModal from "@/components/contact-form-modal";
 import { HighPerformanceSquadApplication } from "@/components/applications/high-performance-squad-application";
-import OneClickChat from "@/components/one-click-chat";
 import { Calendar, MapPin, Users, RotateCcw, Building2, MessageSquare, Phone, Mail, School, Clock, Youtube, Instagram, Facebook, X, Menu, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -566,8 +565,6 @@ export default function Landing() {
         </DialogContent>
       </Dialog>
 
-      {/* Floating Program Finder chat widget */}
-      <OneClickChat />
     </div>
   );
 }

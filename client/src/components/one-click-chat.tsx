@@ -1,229 +1,80 @@
-import { DISCOVERY_CALL_URL } from "@/content/contact";
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { MessageCircle, X, Sparkles, Phone, ChevronRight, ArrowLeft } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useLocation } from "wouter";
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'wouter';
+import { MessageCircle, X, Search, ArrowUpRight } from 'lucide-react';
+import { DISCOVERY_CALL_URL, EMAIL_ENQUIRY_URL } from '@/content/contact';
+import { findVisitorHelp, HelpAnswer, showVisitorHelp, VISITOR_HELP } from '@/content/visitor-help';
 
-// ─── FAQ content ────────────────────────────────────────────────────────────
+const QUICK_TOPICS=['programs','first-session','existing','contact'];
 
-const TOPICS = [
-  { key: "programs",   emoji: "🏃", label: "Which program suits my child?" },
-  { key: "cost",       emoji: "💰", label: "How much does it cost?" },
-  { key: "venues",     emoji: "📍", label: "Where are the venues?" },
-  { key: "included",   emoji: "✅", label: "What's included in sessions?" },
-  { key: "trial",      emoji: "🎯", label: "Can my child try a session?" },
-  { key: "enrol",      emoji: "📋", label: "How do I enrol?" },
-  { key: "apply",      emoji: "🌟", label: "Junior Academy / Senior Squad applications" },
-  { key: "contact",    emoji: "💬", label: "Talk to someone" },
-] as const;
-
-type TopicKey = typeof TOPICS[number]["key"];
-
-const ANSWERS: Record<TopicKey, { text: string; cta?: { label: string; href: string; external?: boolean } }> = {
-  programs: {
-    text: "Choose by your athlete’s stage and goals:\n\n• **Foundation** — Prep to Year 2.\n• **Emerging Athletes** — Years 3 to 6, at school or community venues.\n• **Junior Academy** — Years 6 to 9, with individual exceptions.\n• **Senior Squad** — Ages 16+, with individual placement considered.\n• **Team Sport Speed** — Ages 13+.\n• **High Performance** — Individual suitability discussed with Coach Al.\n\nYear 6 athletes may suit either Emerging Athletes or Junior Academy. A discovery call can help you choose.",
-    cta: { label: "Compare programs", href: "/programs" },
-  },
-  cost: {
-    text: "Fees depend on the program and number of sessions. School-based classes and Team Sport Speed are priced per class; Junior Academy, Senior Squad and High Performance have their own membership or coaching fees.\n\nCheck your program page for fees and GST wording, then confirm the total with the booking provider. Ballam Park may have separate venue membership costs — see Where we train.",
-    cta: { label: "View programs and fees", href: "/programs" },
-  },
-  venues: {
-    text: "We coach across Frankston, Mornington and Mt Eliza, including Ballam Park, Mornington Athletics Track, Peninsula Grammar and Toorak College.\n\nSchool sessions are for students of that school. Where we train has venue details, the weekly schedule and Ballam Park membership information. Confirm the session with Coach Al before attending.",
-    cta: { label: "Where we train", href: "https://power2adapt.coach/where-we-train", external: true },
-  },
-  included: {
-    text: "Coaching is matched to the athlete’s stage and goals. Inclusions vary by program, so check its page for session frequency, programming and feedback.\n\nBook a discovery call to discuss what your athlete needs and confirm which option fits.",
-    cta: { label: "Compare programs", href: "/programs" },
-  },
-  trial: {
-    text: "Every new athlete can try a free session. Book a free 15-minute discovery call with Coach Al so we can understand your athlete’s goals, confirm the right group and arrange the trial. Ballam Park venue membership requirements still need to be confirmed before attending.",
-    cta: { label: "Book a Discovery Call", href: DISCOVERY_CALL_URL, external: true },
-  },
-  enrol: {
-    text: "Start with the program finder and select your athlete’s stage. School and Team Sport Speed sessions link to the current booking provider. Junior Academy and Senior Squad use an application process.\n\nNot sure where to start? A discovery call helps us understand your athlete’s goals and confirm how we can help.",
-    cta: { label: "Find a program", href: "/programs" },
-  },
-  apply: {
-    text: "Junior Academy is for Years 6 to 9, with individual exceptions. Senior Squad placement is discussed individually.\n\nExplore the program page for the application and inclusions, or book a discovery call first to discuss suitability.",
-    cta: { label: "Book a Discovery Call", href: DISCOVERY_CALL_URL, external: true },
-  },
-  contact: {
-    text: "Book a free 15-minute video discovery call with Coach Al. We’ll discuss your athlete’s goals and confirm whether we can help.\n\nPrefer email? Contact info@power2adapt.com and include your mobile number and the best time to call (Melbourne time).",
-    cta: { label: "Book a Discovery Call", href: DISCOVERY_CALL_URL, external: true },
-  },
-};
-
-// ─── Markdown-lite renderer ─────────────────────────────────────────────────
-function renderText(text: string) {
-  return text.split("\n").map((line, i) => {
-    const parts = line.split(/\*\*(.*?)\*\*/g);
-    return (
-      <span key={i} className="block leading-relaxed">
-        {parts.map((part, j) =>
-          j % 2 === 1 ? <strong key={j}>{part}</strong> : part
-        )}
-      </span>
-    );
-  });
-}
-
-// ─── Component ───────────────────────────────────────────────────────────────
 export default function OneClickChat() {
-  const [, setLocation] = useLocation();
-  const [chatOpen, setChatOpen] = useState(false);
-  const [activeTopic, setActiveTopic] = useState<TopicKey | null>(null);
+  const [location]=useLocation();
+  const [open,setOpen]=useState(false);
+  const [query,setQuery]=useState('');
+  const [answers,setAnswers]=useState<HelpAnswer[] | null>(null);
+  const [allTopics,setAllTopics]=useState(false);
+  const trigger=useRef<HTMLButtonElement>(null);
+  const panel=useRef<HTMLDivElement>(null);
+  const heading=useRef<HTMLHeadingElement>(null);
+  const result=useRef<HTMLDivElement>(null);
 
-  const helpButton = useRef<HTMLButtonElement>(null);
-  const closeButton = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    if (!chatOpen) return;
-    closeButton.current?.focus();
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setChatOpen(false);
-        helpButton.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [chatOpen]);
-
-  function openChat() { setChatOpen(true); }
-  function closeChat() {
-    setChatOpen(false);
-    helpButton.current?.focus();
-  }
-
-  function handleCta(href: string, external?: boolean) {
-    setChatOpen(false);
-    if (external) {
-      window.open(href, "_blank", "noopener noreferrer");
-    } else {
-      setLocation(href);
+  function clear() { setQuery(''); setAnswers(null); setAllTopics(false); }
+  function close() { setOpen(false); clear(); trigger.current?.focus({preventScroll:true}); }
+  useEffect(()=>{ setOpen(false); clear(); },[location]);
+  useEffect(()=>{
+    if (!open) return;
+    heading.current?.focus({preventScroll:true}); // Avoid opening the phone keyboard automatically.
+    function onKey(event:KeyboardEvent) { if(event.key==='Escape') close(); }
+    function outside(event:PointerEvent) {
+      if(event.target instanceof Node && !panel.current?.contains(event.target) && !trigger.current?.contains(event.target)) { setOpen(false); clear(); }
     }
-  }
+    window.addEventListener('keydown',onKey);
+    window.addEventListener('pointerdown',outside);
+    return ()=>{window.removeEventListener('keydown',onKey);window.removeEventListener('pointerdown',outside);};
+  },[open]);
+  useEffect(()=>{ if(answers!==null) result.current?.focus({preventScroll:true}); },[answers]);
 
-  const answer = activeTopic ? ANSWERS[activeTopic] : null;
-  const topicLabel = activeTopic ? TOPICS.find(t => t.key === activeTopic)?.label : null;
-
-  return (
-    <>
-      {/* ── FAB button ── */}
-      <motion.button
-        ref={helpButton}
-        aria-label="Open program help"
-        aria-expanded={chatOpen}
-        aria-controls="program-help-panel"
-        onClick={() => chatOpen ? closeChat() : openChat()}
-        className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex flex-col items-center justify-center"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.8, type: "spring" }}
-      >
-        <MessageCircle className="w-6 h-6 text-white" />
-        <span className="text-[9px] text-white font-bold mt-0.5 tracking-wide">HELP</span>
-        <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-white" />
-      </motion.button>
-
-      {/* ── Chat panel ── */}
-      <AnimatePresence>
-        {chatOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300, damping: 28 }}
-            id="program-help-panel"
-            role="region"
-            aria-label="Program help"
-            className="fixed bottom-[72px] right-3 sm:bottom-24 sm:right-6 z-50 w-[340px] max-w-[calc(100vw-24px)] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden max-h-[min(520px,calc(100dvh-90px))] sm:max-h-[min(520px,calc(100dvh-112px))]"
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-primary-600 to-secondary-500 p-4 flex items-center justify-between flex-shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-white font-bold text-sm leading-none">Power2ADAPT</p>
-                  <p className="text-white/70 text-xs mt-0.5">Program questions</p>
-                </div>
-              </div>
-              <button ref={closeButton} aria-label="Close program help" onClick={closeChat} className="text-white/70 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="flex-1 overflow-y-auto">
-              {!activeTopic ? (
-                /* Topic list */
-                <div className="p-3">
-                  <p className="text-xs text-gray-400 font-medium px-1 mb-2 uppercase tracking-wide">
-                    What would you like to know?
-                  </p>
-                  <div className="flex flex-col gap-1.5">
-                    {TOPICS.map((t) => (
-                      <button
-                        key={t.key}
-                        onClick={() => setActiveTopic(t.key)}
-                        className="flex items-center gap-3 text-left px-3 py-2.5 rounded-xl border border-gray-100 hover:border-primary-300 hover:bg-primary-50 transition-all group"
-                      >
-                        <span className="text-lg flex-shrink-0">{t.emoji}</span>
-                        <span className="text-sm font-medium text-gray-700 group-hover:text-primary-700 flex-1">
-                          {t.label}
-                        </span>
-                        <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-primary-400 flex-shrink-0" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                /* Answer view */
-                <div className="p-4">
-                  <button
-                    onClick={() => setActiveTopic(null)}
-                    className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 mb-3"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" /> Back to questions
-                  </button>
-
-                  <p className="text-xs font-semibold text-primary-600 uppercase tracking-wide mb-2">
-                    {topicLabel}
-                  </p>
-
-                  <div className="text-sm text-gray-700 space-y-1 mb-4">
-                    {renderText(answer!.text)}
-                  </div>
-
-                  {answer?.cta && (
-                    <button
-                      onClick={() => handleCta(answer.cta!.href, answer.cta!.external)}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-sm rounded-xl py-3 hover:opacity-90 transition-opacity"
-                    >
-                      {answer.cta.external && <Phone className="w-4 h-4" />}
-                      {answer.cta.label}
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="border-t border-gray-100 px-4 py-3 flex-shrink-0 bg-gray-50">
-              <button
-                onClick={() => handleCta(DISCOVERY_CALL_URL, true)}
-                className="w-full flex items-center justify-center gap-2 text-xs font-semibold text-primary-600 hover:text-primary-800"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                Book a Discovery Call
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
+  if (!showVisitorHelp(location)) return null;
+  const topics=allTopics?VISITOR_HELP.filter(a=>a.id!=='health'):QUICK_TOPICS.map(id=>VISITOR_HELP.find(a=>a.id===id)!);
+  return <>
+    <div aria-hidden="true" className="h-20" />
+    <button ref={trigger} type="button" aria-label="Open Power2ADAPT help" aria-expanded={open} aria-controls="visitor-help-panel"
+      onClick={()=>open?close():setOpen(true)}
+      className="fixed bottom-[max(12px,env(safe-area-inset-bottom))] right-3 z-40 flex h-12 min-w-12 items-center justify-center gap-2 rounded-full bg-[#0a6b66] px-4 font-bold text-white shadow-lg hover:bg-[#085550] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a6b66]">
+      <MessageCircle aria-hidden="true" className="h-5 w-5"/><span>Help</span>
+    </button>
+    {open && <div ref={panel} id="visitor-help-panel" role="region" aria-labelledby="visitor-help-title"
+      className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-3 right-3 z-40 flex max-h-[calc(100dvh-90px-env(safe-area-inset-bottom))] w-auto sm:left-auto sm:w-[380px] flex-col overflow-hidden rounded-2xl border border-[#e7e1d8] bg-white text-[#2e2600] shadow-2xl">
+      <header className="flex shrink-0 items-center justify-between border-b border-[#e7e1d8] bg-[#faf8f5] px-4 py-2">
+        <div><h2 ref={heading} tabIndex={-1} id="visitor-help-title" className="font-bold focus:outline-none">Ask Power2ADAPT</h2><p className="text-xs text-[#525759]">Find answers from our website</p></div>
+        <button type="button" aria-label="Close help" onClick={close} className="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-white focus-visible:outline"><X aria-hidden="true" className="h-5 w-5"/></button>
+      </header>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
+        <form onSubmit={event=>{event.preventDefault();setAnswers(findVisitorHelp(query));setAllTopics(false);}}>
+          <label htmlFor="visitor-help-question" className="mb-2 block text-sm font-semibold">What would you like to know?</label>
+          <div className="flex gap-2">
+            <input id="visitor-help-question" value={query} onChange={event=>setQuery(event.target.value)} maxLength={220} autoComplete="off" enterKeyHint="search" aria-describedby="visitor-help-privacy"
+              placeholder="e.g. Where do we meet?" className="min-h-11 min-w-0 flex-1 rounded-lg border border-[#b8c4c2] px-3 text-base text-[#2e2600] focus:outline focus:outline-2 focus:outline-[#0a6b66]"/>
+            <button type="submit" aria-label="Find an answer" disabled={!query.trim()} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#0a6b66] text-white disabled:opacity-40 focus-visible:outline focus-visible:outline-offset-2"><Search aria-hidden="true" className="h-5 w-5"/></button>
+          </div>
+          <p id="visitor-help-privacy" className="mt-2 text-xs leading-relaxed text-[#525759]">Use a general question. Please leave out names, contact details and medical information.</p>
+        </form>
+        {answers!==null && <div ref={result} tabIndex={-1} className="mt-4 space-y-3 focus:outline-none" aria-label="Help results">
+          <p className="text-xs font-bold uppercase tracking-wide text-[#0a6b66]" role="status">{answers.length?'Relevant website guidance':'No clear match'}</p>
+          {answers.length?answers.map(answer=><article key={answer.id} className="rounded-xl border border-[#e7e1d8] bg-[#faf8f5] p-3">
+            <h3 className="mb-2 font-bold">{answer.title}</h3><p className="whitespace-pre-line text-sm leading-relaxed text-[#525759]">{answer.text}</p>
+            <a href={answer.href} onClick={close} className="mt-2 inline-flex min-h-11 items-center gap-1 font-bold text-[#0a6b66] underline">{answer.label}<ArrowUpRight aria-hidden="true" className="h-4 w-4"/></a>
+          </article>):<p className="text-sm leading-relaxed text-[#525759]">I couldn’t find a confident match in our website guidance. Try a topic below, or contact Coach Al for an individual answer. This help cannot check live bookings or make decisions about your athlete.</p>}
+        </div>}
+        <div className="mt-4 grid gap-2">
+          <p className="text-xs font-bold uppercase tracking-wide text-[#525759]">{answers===null?'Or choose a topic':'Explore a topic'}</p>
+          {topics.map(answer=><button key={answer.id} type="button" onClick={()=>{setAnswers([answer]);setQuery('');setAllTopics(false);}} className="min-h-11 rounded-lg border border-[#e7e1d8] px-3 py-2 text-left text-sm font-semibold hover:bg-[#faf8f5] focus-visible:outline focus-visible:outline-[#0a6b66]">{answer.title}</button>)}
+          <button type="button" aria-expanded={allTopics} onClick={()=>setAllTopics(!allTopics)} className="min-h-11 text-left text-sm font-bold text-[#0a6b66] underline">{allTopics?'Show fewer topics':'Browse all help topics'}</button>
+        </div>
+      </div>
+      <footer className="shrink-0 border-t border-[#e7e1d8] px-4 py-2">
+        <div className="flex flex-wrap items-center gap-x-4"><a href={DISCOVERY_CALL_URL} onClick={close} className="inline-flex min-h-11 items-center text-sm font-bold text-[#0a6b66] underline">Book a discovery call</a><a href={EMAIL_ENQUIRY_URL} onClick={close} className="inline-flex min-h-11 items-center text-sm font-bold text-[#0a6b66] underline">Email Coach Al</a></div>
+        <p className="text-xs text-[#525759]">Website guidance only. Questions clear when you close help.</p>
+      </footer>
+    </div>}
+  </>;
 }

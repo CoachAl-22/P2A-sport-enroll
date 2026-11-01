@@ -11,6 +11,7 @@ import Foundation from "@/pages/foundation";
 import EmergingAthletes from "@/pages/emerging-athletes";
 import TeamSportSpeed from "@/pages/team-sport-speed";
 import Programs from "@/pages/programs";
+import OneClickChat from "@/components/one-click-chat";
 
 const HighPerformance = lazy(() => import("@/pages/high-performance"));
 const SeniorSquad = lazy(() => import("@/pages/senior-squad"));
@@ -166,6 +167,7 @@ function App() {
         <Toaster />
         <Suspense fallback={<PageSpinner />}>
           <Router />
+          <OneClickChat />
         </Suspense>
       </TooltipProvider>
     </QueryClientProvider>

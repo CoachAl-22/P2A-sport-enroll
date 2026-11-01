@@ -6,8 +6,9 @@ import { EMAIL_ENQUIRY_URL } from '@/content/contact';
 
 export default function EnrollmentGuide() {
   useEffect(() => {
-    if (window.location.hash === '#existing-families') {
-      document.getElementById('existing-families')?.scrollIntoView();
+    const section=window.location.hash.slice(1);
+    if (section === 'existing-families' || section === 'venue-meeting-points') {
+      document.getElementById(section)?.scrollIntoView();
     }
   }, []);
   return <VisitorSupport title="Your first session" intro="A simple guide to getting started, arriving prepared and choosing what comes next.">
