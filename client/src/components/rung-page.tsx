@@ -45,6 +45,10 @@ export default function RungPage({ rung }: { rung: RungContent }) {
         <p className="mb-8 text-lg text-[#525759]">{rung.teaser}</p>
 
         <p className="mb-6 text-[#525759]">Not sure which group fits? <a href={DISCOVERY_CALL_URL} className="font-bold text-[#0a6b66] underline">Book a Discovery Call</a> — a free 15-minute video call with Coach Al.</p>
+        <div className="mb-6 rounded-xl bg-white p-5 text-[#525759]">
+          <p className="font-bold text-[#2e2600]">{rung.price}</p><p className="mt-2 text-sm">{rung.priceNote}</p>
+          <p className="mt-3 text-sm">Every new athlete can try one free session. Arrange it with Coach Al before attending. <a href="/enrollment-guide" className="font-bold text-[#0a6b66] underline">Your first session guide</a>.</p>
+        </div>
         <div className="mb-12">
           <ClassTiles classes={rung.classes} src={src} ctaLabel={rung.ctaLabel} programName={rung.name} />
         </div>

@@ -1,3 +1,4 @@
+import { JoiningJourney } from "@/components/joining-journey";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
@@ -46,13 +47,7 @@ export default function Landing() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Button 
-                onClick={() => setIsLoginModalOpen(true)}
-                variant="ghost"
-                className="hidden sm:inline-flex text-primary-500 hover:text-primary-700 font-medium"
-              >
-                Login
-              </Button>
+              <a href="/enrollment-guide#existing-families" className="hidden sm:inline-flex px-3 py-2 text-sm font-bold text-primary-500 hover:underline">Existing families</a>
               {/* Mobile menu button */}
               <div className="md:hidden">
                 <Button
@@ -137,16 +132,7 @@ export default function Landing() {
                 Contact
               </a>
               <div className="pt-2 border-t border-gray-200">
-                <Button 
-                  onClick={() => {
-                    setIsLoginModalOpen(true);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  variant="ghost"
-                  className="w-full justify-start text-primary-500 hover:text-primary-700 font-medium"
-                >
-                  Login
-                </Button>
+                <a href="/enrollment-guide#existing-families" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 font-bold text-primary-500 hover:underline">Existing families</a>
               </div>
             </div>
           </div>
@@ -155,7 +141,7 @@ export default function Landing() {
 
       <div className="bg-orange-500 px-4 py-3 text-center text-sm font-bold text-white sm:text-base">
         Every new athlete can try a free session. Book a discovery call to find the right group.{" "}
-        <a href="/programs" className="underline underline-offset-2 hover:no-underline">Find your class →</a>
+        <a href="/enrollment-guide" className="underline underline-offset-2 hover:no-underline">How to get started →</a>
       </div>
 
       {/* Hero Section */}
@@ -203,6 +189,8 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><JoiningJourney /></div>
 
       {/* Quick Stats */}
       <section className="py-16 bg-white">
@@ -425,7 +413,8 @@ export default function Landing() {
               <ul className="space-y-2 text-gray-300">
                 <li><a href="https://power2adapt.coach/where-we-train" className="hover:text-white">Where we train</a></li>
                 <li><a href="/parent-help-center" className="hover:text-white">Parent Help Centre</a></li>
-                <li><a href="/enrollment-guide" className="hover:text-white">Enrolment Guide</a></li>
+                <li><a href="/enrollment-guide" className="hover:text-white">Your first session</a></li>
+                <li><a href="/enrollment-guide#existing-families" className="hover:text-white">Existing bookings</a></li>
                 <li><a href="/payment-support" className="hover:text-white">Payment Support</a></li>
                 <li><button onClick={() => setIsContactFormOpen(true)} className="hover:text-white cursor-pointer" data-testid="button-contact-us">Contact Us</button></li>
                 <li><button onClick={() => setIsSchoolPartnershipsModalOpen(true)} className="hover:text-white cursor-pointer">School Partnerships</button></li>

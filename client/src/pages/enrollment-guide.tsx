@@ -1,20 +1,42 @@
+import { useEffect } from 'react';
 import { VisitorSupport, SupportSection } from '@/components/visitor-support';
+import { JoiningJourney } from '@/components/joining-journey';
+import { EMAIL_ENQUIRY_URL } from '@/content/contact';
+
 export default function EnrollmentGuide() {
-  return <VisitorSupport title="Enrolment Guide" intro="Choose a program, confirm the fit and follow the booking or application route for your athlete.">
-    <SupportSection title="1. Find the right program">
-      <p><a className="font-bold underline" href="/programs">Compare programs</a> by school year, goals, venue and commitment. School sessions are for students of that school.</p>
-      <p>If you are unsure, book a discovery call before applying or paying.</p>
+  useEffect(() => {
+    if (window.location.hash === '#existing-families') {
+      document.getElementById('existing-families')?.scrollIntoView();
+    }
+  }, []);
+  return <VisitorSupport title="Your first session" intro="A simple guide to getting started, arriving prepared and choosing what comes next.">
+    <JoiningJourney />
+    <SupportSection title="Before your trial">
+      <p><a className="font-bold underline" href="/programs">Compare programs and session times</a>, then speak with Coach Al to confirm the right group and arrange your free trial. School sessions are for students of that school; ask about community options if needed.</p>
+      <p>Confirm the date, start time, venue and exact meeting point before travelling. An enquiry or application alone does not confirm a place.</p>
     </SupportSection>
-    <SupportSection title="2. Follow your program’s next step">
-      <p>For Foundation, Emerging Athletes and Team Sport Speed, choose a session in the program finder and follow its booking link. The provider will show the information needed to enrol.</p>
-      <p>For Junior Academy and Senior Squad, use the application on the program page. Coach Al will review suitability and confirm the next steps. High Performance starts with a discussion about your athlete’s goals.</p>
+    <SupportSection title="What to bring">
+      <p>Bring a water bottle, wear comfortable clothing you can move in and suitable sports shoes. Check your session confirmation for any program-specific equipment or instructions.</p>
+      <p>Let Coach Al know about anything that may affect safe participation before training, including an injury or support need. Discuss sensitive information directly with the coach.</p>
     </SupportSection>
-    <SupportSection title="3. Confirm details before payment">
-      <p>Check the venue, session time, term dates, total fee, GST and any venue membership costs. Your program page and booking provider describe the relevant option.</p>
-      <p>Submitting an enquiry or application does not by itself confirm a place. Keep your booking confirmation and follow the instructions provided.</p>
+    <SupportSection title="Finding the coach">
+      <p><a className="font-bold underline" href="https://power2adapt.coach/where-we-train">Where we train</a> has venue information. Check your confirmation for the entrance, parking and meeting point; if these are unclear, contact Coach Al before leaving.</p>
+      <p>Allow time to find the group and introduce your athlete. Confirm supervision and collection arrangements with Coach Al before the session.</p>
+      <p>For Ballam Park, check the separate Frankston Athletic Club membership requirements and costs with Coach Al, including what applies to your trial.</p>
     </SupportSection>
-    <SupportSection title="Need to change an existing booking?">
-      <p>Use the provider named in your booking confirmation, or contact Coach Al. Include your name, athlete’s name, program and session. For a callback, include your mobile number and best time to call.</p>
+    <SupportSection title="After the session">
+      <p>Discuss how your athlete found the session and whether the group is a good fit. Before paying, confirm the program, session times, term dates, total fee including GST, inclusions and any additional venue costs.</p>
+      <p>Foundation, Emerging Athletes and Team Sport Speed use the relevant session booking route. Junior Academy and Senior Squad use an application reviewed by Coach Al. High Performance begins with an individual discussion.</p>
+      <p>Keep your booking confirmation and follow its instructions. A trial or application does not guarantee acceptance into a squad.</p>
     </SupportSection>
+    <section id="existing-families" className="scroll-mt-8 rounded-xl border border-[#e7e1d8] bg-white p-6">
+      <h2 className="mb-3 text-2xl font-bold">Already training with us?</h2>
+      <div className="space-y-3 text-[#525759]">
+        <p>To change or review a booking, use the provider and link in your original confirmation. Setmore bookings can be managed through that confirmation; term enrolments follow their enrolment provider’s instructions.</p>
+        <p><a className="font-bold underline" href="/login">Log in to your Power2ADAPT account</a> for your account features. Session changes and payments still use the provider named in your booking confirmation.</p>
+        <p>Need help? <a className="font-bold underline" href={EMAIL_ENQUIRY_URL}>Email Coach Al</a> with your name, athlete’s name, program, session, mobile number and best callback time (Melbourne time).</p>
+        <p><a className="font-bold underline" href="/parent-help-center">Read the cancellation and absence guidance</a> or <a className="font-bold underline" href="/payment-support">get payment help</a>.</p>
+      </div>
+    </section>
   </VisitorSupport>;
 }

@@ -98,6 +98,8 @@ export default function Programs() {
           {" "}for venue details, the weekly schedule and Ballam Park membership information.
         </p>
 
+        <p className="mb-6 rounded-xl border border-[#e7e1d8] bg-white p-4 text-sm text-[#525759]">New here? <a href="/enrollment-guide" className="font-bold text-[#0a6b66] underline">See how to get started and prepare for your free trial</a>. Already training? <a href="/enrollment-guide#existing-families" className="font-bold text-[#0a6b66] underline">Manage an existing booking</a>.</p>
+
         <nav aria-label="Program page sections" className="mb-6 flex flex-wrap gap-4 text-sm font-bold text-[#0a6b66]">
           <a href="#choose-program" className="underline">Find a program</a><a href="#compare-programs" className="underline">Compare programs</a><a href="#term4-times" className="underline">Weekly schedule</a>
         </nav>
@@ -127,6 +129,11 @@ export default function Programs() {
             <p className="text-sm font-bold uppercase tracking-widest text-[#0a6b66]">That is</p>
             <h2 className="mb-3 mt-1 text-3xl font-black text-[#2e2600]">{rung.name}</h2>
             <p className="mb-4 text-[#525759]">{rung.teaser}</p>
+            <div className="mb-6 rounded-xl bg-white p-5 text-[#525759]">
+              <p className="font-bold text-[#0a6b66]">{rung.ageBand}</p>
+              {hasClasses(rung) ? <><p className="mt-2 font-bold text-[#2e2600]">{rung.price}</p><p className="mt-2 text-sm">{rung.priceNote}</p><p className="mt-3 text-sm">Includes: {rung.included.join('; ')}.</p></> : <p className="mt-2">By application. Confirm your training plan, fees and inclusions with Coach Al on the program page before committing.</p>}
+              <p className="mt-3 text-sm">Every new athlete can try one free session. Arrange the trial with Coach Al; availability is confirmed when booked. <a href="/enrollment-guide" className="font-bold text-[#0a6b66] underline">Prepare for your first session</a>.</p>
+            </div>
 
             {hasClasses(rung) && rung.notForWho && (
               <p className="mb-4 rounded-lg bg-white p-4 text-sm text-[#0a6b66]">
