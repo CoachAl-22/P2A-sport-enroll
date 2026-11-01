@@ -33,10 +33,12 @@ export default function ParentHelpCenter() {
     <SupportSection title="Drop-off and collection">
       <p>Parents and caregivers are responsible for their children before and after the designated class time. Please collect your child on time and tell the coach if collection arrangements change.</p>
       <p>If you are delayed, contact the coach promptly. The coach will try to contact you and arrange for another adult to remain with the child rather than leaving them alone.</p>
-      <p>Confirm with Coach Al whether you need to stay during your athlete’s session and agree on the meeting and collection point before attending.</p>
+      <p>Parents do not need to stay during sessions. You are welcome to stay and watch if you wish, particularly for younger athletes in Prep and Year 1. Agree on the meeting and collection point before attending.</p>
     </SupportSection>
-    <SupportSection title="What if the weather changes?">
-      <p>For weather or schedule changes, check your session messages and contact Coach Al if the plan is unclear. Keep your mobile and email current with your booking provider.</p>
+    <SupportSection title="Heat, extreme weather and cancelled classes">
+      <p>Sessions do not run when the temperature is above 36°C or in extreme weather conditions. Venue-specific rules may require earlier cancellation.</p>
+      <p>If Power2ADAPT cancels a class, everyone booked into that class receives a credit.</p>
+      <p>Check your session messages for any changes and contact Coach Al if the plan is unclear. Keep your mobile and email current with your booking provider.</p>
       <p><a className="font-bold underline" href="tel:+61434679395">Call Coach Al on 0434 679 395</a> if you need to clarify arrival or a session change.</p>
     </SupportSection>
     <SupportSection title="I booked but have no confirmation">

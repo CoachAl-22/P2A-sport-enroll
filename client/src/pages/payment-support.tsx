@@ -19,6 +19,10 @@ export default function PaymentSupport() {
       <p>Check whether you received a confirmation or were charged before trying again. Contact the booking provider or Coach Al if anything is unclear.</p>
       <p>Include the athlete’s name, program, booking date and any reference number. Do not email card details or passwords.</p>
     </SupportSection>
+    <SupportSection title="When Power2ADAPT cancels a class">
+      <p>Everyone booked into a class cancelled by Power2ADAPT receives a credit. Sessions do not run above 36°C or in extreme weather conditions; venue-specific rules may require earlier cancellation.</p>
+      <p>This is separate from the late-notice and no-show rules for an athlete’s own absence below.</p>
+    </SupportSection>
     <SupportSection title="Cancellations, refunds and changes">
       <p>Prepaid Setmore appointments are generally rescheduled. Please give more than two hours’ notice if you need to change a booking. For term enrolments, less than two hours’ notice is recorded as late notice; missed sessions without notice are recorded as no-shows. Late notice and no-shows do not receive a credit. Illness and family matters are assessed individually, and Coach Al uses discretion in how the absence is classified. Contact Coach Al to discuss your situation. These arrangements do not limit your rights under Australian Consumer Law.</p>
     </SupportSection>

@@ -23,8 +23,12 @@ export default function EnrollmentGuide() {
     <VenueMeetingPoints />
     <SupportSection title="Arrival and collection">
       <p><a className="font-bold underline" href="https://power2adapt.coach/where-we-train">Where we train</a> has venue information. Check your confirmation for the entrance, parking and meeting point; if these are unclear, contact Coach Al before leaving.</p>
-      <p>Allow time to find the group and introduce your athlete. Parents and caregivers are responsible before and after the designated class time. Collect your child on time, tell the coach about any changes in collection arrangements, and contact the coach promptly if delayed. Confirm whether you need to stay during the session and agree on the collection point with Coach Al.</p>
+      <p>Allow time to find the group and introduce your athlete. Parents and caregivers are responsible before and after the designated class time. Collect your child on time, tell the coach about any changes in collection arrangements, and contact the coach promptly if delayed. Parents do not need to stay during the session, but are welcome to watch, particularly for Prep and Year 1 athletes. Agree on the collection point with Coach Al.</p>
       <p>For Ballam Park, check the separate Frankston Athletic Club membership requirements and costs with Coach Al, including what applies to your trial.</p>
+    </SupportSection>
+    <SupportSection title="Check the weather before leaving">
+      <p>Sessions do not run above 36°C or in extreme weather conditions. Venue-specific rules may require earlier cancellation. Check your session messages and contact Coach Al if you are unsure whether training is going ahead.</p>
+      <p>If Power2ADAPT cancels a class, everyone booked into that class receives a credit.</p>
     </SupportSection>
     <SupportSection title="After the session">
       <p>Discuss how your athlete found the session and whether the group is a good fit. Before paying, confirm the program, session times, term dates, total fee including GST, inclusions and any additional venue costs.</p>
