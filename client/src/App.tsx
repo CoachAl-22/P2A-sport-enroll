@@ -63,6 +63,9 @@ function Router() {
 
   return (
     <Switch>
+          <Route path="/parent-help-center" component={ParentHelpCenter} />
+          <Route path="/enrollment-guide" component={EnrollmentGuide} />
+          <Route path="/payment-support" component={PaymentSupport} />
       {!isAuthenticated ? (
         <>
           <Route path="/" component={Landing} />
@@ -79,9 +82,7 @@ function Router() {
           <Route path="/education" component={Blog} />
           <Route path="/blog/:slug" component={BlogArticle} />
           <Route path="/education/:slug" component={BlogArticle} />
-          <Route path="/parent-help-center" component={ParentHelpCenter} />
-          <Route path="/enrollment-guide" component={EnrollmentGuide} />
-          <Route path="/payment-support" component={PaymentSupport} />
+
           {/* Retired with the enrolment engine (2026-08-03). Redirected, not 404,
               because old confirmation emails and SMS still carry these links. */}
           <Route path="/enrollment/:classId"><Redirect to="/programs" /></Route>

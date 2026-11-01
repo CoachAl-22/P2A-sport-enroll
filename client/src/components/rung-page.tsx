@@ -1,3 +1,4 @@
+import { DISCOVERY_CALL_URL } from "@/content/contact";
 import type { RungContent } from "@/content/rungs";
 import { ClassTiles } from "@/components/class-tiles";
 
@@ -43,10 +44,15 @@ export default function RungPage({ rung }: { rung: RungContent }) {
         <h1 className="mb-4 text-4xl font-black text-[#2e2600] md:text-5xl">{rung.name}</h1>
         <p className="mb-8 text-lg text-[#525759]">{rung.teaser}</p>
 
+        <p className="mb-6 text-[#525759]">Not sure which group fits? <a href={DISCOVERY_CALL_URL} className="font-bold text-[#0a6b66] underline">Book a Discovery Call</a> — a free 15-minute video call with Coach Al.</p>
         <div className="mb-12">
           <ClassTiles classes={rung.classes} src={src} ctaLabel={rung.ctaLabel} programName={rung.name} />
         </div>
 
+        {(rung.slug === "foundation" || rung.slug === "emerging-athletes") && <section className="mb-10 rounded-xl bg-white p-5">
+          <h2 className="mb-3 text-2xl font-bold text-[#0a6b66]">Community sessions</h2>
+          <p className="text-[#525759]">Not at one of the listed schools? Mornington runs Wednesday 4:30pm and Ballam Park runs Thursday 4:30pm. <a href={DISCOVERY_CALL_URL} className="font-bold text-[#0a6b66] underline">Book a Discovery Call</a> to confirm the right group and arrange your athlete’s free trial.</p>
+        </section>}
         <Section title="What this program is about">
           {rung.about.map((para) => (
             <p key={para} className="mb-3 text-[#525759]">
@@ -72,6 +78,7 @@ export default function RungPage({ rung }: { rung: RungContent }) {
           <Bullets items={rung.logistics} />
         </Section>
 
+        <p className="mb-8 text-sm text-[#525759]"><a href="https://power2adapt.coach/where-we-train" className="font-bold text-[#0a6b66] underline">Where we train</a> has venue information and Ballam Park membership details. Check any additional venue costs before booking.</p>
         <Section title="Price">
           <p className="text-3xl font-black text-[#2e2600]">{rung.price}</p>
           <p className="mt-2 text-[#525759]">{rung.priceNote}</p>

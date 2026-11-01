@@ -154,7 +154,7 @@ export default function Landing() {
       </nav>
 
       <div className="bg-orange-500 px-4 py-3 text-center text-sm font-bold text-white sm:text-base">
-        Find your program, venue and session time. View classes or ask Coach Al where to start.{" "}
+        Every new athlete can try a free session. Book a discovery call to find the right group.{" "}
         <a href="/programs" className="underline underline-offset-2 hover:no-underline">Find your class →</a>
       </div>
 
@@ -179,7 +179,7 @@ export default function Landing() {
                 <Button asChild
                   className="bg-secondary-500 hover:bg-secondary-600 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg"
                 >
-                  <a href="https://power2adapt.setmore.com/book?step=additional-products&amp;products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&amp;type=service&amp;staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&amp;staffSelected=false">Book a Discovery Call →</a>
+                  <a href="https://power2adapt.setmore.com/book?step=time-slot&amp;products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&amp;type=service&amp;staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&amp;staffSelected=true">Book a Discovery Call →</a>
                 </Button>
                 <Button 
                   onClick={() => {
@@ -309,7 +309,7 @@ export default function Landing() {
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">View classes</span>
                 </div>
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Monday 3:30 – 4:45pm</span></div>
+                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Monday 3:30pm</span></div>
                   <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Peninsula Grammar</span></div>
                   <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2</span></div>
                 </div>
@@ -329,7 +329,7 @@ export default function Landing() {
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">View classes</span>
                 </div>
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Monday 3:30 – 4:45pm</span></div>
+                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Monday 3:30pm</span></div>
                   <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Peninsula Grammar</span></div>
                   <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Year 3–6</span></div>
                 </div>
@@ -349,7 +349,7 @@ export default function Landing() {
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">View classes</span>
                 </div>
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Thursday 3:30 – 4:45pm</span></div>
+                  <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Thursday 3:30pm</span></div>
                   <div className="flex items-center text-gray-600"><MapPin className="w-4 h-4 mr-2" /><span className="text-sm">Toorak College</span></div>
                   <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2</span></div>
                 </div>
@@ -489,7 +489,7 @@ export default function Landing() {
           </div>
           
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
-            <p>&copy; {new Date().getFullYear()} Power2ADAPT. All rights reserved. | Privacy Policy | Terms of Service</p>
+            <p>&copy; {new Date().getFullYear()} Power2ADAPT. All rights reserved. | <a href="/parent-help-center#policies" className="underline hover:text-white">Safety and program policies</a></p>
           </div>
         </div>
       </footer>

@@ -1,3 +1,4 @@
+import { DISCOVERY_CALL_URL, withCallbackDetails } from "@/content/contact";
 import { useState, type FormEvent } from "react";
 
 const fieldClass =
@@ -19,6 +20,8 @@ export function ProgramEnquiryForm() {
       new FormData(form).forEach((value, key) => {
         if (typeof value === "string") body.append(key, value);
       });
+      body.set("message", withCallbackDetails(String(body.get("message") || ""), String(body.get("best_time") || "")));
+      body.delete("best_time");
       const response = await fetch("/api/programs/enquiry", {
         method: "POST",
         body,
@@ -42,10 +45,11 @@ export function ProgramEnquiryForm() {
   return (
     <section id="p2a-enquiry" aria-labelledby="enquiry-heading" className="mt-10 rounded-xl border border-[#e7e1d8] bg-white p-6">
       <h2 id="enquiry-heading" className="mb-1 text-2xl font-black text-[#2e2600]">Find the right class for your athlete</h2>
-      <p className="mb-5 text-[#525759]">Five quick questions. Coach Al will be in touch within 24 hours.</p>
+      <p className="mb-5 text-[#525759]">Prefer to send an enquiry? Include your mobile number and the best time to call so Coach Al can understand your athlete’s goals and confirm how we can help.</p>
+      <a href={DISCOVERY_CALL_URL} className="mb-5 inline-block font-bold text-[#0a6b66] underline">Book a free 15-minute discovery call instead</a>
       {submitted ? (
         <p role="status" className="rounded-lg bg-[#e8f5f0] p-4 font-bold text-[#0a6b66]">
-          Thanks! Coach Al will be in touch within 24 hours.
+          Thanks — your enquiry has been received. Coach Al will review it and get in touch. You can also book a discovery call above.
         </p>
       ) : (
         <form onSubmit={submit} className="space-y-4">
@@ -59,7 +63,7 @@ export function ProgramEnquiryForm() {
             <label className="text-sm font-semibold text-[#2e2600]">Email *
               <input name="email" type="email" required maxLength={254} autoComplete="email" className={fieldClass} />
             </label>
-            <label className="text-sm font-semibold text-[#2e2600]">Mobile
+            <label className="text-sm font-semibold text-[#2e2600]">Mobile number
               <input name="phone" type="tel" maxLength={40} autoComplete="tel" className={fieldClass} />
             </label>
             <label className="text-sm font-semibold text-[#2e2600]">Athlete's first name
@@ -110,8 +114,11 @@ export function ProgramEnquiryForm() {
           <label className="block text-sm font-semibold text-[#2e2600]">5. Main sport
             <input name="sport" maxLength={120} placeholder="e.g. AFL, netball, athletics" className={fieldClass} />
           </label>
+          <label className="block text-sm font-semibold text-[#2e2600]">Best time to call
+            <input name="best_time" maxLength={150} placeholder="e.g. weekdays after 4pm (Melbourne time)" className={fieldClass} />
+          </label>
           <label className="block text-sm font-semibold text-[#2e2600]">Anything else?
-            <textarea name="message" rows={3} maxLength={2000} className={fieldClass} />
+            <textarea name="message" rows={3} maxLength={1800} className={fieldClass} />
           </label>
           {error && <p role="alert" className="text-sm font-semibold text-red-700">{error}</p>}
           <button type="submit" disabled={sending} className="rounded-full bg-[#f6930e] px-8 py-3 font-bold text-[#2e2600] hover:opacity-90 disabled:opacity-50">

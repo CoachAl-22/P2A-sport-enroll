@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { DISCOVERY_CALL_URL, withCallbackDetails } from "@/content/contact";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -67,6 +69,7 @@ type ContactFormData = z.infer<typeof contactFormSchema>;
 
 export default function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
   const { toast } = useToast();
+  const [bestTime, setBestTime] = useState("");
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
@@ -92,7 +95,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, message: withCallbackDetails(data.message, bestTime) }),
       });
 
       if (!response.ok) {
@@ -101,11 +104,12 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
       }
 
       toast({
-        title: "Message Sent Successfully!",
-        description: "We've received your enquiry and will get back to you within 24 hours. Check your SMS for confirmation.",
+        title: "Enquiry received",
+        description: "Your enquiry has been received. Coach Al will review it and get in touch.",
       });
 
       form.reset();
+      setBestTime("");
       onClose();
     } catch (error: any) {
       toast({
@@ -139,12 +143,15 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
         </DialogHeader>
 
         <Button asChild className="w-full">
-          <a href="https://power2adapt.setmore.com/book?step=additional-products&amp;products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&amp;type=service&amp;staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&amp;staffSelected=false">Book a Free 15-Minute Discovery Call</a>
+          <a href={DISCOVERY_CALL_URL}>Book a Free 15-Minute Discovery Call</a>
         </Button>
         <p className="text-sm text-gray-600">A video call to discuss your athlete, understand their goals and confirm whether we can help.</p>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <label className="block text-sm font-medium text-gray-900" htmlFor="contact-best-time">Best time to call
+              <Input id="contact-best-time" value={bestTime} onChange={(event) => setBestTime(event.target.value)} maxLength={150} placeholder="e.g. weekdays after 4pm (Melbourne time)" className="mt-2" />
+            </label>
             {/* Name */}
             <FormField
               control={form.control}

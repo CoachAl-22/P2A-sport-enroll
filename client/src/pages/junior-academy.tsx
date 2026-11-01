@@ -1,3 +1,4 @@
+import { DISCOVERY_CALL_URL } from "@/content/contact";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/auth/login-modal";
@@ -46,7 +47,7 @@ export default function JuniorAcademy() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/">
-                <h1 className="text-2xl font-heading font-bold text-primary-500 cursor-pointer">Power2ADAPT</h1>
+                <span className="text-2xl font-heading font-bold text-primary-500 cursor-pointer">Power2ADAPT</span>
               </Link>
             </div>
             <div className="hidden md:flex items-baseline space-x-1">
@@ -197,9 +198,9 @@ export default function JuniorAcademy() {
           <div className="text-center mb-10">
             <h2 className="text-3xl font-heading font-bold text-gray-900 mb-4">When Does It Run?</h2>
             <p className="text-gray-600">
-              Four Term 4 sessions a week at Ballam Park, including the new Tuesday 4:30pm
-              session. Your athlete trains up to twice a week, so pick the sessions that fit
-              around school and their sport.
+              Choose from Ballam Park sessions on Monday, Tuesday and Thursday, or shared Mornington
+              sessions on Wednesday and Friday. Your athlete trains up to twice a week. Discuss
+              the sessions that fit around school and their sport with Coach Al.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
@@ -221,6 +222,12 @@ export default function JuniorAcademy() {
           </div>
         </div>
       </section>
+
+      <div className="mx-auto max-w-5xl px-4 pb-8 text-center">
+        <a href={DISCOVERY_CALL_URL} className="inline-block rounded-lg bg-secondary-500 px-6 py-3 font-bold text-white">Book a Discovery Call</a>
+        <p className="mt-3 text-gray-600">A free 15-minute video call to discuss your athlete and confirm the right fit. Every new athlete can arrange a free trial session.</p>
+        <a href="https://power2adapt.coach/where-we-train" className="mt-3 inline-block font-semibold text-primary-600 underline">Venue details and Ballam Park membership costs</a>
+      </div>
 
       {/* Pricing */}
       <section className="py-16 bg-gray-50">

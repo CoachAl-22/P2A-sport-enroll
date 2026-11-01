@@ -19,7 +19,7 @@ export interface FinderChoice {
 
 export const FINDER_CHOICES: FinderChoice[] = [
   { id: "prep-2", label: "Prep to Year 2", note: "About 5 to 7", rung: "foundation" },
-  { id: "years-3-6", label: "Years 3 to 6", note: "School programs; Year 6 can also explore Junior Academy", rung: "emerging-athletes" },
+  { id: "years-3-6", label: "Years 3 to 6", note: "School or community sessions; Year 6 can explore Junior Academy", rung: "emerging-athletes" },
   { id: "years-6-9", label: "Years 6 to 9", note: "Individual exceptions considered", rung: "junior-academy" },
   { id: "age-16-plus", label: "Year 10 and above", note: "Explore Senior Squad; placement with Coach Al", rung: "senior-squad" },
   {

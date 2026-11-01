@@ -1,3 +1,5 @@
+import { TRAINING_SCHEDULE } from "@/content/schedule";
+import { ProgramComparison } from "@/components/program-comparison";
 import { useState } from "react";
 import { FINDER_CHOICES, resolveRung, type FinderChoiceId } from "@/content/finder";
 import { RUNGS, type RungContent, type RungSummary, type RungApplyCard } from "@/content/rungs";
@@ -45,7 +47,7 @@ function BookACall({ label, src }: { label: string; src: string }) {
         href={`/enrol/book-a-call?src=${src}`}
         className="inline-block rounded-full border-2 border-[#0a6b66] px-6 py-3 font-bold uppercase tracking-wide text-[#0a6b66] hover:bg-[#0a6b66] hover:text-white"
       >
-        Book a discovery call
+        Book a Discovery Call
       </a>
     </div>
   );
@@ -96,39 +98,10 @@ export default function Programs() {
           {" "}for venue details, the weekly schedule and Ballam Park membership information.
         </p>
 
-        <section className="mb-10" aria-labelledby="term4-times">
-          <h2 id="term4-times" className="mb-3 text-2xl font-black text-[#2e2600]">Term 4 class times</h2>
-          <p className="mb-2 text-sm text-[#525759] sm:hidden">Swipe sideways to see the venue →</p>
-          <div className="overflow-x-auto rounded-xl border border-[#e7e1d8] bg-white">
-            <table className="w-full min-w-[590px] text-left text-sm text-[#2e2600]">
-              <thead className="bg-[#f1ede7]">
-                <tr>{["Class", "Day", "Time", "Venue"].map(label =>
-                  <th key={label} scope="col" className="px-4 py-3 font-bold">{label}</th>
-                )}</tr>
-              </thead>
-              <tbody className="divide-y divide-[#e7e1d8]">
-                {[
-                  ["Foundation (Prep to Gr 2)", "Monday", "3:30 to 4:45pm", "Peninsula Grammar (school students)"],
-                  ["Emerging Athletes (Gr 3 to 6)", "Monday", "3:30 to 4:45pm", "Peninsula Grammar (school students)"],
-                  ["Foundation (Prep to Gr 2)", "Thursday", "3:30 to 4:45pm", "Toorak College (school students)"],
-                  ["Emerging Athletes (Gr 3 to 6)", "Thursday", "3:30 to 4:45pm", "Toorak College (school students)"],
-                  ["Junior Academy", "Tuesday", "4:30pm", "Frankston (new this term)"],
-                  ["Junior Academy / Senior Squad", "Mon, Tue, Thu", "5:30 to 7:00pm", "Ballam Park, Frankston"],
-                  ["Senior Squad / Team Sport Speed", "Wednesday", "5:30pm", "Mornington Athletics Track"],
-                  ["Team Sport Speed", "Friday", "4:30pm and 5:30pm", "Mornington Athletics Track"],
-                ].map(([name, day, time, venue], i) =>
-                  <tr key={i}>
-                    {[name, day, time, venue].map((value, j) =>
-                      <td key={j} className="px-4 py-3 align-top">{value}</td>
-                    )}
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-2 text-xs text-[#525759]">School sessions are for students of that school. Select a year level below to find an enrolment option.</p>
-        </section>
-
+        <nav aria-label="Program page sections" className="mb-6 flex flex-wrap gap-4 text-sm font-bold text-[#0a6b66]">
+          <a href="#choose-program" className="underline">Find a program</a><a href="#compare-programs" className="underline">Compare programs</a><a href="#term4-times" className="underline">Weekly schedule</a>
+        </nav>
+        <h2 id="choose-program" className="mb-3 text-2xl font-black text-[#2e2600]">Choose your athlete’s stage</h2>
         <div className="grid gap-3 sm:grid-cols-2" data-testid="finder-choices">
           {FINDER_CHOICES.map((c) => (
             <button
@@ -172,7 +145,7 @@ export default function Programs() {
             {rung.slug === "emerging-athletes" && (
               <p className="mt-4 rounded-lg bg-white p-4 text-sm text-[#525759]">
                 Junior Academy is for Years 6 to 9, with individual exceptions. Year 6 athletes can
-                also join Emerging Athletes through their school. Ask Coach Al which group fits.
+                also join Emerging Athletes through school or community sessions. Ask Coach Al which group fits.
               </p>
             )}
 
@@ -208,8 +181,14 @@ export default function Programs() {
               </>
             ) : null}
 
+            {hasClasses(rung) && (rung.slug === "foundation" || rung.slug === "emerging-athletes") && (
+              <div className="mt-6 rounded-lg bg-white p-5 text-[#525759]">
+                <h3 className="mb-2 font-bold text-[#2e2600]">Looking for a community session?</h3>
+                <p>Foundation and Emerging Athletes also train at Mornington on Wednesday 4:30pm and Ballam Park on Thursday 4:30pm. <a href="/enrol/book-a-call?src=community-finder" className="font-bold text-[#0a6b66] underline">Book a Discovery Call</a> to confirm the right group and arrange a free trial.</p>
+              </div>
+            )}
             <BookACall
-              label="If none of those days or venues work, have a quick chat and I will sort it out."
+              label="A free 15-minute video call to understand your athlete’s goals and confirm whether we can help."
               src={`${finderSrc}-${rung.slug}`}
             />
           </div>
@@ -221,6 +200,33 @@ export default function Programs() {
             src={finderSrc}
           />
         )}
+
+        <p className="mt-6 text-sm text-[#525759]">Ballam Park training requires a separate Frankston Athletic Club membership. <a href="https://power2adapt.coach/where-we-train#frankston" className="font-bold underline">Check the membership categories and current costs</a> before booking. Other listed venues do not require this additional membership.</p>
+        <ProgramComparison />
+
+        <section className="mb-10" aria-labelledby="term4-times">
+          <h2 id="term4-times" className="mb-3 text-2xl font-black text-[#2e2600]">Weekly training schedule</h2>
+          <p className="mb-2 text-sm text-[#525759] sm:hidden">Swipe sideways to see the venue →</p>
+          <div className="overflow-x-auto rounded-xl border border-[#e7e1d8] bg-white">
+            <table className="w-full min-w-[590px] text-left text-sm text-[#2e2600]">
+              <thead className="bg-[#f1ede7]">
+                <tr>{["Class", "Day", "Time", "Venue"].map(label =>
+                  <th key={label} scope="col" className="px-4 py-3 font-bold">{label}</th>
+                )}</tr>
+              </thead>
+              <tbody className="divide-y divide-[#e7e1d8]">
+                {TRAINING_SCHEDULE.map((session, i) =>
+                  <tr key={i}>
+                    {[session.label, session.day, session.time,
+                      `${session.venue}${session.studentsOnly ? ` (${session.studentsOnly} students only)` : session.waitlist ? " — waitlist only" : session.accessNote ? ` — ${session.accessNote}` : " — open to everyone"}`
+                    ].map((value, j) => <td key={j} className="px-4 py-3 align-top">{value}</td>)}
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-[#525759]">Schedule aligned with Where we train. School sessions are for students of that school. Community Foundation and Emerging Athletes sessions can be arranged with Coach Al; Tuesday 4:30pm at Ballam Park is Hurdle Squad; discuss placement with Coach Al. High Performance is by prior booking with no fixed slot.</p>
+        </section>
 
         <ProgramEnquiryForm />
 

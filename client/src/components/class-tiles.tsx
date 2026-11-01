@@ -31,7 +31,7 @@ export function ClassTiles({
         <a
           key={cls.slug}
           href={`/enrol/${cls.slug}?src=${src}`}
-          className="flex items-center justify-between rounded-xl border-2 border-[#e7e1d8] bg-white p-4 shadow-sm transition hover:border-[#12d4c8] hover:shadow-md"
+          className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border-2 border-[#e7e1d8] bg-white p-4 shadow-sm transition hover:border-[#12d4c8] hover:shadow-md"
           data-testid={`enrol-cta-${cls.slug}`}
         >
           <span className="text-[#525759]">
@@ -50,7 +50,7 @@ export function ClassTiles({
               <span className="mt-1 block text-sm">Open to everyone</span>
             )}
           </span>
-          <span className="font-bold uppercase tracking-wide text-[#f6930e]">
+          <span className="shrink-0 font-bold uppercase tracking-wide text-[#b45d00]">
             {cls.waitlist ? "Join waitlist" : ctaLabel}
           </span>
         </a>

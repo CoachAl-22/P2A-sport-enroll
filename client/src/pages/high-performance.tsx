@@ -315,17 +315,9 @@ export default function HighPerformance() {
                 </div>
                 
                 <div className="bg-gray-900 rounded-lg p-4">
-                  <video 
-                    controls 
-                    className="w-full h-auto rounded-lg"
-                    preload="metadata"
-                  >
-                    <source src="/images/reel_edge10 alistair iv (1).MP4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                  <p className="text-center text-gray-400 text-sm mt-2">
-                    Performance testing demonstration by Head Coach Alistair Tait
-                  </p>
+                  <h4 className="text-xl font-bold text-white mb-3">Understand your athlete’s next step</h4>
+                  <p className="text-gray-300 mb-4">Talk through your goals, current training and the areas you want to improve with Coach Al.</p>
+                  <a href="https://power2adapt.setmore.com/book?step=time-slot&amp;products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&amp;type=service&amp;staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&amp;staffSelected=true" className="inline-block rounded-lg bg-secondary-500 px-5 py-3 font-semibold text-white">Book a Discovery Call</a>
                 </div>
               </div>
             </div>
@@ -361,8 +353,8 @@ export default function HighPerformance() {
                 asChild
                 className="bg-secondary-500 hover:bg-secondary-600 text-white font-semibold px-8 py-3"
               >
-                <a href="https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0" target="_blank" rel="noopener noreferrer">
-                  Book Free Discovery Call
+                <a href="https://power2adapt.setmore.com/book?step=time-slot&amp;products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&amp;type=service&amp;staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&amp;staffSelected=true" target="_blank" rel="noopener noreferrer">
+                  Book a Discovery Call
                 </a>
               </Button>
               <Button 

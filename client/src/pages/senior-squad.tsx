@@ -20,7 +20,7 @@ export default function SeniorSquad() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <Link href="/">
-                  <h1 className="text-2xl font-heading font-bold text-primary-500 cursor-pointer">Power2ADAPT</h1>
+                  <span className="text-2xl font-heading font-bold text-primary-500 cursor-pointer">Power2ADAPT</span>
                 </Link>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function SeniorSquad() {
           <div className="text-center mb-10">
             <h2 className="text-3xl font-heading font-bold text-gray-900 mb-4">When Does It Run?</h2>
             <p className="text-gray-600">
-              Four Term 4 sessions a week at Ballam Park and Mornington, all coached by Alistair.
+              Weekly squad sessions at Ballam Park and Mornington, all coached by Alistair.
               Pick the sessions that fit around school, work and your competition calendar.
             </p>
           </div>
@@ -385,8 +385,8 @@ export default function SeniorSquad() {
               size="lg"
               className="bg-secondary-500 hover:bg-secondary-600 text-white font-bold px-8 py-3 text-lg"
             >
-              <a href="https://power2adapt.setmore.com/services/a9a6a66a-9c61-4bec-829a-84d78687c2c0" target="_blank" rel="noopener noreferrer">
-                Book Free Discovery Call
+              <a href="https://power2adapt.setmore.com/book?step=time-slot&amp;products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&amp;type=service&amp;staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&amp;staffSelected=true" target="_blank" rel="noopener noreferrer">
+                Book a Discovery Call
               </a>
             </Button>
             <Button 

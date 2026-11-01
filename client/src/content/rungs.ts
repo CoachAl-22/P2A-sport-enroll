@@ -1,3 +1,4 @@
+import { sessionsFor } from "@/content/schedule";
 export type RungSlug =
   | "foundation"
   | "emerging-athletes"
@@ -21,20 +22,9 @@ export interface SessionTime {
   time: string;
 }
 
-// The Term 4 table is the source of truth for by-application sessions.
-const JUNIOR_SESSIONS: SessionTime[] = [
-  { venue: "Ballam Park, Frankston", day: "Tuesday", time: "4:30pm" },
-  { venue: "Ballam Park, Frankston", day: "Monday", time: "5:30pm to 7:00pm" },
-  { venue: "Ballam Park, Frankston", day: "Tuesday", time: "5:30pm to 7:00pm" },
-  { venue: "Ballam Park, Frankston", day: "Thursday", time: "5:30pm to 7:00pm" },
-];
-
-const SENIOR_SESSIONS: SessionTime[] = [
-  { venue: "Ballam Park, Frankston", day: "Monday", time: "5:30pm to 7:00pm" },
-  { venue: "Ballam Park, Frankston", day: "Tuesday", time: "5:30pm to 7:00pm" },
-  { venue: "Ballam Park, Frankston", day: "Thursday", time: "5:30pm to 7:00pm" },
-  { venue: "Mornington Athletics Track", day: "Wednesday", time: "5:30pm" },
-];
+// Shared with the finder table and squad detail pages.
+const JUNIOR_SESSIONS: SessionTime[] = sessionsFor("junior-academy");
+const SENIOR_SESSIONS: SessionTime[] = sessionsFor("senior-squad");
 
 // Fields every hub card needs, whether the rung has a full detail page or not.
 interface RungCard {
@@ -125,7 +115,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       "Games and relays that get them repeating that skill fifty times without noticing",
       "A finish, one win named out loud, and back to you",
     ],
-    included: COMMON_INCLUDED,
+    included: ["My Athletic Journey app access for the whole term"],
     logistics: [
       "One session a week, during the school term",
       "Runners and clothes they can move in, plus a drink bottle",
@@ -137,8 +127,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ctaLabel: "Enrol now",
     enrolSlug: "foundation",
     classes: [
-      { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm to 4:45pm", studentsOnly: "Peninsula Grammar" },
-      { slug: "toorak-foundation-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm to 4:45pm", studentsOnly: "Toorak College" },
+      { slug: "pg-foundation-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
+      { slug: "toorak-foundation-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm", studentsOnly: "Toorak College" },
     ],
   },
 
@@ -158,7 +148,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       "You would rather they built a base now than chase a quick fix later",
     ],
     notForWho:
-      "Junior Academy is for Years 6 to 9, with individual exceptions. Year 6 athletes can also join Emerging Athletes through their school; ask Coach Al which group fits. Year 2 or below, start at Foundation. Year 10 and above, explore Senior Squad and discuss placement with Coach Al.",
+      "Junior Academy is for Years 6 to 9, with individual exceptions. Year 6 athletes can also join Emerging Athletes through school or community sessions; ask Coach Al which group fits. Year 2 or below, start at Foundation. Year 10 and above, explore Senior Squad and discuss placement with Coach Al.",
     session: [
       "Warm up as a group while I watch how each athlete is moving that day",
       "One technical cue for the session, drilled properly, rather than six drilled badly",
@@ -166,7 +156,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       "Strength and landing work suited to their stage, not their age",
       "Cool down, and every athlete leaves knowing the one thing to think about this week",
     ],
-    included: COMMON_INCLUDED,
+    included: ["My Athletic Journey app access for the whole term"],
     logistics: [
       "One session a week, during the school term",
       "Runners and training clothes, plus a drink bottle",
@@ -178,8 +168,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
     ctaLabel: "Enrol now",
     enrolSlug: "emerging-athletes",
     classes: [
-      { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm to 4:45pm", studentsOnly: "Peninsula Grammar" },
-      { slug: "toorak-emerging-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm to 4:45pm", studentsOnly: "Toorak College" },
+      { slug: "pg-emerging-mon", venue: "Peninsula Grammar", day: "Monday", time: "3:30pm", studentsOnly: "Peninsula Grammar" },
+      { slug: "toorak-emerging-thu", venue: "Toorak College", day: "Thursday", time: "3:30pm", studentsOnly: "Toorak College" },
     ],
   },
 
@@ -300,7 +290,7 @@ export const SESSION_VENUES: Record<"junior-academy" | "senior-squad", { venue: 
 // The Senior Squad page explains the shared Wednesday track session separately.
 export const MORNINGTON_SHARED_NOTE: Partial<Record<RungSlug, string>> = {
   "senior-squad":
-    "Wednesday track sessions are shared with Team Sport Speed. You train alongside them on your own Senior Squad programming.",
+    "Wednesday and Friday track sessions are shared with Team Sport Speed and Junior Academy. You train alongside them on your own Senior Squad programming.",
 };
 
 export function RUNG_BY_SLUG(slug: RungSlug): RungContent | RungSummary {
