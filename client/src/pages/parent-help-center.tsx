@@ -19,7 +19,7 @@ export default function ParentHelpCenter() {
     <section id="policies" className="rounded-xl border border-[#e7e1d8] bg-white p-6">
       <h2 className="mb-3 text-2xl font-bold">Safety and program policies</h2>
       <p className="text-[#525759]">Please tell Coach Al about relevant medical conditions, allergies and injuries before training, and keep emergency contact information current. Respect coaches, other athletes and equipment.</p>
-      <p className="mt-3 text-[#525759]">For a prepaid Setmore appointment cancelled with less than two hours’ notice, contact Coach Al to reschedule. For term bookings, less than two hours’ notice is recorded as late notice and no credit is given; a no-show also receives no credit. Illness and family circumstances are considered individually, and Coach Al may offer a makeup session or refund. These arrangements do not limit your rights under Australian Consumer Law.</p>
+      <p className="mt-3 text-[#525759]">Prepaid one-on-one sessions are generally rescheduled. Please give more than two hours’ notice if you need to change a Setmore booking. For term enrolments, less than two hours’ notice is recorded as late notice and no credit is given. Coach Al may offer a discretionary credit for medical or family issues, and may occasionally offer a refund when circumstances change. Contact Coach Al to discuss your situation. These arrangements do not limit your rights under Australian Consumer Law.</p>
       <p className="mt-3 text-[#525759]">Ask Coach Al for the policies that apply to your program before booking. For privacy questions or a request to access or correct your information, email info@power2adapt.com.</p>
     </section>
     <SupportSection title="What’s included?">
