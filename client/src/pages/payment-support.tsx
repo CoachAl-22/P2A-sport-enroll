@@ -15,7 +15,7 @@ export default function PaymentSupport() {
       <p>Include the athlete’s name, program, booking date and any reference number. Do not email card details or passwords.</p>
     </SupportSection>
     <SupportSection title="Cancellations, refunds and changes">
-      <p>Prepaid one-on-one sessions are generally rescheduled. Please give more than two hours’ notice if you need to change a Setmore booking. For term enrolments, less than two hours’ notice is recorded as late notice and no credit is given. Coach Al may offer a discretionary credit for medical or family issues, and may occasionally offer a refund when circumstances change. Contact Coach Al to discuss your situation. These arrangements do not limit your rights under Australian Consumer Law.</p>
+      <p>Prepaid Setmore appointments are generally rescheduled. Please give more than two hours’ notice if you need to change a booking. For term enrolments, less than two hours’ notice is recorded as late notice; missed sessions without notice are recorded as no-shows. Late notice and no-shows do not receive a credit. Illness and family matters are assessed individually, and Coach Al uses discretion in how the absence is classified. Contact Coach Al to discuss your situation. These arrangements do not limit your rights under Australian Consumer Law.</p>
     </SupportSection>
   </VisitorSupport>;
 }
