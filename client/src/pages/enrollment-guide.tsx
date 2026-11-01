@@ -42,7 +42,7 @@ export default function EnrollmentGuide() {
     <section id="existing-families" className="scroll-mt-8 rounded-xl border border-[#e7e1d8] bg-white p-6">
       <h2 className="mb-3 text-2xl font-bold">Already training with us?</h2>
       <div className="space-y-3 text-[#525759]">
-        <p>To change or review a booking, use the provider and link in your original confirmation. Setmore bookings can be managed through that confirmation; term enrolments follow their enrolment provider’s instructions.</p>
+        <p>To change or review a booking, use the link provided in your original booking confirmation. Setmore appointments can be managed through that link; for term enrolments, follow the instructions in your confirmation.</p>
         <p><a className="font-bold underline" href="/login">Log in to your Power2ADAPT account</a> for your account features. Session changes and payments still use the provider named in your booking confirmation.</p>
         <p>Need help? <a className="font-bold underline" href={EMAIL_ENQUIRY_URL}>Email Coach Al</a> with your name, athlete’s name, program, session, mobile number and best callback time (Melbourne time).</p>
         <p><a className="font-bold underline" href="/parent-help-center">Read the cancellation and absence guidance</a> or <a className="font-bold underline" href="/payment-support">get payment help</a>.</p>
