@@ -13,6 +13,10 @@ describe('visitor questions find approved guidance', () => {
     ['I missed a class with less than two hours notice', 'absence'],
     ['Can I reschedule my Setmore appointment?', 'absence'],
     ['Can we try a free trial?', 'trial'],
+    ['Take me straight to enrolment or book a session', 'enrol'],
+    ['Book a session', 'enrol'],
+    ['Make a new booking', 'enrol'],
+    ['I want to book a free trial', 'trial'],
     ['How much does Team Sport Speed cost?', 'fees'],
     ['Does a parent have to stay and watch?', 'parents'],
     ['What should we bring to our first session?', 'first-session'],
@@ -28,6 +32,9 @@ describe('visitor questions find approved guidance', () => {
     ['My child has knee pain, can they train?', 'health'],
   ])('routes "%s" to the relevant topic', (query, id) => {
     expect(findVisitorHelp(query)[0]?.id).toBe(id);
+  });
+  it('does not offer paid booking routes for a free trial question',()=>{
+    expect(findVisitorHelp('I want to book a free trial').map(a=>a.id)).not.toContain('enrol');
   });
   it('does not invent an answer to unrelated or instruction-like questions', () => {
     expect(findVisitorHelp('Who won the football grand final?')).toEqual([]);

@@ -1,4 +1,5 @@
 import { DISCOVERY_CALL_URL, EMAIL_ENQUIRY_URL } from './contact';
+import { RUNG_PAGES } from './rungs';
 
 export type HelpAnswer = { id:string; title:string; text:string; label:string; href:string; matches:[RegExp,number][] };
 
@@ -21,7 +22,7 @@ export const VISITOR_HELP: HelpAnswer[] = [
   {id:'venues',title:'Venues and session times',text:'We train at Ballam Park Athletic Track, Mornington Athletics Track, Peninsula Grammar and Toorak College. School sessions are for students of that school. Check Where we train and confirm the current group, date and time with Coach Al before attending. This help does not show live availability.',label:'Where we train',href:'https://power2adapt.coach/where-we-train',matches:[[/\b(venues?|where|directions|parking|meet|location|pickup|pick up)\b/,3],[/\b(timetable|schedule|times?|when|tuesday|wednesday|thursday|friday|hurdles?)\b/,7]]},
   {id:'images',title:'Photo and video choices',text:'Private technique videos and public website/social sharing have separate permissions. For under-18 athletes, parent/guardian and athlete must both agree before recording or public use. Saying no does not affect participation. Coach Al currently keeps private videos in athlete-specific Google Drive folders accessible only to him and sends feedback copies to parents through iMessage or WhatsApp. Contact him to change permission or request removal.',label:'Photos, videos and your choices',href:'/photos-and-videos',matches:[[/\b(photos?|images?|videos?|filming|recording|consent|permission|social|privacy|whatsapp|imessage)\b/,9]]},
   {id:'inclusions',title:'What is included?',text:'Foundation and Emerging Athletes include My Athletic Journey app access. Junior Academy and Senior Squad include individual programming, progress testing and app support. High Performance includes its current physio partnership and advanced performance testing. See your program page for membership details.',label:'Compare program inclusions',href:'/programs',matches:[[/\b(include|included|inclusions?|programming|testing|maj|my athletic journey|app)\b/,8]]},
-  {id:'enrol',title:'How to join',text:'School classes and Team Sport Speed use the booking links on their program pages. Junior Academy and Senior Squad use applications reviewed by Coach Al. High Performance begins with an individual discussion. If unsure, start with a discovery call and arrange your free trial.',label:'Find your program',href:'/programs',matches:[[/\b(enrol\w*|enroll\w*|applications?|apply|join|sign up)\b/,7]]},
+  {id:'enrol',title:'Enrol or book a session',text:'Choose your school class, session or squad application below. Free trials and High Performance start with Coach Al.',label:'Compare all programs',href:'/programs',matches:[[/\b(enrol\w*|enroll\w*|applications?|apply|join|sign up|book)\b/,7],[/\b(make|new)\b.*\bbooking\b|\bbooking (a |an )?session\b/,8]]},
   {id:'contact',title:'Talk to Coach Al',text:'Book a free 15-minute video discovery call to discuss your athlete’s goals and confirm how we can help. Prefer email? Use info@power2adapt.com and include your mobile number and best callback time (Melbourne time).',label:'Book a Discovery Call',href:DISCOVERY_CALL_URL,matches:[[/\b(contact|coach al|email|phone|call|talk|human|someone|discovery)\b/,4]]},
   {id:'health',title:'Discuss health and individual needs directly',text:'This help cannot assess injuries, give medical advice or decide whether an athlete can safely train. Please discuss relevant health or support needs directly with Coach Al before the session. Do not enter medical details here.',label:'Email Coach Al',href:EMAIL_ENQUIRY_URL,matches:[]},
 ];
@@ -34,7 +35,7 @@ export function findVisitorHelp(query:string): HelpAnswer[] {
   const venueIds=['peninsula','ballam','mornington','toorak'];
   const ranked=VISITOR_HELP.map(answer=>({answer,score:answer.matches.reduce((sum,[pattern,weight])=>sum+(pattern.test(text)?weight:0),0)}))
     .map(item=>({...item,score:item.score+(meeting && item.score>0 && venueIds.includes(item.answer.id)?6:0)}))
-    .filter(item=>item.score>=3).sort((a,b)=>b.score-a.score);
+    .filter(item=>item.score>=3 && !(item.answer.id==='enrol' && /\b(trials?|free|try|discovery|call|reschedul\w*|cancel\w*)\b/.test(text))).sort((a,b)=>b.score-a.score);
   return ranked.filter(item=>item.score>=ranked[0].score-2).slice(0,3).map(item=>item.answer);
 }
 
@@ -42,3 +43,30 @@ const PUBLIC_HELP_PATHS=new Set(['/', '/programs', '/foundation', '/emerging-ath
 export function showVisitorHelp(path:string):boolean {
   return PUBLIC_HELP_PATHS.has(path) || /^\/(blog|education)\/[^/]+$/.test(path);
 }
+
+
+export const BOOKING_OPTIONS = [
+  {
+    id:'school', title:'School classes',
+    note:'For students of that school only. These links open the SportsBiz timetable; your class is not preselected. Choose the correct term, school and class before paying.',
+    links:[RUNG_PAGES.foundation,RUNG_PAGES['emerging-athletes']].flatMap(program=>program.classes.map(session=>({
+      label:`${session.venue} · ${program.name} (${program.ageBand}) · ${session.day} ${session.time}`,
+      href:`/enrol/${session.slug}`,
+    }))),
+  },
+  {
+    id:'sessions', title:'Team Sport Speed sessions',
+    note:'Ages 13+. $33 including GST per class. Choose your date in Setmore and check Melbourne time and the final total. Arrange a free trial with Coach Al first.',
+    links:RUNG_PAGES['team-sport-speed'].classes.map(session=>({label:`${session.day} ${session.time} · ${session.venue}`,href:`/enrol/${session.slug}`})),
+  },
+  {
+    id:'applications', title:'Junior Academy / Senior Squad applications',
+    note:'Applications are reviewed by Coach Al; submitting one does not confirm a place. Junior Academy is Years 6–9 with individual exceptions; discuss Senior Squad placement with Coach Al.',
+    links:[{label:'Apply for Junior Academy',href:'/junior-academy-application.html'},{label:'Apply for Senior Squad',href:'/senior-squad-application.html'}],
+  },
+  {
+    id:'trial', title:'Arrange a free trial',
+    note:'Every new athlete can have a free trial. Book a discovery call so Coach Al can confirm the group and arrange it. A paid session booking is not a free-trial booking.',
+    links:[{label:'Arrange my trial with Coach Al',href:DISCOVERY_CALL_URL}],
+  },
+];

@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'wouter';
 import { MessageCircle, X, Search, ArrowUpRight } from 'lucide-react';
 import { DISCOVERY_CALL_URL, EMAIL_ENQUIRY_URL } from '@/content/contact';
-import { findVisitorHelp, HelpAnswer, showVisitorHelp, VISITOR_HELP } from '@/content/visitor-help';
+import { BOOKING_OPTIONS, findVisitorHelp, HelpAnswer, showVisitorHelp, VISITOR_HELP } from '@/content/visitor-help';
 
-const QUICK_TOPICS=['programs','first-session','existing','contact'];
+const QUICK_TOPICS=['enrol','programs','first-session','existing','contact'];
 
 export default function OneClickChat() {
   const [location]=useLocation();
@@ -43,7 +43,7 @@ export default function OneClickChat() {
       <MessageCircle aria-hidden="true" className="h-5 w-5"/><span>Help</span>
     </button>
     {open && <div ref={panel} id="visitor-help-panel" role="region" aria-labelledby="visitor-help-title"
-      className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-3 right-3 z-40 flex max-h-[calc(100dvh-90px-env(safe-area-inset-bottom))] w-auto sm:left-auto sm:w-[380px] flex-col overflow-hidden rounded-2xl border border-[#e7e1d8] bg-white text-[#2e2600] shadow-2xl">
+      className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] left-3 right-3 z-50 flex max-h-[calc(100dvh-90px-env(safe-area-inset-bottom))] w-auto sm:left-auto sm:w-[380px] flex-col overflow-hidden rounded-2xl border border-[#e7e1d8] bg-white text-[#2e2600] shadow-2xl">
       <header className="flex shrink-0 items-center justify-between border-b border-[#e7e1d8] bg-[#faf8f5] px-4 py-2">
         <div><h2 ref={heading} tabIndex={-1} id="visitor-help-title" className="font-bold focus:outline-none">Ask Power2ADAPT</h2><p className="text-xs text-[#525759]">Find answers from our website</p></div>
         <button type="button" aria-label="Close help" onClick={close} className="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-white focus-visible:outline"><X aria-hidden="true" className="h-5 w-5"/></button>
@@ -62,6 +62,15 @@ export default function OneClickChat() {
           <p className="text-xs font-bold uppercase tracking-wide text-[#0a6b66]" role="status">{answers.length?'Relevant website guidance':'No clear match'}</p>
           {answers.length?answers.map(answer=><article key={answer.id} className="rounded-xl border border-[#e7e1d8] bg-[#faf8f5] p-3">
             <h3 className="mb-2 font-bold">{answer.title}</h3><p className="whitespace-pre-line text-sm leading-relaxed text-[#525759]">{answer.text}</p>
+            {answer.id==='enrol' && <div className="mt-3 space-y-2">
+              {BOOKING_OPTIONS.map(group=><details key={group.id} className="rounded-lg border border-[#d4dfdc] bg-white">
+                <summary className="min-h-11 cursor-pointer rounded-lg px-3 py-3 text-sm font-bold text-[#0a6b66] focus-visible:outline focus-visible:outline-[#0a6b66]">{group.title}</summary>
+                <div className="space-y-2 px-3 pb-3">
+                  <p className="text-sm leading-relaxed text-[#525759]">{group.note}</p>
+                  {group.links.map(link=><a key={link.href} href={link.href} onClick={close} className="flex min-h-11 items-center justify-between gap-2 rounded-lg border border-[#e7e1d8] px-3 py-3 text-sm font-bold text-[#0a6b66] underline hover:bg-[#faf8f5] focus-visible:outline focus-visible:outline-[#0a6b66]"><span>{link.label}</span><ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0"/></a>)}
+                </div>
+              </details>)}
+            </div>}
             <a href={answer.href} onClick={close} className="mt-2 inline-flex min-h-11 items-center gap-1 font-bold text-[#0a6b66] underline">{answer.label}<ArrowUpRight aria-hidden="true" className="h-4 w-4"/></a>
           </article>):<p className="text-sm leading-relaxed text-[#525759]">I couldn’t find a confident match in our website guidance. Try a topic below, or contact Coach Al for an individual answer. This help cannot check live bookings or make decisions about your athlete.</p>}
         </div>}

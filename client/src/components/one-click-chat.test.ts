@@ -49,3 +49,34 @@ describe('quiet visitor help',()=>{
     expect(host.querySelector('input')).toBeNull();
   });
 });
+
+describe('direct booking help',()=>{
+  it('offers enrolment in the opening menu without a typed question',async()=>{
+    await click('Open Power2ADAPT help');
+    expect(button('Enrol or book a session')).toBeDefined();
+  });
+  it('offers the school, session, squad and trial routes separately',async()=>{
+    await click('Open Power2ADAPT help'); await click('Enrol or book a session');
+    expect(Array.from(host.querySelectorAll('summary')).map(s=>s.textContent)).toEqual(['School classes','Team Sport Speed sessions','Junior Academy / Senior Squad applications','Arrange a free trial']);
+  });
+  it('links each school and stage to its existing booking route',async()=>{
+    await click('Open Power2ADAPT help'); await click('Enrol or book a session');
+    const school=Array.from(host.querySelectorAll('details')).find(d=>d.querySelector('summary')?.textContent==='School classes')!;
+    expect(Array.from(school.querySelectorAll('a')).map(a=>a.getAttribute('href'))).toEqual(['/enrol/pg-foundation-mon','/enrol/toorak-foundation-thu','/enrol/pg-emerging-mon','/enrol/toorak-emerging-thu']);
+    expect(school.textContent).toContain('students of that school');
+    expect(school.textContent).toContain('term');
+  });
+  it('offers the three session routes without selecting a date or taking payment',async()=>{
+    await click('Open Power2ADAPT help'); await click('Enrol or book a session');
+    const sessions=Array.from(host.querySelectorAll('details')).find(d=>d.querySelector('summary')?.textContent==='Team Sport Speed sessions')!;
+    expect(Array.from(sessions.querySelectorAll('a')).map(a=>a.getAttribute('href'))).toEqual(['/enrol/team-speed-wed-530','/enrol/team-speed-fri-430','/enrol/team-speed-fri-530']);
+    expect(sessions.textContent).toContain('$33 including GST');
+  });
+  it('opens the actual squad application pages and keeps trials on the discovery-call route',async()=>{
+    await click('Open Power2ADAPT help'); await click('Enrol or book a session');
+    const groups=Array.from(host.querySelectorAll('details'));
+    expect(Array.from(groups[2].querySelectorAll('a')).map(a=>a.getAttribute('href'))).toEqual(['/junior-academy-application.html','/senior-squad-application.html']);
+    expect(groups[3].querySelector('a')?.getAttribute('href')).toContain('power2adapt.setmore.com/book?step=time-slot&products=a9a6a66a');
+    expect(groups[3].querySelectorAll('a')).toHaveLength(1);
+  });
+});
