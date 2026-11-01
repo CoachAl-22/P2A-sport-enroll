@@ -302,7 +302,7 @@ export default function Landing() {
                   <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2</span></div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
                   <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>
@@ -322,7 +322,7 @@ export default function Landing() {
                   <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Year 3–6</span></div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
                   <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>
@@ -342,7 +342,7 @@ export default function Landing() {
                   <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Prep – Year 2</span></div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
                   <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>
@@ -362,7 +362,7 @@ export default function Landing() {
                   <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Ages 13+</span></div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
                   <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>
@@ -382,7 +382,7 @@ export default function Landing() {
                   <div className="flex items-center text-gray-600"><Users className="w-4 h-4 mr-2" /><span className="text-sm">Ages 13+</span></div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div><span className="text-2xl font-heading font-bold text-primary-500">$30</span><span className="text-gray-500 text-sm"> + GST per class</span></div>
+                  <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
                   <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>

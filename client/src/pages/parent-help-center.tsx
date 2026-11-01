@@ -11,7 +11,7 @@ export default function ParentHelpCenter() {
     </SupportSection>
     <SupportSection title="How do we join?">
       <p>School classes and Team Sport Speed have links to the current booking provider. Junior Academy and Senior Squad have an application process. A discovery call is the best first step if you are unsure.</p>
-      <p><a className="font-bold underline" href="/enrollment-guide">Read the enrolment guide</a> or <a className="font-bold underline" href="/payment-support">get payment help</a>.</p>
+      <p><a className="font-bold underline" href="/enrollment-guide">Read your first-session guide</a> or <a className="font-bold underline" href="/payment-support">get payment help</a>.</p>
     </SupportSection>
     <SupportSection title="Can we try a session?">
       <p>Every new athlete can have a free trial session. Book a discovery call with Coach Al to choose the right group and arrange a time. Confirm any Ballam Park membership requirements before attending.</p>
@@ -24,6 +24,18 @@ export default function ParentHelpCenter() {
     </section>
     <SupportSection title="What’s included?">
       <p>Foundation and Emerging Athletes include My Athletic Journey app access. Junior Academy and Senior Squad include individual programming, progress testing and app support; see each program page for the membership details.</p>
+    </SupportSection>
+    <SupportSection title="My athlete is a beginner — where do we start?">
+      <p>Tell Coach Al about your athlete’s experience, confidence and goals during the discovery call. Agree on a suitable group and arrange a free trial before committing.</p>
+    </SupportSection>
+    <SupportSection title="Do parents stay? What if the weather changes?">
+      <p>Confirm supervision, drop-off and collection arrangements for your athlete’s session with Coach Al before attending.</p>
+      <p>For weather or schedule changes, check your session messages and contact Coach Al if the plan is unclear. Keep your mobile and email current with your booking provider.</p>
+      <p><a className="font-bold underline" href="tel:+61434679395">Call Coach Al on 0434 679 395</a> if you need to clarify arrival or a session change.</p>
+    </SupportSection>
+    <SupportSection title="I booked but have no confirmation">
+      <p>Check your inbox and spam folder, and the account or provider used to book. Check whether payment was taken before submitting another booking.</p>
+      <p>An enquiry receipt is not a booking confirmation. If you are unsure, contact Coach Al with your name, athlete, program, date and booking reference. <a className="font-bold underline" href="/payment-support">Get booking and payment help</a>.</p>
     </SupportSection>
     <SupportSection title="What should we bring?">
       <p>Bring a drink bottle, runners and clothes your athlete can move in. Check the program page and any instructions from Coach Al for your session.</p>

@@ -31,7 +31,7 @@ export function ClassTiles({
         <a
           key={cls.slug}
           href={`/enrol/${cls.slug}?src=${src}`}
-          className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border-2 border-[#e7e1d8] bg-white p-4 shadow-sm transition hover:border-[#12d4c8] hover:shadow-md"
+          className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border-2 border-[#e7e1d8] bg-white p-4 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0a6b66] hover:border-[#12d4c8] hover:shadow-md"
           data-testid={`enrol-cta-${cls.slug}`}
         >
           <span className="text-[#525759]">

@@ -86,7 +86,7 @@ const COMMON_INCLUDED = [
 ];
 
 const TERM_PRICE_NOTE =
-  "$30 + GST per class, for the number of weeks in your school's term. A 10 week term is $300 + GST, a 9 week term is $270 + GST. Term length varies by school (Toorak College and Peninsula Grammar run 9 week terms), so check the exact number of weeks at checkout.";
+  "$30 plus $3 GST per class ($33 total), for the number of weeks in your school's term. A 10 week term is $330 including GST; a 9 week term is $297 including GST. Term length varies by school (Toorak College and Peninsula Grammar run 9 week terms), so check the exact number of weeks at checkout.";
 
 type FullRungSlug = "foundation" | "emerging-athletes" | "team-sport-speed";
 
@@ -122,7 +122,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       "Drop off and pick up at the venue. Our coaches stay until every child is collected",
       "Wet weather: we train unless it is unsafe, and you will hear from me before the session if it is called off",
     ],
-    price: "$30 + GST per class",
+    price: "$33 including GST per class",
     priceNote: TERM_PRICE_NOTE,
     ctaLabel: "Enrol now",
     enrolSlug: "foundation",
@@ -163,7 +163,7 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       "Sessions run at your athlete's school or at the Mornington track, depending on the group",
       "Wet weather: we train unless it is unsafe, and you will hear from me before the session if it is called off",
     ],
-    price: "$30 + GST per class",
+    price: "$33 including GST per class",
     priceNote: TERM_PRICE_NOTE,
     ctaLabel: "Enrol now",
     enrolSlug: "emerging-athletes",
@@ -225,8 +225,8 @@ export const RUNGS: Record<RungSlug, RungContent | RungSummary> = {
       "Runners and training clothes, plus a drink bottle",
       "Wet weather: we train unless it is unsafe, and you will hear from me before the session if it is called off",
     ],
-    price: "$30 + GST per class",
-    priceNote: TERM_PRICE_NOTE,
+    price: "$33 including GST per class",
+    priceNote: "Setmore lists the $30 session fee and adds $3 GST, for a $33 total. Check the available dates and final total in Setmore before booking. Arrange a new athlete’s free trial with Coach Al first.",
     ctaLabel: "Book",
     enrolSlug: "team-sport-speed",
     classes: [

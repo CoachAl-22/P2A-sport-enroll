@@ -5,7 +5,7 @@ export function VisitorSupport({ title, intro, children }: { title: string; intr
   return <main className="min-h-screen bg-[#faf8f5] px-6 py-8 text-[#2e2600]">
     <div className="mx-auto max-w-3xl">
       <nav aria-label="Support navigation" className="mb-8 flex flex-wrap gap-5 text-sm font-bold text-[#0a6b66]">
-        <a href="/" className="underline">Power2ADAPT home</a><a href="/programs" className="underline">Programs</a><a href="/parent-help-center" className="underline">Help</a>
+        <a href="/" className="underline">Power2ADAPT home</a><a href="/programs" className="underline">Programs</a><a href="/enrollment-guide" className="underline">First session</a><a href="/parent-help-center" className="underline">Help</a>
       </nav>
       <h1 className="text-4xl font-black">{title}</h1>
       <p className="my-5 text-lg text-[#525759]">{intro}</p>

@@ -10,6 +10,11 @@ export default function PaymentSupport() {
       <p>Follow the booking link for your chosen class, or the instructions Coach Al provides after your application is accepted. Check the provider, session and total before entering payment details.</p>
       <p>This help page does not take payments. Use the provider’s confirmation and receipt to check your booking.</p>
     </SupportSection>
+    <SupportSection title="Check your booking confirmation">
+      <p>Look for the athlete’s name, program, date, start time and time zone, venue, payment amount and reference. Keep the provider’s change or cancellation link.</p>
+      <p>If the entrance, meeting point, what to bring or supervision arrangements are missing, confirm them with Coach Al before travelling. <a className="font-bold underline" href="/enrollment-guide">Use the first-session guide</a> to prepare.</p>
+      <p>A website enquiry or squad application receipt does not confirm a place. Wait for the relevant booking or acceptance confirmation.</p>
+    </SupportSection>
     <SupportSection title="Payment failed or confirmation missing?">
       <p>Check whether you received a confirmation or were charged before trying again. Contact the booking provider or Coach Al if anything is unclear.</p>
       <p>Include the athlete’s name, program, booking date and any reference number. Do not email card details or passwords.</p>

@@ -1,13 +1,18 @@
-import { DISCOVERY_CALL_URL, withCallbackDetails } from "@/content/contact";
-import { useState, type FormEvent } from "react";
+import { DISCOVERY_CALL_URL, EMAIL_ENQUIRY_URL, withCallbackDetails } from "@/content/contact";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 const fieldClass =
-  "mt-1 block w-full rounded-lg border border-[#d9d3ca] bg-white px-3 py-2 text-[#2e2600] focus:border-[#0a6b66] focus:outline-none focus:ring-2 focus:ring-[#0a6b66]/20";
+  "mt-1 block min-h-11 w-full rounded-lg border border-[#d9d3ca] bg-white px-3 py-2 text-base text-[#2e2600] focus:border-[#0a6b66] focus:outline-none focus:ring-2 focus:ring-[#0a6b66]/20";
 
 export function ProgramEnquiryForm() {
   const [sending, setSending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+
+  const feedbackRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (submitted || error) feedbackRef.current?.focus();
+  }, [submitted, error]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -48,11 +53,12 @@ export function ProgramEnquiryForm() {
       <p className="mb-5 text-[#525759]">Prefer to send an enquiry? Include your mobile number and the best time to call so Coach Al can understand your athlete’s goals and confirm how we can help.</p>
       <a href={DISCOVERY_CALL_URL} className="mb-5 inline-block font-bold text-[#0a6b66] underline">Book a free 15-minute discovery call instead</a>
       {submitted ? (
-        <p role="status" className="rounded-lg bg-[#e8f5f0] p-4 font-bold text-[#0a6b66]">
-          Thanks — your enquiry has been received. Coach Al will review it and get in touch. You can also book a discovery call above.
+        <p ref={feedbackRef} tabIndex={-1} role="status" className="rounded-lg bg-[#e8f5f0] p-4 font-bold text-[#0a6b66]">
+          Thanks — your enquiry has been received. Coach Al will review it and get in touch. This is an enquiry receipt, not a confirmed booking. You can also book a discovery call above.
         </p>
       ) : (
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={submit} aria-busy={sending} className="space-y-4">
+          <p className="text-sm text-[#525759]">Fields marked * are required. Please leave detailed medical information out of this general enquiry; discuss it directly with Coach Al. <a href="/parent-help-center#policies" className="font-bold text-[#0a6b66] underline">Information and privacy questions</a>.</p>
           <div className="absolute -left-[9999px]" aria-hidden="true">
             <label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
           </div>
@@ -104,8 +110,8 @@ export function ProgramEnquiryForm() {
             <legend className="mb-2 text-sm font-semibold text-[#2e2600]">4. Which afternoons work?</legend>
             <div className="flex flex-wrap gap-x-5 gap-y-2">
               {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
-                <label key={day} className="flex items-center gap-2 text-sm text-[#2e2600]">
-                  <input type="checkbox" name="days" value={day} className="accent-[#0a6b66]" />
+                <label key={day} className="flex min-h-11 cursor-pointer items-center gap-2 text-base text-[#2e2600]">
+                  <input type="checkbox" name="days" value={day} className="h-5 w-5 accent-[#0a6b66]" />
                   {day}
                 </label>
               ))}
@@ -120,7 +126,7 @@ export function ProgramEnquiryForm() {
           <label className="block text-sm font-semibold text-[#2e2600]">Anything else?
             <textarea name="message" rows={3} maxLength={1800} className={fieldClass} />
           </label>
-          {error && <p role="alert" className="text-sm font-semibold text-red-700">{error}</p>}
+          {error && <p ref={feedbackRef} tabIndex={-1} role="alert" className="rounded-lg border border-red-200 p-4 text-sm font-semibold text-red-700">{error} Your entries are still here. You can try again or <a href={EMAIL_ENQUIRY_URL} className="underline">email Coach Al</a>.</p>}
           <button type="submit" disabled={sending} className="rounded-full bg-[#f6930e] px-8 py-3 font-bold text-[#2e2600] hover:opacity-90 disabled:opacity-50">
             {sending ? "Sending..." : "Send enquiry"}
           </button>

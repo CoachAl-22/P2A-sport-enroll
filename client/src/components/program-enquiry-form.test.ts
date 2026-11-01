@@ -30,6 +30,7 @@ describe('visitor enquiry form', () => {
     expect(body.get('message')).toBe('Best time to call: After 4pm Tuesdays\n\nNetball development');
     expect(body.has('best_time')).toBe(false);
     expect(host.querySelector('[role="status"]')?.textContent).toContain('enquiry has been received');
+    expect(document.activeElement).toBe(host.querySelector('[role="status"]'));
   });
   it('keeps the form and callback details when the provider fails', async () => {
     vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,json:async()=>({message:'Delivery unavailable — please email Coach Al.'})}));
@@ -37,6 +38,8 @@ describe('visitor enquiry form', () => {
     await act(async()=>host.querySelector('form')!.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));
     expect(host.querySelector('[role="status"]')).toBeNull();
     expect(host.querySelector('[role="alert"]')?.textContent).toContain('Delivery unavailable');
+    expect(document.activeElement).toBe(host.querySelector('[role="alert"]'));
+    expect(host.querySelector('[role="alert"] a')?.getAttribute('href')).toContain('mailto:info@power2adapt.com');
     expect((host.querySelector('[name="best_time"]') as HTMLInputElement).value).toBe('After 4pm Tuesdays');
     expect(host.querySelector('button[type="submit"]')?.hasAttribute('disabled')).toBe(false);
   });

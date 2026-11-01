@@ -1,3 +1,4 @@
+import { BookingChecklist } from "@/components/booking-checklist";
 import { TRAINING_SCHEDULE } from "@/content/schedule";
 import { ProgramComparison } from "@/components/program-comparison";
 import { useState } from "react";
@@ -235,6 +236,7 @@ export default function Programs() {
           <p className="mt-2 text-xs text-[#525759]">Schedule aligned with Where we train. School sessions are for students of that school. Community Foundation and Emerging Athletes sessions can be arranged with Coach Al; Tuesday 4:30pm at Ballam Park is Hurdle Squad; discuss placement with Coach Al. High Performance is by prior booking with no fixed slot.</p>
         </section>
 
+        <BookingChecklist />
         <ProgramEnquiryForm />
 
         <section className="mt-10 rounded-xl border border-[#e7e1d8] bg-white p-6">
