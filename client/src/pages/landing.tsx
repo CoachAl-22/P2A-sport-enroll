@@ -415,6 +415,7 @@ export default function Landing() {
                 <li><a href="/parent-help-center" className="hover:text-white">Parent Help Centre</a></li>
                 <li><a href="/enrollment-guide" className="hover:text-white">Your first session</a></li>
                 <li><a href="/enrollment-guide#existing-families" className="hover:text-white">Existing bookings</a></li>
+                <li><a href="/photos-and-videos" className="hover:text-white">Photos and video choices</a></li>
                 <li><a href="/payment-support" className="hover:text-white">Payment Support</a></li>
                 <li><button onClick={() => setIsContactFormOpen(true)} className="hover:text-white cursor-pointer" data-testid="button-contact-us">Contact Us</button></li>
                 <li><button onClick={() => setIsSchoolPartnershipsModalOpen(true)} className="hover:text-white cursor-pointer">School Partnerships</button></li>

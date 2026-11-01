@@ -1,3 +1,4 @@
+import { PhotoVideoChoices, EMPTY_MEDIA_CHOICES, imagePermissionRecord, validImagePermission } from "@/components/photo-video-choices";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -76,6 +77,7 @@ interface HighPerformanceSquadApplicationProps {
 
 export function HighPerformanceSquadApplication({ isOpen, onClose }: HighPerformanceSquadApplicationProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mediaChoices, setMediaChoices] = useState({...EMPTY_MEDIA_CHOICES});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 
@@ -112,9 +114,13 @@ export function HighPerformanceSquadApplication({ isOpen, onClose }: HighPerform
   });
 
   const onSubmit = async (data: HighPerformanceSquadApplicationForm) => {
+    if (!validImagePermission(mediaChoices)) {
+      toast({ title: 'Photo permission details needed', description: 'Choose who is granting permission and enter their name, or leave all image boxes unticked.', variant: 'destructive' });
+      return;
+    }
     setIsSubmitting(true);
     try {
-      await apiRequest("POST", "/api/applications/high-performance-squad", data);
+      await apiRequest("POST", "/api/applications/high-performance-squad", {...data, additionalNotes: [data.additionalNotes, "Image permissions: " + JSON.stringify(imagePermissionRecord(mediaChoices))].filter(Boolean).join("\n\n")});
       setIsSubmitted(true);
       toast({
         title: "Application Submitted Successfully!",
@@ -135,6 +141,7 @@ export function HighPerformanceSquadApplication({ isOpen, onClose }: HighPerform
     if (isSubmitted) {
       setIsSubmitted(false);
       form.reset();
+      setMediaChoices({...EMPTY_MEDIA_CHOICES});
     }
     onClose();
   };
@@ -703,6 +710,8 @@ export function HighPerformanceSquadApplication({ isOpen, onClose }: HighPerform
                       />
                     </CardContent>
                   </Card>
+
+                  <PhotoVideoChoices value={mediaChoices} onChange={setMediaChoices} />
 
                   {/* Submit Button */}
                   <div className="flex justify-end gap-4 pb-6">

@@ -31,6 +31,7 @@ const AdminEnquiries = lazy(() => import("@/pages/admin-enquiries"));
 const Attendance = lazy(() => import("@/pages/attendance"));
 const ParentHelpCenter = lazy(() => import("@/pages/parent-help-center"));
 const EnrollmentGuide = lazy(() => import("@/pages/enrollment-guide"));
+const PhotosAndVideos = lazy(() => import("@/pages/photos-and-videos"));
 const PaymentSupport = lazy(() => import("@/pages/payment-support"));
 const ResetPassword = lazy(() => import("@/pages/reset-password"));
 const VideoHighlights = lazy(() => import("@/pages/video-highlights"));
@@ -66,6 +67,7 @@ function Router() {
           <Route path="/parent-help-center" component={ParentHelpCenter} />
           <Route path="/enrollment-guide" component={EnrollmentGuide} />
           <Route path="/payment-support" component={PaymentSupport} />
+          <Route path="/photos-and-videos" component={PhotosAndVideos} />
       {!isAuthenticated ? (
         <>
           <Route path="/" component={Landing} />

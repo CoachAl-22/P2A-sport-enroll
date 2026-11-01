@@ -24,6 +24,10 @@ export default function ParentHelpCenter() {
       <p className="mt-3 text-[#525759]">Prepaid Setmore appointments are generally rescheduled. Please give more than two hours’ notice if you need to change a booking. For term enrolments, less than two hours’ notice is recorded as late notice; missed sessions without notice are recorded as no-shows. Late notice and no-shows do not receive a credit. Illness and family matters are assessed individually, and Coach Al uses discretion in how the absence is classified. Contact Coach Al to discuss your situation. These arrangements do not limit your rights under Australian Consumer Law.</p>
       <p className="mt-3 text-[#525759]">Ask Coach Al for the policies that apply to your program before booking. For privacy questions or a request to access or correct your information, email info@power2adapt.com.</p>
     </section>
+    <SupportSection title="Photos, videos and your choices">
+      <p>Private running and hurdle technique videos need permission before recording. For athletes under 18, both parent/guardian and athlete must agree. Public website and social sharing need separate permission; declining does not affect participation.</p>
+      <p>Coach Al currently stores private videos in athlete-specific Google Drive folders accessible only to him and sends feedback copies to parents through iMessage or WhatsApp. <a className="font-bold underline" href="/photos-and-videos">Read the photos and videos guidance</a>, including how to change permission or request removal.</p>
+    </SupportSection>
     <SupportSection title="What’s included?">
       <p>Foundation and Emerging Athletes include My Athletic Journey app access. Junior Academy and Senior Squad include individual programming, progress testing and app support; see each program page for the membership details.</p>
     </SupportSection>

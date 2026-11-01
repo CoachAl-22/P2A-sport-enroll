@@ -765,6 +765,8 @@
   ══════════════════════════════ -->
   <div class="step" id="step4">
 
+    <section data-image-consent class="form-card" style="padding:20px;line-height:1.7"></section>
+
     <div class="consent-box">
       <h4>Athlete Agreement</h4>
       <p><strong>Health & Readiness:</strong> I confirm that the information provided in this application is accurate and complete to the best of my knowledge. I understand that Power2ADAPT coaching is not a substitute for medical advice, and I will inform the coach of any changes to my health or physical condition that may affect my training.</p>
@@ -920,6 +922,12 @@
 
     if (FORMSPREE_ID === 'YOUR_FORM_ID') { showSuccess(); return; }
 
+    if (!window.P2AImageConsent) { alert('Photo permission options could not load. Please reload or contact info@power2adapt.com.'); return; }
+    const imagePermissions = window.P2AImageConsent.collect();
+    if (!imagePermissions) return;
+    data.imagePermissions = imagePermissions;
+    data.photoConsent = 'Private:' + (imagePermissions.privateCoaching ? 'yes' : 'no') + ';Website:' + (imagePermissions.website ? 'yes' : 'no') + ';Social:' + (imagePermissions.social ? 'yes' : 'no');
+
     fetch('https://formspree.io/f/' + FORMSPREE_ID, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -947,5 +955,6 @@
   });
 </script>
 
+<script src="/image-consent.js"></script>
 </body>
 </html>

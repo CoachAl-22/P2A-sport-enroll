@@ -944,24 +944,7 @@
       </label>
     </div>
 
-    <!-- Photo consent -->
-    <div class="form-card">
-      <div class="form-card-head">
-        <span class="section-badge">Photo & Content</span>
-        <span class="form-card-title">Photo & Video Consent</span>
-      </div>
-      <div class="form-card-body">
-        <div class="field" data-required>
-          <label>May Power2ADAPT photograph or film your child during sessions? <span class="req">*</span></label>
-          <div class="radio-group" id="qPhoto">
-            <label class="radio-option"><input type="radio" name="qPhoto" value="Yes - coaching use only"><div class="radio-dot"></div><span>Yes — for coaching use only (not shared publicly)</span></label>
-            <label class="radio-option"><input type="radio" name="qPhoto" value="Yes - including social media"><div class="radio-dot"></div><span>Yes — may also be shared on Power2ADAPT social media and website</span></label>
-            <label class="radio-option"><input type="radio" name="qPhoto" value="No"><div class="radio-dot"></div><span>No — please do not photograph or film my child</span></label>
-          </div>
-          <div class="field-error" id="qPhoto-error" style="display:none">Please select an option</div>
-        </div>
-      </div>
-    </div>
+    <section data-image-consent class="form-card" style="padding:20px;line-height:1.7"></section>
 
     <div class="form-nav">
       <button class="btn btn-back" onclick="prevStep(4)">← Back</button>
@@ -1151,12 +1134,6 @@
       alert('Please read and agree to the consent statement before submitting.');
       valid = false;
     }
-    if (!getRadioValue('qPhoto')) {
-      document.getElementById('qPhoto-error').style.display = 'block';
-      valid = false;
-    } else {
-      document.getElementById('qPhoto-error').style.display = 'none';
-    }
     if (!valid) return;
 
     const data = {
@@ -1180,7 +1157,6 @@
       feedbackPref: getRadioValue('q14'),
       coachNotes:   'School year: ' + document.getElementById('athleteSchoolYear').value + '\n' + document.getElementById('q15').value,
       programme:    getRadioValue('qProgramme'),
-      photoConsent: getRadioValue('qPhoto'),
     };
 
     const FORMSPREE_ID = 'maqplzgr';
@@ -1188,6 +1164,13 @@
       alert("Applications are temporarily unavailable. Please email info@power2adapt.com.");
       return;
     }
+
+    if (!window.P2AImageConsent) { alert('Photo permission options could not load. Please reload or contact info@power2adapt.com.'); return; }
+    const imagePermissions = window.P2AImageConsent.collect();
+    if (!imagePermissions) return;
+    data.imagePermissions = imagePermissions;
+    data.photoConsent = 'Private:' + (imagePermissions.privateCoaching ? 'yes' : 'no') + ';Website:' + (imagePermissions.website ? 'yes' : 'no') + ';Social:' + (imagePermissions.social ? 'yes' : 'no');
+    data.coachNotes += '\n\nImage permissions: ' + JSON.stringify(imagePermissions);
 
     fetch('https://formspree.io/f/' + FORMSPREE_ID, {
       method: 'POST',
@@ -1208,5 +1191,6 @@
 
 </script>
 
+<script src="/image-consent.js"></script>
 </body>
 </html>

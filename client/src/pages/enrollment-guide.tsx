@@ -16,6 +16,9 @@ export default function EnrollmentGuide() {
       <p><a className="font-bold underline" href="/programs">Compare programs and session times</a>, then speak with Coach Al to confirm the right group and arrange your free trial. School sessions are for students of that school; ask about community options if needed.</p>
       <p>Confirm the date, start time, venue and exact meeting point before travelling. An enquiry or application alone does not confirm a place.</p>
     </SupportSection>
+    <SupportSection title="Photos and video are your choice">
+      <p>Private technique analysis and public sharing have separate permissions. For athletes under 18, parent/guardian and athlete must both agree before recording or public use. Saying no does not affect participation. <a className="font-bold underline" href="/photos-and-videos">Read your photo and video choices</a> before the session.</p>
+    </SupportSection>
     <SupportSection title="What to bring">
       <p>Bring a water bottle, wear comfortable clothing you can move in and suitable sports shoes. Check your session confirmation for any program-specific equipment or instructions.</p>
       <p>Let Coach Al know about anything that may affect safe participation before training, including an injury or support need. Discuss sensitive information directly with the coach.</p>
