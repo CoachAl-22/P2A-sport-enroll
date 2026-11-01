@@ -1,3 +1,4 @@
+export const EMERGING_TRIAL_URL = "https://power2adapt.com/emerging-athlete-free-trial/";
 export const DISCOVERY_CALL_URL = "https://power2adapt.setmore.com/book?step=time-slot&products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&type=service&staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&staffSelected=true";
 export const EMAIL_ENQUIRY_URL = "mailto:info@power2adapt.com?" + new URLSearchParams({
   subject: "Coaching enquiry",

@@ -72,11 +72,12 @@ describe('direct booking help',()=>{
     expect(Array.from(sessions.querySelectorAll('a')).map(a=>a.getAttribute('href'))).toEqual(['/enrol/team-speed-wed-530','/enrol/team-speed-fri-430','/enrol/team-speed-fri-530']);
     expect(sessions.textContent).toContain('$33 including GST');
   });
-  it('opens the actual squad application pages and keeps trials on the discovery-call route',async()=>{
+  it('opens squad applications and separates the Emerging trial link from discovery calls',async()=>{
     await click('Open Power2ADAPT help'); await click('Enrol or book a session');
     const groups=Array.from(host.querySelectorAll('details'));
     expect(Array.from(groups[2].querySelectorAll('a')).map(a=>a.getAttribute('href'))).toEqual(['/junior-academy-application.html','/senior-squad-application.html']);
-    expect(groups[3].querySelector('a')?.getAttribute('href')).toContain('power2adapt.setmore.com/book?step=time-slot&products=a9a6a66a');
-    expect(groups[3].querySelectorAll('a')).toHaveLength(1);
+    expect(groups[3].querySelectorAll('a')[0]?.getAttribute('href')).toBe('https://power2adapt.com/emerging-athlete-free-trial/');
+    expect(groups[3].querySelectorAll('a')[1]?.getAttribute('href')).toContain('power2adapt.setmore.com/book?step=time-slot&products=a9a6a66a');
+    expect(groups[3].querySelectorAll('a')).toHaveLength(2);
   });
 });
