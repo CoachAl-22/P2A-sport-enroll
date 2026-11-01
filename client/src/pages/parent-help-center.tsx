@@ -1,3 +1,4 @@
+import { VenueMeetingPoints } from '@/components/venue-meeting-points';
 import { VisitorSupport, SupportSection } from '@/components/visitor-support';
 export default function ParentHelpCenter() {
   return <VisitorSupport title="Parent Help Centre" intro="Find a program, understand the next step and get help from Coach Al.">
@@ -9,6 +10,7 @@ export default function ParentHelpCenter() {
       <p><a className="font-bold underline" href="https://power2adapt.coach/where-we-train">Where we train</a> has venue information, the weekly schedule and Ballam Park membership details. School sessions are for students of that school.</p>
       <p>Confirm your group and session before attending. Contact Coach Al about weather, absences or schedule changes.</p>
     </SupportSection>
+    <VenueMeetingPoints />
     <SupportSection title="How do we join?">
       <p>School classes and Team Sport Speed have links to the current booking provider. Junior Academy and Senior Squad have an application process. A discovery call is the best first step if you are unsure.</p>
       <p><a className="font-bold underline" href="/enrollment-guide">Read your first-session guide</a> or <a className="font-bold underline" href="/payment-support">get payment help</a>.</p>
