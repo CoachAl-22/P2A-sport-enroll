@@ -28,8 +28,12 @@ export default function ParentHelpCenter() {
     <SupportSection title="My athlete is a beginner — where do we start?">
       <p>Tell Coach Al about your athlete’s experience, confidence and goals during the discovery call. Agree on a suitable group and arrange a free trial before committing.</p>
     </SupportSection>
-    <SupportSection title="Do parents stay? What if the weather changes?">
-      <p>Confirm supervision, drop-off and collection arrangements for your athlete’s session with Coach Al before attending.</p>
+    <SupportSection title="Drop-off and collection">
+      <p>Parents and caregivers are responsible for their children before and after the designated class time. Please collect your child on time and tell the coach if collection arrangements change.</p>
+      <p>If you are delayed, contact the coach promptly. The coach will try to contact you and arrange for another adult to remain with the child rather than leaving them alone.</p>
+      <p>Confirm with Coach Al whether you need to stay during your athlete’s session and agree on the meeting and collection point before attending.</p>
+    </SupportSection>
+    <SupportSection title="What if the weather changes?">
       <p>For weather or schedule changes, check your session messages and contact Coach Al if the plan is unclear. Keep your mobile and email current with your booking provider.</p>
       <p><a className="font-bold underline" href="tel:+61434679395">Call Coach Al on 0434 679 395</a> if you need to clarify arrival or a session change.</p>
     </SupportSection>

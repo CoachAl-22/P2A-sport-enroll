@@ -21,7 +21,7 @@ export default function EnrollmentGuide() {
     </SupportSection>
     <SupportSection title="Finding the coach">
       <p><a className="font-bold underline" href="https://power2adapt.coach/where-we-train">Where we train</a> has venue information. Check your confirmation for the entrance, parking and meeting point; if these are unclear, contact Coach Al before leaving.</p>
-      <p>Allow time to find the group and introduce your athlete. Confirm supervision and collection arrangements with Coach Al before the session.</p>
+      <p>Allow time to find the group and introduce your athlete. Parents and caregivers are responsible before and after the designated class time. Collect your child on time, tell the coach about any changes in collection arrangements, and contact the coach promptly if delayed. Confirm whether you need to stay during the session and agree on the collection point with Coach Al.</p>
       <p>For Ballam Park, check the separate Frankston Athletic Club membership requirements and costs with Coach Al, including what applies to your trial.</p>
     </SupportSection>
     <SupportSection title="After the session">
