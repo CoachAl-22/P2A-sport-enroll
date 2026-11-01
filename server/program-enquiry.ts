@@ -64,6 +64,14 @@ export function registerProgramEnquiryRoute(app: Express): void {
           console.error("Program enquiry web app returned HTTP", response.status);
           return res.status(502).json({ message: "Enquiry could not be sent. Please try again or email info@power2adapt.com." });
         }
+        // Apps Script can return HTTP 200 for an application error. A lead
+        // is accepted only after the webhook explicitly acknowledges it.
+        const acknowledgement: unknown = await response.json();
+        if (!acknowledgement || typeof acknowledgement !== "object" ||
+            !("ok" in acknowledgement) || acknowledgement.ok !== true) {
+          console.error("Program enquiry web app did not acknowledge the enquiry");
+          return res.status(502).json({ message: "Enquiry could not be sent. Please try again or email info@power2adapt.com." });
+        }
         return res.json({ ok: true });
       } catch (error) {
         console.error("Program enquiry web app request failed", error instanceof Error ? error.message : "Unknown error");

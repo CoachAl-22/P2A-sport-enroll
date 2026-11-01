@@ -18,7 +18,7 @@ function app() {
 afterEach(() => vi.unstubAllGlobals());
 describe('program enquiry handoff (isolated providers)', () => {
   it('forwards mobile, callback message and repeated available days', async () => {
-    const upstream = vi.fn().mockResolvedValue({ok: true});
+    const upstream = vi.fn().mockResolvedValue({ok: true, json: async () => ({ok: true})});
     vi.stubGlobal('fetch', upstream);
     await request(app()).post('/api/programs/enquiry').type('form').send(enquiry).expect(200, {ok: true});
     const body = upstream.mock.calls[0][1].body as URLSearchParams;
@@ -26,7 +26,15 @@ describe('program enquiry handoff (isolated providers)', () => {
     expect(body.get('message')).toBe(enquiry.message);
     expect(body.getAll('days')).toEqual(['Monday', 'Thursday']);
   });
-  it('does not report success when the provider fails', async () => {
+  it('does not acknowledge an HTTP 200 processing failure', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ok:true, json:async()=>({ok:false,error:'missing name or email'})}));
+    await request(app()).post('/api/programs/enquiry').type('form').send(enquiry).expect(502);
+  });
+  it('does not acknowledge an HTML error page returned as HTTP 200', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ok:true, json:async()=>{throw new SyntaxError('Unexpected HTML')}}));
+    await request(app()).post('/api/programs/enquiry').type('form').send(enquiry).expect(502);
+  });
+  it('does not report success when the provider fails' , async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ok: false, status: 500}));
     const response = await request(app()).post('/api/programs/enquiry').type('form').send(enquiry).expect(502);
     expect(response.body.ok).not.toBe(true);
