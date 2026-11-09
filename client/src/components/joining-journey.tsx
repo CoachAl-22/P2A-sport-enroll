@@ -16,7 +16,7 @@ export function JoiningJourney() {
       </li>)}
     </ol>
     <div className="flex flex-wrap items-center gap-4">
-      <a href={DISCOVERY_CALL_URL} className="rounded-lg bg-[#0a6b66] px-5 py-3 font-bold text-white hover:bg-[#08534f]">Book a Discovery Call</a>
+      <a href={DISCOVERY_CALL_URL} className="rounded-lg bg-secondary-500 px-5 py-3 font-bold text-white hover:bg-secondary-600">Book a free discovery call</a>
       <a href="/enrollment-guide" className="font-bold text-[#0a6b66] underline">Your first session guide</a>
     </div>
     <p className="mt-5 border-t border-[#e7e1d8] pt-4 text-sm text-[#525759]">Already training with us? <a href="/enrollment-guide#existing-families" className="font-bold text-[#0a6b66] underline">Manage an existing booking</a>.</p>

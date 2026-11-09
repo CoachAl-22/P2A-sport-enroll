@@ -1,4 +1,6 @@
 import { JoiningJourney } from "@/components/joining-journey";
+import { ClassFinderQuiz } from "@/components/class-finder-quiz";
+import { DISCOVERY_CALL_URL } from "@/content/contact";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
@@ -33,7 +35,7 @@ export default function Landing() {
                 <a href="/" className="text-2xl font-heading font-bold text-primary-500" aria-label="Power2ADAPT home">Power2ADAPT</a>
               </div>
             </div>
-            <div className="hidden md:block">
+            <div className="hidden xl:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 <a href="/programs" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Programs</a>
                 <a href="https://power2adapt.coach/where-we-train" className="text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium">Where we train</a>
@@ -48,7 +50,7 @@ export default function Landing() {
             <div className="flex items-center space-x-4">
               <a href="/enrollment-guide#existing-families" className="hidden sm:inline-flex px-3 py-2 text-sm font-bold text-primary-500 hover:underline">Existing families</a>
               {/* Mobile menu button */}
-              <div className="md:hidden">
+              <div className="xl:hidden">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -70,7 +72,7 @@ export default function Landing() {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div id="mobile-navigation" className="md:hidden">
+          <div id="mobile-navigation" className="xl:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
               <a
                 href="/programs"
@@ -138,13 +140,13 @@ export default function Landing() {
         )}
       </nav>
 
-      <div className="bg-orange-500 px-4 py-3 text-center text-sm font-bold text-white sm:text-base">
+      <div className="bg-gray-900 px-4 py-3 text-center text-sm font-semibold text-white sm:text-base">
         Every new athlete can try a free session. Book a discovery call to find the right group.{" "}
         <a href="/enrollment-guide" className="underline underline-offset-2 hover:no-underline">How to get started →</a>
       </div>
 
       {/* Hero Section */}
-      <section className="relative gradient-primary text-white py-20">
+      <section className="relative gradient-primary text-white pt-20 pb-28">
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: "url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')",
           backgroundSize: "cover",
@@ -153,43 +155,38 @@ export default function Landing() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-blue-100 mb-4">Excellence Through Consistency</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-blue-100 mb-4">Speed coaching · Prep to adult · Frankston, Mornington &amp; Mt Eliza</p>
               <h1 className="text-4xl md:text-6xl font-heading font-bold leading-tight mb-6">
-                Build the Athlete <span className="text-secondary-500">Behind the Sport</span>
+                Build the Athlete <span className="text-blue-200">Behind the Sport</span>
               </h1>
               <p className="text-xl mb-8 text-blue-100">
-                Running technique, speed and athletic development across Frankston, Mornington and Mt Eliza. Find the right program for your athlete's stage and build confidence through consistent coaching.
+                Running technique, speed and confidence that carry into every sport. Every new athlete can try a free session first.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-5">
                 <Button asChild
-                  className="bg-secondary-500 hover:bg-secondary-600 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg"
+                  className="bg-secondary-500 hover:bg-secondary-600 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg shadow-[0_14px_30px_-10px_rgba(242,101,34,.75)]"
                 >
-                  <a href="https://power2adapt.setmore.com/book?step=time-slot&amp;products=a9a6a66a-9c61-4bec-829a-84d78687c2c0&amp;type=service&amp;staff=radec66996c3d8174cc26c451adc8c9832fdac5b7&amp;staffSelected=true">Book a Discovery Call →</a>
+                  <a href={DISCOVERY_CALL_URL}>Book a free discovery call →</a>
                 </Button>
-                <Button 
-                  onClick={() => {
-                    const classesSection = document.getElementById('classes');
-                    classesSection?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  variant="outline"
-                  className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary-500 px-8 py-4 rounded-lg font-heading font-semibold text-lg"
-                >
-                  Explore Programs
-                </Button>
+                <a href="#class-finder" className="whitespace-nowrap font-heading font-semibold text-white underline underline-offset-4 hover:no-underline">
+                  Which class fits my athlete?
+                </a>
               </div>
             </div>
             <div className="hidden md:block">
               <img 
                 src="/images/georgia-goss-comp.jpg" 
                 alt="Young athletes in training" 
-                className="rounded-xl shadow-2xl"
+                className="rounded-xl ring-1 ring-white/20"
               />
             </div>
           </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><JoiningJourney /></div>
+      <div className="relative z-10 -mt-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 [&>section]:mt-0"><JoiningJourney /></div>
+
+      <ClassFinderQuiz />
 
       {/* Quick Stats */}
       <section className="py-16 bg-white">
@@ -225,7 +222,7 @@ export default function Landing() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-primary-500" />
               </div>
               <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">A foundation for every sport</h3>
@@ -233,40 +230,40 @@ export default function Landing() {
             </div>
             
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <RotateCcw className="w-8 h-8 text-secondary-500" />
+              <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <RotateCcw className="w-8 h-8 text-primary-500" />
               </div>
               <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Coaching for their stage</h3>
               <p className="text-gray-600">Start with your athlete's year level and goals. Coach Al can help you find the right group.</p>
             </div>
             
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-8 h-8 text-green-500" />
+              <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-8 h-8 text-primary-500" />
               </div>
               <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Progress you can see</h3>
               <p className="text-gray-600">Junior Academy, Senior Squad and High Performance athletes are tested in weeks 1, 5 and 10 to guide their development.</p>
             </div>
             
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Building2 className="w-8 h-8 text-purple-500" />
+              <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Building2 className="w-8 h-8 text-primary-500" />
               </div>
               <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">School and community sessions</h3>
               <p className="text-gray-600">Explore sessions in Frankston, Mornington and Mt Eliza. School sessions are for students of that school.</p>
             </div>
             
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MessageSquare className="w-8 h-8 text-red-500" />
+              <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="w-8 h-8 text-primary-500" />
               </div>
               <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Train the mind too</h3>
               <p className="text-gray-600">Work on managing nerves, healthy expectations and building momentum alongside physical skills.</p>
             </div>
             
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <School className="w-8 h-8 text-yellow-600" />
+              <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <School className="w-8 h-8 text-primary-500" />
               </div>
               <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Consistency builds confidence</h3>
               <p className="text-gray-600">Give your athlete time to learn, practise and see what they can do. Real development builds over time.</p>
@@ -288,12 +285,12 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
             {/* Foundation — Peninsula Grammar Monday */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors">
               <img src="/images/coach-georgia-crew.jpg" alt="Young children learning fundamental movement skills" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-heading font-bold text-gray-900">Foundation Class</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">View classes</span>
+                  
                 </div>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Monday 3:30pm</span></div>
@@ -302,18 +299,18 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
-                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
+                  <a href="/programs" className="border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>
             </div>
 
             {/* Emerging Athletes — Peninsula Grammar Monday */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors">
               <img src="/images/ashton-xcr.jpg" alt="Young athletes developing skills in team sports" className="w-full h-48 object-contain bg-gray-100" />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-heading font-bold text-gray-900">Emerging Athletes</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">View classes</span>
+                  
                 </div>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Monday 3:30pm</span></div>
@@ -322,18 +319,18 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
-                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
+                  <a href="/programs" className="border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>
             </div>
 
             {/* Foundation — Toorak College Thursday */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors">
               <img src="/images/coach-georgia-crew.jpg" alt="Young children learning fundamental movement skills" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-heading font-bold text-gray-900">Foundation Class</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">View classes</span>
+                  
                 </div>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Thursday 3:30pm</span></div>
@@ -342,18 +339,18 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
-                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
+                  <a href="/programs" className="border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>
             </div>
 
             {/* Team Sport Speed — Friday 4:30pm */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors">
               <img src="/images/team-sport-running.jpg" alt="Athletes training for speed and agility" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-heading font-bold text-gray-900">Team Sport Speed</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">View classes</span>
+                  
                 </div>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Friday 4:30pm</span></div>
@@ -362,18 +359,18 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
-                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
+                  <a href="/programs" className="border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>
             </div>
 
             {/* Team Sport Speed — Friday 5:30pm */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors hover:shadow-lg">
+            <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-primary-500 transition-colors">
               <img src="/images/team-sport-running.jpg" alt="Athletes training for speed and agility" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-heading font-bold text-gray-900">Team Sport Speed</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">View classes</span>
+                  
                 </div>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-gray-600"><Calendar className="w-4 h-4 mr-2" /><span className="text-sm">Friday 5:30pm</span></div>
@@ -382,7 +379,7 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div><span className="text-2xl font-heading font-bold text-primary-500">$33</span><span className="text-gray-500 text-sm"> incl. GST per class</span></div>
-                  <a href="/programs" className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
+                  <a href="/programs" className="border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">View classes</a>
                 </div>
               </div>
             </div>
@@ -390,7 +387,7 @@ export default function Landing() {
           </div>
 
           <div className="text-center mt-10">
-            <a href="/programs" className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-md hover:shadow-lg transition-all">
+            <a href="/programs" className="inline-flex items-center gap-2 border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white font-bold text-lg px-8 py-4 rounded-xl transition-colors">
               Find the right class
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </a>
