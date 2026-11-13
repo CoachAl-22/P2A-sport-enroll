@@ -6135,6 +6135,8 @@ const MAJ_CONTENT = {
       doBtn.classList.remove('done');
     }
 
+    renderGameLink(a, doBtn);
+
     // Show learn reminder banner if Learn not yet done
     const learnBanner = document.getElementById('learn-reminder-banner');
     if (learnBanner) learnBanner.style.display = wp.learn ? 'none' : 'flex';
@@ -6177,6 +6179,44 @@ const MAJ_CONTENT = {
     // XP pill
     const xpAvail = 10 + 10 + 15 + (week.do.badge && !week.do.badge.coachRequired ? week.do.badge.xp : 0);
     document.querySelector('.week-pill').textContent = `${mod.pillar} · +${xpAvail} XP this week`;
+  }
+
+  // ── EXPLORER'S RUN PLAY BUTTON (private play-test) ───────────────────
+  // Opens the practice game at the level that matches this week (Module 1 only). The link carries a
+  // level name and nothing else: no athlete details go to the game and nothing comes back. Game XP
+  // is separate from MAJ XP; the coach checks the real skill at training.
+  // Hidden unless switched on for this device: open /my-athletic-journey?game=on (or ?game=off).
+  const GAME_LEVELS = { 2: 'skip', 3: 'sprint', 4: 'jump', 6: 'tempo', 8: 'reel' };
+  const GAME_SWITCH_KEY = 'maj_game_playtest';
+  (function readGameSwitch() {
+    try {
+      const g = new URLSearchParams(window.location.search).get('game');
+      if (g === 'on') localStorage.setItem(GAME_SWITCH_KEY, '1');
+      if (g === 'off') localStorage.removeItem(GAME_SWITCH_KEY);
+    } catch (e) { /* storage blocked: the button stays hidden */ }
+  })();
+  function gamePlaytestOn() {
+    try { return localStorage.getItem(GAME_SWITCH_KEY) === '1'; } catch (e) { return false; }
+  }
+  function renderGameLink(a, doBtn) {
+    let link = document.getElementById('game-play-link');
+    const level = a && a.currentModule === 1 ? GAME_LEVELS[a.currentWeek] : null;
+    if (!level || !gamePlaytestOn() || !doBtn) { if (link) link.style.display = 'none'; return; }
+    if (!link) {
+      link = document.createElement('a');
+      link.id = 'game-play-link';
+      link.style.cssText = 'display:block;margin-top:12px;padding:12px 14px;border:2px solid var(--cyan);border-radius:12px;'
+        + 'text-align:center;text-decoration:none;color:var(--cyan);font-weight:700;font-size:15px;line-height:1.35;';
+      const title = document.createElement('span');
+      title.textContent = "Practise this skill in Explorer's Run";
+      const sub = document.createElement('span');
+      sub.style.cssText = 'display:block;margin-top:2px;font-weight:400;font-size:12px;color:var(--text2);';
+      sub.textContent = 'A game score only. Your coach checks the real thing.';
+      link.appendChild(title); link.appendChild(sub);
+      doBtn.insertAdjacentElement('afterend', link);
+    }
+    link.href = '/play/?level=' + level + '&from=maj';
+    link.style.display = 'block';
   }
 
   // ── NEXT WEEK BUTTON ─────────────────────────────────────────────────

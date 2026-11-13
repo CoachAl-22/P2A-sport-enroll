@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Explorer's Run</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=DM+Sans:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+  <div id="app">
+    <header class="titlebar">
+      <button id="quit" class="tbtn" type="button" hidden>Map</button>
+      <h1 id="title">EXPLORER'S RUN</h1>
+      <button id="skipPractice" class="tbtn" type="button" hidden>Skip practice</button>
+      <button id="mute" class="tbtn" type="button" aria-pressed="true">Sound</button>
+    </header>
+
+    <main class="scene">
+      <canvas id="cv" role="img" aria-label="Explorer's Run game screen"></canvas>
+
+      <div class="hud" id="hud">
+        <div class="chip"><span>XP</span><b id="hXP">0</b></div>
+        <div class="chip"><span>Distance</span><b id="hDist">0 m</b></div>
+        <div class="chip"><span>Time</span><b id="hTime">0.0</b></div>
+      </div>
+
+      <div class="hud2" id="hud2">
+        <div class="meter">
+          <span>Energy</span>
+          <div class="track"><i id="hEnergy"></i></div>
+        </div>
+        <div class="meter tempo" id="hTempo">
+          <span>Tempo</span>
+          <div class="track"><em class="zone" id="hZone"></em><i class="needle" id="hNeedle"></i></div>
+        </div>
+      </div>
+
+      <div class="coachline" id="coachline" aria-live="polite"></div>
+    </main>
+
+    <div class="pads">
+      <button class="pad l" id="padL" type="button"><span class="pad-label">LEFT</span></button>
+      <button class="pad j" id="padJ" type="button" hidden><span class="pad-label">JUMP</span></button>
+      <button class="pad r" id="padR" type="button"><span class="pad-label">RIGHT</span></button>
+    </div>
+  </div>
+
+  <div class="veil" id="veil" hidden>
+    <div class="card" id="card" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <pre id="debug" hidden></pre>
+
+  <script type="module" src="js/game.js"></script>
+</body>
+</html>

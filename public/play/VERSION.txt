@@ -1,0 +1,1 @@
+Explorer's Run, copied from the explorers-run repository at commit 123fd1e (2026-11-13). Do not edit here: change the game in its own repository and copy again.

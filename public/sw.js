@@ -65,6 +65,9 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(event.request.url);
 
+  // Explorer's Run (/play): never cached here, so an updated game is never served stale
+  if (url.pathname === '/play' || url.pathname.startsWith('/play/')) return;
+
   // Network-first for ALL /api/ GET requests — never serve stale API data
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(

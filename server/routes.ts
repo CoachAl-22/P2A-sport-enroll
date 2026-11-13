@@ -333,6 +333,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const __staticDir = _dirname(_ftu(import.meta.url));
   app.use("/icons", express.static(_resolve(__staticDir, "../public/icons")));
   app.use("/maj-icon.svg", express.static(_resolve(__staticDir, "../public/maj-icon.svg")));
+  // Explorer's Run: the MAJ practice game, a static copy of the explorers-run repository (see
+  // public/play/VERSION.txt). It has no sign-in, makes no API calls and keeps its progress on the
+  // device only. Unlisted: reached from the hidden-by-default Play button in the MAJ app.
+  app.use("/play", express.static(_resolve(__staticDir, "../public/play"), {
+    index: "index.html",
+    setHeaders: (res) => {
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    },
+  }));
   app.get("/sw.js", (_req, res) => {
     try {
       const swContent = readFileSync(_resolve(__staticDir, "../public/sw.js"), "utf-8");
